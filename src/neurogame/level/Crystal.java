@@ -35,7 +35,6 @@ public class Crystal
   
   public static final Point NONE = new Point();
   
-  private static int chunkWidth;
   private static int gridX;
   private static int gridY;
   
@@ -80,13 +79,12 @@ public class Crystal
   }
   
   
-  public static void setup(int gridX, int gridY, int chunkWidth)
+  public static void setup(int gridX, int gridY)
   {
     palettIdx = rand.nextInt(PALETT_COUNT);
     Crystal.gridX = gridX;
     Crystal.gridY = gridY;
-    Crystal.chunkWidth = chunkWidth;
-    
+
   }
   
   

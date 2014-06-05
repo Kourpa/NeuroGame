@@ -67,6 +67,7 @@ public class Coin extends GameObject
     if (collision(world.getPlayer()) && isActive())
     {
       world.getPlayer().collectCoin();
+//      Library.log("Player Collected Coin", world.getRisk());
       setActive(false);
     }
 

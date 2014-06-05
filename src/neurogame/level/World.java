@@ -14,9 +14,8 @@ import java.util.List;
 
 import neurogame.gameplay.Player;
 import neurogame.library.Library;
-import neurogame.main.Drawable;
 
-public class World implements Drawable {
+public class World{
 
     private final List<Path> pathList;
 
@@ -25,6 +24,7 @@ public class World implements Drawable {
 
     private int PATH_LENGTH = 100;
     private double center = .0;
+    private EnumPathType pathType = EnumPathType.SPIKE;
 
     private final boolean USE_CRYSTALS = false; // toggle fractals on or off, also toggles splits
     private final Player player;
@@ -43,8 +43,6 @@ public class World implements Drawable {
     private double scrollSpeed = MED; // current speed
 
     private CrystalGrower crystalWalls; // fractals!
-
-    Chunks chunks = new Chunks();
 
     /**
      * Initializes firstChunk, secondChunk, player and the outer walls.
@@ -80,7 +78,7 @@ public class World implements Drawable {
      * If the first chunk reaches its end it is replaced with the second chunk
      * and the second chunk is re-generated.
      */
-    public void update(){
+    public double update(Graphics2D graphics, long deltaTime){
         //add the scrollSpeed to the distance
         deltaX += scrollSpeed;
         scrolled_distance += scrollSpeed;
@@ -119,15 +117,17 @@ public class World implements Drawable {
 
         //update crystals
         if(USE_CRYSTALS){
-            crystalWalls.update(deltaX, 0, scrolled_distance);
+//            crystalWalls.update(deltaX, 0, scrolled_distance);
         }
+        
+        draw(graphics);
+        return 0;
     }
 
     /**
      * draw the world
      * @param g
      */
-    @Override
     public void draw(Graphics2D g){
 
         AffineTransform oldTransform = g.getTransform();

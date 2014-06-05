@@ -16,8 +16,10 @@ public class Path {
     private double center;
 
     private final double MAX_CHANGE = .01;
+    
     public static final double STEP_SIZE = .01;
-
+    private static EnumPathType pathType;
+    
     private final double ROCK_PADDING = .01;
     private double shipPadding = .2;
 

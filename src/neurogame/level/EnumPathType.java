@@ -5,9 +5,16 @@ package neurogame.level;
 
 public enum EnumPathType{
     SPIKE{
-        public double speed;
-        public double maxChange;
-        public double stepSize;
-        public double shipPadding;
+        public final double speed = .01;
+        private final double maxChange = .01;
+        private final double stepSize = .01;
+        private final double shipPadding = .5;
+        
+    };
+    
+    public double speed = .01;
+    
+    public double getSpeed(){
+        return speed;
     }
 }

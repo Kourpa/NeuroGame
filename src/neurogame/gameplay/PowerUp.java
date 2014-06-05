@@ -212,6 +212,7 @@ public class PowerUp extends GameObject
     if (player != null && !alreadyUsed && !inUse)
     {
       inUse = true;
+//      Library.log("Player used powerup " + type, world.getRisk());
       switch (type)
       {
       // TODO
@@ -264,12 +265,12 @@ public class PowerUp extends GameObject
 //        }
 //      }
 //      break;
-    case LASER:
-      laserDraw = true;
-
-      // update laser polygon
-      updateLaserPoly();
-
+//    case LASER:
+//      laserDraw = true;
+//
+//      // update laser polygon
+//      updateLaserPoly();
+//
 //      for (GameObject o : world.getObjectList())
 //      {
 //        if (o instanceof Enemy && Library.isOnScreen(o))
@@ -287,10 +288,10 @@ public class PowerUp extends GameObject
 //          }
 //        }
 //      }
-
-      break;
-    case SUPER:
-      superDraw = true;
+//
+//      break;
+//    case SUPER:
+//      superDraw = true;
 //      for (GameObject o : world.getObjectList())
 //      {
 //        if (player.collision(o) && (o instanceof Enemy))
@@ -298,9 +299,9 @@ public class PowerUp extends GameObject
 //          o.killedBySuper();
 //        }
 //      }
-      break;
-    default:
-      break;
+//      break;
+//    default:
+//      break;
     }
   }
 
@@ -311,6 +312,7 @@ public class PowerUp extends GameObject
   {
     if (inUse)
     {
+//      Library.log("Powerup " + type + " deactivated", world.getRisk());
       switch (type)
       {
       // TODO
@@ -354,6 +356,7 @@ public class PowerUp extends GameObject
       player.collectPowerUp();
 
       System.out.println("Player collected powerup " + type);
+//      Library.log("Player collected powerup " + type, world.getRisk());
 
       player.setPowerUp(this);
       setActive(false);

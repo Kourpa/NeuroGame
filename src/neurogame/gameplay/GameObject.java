@@ -16,8 +16,8 @@ public abstract class GameObject
   private static int globalID; // object id
   private final int id;
   private final String name; // type of object
-  public double x; // starting x
-  public double y; // starting y
+  private double x; // starting x
+  private double y; // starting y
   private double width; // width of obj
   private double height; // height of obj
   private double centerX, centerY;
@@ -200,21 +200,25 @@ public abstract class GameObject
   public void killedByLaser()
   {
     active = false;
+//    Library.log(name + " killed by laser", world.getRisk());
   }
 
   public void killedBySuper()
   {
     active = false;
+//    Library.log(name + " killed by super", world.getRisk());
   }
 
   public void killedByBoost()
   {
     active = false;
+//    Library.log(name + " killed by boost", world.getRisk());
   }
 
   public void hitByEmp()
   {
     empHit = true;
+//    Library.log(name + " hit by emp", world.getRisk());
   }
   
   
@@ -241,10 +245,10 @@ public abstract class GameObject
     //System.out.println("walls="+walls.getBounds2D()+", " + getName() + "("+
     //    getHitMinX() + ", " + getHitMinY() + ") - (" + getHitMaxX() + ", " + getHitMaxY() + ")");
 
-    if (walls.contains(hitMinX, hitMinY)) return true;
-    if (walls.contains(hitMaxX, hitMinY)) return true;
-    if (walls.contains(hitMinX, hitMaxY)) return true;
-    if (walls.contains(hitMaxX, hitMaxY)) return true;
+    if (walls.contains(hitMinX-world.getDeltaX(), hitMinY)) return true;
+    if (walls.contains(hitMaxX-world.getDeltaX(), hitMinY)) return true;
+    if (walls.contains(hitMinX-world.getDeltaX(), hitMaxY)) return true;
+    if (walls.contains(hitMaxX-world.getDeltaX(), hitMaxY)) return true;
 
     return false;
   }
