@@ -15,11 +15,11 @@ public class Path {
     private double bottomY;
     private double center;
 
-    private final double MAX_CHANGE = .3;
-    public static final double STEP_SIZE = .3;
+    private final double MAX_CHANGE = .01;
+    public static final double STEP_SIZE = .01;
 
     private final double ROCK_PADDING = .01;
-    private double shipPadding = .5;
+    private double shipPadding = .2;
 
     private static boolean centered = false;
 
@@ -33,7 +33,7 @@ public class Path {
     public Path(Path p, double center){
         x = p.getX() + STEP_SIZE;
 
-        if(Math.abs(p.center - center) > .4){//MAX_CHANGE){
+        if(Math.abs(p.center - center) > shipPadding){
             if(p.center > center){
                 topY = p.topY - random.nextDouble() * MAX_CHANGE;
                 bottomY = p.topY + shipPadding - random.nextDouble() * MAX_CHANGE;
@@ -57,6 +57,11 @@ public class Path {
             }
         }
 
+        double dy = bottomY - topY;
+        if(dy < shipPadding){
+            bottomY += shipPadding - dy;
+        }
+        
         if(bottomY > 1 - ROCK_PADDING){
             bottomY += 1 - ROCK_PADDING - bottomY;
         }
@@ -81,6 +86,9 @@ public class Path {
         center = (topY + bottomY) / 2;
     }
 
+    public void setPathType(EnumPathType pt){
+    }
+    
     public double getX(){
         return x;
     }

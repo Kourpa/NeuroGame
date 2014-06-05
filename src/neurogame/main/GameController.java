@@ -7,7 +7,6 @@
  * Danny Gomez
  * Marcos Lemus
  */
-
 package neurogame.main;
 
 import java.awt.Graphics2D;
@@ -36,34 +35,34 @@ import neurogame.level.*;
  * @team Marcos Lemus
  */
 public class GameController {
-    
+
     private final NeuroGame game;
     private final PlayerControls controls;
     private final KeyBinds keyBinds;
     private final Map<String, Boolean> inputs;
     private final Map<String, Boolean> previousInputs;
     private NeuroFrame frame;
-    
+
     private IOExecutor executor;
-    
+
     private static Graphics2D graphics;
-    
+
     private boolean loggingMode;
     private boolean soundEnabled;
     private boolean godMode;
     private boolean suicideEnabled;
     private boolean globalDebug;
     private boolean debug;
-    
+
     private int health;
     private int frameCounter;
-    
+
     private boolean controllable;
     private boolean scrolling;
-    
+
     private GameMode mode;
     private TitleScreen title;
-    
+
     private World world;
     private Player player;
     private PowerUp powerUp;
@@ -71,13 +70,13 @@ public class GameController {
     private List<GameObject> zappers;
     private double deltaX;
     private double deltaY;
-    
+
     private Controller joystick = null;
     private static final int JOYSTICK_X = 1;
     private static final int JOYSTICK_Y = 0;
     private static final double JOYSTICK_THRESHOLD = 0.01;
     private double joystickLastX, joystickLastY;
-    
+
     private boolean joystickReady;
 
     /**
@@ -95,11 +94,11 @@ public class GameController {
         this.game = game;
         this.frame = frame;
         this.executor = executor;
-        
+
         controls = new PlayerControls();
         keyBinds = new KeyBinds((JComponent) frame.getContentPane(), controls);
         inputs = controls.getInputs();
-        
+
         objects = null;
         zappers = null;
         deltaX = 0;
@@ -123,11 +122,11 @@ public class GameController {
             e.printStackTrace();
             System.exit(0);
         }
-        
+
         int count = Controllers.getControllerCount();
     // System.out.println(count + " Controllers Found");
 
-    // Cursor myCursor = org.lwjgl.input.Mouse.getNativeCursor();
+        // Cursor myCursor = org.lwjgl.input.Mouse.getNativeCursor();
         // myCursor.setCursorPosition(0, 0);
         // org.lwjgl.input.Mouse.setGrabbed(true);
         // org.lwjgl.input.Mouse.setCursorPosition(0, 0);
@@ -138,20 +137,20 @@ public class GameController {
             if(controller.getName().contains("Gamepad")){
                 joystick = controller;
                 System.out.println("Gamepad found at index " + i);
-                
+
                 joystick.poll();
                 joystickLastX = joystick.getAxisValue(JOYSTICK_X);
                 joystickLastY = joystick.getAxisValue(JOYSTICK_Y);
-                
+
                 break;
             }
         }
 
-    // //////////////
+        // //////////////
         controls.addBinding("sound");
         keyBinds.addBinding(KeyEvent.VK_F1, "sound");
 
-    // A copy of the inputs map used for logging changes in input states.
+        // A copy of the inputs map used for logging changes in input states.
         // This must be done before adding the debugging key binds or the
         // debugging keys will be logged as well.
         previousInputs = new HashMap<String, Boolean>();
@@ -159,7 +158,7 @@ public class GameController {
             previousInputs.put(e.getKey(), e.getValue().booleanValue());
         }
 
-    // Special key bindings for sound, suicide (God-mode-only), and zoom
+        // Special key bindings for sound, suicide (God-mode-only), and zoom
         // (debug only). Must be created before showing the title.
         controls.addBinding("suicide");
         keyBinds.addBinding(KeyEvent.VK_BACK_SPACE, "suicide");
@@ -186,20 +185,20 @@ public class GameController {
         // Zapper spawner.
         controls.addBinding("zapper");
         keyBinds.addBinding(KeyEvent.VK_Z, "zapper");
-        
+
         showTitle();
     }
-    
+
     public static void setGraphics(Graphics2D g){
         graphics = g;
     }
-    
+
     public void mainGameLoop(){
         long timeStart = System.currentTimeMillis();
         long timeCurr = timeStart;
         long timeLast = timeStart;
         update(0);
-        
+
         while(true){
             while(mode == GameMode.PAUSED){
                 try{
@@ -207,9 +206,9 @@ public class GameController {
                 } catch(Exception e){
                 }
             }
-            
+
             long deltaTime = System.currentTimeMillis() - timeLast;
-            
+
             if(deltaTime < Library.MIN_FRAME_MILLISEC){
                 try{
                     Thread.sleep(Library.MIN_FRAME_MILLISEC - deltaTime);
@@ -218,7 +217,7 @@ public class GameController {
             }
             timeCurr = System.currentTimeMillis();
             deltaTime = timeCurr - timeLast;
-            
+
             timeLast = timeCurr;
             update(deltaTime);
         }
@@ -236,7 +235,7 @@ public class GameController {
      */
     private void update(long deltaTime){
         frameCounter++;
-        
+
         switch(mode){
             case PLAYING:
                 playUpdate(deltaTime);
@@ -254,10 +253,10 @@ public class GameController {
             default:
                 break;
         }
-        
+
         frame.render();
     }
-    
+
     private void playUpdate(long deltaTime){
         player.addScore(deltaTime * Library.SCORE_PER_MILLSEC);
         // Player input.
@@ -266,7 +265,7 @@ public class GameController {
         if(scrolling){
             world.update();
             double newDeltaX = world.getDeltaX();
-      // To create the illusion of the player moving through the cavern,
+            // To create the illusion of the player moving through the cavern,
             // not the cavern moving behind the player, update the player
             // position by the change in deltas since last update.
             double newPlayerX = player.getX() + (newDeltaX - deltaX);
@@ -276,7 +275,7 @@ public class GameController {
             world.draw(graphics);
         }
 
-    // engine.setClip(player.getCenterX(), player.getCenterY());
+        // engine.setClip(player.getCenterX(), player.getCenterY());
         // Draw the Zappers.
         updateObjectList(zappers, deltaTime);
         // Update and draw GameObjects.
@@ -285,14 +284,14 @@ public class GameController {
         // Draw the Player and PowerUp effects (if necessary).
         drawPlayer();
         drawPowerUp();
-        
+
         health = (godMode ? Library.HEALTH_MAX : player.getHealth());
 
         // Update the PowerUp.
         powerUp = (player.getPowerUp() != null ? player.getPowerUp() : null);
         if(powerUp != null){
             powerUp.update(deltaTime);
-            
+
             if(powerUp.isAlreadyUsed()){
                 player.setPowerUp(null);
                 powerUp = null;
@@ -302,11 +301,11 @@ public class GameController {
         // Set the info for the HUD.
         frame.setStats(player.getScore(), player.getCoins(), health, powerUp);
     }
-    
+
     public void drawPlayer(){
         player.render(graphics);
     }
-    
+
     public void drawPowerUp(){
         PowerUp p = player.getPowerUp();
         if(p != null){
@@ -377,7 +376,7 @@ public class GameController {
         if(inputs.get("space")){
             usePowerUp();
         }
-        
+
         if(joystick != null){
             if(joystick.isButtonPressed(0)){
                 usePowerUp();
@@ -413,7 +412,7 @@ public class GameController {
         if(inputs.get("escape")){
             inputs.put("escape", false);
             controls.disableAll();
-      // When toggling screen mode, we need to stop the timer to make
+            // When toggling screen mode, we need to stop the timer to make
             // sure render() doesn't get called while the switch is taking
             // place, as this could cause multithreading issues.
             mode = GameMode.PAUSED;
@@ -441,7 +440,7 @@ public class GameController {
                 gameOver();
             }
 
-      // // Toggle centered - only if debug.
+            // // Toggle centered - only if debug.
             // if (inputs.get("toggle_centered") && debug)
             // {
             // inputs.put("toggle_centered", false);
@@ -491,26 +490,26 @@ public class GameController {
      */
     private DirectionVector moveHelper(){
         DirectionVector dir = new DirectionVector();
-        
+
         boolean n = false;
         boolean s = false;
         boolean w = false;
         boolean e = false;
-        
+
         if(joystick == null){
             n = inputs.get("up");
             s = inputs.get("down");
             w = inputs.get("left");
             e = inputs.get("right");
 
-      //System.out.println(n + " " + e + " " + s + " " + w);
+            //System.out.println(n + " " + e + " " + s + " " + w);
             if(n){
                 dir.y = -1;
             }
             else if(s){
                 dir.y = 1;
             }
-            
+
             if(e){
                 dir.x = 1;
             }
@@ -518,12 +517,12 @@ public class GameController {
                 dir.x = -1;
             }
         }
-        
+
         else{
             joystick.poll();
             double stickX = joystick.getAxisValue(JOYSTICK_X);
             double stickY = joystick.getAxisValue(JOYSTICK_Y);
-            
+
             if(!joystickReady){
                 double deltaX = Math.abs(joystickLastX - stickX);
                 double deltaY = Math.abs(joystickLastY - stickY);
@@ -531,14 +530,14 @@ public class GameController {
                     joystickReady = true;
                 }
             }
-            
+
             if(joystickReady){
                 dir.x = stickX;
                 dir.y = stickY;
             }
         }
         return dir;
-        
+
     }
 
     /**
@@ -567,7 +566,7 @@ public class GameController {
         scrolling = true;
         player = world.getPlayer();
         health = player.getHealth();
-        
+
         log("New game.");
     }
 
@@ -618,7 +617,7 @@ public class GameController {
                     game.quit();
                 }
             }
-            
+
             if(inputs.get("sound")){
                 soundEnabled = !soundEnabled;
             }
@@ -637,7 +636,7 @@ public class GameController {
      * Handles keyboard events while paused.
      */
     private void pauseUpdate(){
-        
+
         if(inputs.get("pause")){
             inputs.put("pause", false);
             unpause();
@@ -771,5 +770,5 @@ public class GameController {
 
         INITIALIZING, TITLE, PLAYING, PAUSED, DEAD;
     }
-    
+
 }

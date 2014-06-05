@@ -1,3 +1,7 @@
+/**
+ * World generates and updates randomly generated path.
+ * @author Marcos
+ */
 package neurogame.level;
 
 import java.awt.Color;
@@ -9,18 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import neurogame.gameplay.Player;
-import neurogame.level.Chunk.Type;
 import neurogame.library.Library;
 import neurogame.main.Drawable;
 
-/**
- * World generates and updates randomly generated chunks.
- *
- * @author Marcos
- */
 public class World implements Drawable {
 
-    private List<Path> pathList;
+    private final List<Path> pathList;
 
     private final Path2D.Double top;
     private final Path2D.Double bottom;
@@ -53,7 +51,7 @@ public class World implements Drawable {
      * and the fractal.
      */
     public World(){
-        player = new Player(0.1, Chunk.HEIGHT / 2, 0.075, 0.075, this);
+        player = new Player(0.1, 1 / 2, 0.075, 0.075, this);
 
         pathList = new ArrayList<>();
         pathList.add(new Path());
@@ -85,13 +83,15 @@ public class World implements Drawable {
     public void update(){
         //add the scrollSpeed to the distance
         deltaX += scrollSpeed;
+        scrolled_distance += scrollSpeed;
 
         //Check to see if I should spawn another chunk
         if(deltaX >= Path.STEP_SIZE){
             deltaX = 0;
-            
+
             pathList.remove(0);
             pathList.add(new Path(pathList.get(pathList.size() - 1), center));
+            
 
             top.reset();
             bottom.reset();
@@ -115,7 +115,6 @@ public class World implements Drawable {
             walls.reset();
             walls.add(new Area(top));
             walls.add(new Area(bottom));
-            walls.transform(AffineTransform.getTranslateInstance(deltaX, 0));
         }
 
         //update crystals
@@ -126,7 +125,6 @@ public class World implements Drawable {
 
     /**
      * draw the world
-     *
      * @param g
      */
     @Override
@@ -135,7 +133,7 @@ public class World implements Drawable {
         AffineTransform oldTransform = g.getTransform();
         g.setTransform(AffineTransform.getScaleInstance(Library.U_VALUE, Library.U_VALUE));
         g.translate(-deltaX, 0);
-        
+
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 2, 1);
 
@@ -147,7 +145,6 @@ public class World implements Drawable {
 
         if(Path.isCentered()){
             center = .8 - Library.RANDOM.nextDouble() * .6;
-//            System.out.println(center);
         }
 //        if (USE_CRYSTALS) {
 //            crystalWalls.draw(g);

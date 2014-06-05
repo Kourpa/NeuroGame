@@ -17,9 +17,9 @@ public class CrystalGrower //implements ActionListener
 
     private static Random rand = new Random();
 
-    public int chunkWidth = (int) (Library.U_VALUE * Chunk.WIDTH);
+    public int chunkWidth = (int) (Library.U_VALUE * 1);
     public int gridX = chunkWidth * 2;
-    public int gridY = (int) (Library.U_VALUE * Chunk.HEIGHT) * 3;
+    public int gridY = (int) (Library.U_VALUE * 1) * 3;
 
     private static final int MAX_CRYSTALS = 2000;
 
