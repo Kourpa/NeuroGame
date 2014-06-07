@@ -9,27 +9,25 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
-import java.util.ArrayList;
-import java.util.List;
 
 import neurogame.gameplay.Player;
 import neurogame.library.Library;
 
-public class World{
+public class World {
 
-    private final List<Path> pathList;
+    private Chunk[] chunks;
+    private int leadingChunkIndex = 0;
 
-    private final Path2D.Double top;
-    private final Path2D.Double bottom;
+    private int chunkSize;
+    private double windowWidth = Library.screenToWorld(Library.getWindowWidth());
 
-    private int PATH_LENGTH = 100;
-    private double center = .0;
-    private EnumPathType pathType = EnumPathType.SPIKE;
+    private EnumPathType pathType = EnumPathType.SQUARE;
 
     private final boolean USE_CRYSTALS = false; // toggle fractals on or off, also toggles splits
     private final Player player;
 
     private final Color grey = new Color(25, 25, 25); // Colors!
+    private final Color[] colors = new Color[]{Color.CYAN, Color.MAGENTA};
 
     //Easy speed controls
     public static final double SLOW = 0.001;
@@ -39,7 +37,7 @@ public class World{
     private final Area walls = new Area(); // The wrong way to do walls
 
     private double deltaX = 0; //total horizontal change
-    private double scrolled_distance = 0; // used to determine when to generate new chunks
+    private double scrolledDistance = 0; // used to determine when to generate new chunks
     private double scrollSpeed = MED; // current speed
 
     private CrystalGrower crystalWalls; // fractals!
@@ -49,103 +47,76 @@ public class World{
      * and the fractal.
      */
     public World(){
+        chunkSize = (int) (windowWidth / pathType.getStepSize() * 2);
         player = new Player(0.1, 1 / 2, 0.075, 0.075, this);
 
-        pathList = new ArrayList<>();
-        pathList.add(new Path());
-
-        top = new Path2D.Double();
-        bottom = new Path2D.Double();
-
-        top.moveTo(0, 0);
-        bottom.moveTo(0, 1);
-
-        Path p;
-        for(int i = 0; i < PATH_LENGTH; i++){
-            p = new Path(pathList.get(pathList.size() - 1), .5);
-            pathList.add(p);
-
-            top.lineTo(p.getX(), p.getTopY());
-            bottom.lineTo(p.getX(), p.getBottomY());
-        }
-
-        top.lineTo(PATH_LENGTH * Path.STEP_SIZE, 0);
-        bottom.lineTo(PATH_LENGTH * Path.STEP_SIZE, 1);
+        chunks = new Chunk[2];
+        chunks[0] = new Chunk(chunkSize, pathType);
+        chunks[1] = new Chunk(chunks[0].getReference(), chunkSize, pathType);
     }
 
     /**
-     * Moves the chunk to the left depending on the scrollSpeed
-     * If the first chunk reaches its end it is replaced with the second chunk
-     * and the second chunk is re-generated.
+     * updates the chunks regenerating if the width is reached
+     * @param graphics
+     * @param deltaTime
      */
     public double update(Graphics2D graphics, long deltaTime){
-        //add the scrollSpeed to the distance
-        deltaX += scrollSpeed;
-        scrolled_distance += scrollSpeed;
+        /**add the scrollSpeed to the distance**/
+        scrolledDistance += scrollSpeed;
 
-        //Check to see if I should spawn another chunk
-        if(deltaX >= Path.STEP_SIZE){
-            deltaX = 0;
-
-            pathList.remove(0);
-            pathList.add(new Path(pathList.get(pathList.size() - 1), center));
-            
-
-            top.reset();
-            bottom.reset();
-
-            top.moveTo(0, 0);
-            bottom.moveTo(0, 1);
-
-            double firstX = pathList.get(0).getX();
-
-            pathList.forEach(p -> {
-                top.lineTo(p.getX() - firstX, p.getTopY());
-                bottom.lineTo(p.getX() - firstX, p.getBottomY());
-            });
-
-            top.lineTo(PATH_LENGTH * Path.STEP_SIZE, 0);
-            bottom.lineTo(PATH_LENGTH * Path.STEP_SIZE, 1);
-
-            top.closePath();
-            bottom.closePath();
-
-            walls.reset();
-            walls.add(new Area(top));
-            walls.add(new Area(bottom));
+        /**if the leading chunk has left the screen re-randomize it.**/
+        if(scrolledDistance >= chunkSize * Path.STEP_SIZE){
+            scrolledDistance = 0;
+            System.out.println("randomizing chunks");
+            if(leadingChunkIndex == 0){
+                chunks[0].randomize(chunks[1].getReference(), chunkSize, pathType);
+                leadingChunkIndex = 1;
+            }
+            else{
+                chunks[1].randomize(chunks[0].getReference(), chunkSize, pathType);
+                leadingChunkIndex = 0;
+            }
+        }
+        else{
+            deltaX += scrollSpeed;
         }
 
         //update crystals
         if(USE_CRYSTALS){
-//            crystalWalls.update(deltaX, 0, scrolled_distance);
+            //crystalWalls.update(deltaX, 0, scrolled_distance);
         }
-        
+
         draw(graphics);
         return 0;
     }
 
     /**
-     * draw the world
+     * draws the world
      * @param g
      */
     public void draw(Graphics2D g){
-
         AffineTransform oldTransform = g.getTransform();
         g.setTransform(AffineTransform.getScaleInstance(Library.U_VALUE, Library.U_VALUE));
-        g.translate(-deltaX, 0);
-
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 2, 1);
 
+        g.translate(-deltaX, 0);
+
         g.setColor(grey);
-        g.fill(top);
-        g.fill(bottom);
+
+        
+        //Draw each segment of the chunks.
+        int i = 0;
+        for(Chunk c : chunks){
+            g.setColor(colors[i]);
+            for(Path2D.Double area : c.getTopAndBottom()){
+                g.fill(area);
+            }
+            i++;
+        }
 
         g.setTransform(oldTransform);
 
-        if(Path.isCentered()){
-            center = .8 - Library.RANDOM.nextDouble() * .6;
-        }
 //        if (USE_CRYSTALS) {
 //            crystalWalls.draw(g);
 //        }
@@ -178,7 +149,7 @@ public class World{
     }
 
     public double getDeltaX(){
-        return deltaX;
+        return 0;
     }
 
     public void setSpeed(double scrollSpeed){

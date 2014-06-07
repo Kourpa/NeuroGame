@@ -3,18 +3,41 @@
  * */
 package neurogame.level;
 
+import java.awt.Color;
+import neurogame.gameplay.Enemy;
+
 public enum EnumPathType{
-    SPIKE{
-        public final double speed = .01;
-        private final double maxChange = .01;
-        private final double stepSize = .01;
-        private final double shipPadding = .5;
-        
-    };
+    SPIKE(.01, .1, .1, .3, null, Color.ORANGE),
+    SMOOTH(.01, .01, .01, .3, null, Color.ORANGE),
+    CURVED(.01, .1, .1, .3, null, Color.ORANGE),
+    SQUARE(.01, .1, .1, .3, null, Color.ORANGE);
+
+    private final double speed;
+    private final double maxChange;
+    private final double stepSize;
+    private final double shipPadding;
+    private final Enemy enemy;
+    private final Color color;
     
-    public double speed = .01;
-    
-    public double getSpeed(){
-        return speed;
+    EnumPathType(double speed, 
+                 double maxChange, 
+                 double stepSize, 
+                 double shipPadding, 
+                 Enemy enemy, 
+//                 PowerUp power up 
+                 Color color){
+        this.speed = speed;
+        this.maxChange = maxChange;
+        this.stepSize = stepSize;
+        this.shipPadding = shipPadding;
+        this.enemy = enemy;
+        this.color = color;
     }
+    
+    public double getSpeed(){return speed;}
+    public double getMaxChange(){return maxChange;}
+    public double getStepSize(){return stepSize;}
+    public double getShipPadding(){return shipPadding;}
+    public Enemy getEnemy(){return enemy;}
+    public Color getColor(){return color;}
 }
