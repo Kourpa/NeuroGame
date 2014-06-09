@@ -57,7 +57,7 @@ public class Player extends GameObject
    */
   public void update(long deltaTime)
   {
-    System.out.println(this);
+//    System.out.println(this);
     updateColTimer();
     
     
@@ -80,8 +80,8 @@ public class Player extends GameObject
     lastVelocityY = velocityY;
     
     
-    if (wallCollision())
-    {  System.out.println("wallCollision()=true");
+    if (wallCollision()){
+//    {  System.out.println("wallCollision()=true");
        lastVelocityX = 0;
        lastVelocityY = -lastVelocityY;
       loseHealth(getX(), getY(), Library.DAMAGE_PER_WALL_HIT);
@@ -108,7 +108,7 @@ public class Player extends GameObject
     // if the player got pushed off the screen
     if (getX()+getWidth() < world.getDeltaX())
     {
-      System.out.println("Die (off screen Left): " + getX()+getWidth() + "<" + world.getDeltaX());
+//      System.out.println("Die (off screen Left): " + getX()+getWidth() + "<" + world.getDeltaX());
       health = 0;
     }
     

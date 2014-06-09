@@ -5,12 +5,14 @@ package neurogame.level;
 
 import java.awt.Color;
 import neurogame.gameplay.Enemy;
+import neurogame.gameplay.PowerUp;
 
 public enum EnumPathType{
-    SPIKE(.01, .1, .1, .3, null, Color.ORANGE),
-    SMOOTH(.01, .01, .01, .3, null, Color.ORANGE),
-    CURVED(.01, .1, .1, .3, null, Color.ORANGE),
-    SQUARE(.01, .1, .1, .3, null, Color.ORANGE);
+    SPIKE( .01,  .1,  .1, .3, null, null, Color.ORANGE),
+    SMOOTH(.01, .01, .01, .3, null, null, Color.ORANGE),
+    CURVED(.01,  .1,  .1, .5, null, null, Color.ORANGE),
+    SQUARE(.01,  .1,  .1, .5, null, null, Color.ORANGE),
+    FLAT(  .01,  .1,  .1, .8, null, null, Color.ORANGE);
 
     private final double speed;
     private final double maxChange;
@@ -24,7 +26,7 @@ public enum EnumPathType{
                  double stepSize, 
                  double shipPadding, 
                  Enemy enemy, 
-//                 PowerUp power up 
+                 PowerUp powerUp, 
                  Color color){
         this.speed = speed;
         this.maxChange = maxChange;

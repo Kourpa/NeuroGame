@@ -21,7 +21,7 @@ public class World {
     private int chunkSize;
     private double windowWidth = Library.screenToWorld(Library.getWindowWidth());
 
-    private EnumPathType pathType = EnumPathType.SQUARE;
+    private EnumPathType pathType = EnumPathType.SPIKE;
 
     private final boolean USE_CRYSTALS = false; // toggle fractals on or off, also toggles splits
     private final Player player;
@@ -65,15 +65,15 @@ public class World {
         scrolledDistance += scrollSpeed;
 
         /**if the leading chunk has left the screen re-randomize it.**/
-        if(scrolledDistance >= chunkSize * Path.STEP_SIZE){
+        if(scrolledDistance >= chunkSize * pathType.getStepSize()){
             scrolledDistance = 0;
             System.out.println("randomizing chunks");
             if(leadingChunkIndex == 0){
-                chunks[0].randomize(chunks[1].getReference(), chunkSize, pathType);
+                chunks[0].randomize(chunks[1].getReference(), chunkSize);
                 leadingChunkIndex = 1;
             }
             else{
-                chunks[1].randomize(chunks[0].getReference(), chunkSize, pathType);
+                chunks[1].randomize(chunks[0].getReference(), chunkSize);
                 leadingChunkIndex = 0;
             }
         }
@@ -106,13 +106,10 @@ public class World {
 
         
         //Draw each segment of the chunks.
-        int i = 0;
         for(Chunk c : chunks){
-            g.setColor(colors[i]);
             for(Path2D.Double area : c.getTopAndBottom()){
                 g.fill(area);
             }
-            i++;
         }
 
         g.setTransform(oldTransform);

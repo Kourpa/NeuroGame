@@ -10,19 +10,13 @@ import neurogame.library.Library;
  * Data structure used to hold vertex information.
  */
 public class Path {
+
     private final Random random = Library.RANDOM;
     private final double x;
     private double topY;
     private double bottomY;
     private double center;
-
-    private final double MAX_CHANGE = .1;
-    
-    public static final double STEP_SIZE = .1;
-    private EnumPathType pathType;
-    
     private final double ROCK_PADDING = .01;
-    private final double shipPadding = .5;
 
     private static boolean centered = false;
 
@@ -47,46 +41,49 @@ public class Path {
      * @param pathType type of generation
      */
     public Path(Path reference, double center, EnumPathType pathType){
-        x = reference.getX() + STEP_SIZE;
-        this.pathType = pathType;
+        double shipPadding = pathType.getShipPadding();
+        double stepSize = pathType.getStepSize();
+        double maxChange = pathType.getMaxChange();
+        
+        x = reference.getX() + stepSize;
 
         if(Math.abs(reference.center - center) > shipPadding){
             if(reference.center > center){
-                topY = reference.topY - random.nextDouble() * MAX_CHANGE;
-                bottomY = reference.topY + shipPadding - random.nextDouble() * MAX_CHANGE;
+                topY = reference.topY - random.nextDouble() * maxChange;
+                bottomY = reference.topY + shipPadding - random.nextDouble() * maxChange;
             }
             else{
-                topY = reference.topY + random.nextDouble() * MAX_CHANGE;
-                bottomY = reference.topY + shipPadding + random.nextDouble() * MAX_CHANGE;
+                topY = reference.topY + random.nextDouble() * maxChange;
+                bottomY = reference.topY + shipPadding + random.nextDouble() * maxChange;
             }
         }
         else{
             centered = true;
             int r = random.nextInt(2);
-            
+
             if(r == 1){
-                topY = reference.topY - random.nextDouble() * MAX_CHANGE;
-                bottomY = reference.topY + shipPadding - random.nextDouble() * MAX_CHANGE;
+                topY = reference.topY - random.nextDouble() * maxChange;
+                bottomY = reference.topY + shipPadding - random.nextDouble() * maxChange;
             }
             else{
-                topY = reference.topY + random.nextDouble() * MAX_CHANGE;
-                bottomY = reference.topY + shipPadding + random.nextDouble() * MAX_CHANGE;
+                topY = reference.topY + random.nextDouble() * maxChange;
+                bottomY = reference.topY + shipPadding + random.nextDouble() * maxChange;
             }
         }
 
-        /** checks **/
+        /** checks * */
         double dy = bottomY - topY;
         if(dy < shipPadding){
             bottomY += shipPadding - dy;
         }
-        
+
         if(bottomY > 1 - ROCK_PADDING){
             bottomY += 1 - ROCK_PADDING - bottomY;
         }
         else if(bottomY < shipPadding){
             bottomY += shipPadding - bottomY;
         }
-        
+
         if(topY < ROCK_PADDING){
             topY += ROCK_PADDING - topY;
         }
@@ -102,13 +99,12 @@ public class Path {
      * @param x
      * @param topY
      * @param bottomY
-     * @param pathType 
+     * @param pathType
      */
     public Path(double x, double topY, double bottomY, EnumPathType pathType){
         this.x = x;
         this.topY = topY;
         this.bottomY = bottomY;
-        this.pathType = pathType;
         center = (topY + bottomY) / 2;
     }
 
@@ -126,10 +122,6 @@ public class Path {
 
     public double getCenter(){
         return center;
-    }
-    
-    public EnumPathType getPathType(){
-        return pathType;
     }
 
     public static boolean isCentered(){
