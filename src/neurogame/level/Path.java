@@ -18,7 +18,7 @@ public class Path {
     private double center;
     private final double ROCK_PADDING = .01;
 
-    private static boolean centered = false;
+    private boolean centered = false;
 
     /**
      * Default constructor initializes
@@ -44,37 +44,23 @@ public class Path {
         double shipPadding = pathType.getShipPadding();
         double stepSize = pathType.getStepSize();
         double maxChange = pathType.getMaxChange();
-        
+
         x = reference.getX() + stepSize;
 
-        if(Math.abs(reference.center - center) > shipPadding){
-            if(reference.center > center){
-                topY = reference.topY - random.nextDouble() * maxChange;
-                bottomY = reference.topY + shipPadding - random.nextDouble() * maxChange;
-            }
-            else{
-                topY = reference.topY + random.nextDouble() * maxChange;
-                bottomY = reference.topY + shipPadding + random.nextDouble() * maxChange;
-            }
+        if(reference.center > center){
+            topY = reference.topY - random.nextDouble() * maxChange;
+            bottomY = reference.bottomY - random.nextDouble() * maxChange;
         }
         else{
-            centered = true;
-            int r = random.nextInt(2);
-
-            if(r == 1){
-                topY = reference.topY - random.nextDouble() * maxChange;
-                bottomY = reference.topY + shipPadding - random.nextDouble() * maxChange;
-            }
-            else{
-                topY = reference.topY + random.nextDouble() * maxChange;
-                bottomY = reference.topY + shipPadding + random.nextDouble() * maxChange;
-            }
+            topY = reference.topY + random.nextDouble() * maxChange;
+            bottomY = reference.bottomY + random.nextDouble() * maxChange;
         }
 
         /** checks * */
         double dy = bottomY - topY;
         if(dy < shipPadding){
-            bottomY += shipPadding - dy;
+            bottomY += (shipPadding - dy)/2;
+            topY -= (shipPadding - dy)/2;
         }
 
         if(bottomY > 1 - ROCK_PADDING){
@@ -92,6 +78,10 @@ public class Path {
         }
 
         this.center = (bottomY + topY) / 2;
+        
+        if(this.center - center < ROCK_PADDING){
+            centered = true;
+        }
     }
 
     /**
@@ -124,9 +114,10 @@ public class Path {
         return center;
     }
 
-    public static boolean isCentered(){
+    public boolean isCentered(){
         boolean c = centered;
         centered = false;
+
         return c;
     }
 

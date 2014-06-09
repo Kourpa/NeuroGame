@@ -21,7 +21,7 @@ public class World {
     private int chunkSize;
     private double windowWidth = Library.screenToWorld(Library.getWindowWidth());
 
-    private EnumPathType pathType = EnumPathType.SPIKE;
+    private EnumPathType pathType = EnumPathType.FLAT;
 
     private final boolean USE_CRYSTALS = false; // toggle fractals on or off, also toggles splits
     private final Player player;
@@ -47,8 +47,8 @@ public class World {
      * and the fractal.
      */
     public World(){
-        chunkSize = (int) (windowWidth / pathType.getStepSize() * 2);
-        player = new Player(0.1, 1 / 2, 0.075, 0.075, this);
+        chunkSize = (int) (windowWidth / pathType.getStepSize() * 1.5);
+        player = new Player(0.1, 1 / 2.0, 0.075, 0.075, this);
 
         chunks = new Chunk[2];
         chunks[0] = new Chunk(chunkSize, pathType);
@@ -61,13 +61,15 @@ public class World {
      * @param deltaTime
      */
     public double update(Graphics2D graphics, long deltaTime){
-        /**add the scrollSpeed to the distance**/
+        chunkSize = (int) (windowWidth / pathType.getStepSize() * 2);
+
+        /** add the scrollSpeed to the distance* */
         scrolledDistance += scrollSpeed;
 
-        /**if the leading chunk has left the screen re-randomize it.**/
-        if(scrolledDistance >= chunkSize * pathType.getStepSize()){
+        /** if the leading chunk has left the screen re-randomize it.* */
+        if(scrolledDistance >= (chunkSize -1)* pathType.getStepSize()){
             scrolledDistance = 0;
-            System.out.println("randomizing chunks");
+
             if(leadingChunkIndex == 0){
                 chunks[0].randomize(chunks[1].getReference(), chunkSize);
                 leadingChunkIndex = 1;
@@ -76,6 +78,7 @@ public class World {
                 chunks[1].randomize(chunks[0].getReference(), chunkSize);
                 leadingChunkIndex = 0;
             }
+            randomPathType();
         }
         else{
             deltaX += scrollSpeed;
@@ -97,16 +100,19 @@ public class World {
     public void draw(Graphics2D g){
         AffineTransform oldTransform = g.getTransform();
         g.setTransform(AffineTransform.getScaleInstance(Library.U_VALUE, Library.U_VALUE));
-        g.setColor(Color.BLACK);
+//        g.setColor(Color.BLACK);
+        g.setColor(colors[0]);
         g.fillRect(0, 0, 2, 1);
 
         g.translate(-deltaX, 0);
 
-        g.setColor(grey);
+//        g.setColor(grey);
+        g.setColor(colors[1]);
 
-        
         //Draw each segment of the chunks.
+//        int i = 0;
         for(Chunk c : chunks){
+//            g.setColor(colors[i++]);
             for(Path2D.Double area : c.getTopAndBottom()){
                 g.fill(area);
             }
@@ -127,6 +133,16 @@ public class World {
 //        }
     }
 
+    private void randomPathType(){
+        int r = Library.RANDOM.nextInt(10);
+        if(r == 0 || true){
+            pathType = EnumPathType.randomPath();
+            chunks[0].setPathType(pathType);
+            chunks[1].setPathType(pathType);
+            System.out.println(pathType);
+        }
+    }
+
     //geters for the worldObjects
     public Player getPlayer(){
         return player;
@@ -138,7 +154,7 @@ public class World {
     }
 
     public double getWidth(){
-        return 2;
+        return chunkSize * pathType.getStepSize();
     }
 
     public double getHeight(){

@@ -6,6 +6,7 @@ package neurogame.level;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import neurogame.library.Library;
 
 /**
@@ -19,6 +20,9 @@ public final class Chunk {
     private EnumPathType pathType;
     private double max;
     private double min;
+    private double center;
+
+    private final Random random = Library.RANDOM;
 
     /**
      * Class constructor
@@ -56,6 +60,7 @@ public final class Chunk {
         topAndBottom = new Path2D.Double[2];
         topAndBottom[0] = new Path2D.Double();
         topAndBottom[1] = new Path2D.Double();
+        center = random.nextDouble();
     }
 
     /**
@@ -75,7 +80,7 @@ public final class Chunk {
         topAndBottom[0].lineTo(reference.getX(), reference.getTopY());
         topAndBottom[1].lineTo(reference.getX(), reference.getBottomY());
 
-        Path p = new Path(reference, .5, pathType);
+        Path p = new Path(reference, center, pathType);
 
         if(pathType == EnumPathType.CURVED){
             curved(p, chunkSize);
@@ -98,7 +103,7 @@ public final class Chunk {
                 topAndBottom[0].lineTo(p.getX(), p.getTopY());
                 topAndBottom[1].lineTo(p.getX(), p.getBottomY());
 
-                p = new Path(p, .5, pathType);
+                p = newPath(p, center);
             }
         }
 
@@ -107,8 +112,6 @@ public final class Chunk {
 
         topAndBottom[0].closePath();
         topAndBottom[1].closePath();
-
-        System.out.println(pathList.get(pathList.size() - 1));
     }
 
     /**
@@ -141,7 +144,7 @@ public final class Chunk {
             topAndBottom[0].lineTo(p.getX(), p.getTopY());
             topAndBottom[1].lineTo(p.getX(), p.getBottomY());
 
-            p = new Path(p, .5, pathType);
+            p = newPath(p, center);
         }
     }
 
@@ -159,14 +162,15 @@ public final class Chunk {
 
         pathList.add(p);
 
-        for(int c = 0; c < chunkSize; c++){
-            r = Library.RANDOM.nextInt(2);
-            curve = r == 1 ? .1 : -.1;
+        for(int c = 1; c < chunkSize; c++){
+            r = random.nextInt(2);
+            curve = r == 1 ? random.nextDouble() * .1: random.nextDouble() * -.1;
 
             lastX = p.getX();
             lastTopY = p.getTopY();
             lastBottomY = p.getBottomY();
 
+            p = newPath(p, center);
 
             if(p.getTopY() < min){
                 min = p.getTopY();
@@ -183,6 +187,10 @@ public final class Chunk {
                                     (p.getTopY() + lastTopY) / 2 + curve,
                                     p.getX(),
                                     p.getTopY());
+            
+            /** re randomize the curve to avoid identical sides. **/
+            r = random.nextInt(2);
+            curve = r == 1 ? random.nextDouble() * .1: random.nextDouble() * -.1;
 
             topAndBottom[1].curveTo(lastX,
                                     lastBottomY,
@@ -191,10 +199,38 @@ public final class Chunk {
                                     p.getX(),
                                     p.getBottomY());
 
-            p = new Path(p, .5, pathType);
         }
     }
 
+    /**
+     * Creates a new Path given the arguments and 
+     * checks if it is the new min or max.
+     * @param p
+     * @param center
+     * @return new Path() 
+     */
+    private Path newPath(Path p, double center){
+        if(p.isCentered()){
+            center = random.nextDouble();
+        }
+
+        Path path = new Path(p, center, pathType);
+
+        if(path.getTopY() < min){
+            min = path.getTopY();
+        }
+
+        if(path.getBottomY() < max){
+            max = path.getBottomY();
+        }
+
+        return path;
+    }
+    
+    /**
+     * sets the chunks next generated pathType.
+     * @param pathType 
+     */
     public void setPathType(EnumPathType pathType){
         this.pathType = pathType;
     }
