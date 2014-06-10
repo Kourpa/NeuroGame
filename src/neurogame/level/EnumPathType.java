@@ -12,7 +12,7 @@ public enum EnumPathType{
     SPIKE( .0005,  .1,  .1, .4, null, null, Color.ORANGE),
     SMOOTH(.0005, .01, .01, .3, null, null, Color.ORANGE),
     CURVED(.0005,  .1,  .1, .4, null, null, Color.ORANGE),
-    SQUARE(.0005,  .1,  .2, .4, null, null, Color.ORANGE),
+    SQUARE(.0005,  .06,  .06, .4, null, null, Color.ORANGE),
     FLAT(  .0005,  .1,  .1, .8, null, null, Color.ORANGE)
     ;
 

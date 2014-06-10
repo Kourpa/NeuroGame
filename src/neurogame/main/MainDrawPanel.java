@@ -2,25 +2,15 @@ package neurogame.main;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import neurogame.gameplay.PowerUp;
-import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.SpriteMap;
 import neurogame.main.GameController.GameMode;

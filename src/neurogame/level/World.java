@@ -9,42 +9,44 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
+import java.util.ArrayList;
+import java.util.List;
+import neurogame.gameplay.Coin;
+import neurogame.gameplay.GameObject;
 
 import neurogame.gameplay.Player;
 import neurogame.library.Library;
 
 public class World {
 
+    private final Player player;
     private Chunk[] chunks;
-    private int leadingChunkIndex = 0;
+    private final Area walls = new Area(); // The wrong way to do walls
+    private List<GameObject> gameObjects;
 
+    private int leadingChunkIndex = 0;
     private int chunkSize;
     private double windowWidth = Library.screenToWorld(Library.getWindowWidth());
-
     private EnumPathType pathType = EnumPathType.CURVED;
-
-    private final boolean USE_CRYSTALS = false; // toggle fractals on or off, also toggles splits
-    private final Player player;
+    private double distance;
+    private double deltaX = 0; //total horizontal change
+    private double chunkScolledDistance = 0; // used to determine when to generate new chunks
 
     private final Color grey = new Color(25, 25, 25); // Colors!
     private final Color[] colors = new Color[]{Color.CYAN, Color.MAGENTA};
 
-    private final Area walls = new Area(); // The wrong way to do walls
-
-    private double distance;
-    private double deltaX = 0; //total horizontal change
-    private double scrolledDistance = 0; // used to determine when to generate new chunks
-
-    private CrystalGrower crystalWalls; // fractals!
+//    private CrystalGrower crystalWalls; // fractals!
+    private final boolean USE_CRYSTALS = false; // toggle fractals on or off, also toggles splits
 
     /**
      * Initializes firstChunk, secondChunk, player and the outer walls.
      * and the fractal.
      */
     public World(){
-        chunkSize = (int) (windowWidth / pathType.getStepSize() * 1.5);
+        chunkSize = 2+ (int) (windowWidth / pathType.getStepSize());
         player = new Player(0.1, 1 / 2.0, 0.075, 0.075, this);
-
+        gameObjects = new ArrayList<>();
+        
         chunks = new Chunk[2];
         chunks[0] = new Chunk(chunkSize, pathType);
         chunks[1] = new Chunk(chunks[0].getReference(), chunkSize, pathType);
@@ -55,18 +57,19 @@ public class World {
      * updates the chunks regenerating if the width is reached
      * @param graphics
      * @param deltaTime
+     * @return 
      */
     public double update(Graphics2D graphics, long deltaTime){
         distance = deltaTime * pathType.getSpeed();
         
-        chunkSize = (int) (windowWidth / pathType.getStepSize() * 2);
+        chunkSize = 2+(int) (windowWidth / pathType.getStepSize());
 
         /** add the scrollSpeed to the distance* */
-        scrolledDistance += distance;
+        chunkScolledDistance += distance;
 
         /** if the leading chunk has left the screen re-randomize it.* */
-        if(scrolledDistance >= (chunkSize -1)* pathType.getStepSize()){
-            scrolledDistance = 0;
+        if(chunkScolledDistance >= chunkSize* pathType.getStepSize()){
+            chunkScolledDistance = 0;
 
             if(leadingChunkIndex == 0){
                 chunks[0].randomize(chunks[1].getReference(), chunkSize);
@@ -76,10 +79,13 @@ public class World {
                 chunks[1].randomize(chunks[0].getReference(), chunkSize);
                 leadingChunkIndex = 0;
             }
+            
+            deltaX = chunks[leadingChunkIndex].getStartX();
+            
             randomPathType();
         }
         else{
-            deltaX += distance;
+//            deltaX += distance;
         }
 
         //update crystals
@@ -87,10 +93,18 @@ public class World {
             //crystalWalls.update(deltaX, 0, scrolled_distance);
         }
 
+        spawner();
         draw(graphics);
         return 0;
     }
 
+    /**
+     * Spawns the variety of GameObjects into the world.
+     */
+    private void spawner(){
+        gameObjects.add(new Coin(deltaX + windowWidth + chunkScolledDistance, .5, this));
+    }
+    
     /**
      * draws the world
      * @param g
@@ -101,7 +115,7 @@ public class World {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, 2, 1);
 
-        g.translate(-deltaX, 0);
+        g.translate(-(deltaX+chunkScolledDistance), 0);
 
         g.setColor(grey);
 
@@ -131,7 +145,7 @@ public class World {
 
     private void randomPathType(){
         int r = Library.RANDOM.nextInt(10);
-        if(r == 0 || true){
+        if(r == 0){
             pathType = EnumPathType.randomPath();
             chunks[0].setPathType(pathType);
             chunks[1].setPathType(pathType);
@@ -144,6 +158,10 @@ public class World {
         return player;
     }
 
+    public List<GameObject> getObjectList(){
+        return gameObjects;
+    }
+    
     //Getters for the world information
     public Area getCollisionArea(){
         return walls;
@@ -158,7 +176,7 @@ public class World {
     }
 
     public double getDeltaX(){
-        return 0;
+        return 0;//deltaX + chunkScolledDistance;
     }
 
 }

@@ -21,6 +21,7 @@ public final class Chunk {
     private double max;
     private double min;
     private double center;
+    private double startX;
 
     private final Random random = Library.RANDOM;
 
@@ -70,6 +71,7 @@ public final class Chunk {
      * @param chunkSize
      */
     public void randomize(Path reference, int chunkSize){
+        startX = reference.getX();
         pathList.clear();
 
         topAndBottom[0].reset();
@@ -261,4 +263,6 @@ public final class Chunk {
     public double getMin(){
         return min;
     }
+    
+    public double getStartX(){ return startX;}
 }
