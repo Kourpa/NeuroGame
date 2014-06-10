@@ -18,8 +18,6 @@ public class Path {
     private double center;
     private final double ROCK_PADDING = .01;
 
-    private boolean centered = false;
-
     /**
      * Default constructor initializes
      * x = 0
@@ -37,17 +35,17 @@ public class Path {
     /**
      * Generates vertices given the specified values.
      * @param reference keep the vertices flush between chunks
-     * @param center where the path will lead
      * @param pathType type of generation
      */
-    public Path(Path reference, double center, EnumPathType pathType){
+    public Path(Path reference, EnumPathType pathType){
         double shipPadding = pathType.getShipPadding();
         double stepSize = pathType.getStepSize();
         double maxChange = pathType.getMaxChange();
 
         x = reference.getX() + stepSize;
 
-        if(reference.center > center){
+        int r = random.nextInt(2);
+        if(r == 1){
             topY = reference.topY - random.nextDouble() * maxChange;
             bottomY = reference.bottomY - random.nextDouble() * maxChange;
         }
@@ -78,10 +76,6 @@ public class Path {
         }
 
         this.center = (bottomY + topY) / 2;
-        
-        if(this.center - center < ROCK_PADDING){
-            centered = true;
-        }
     }
 
     /**
@@ -112,13 +106,6 @@ public class Path {
 
     public double getCenter(){
         return center;
-    }
-
-    public boolean isCentered(){
-        boolean c = centered;
-        centered = false;
-
-        return c;
     }
 
     @Override

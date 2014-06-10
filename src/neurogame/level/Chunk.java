@@ -80,7 +80,7 @@ public final class Chunk {
         topAndBottom[0].lineTo(reference.getX(), reference.getTopY());
         topAndBottom[1].lineTo(reference.getX(), reference.getBottomY());
 
-        Path p = new Path(reference, center, pathType);
+        Path p = new Path(reference, pathType);
 
         if(pathType == EnumPathType.CURVED){
             curved(p, chunkSize);
@@ -210,11 +210,7 @@ public final class Chunk {
      * @return new Path() 
      */
     private Path newPath(Path p, double center){
-        if(p.isCentered()){
-            center = random.nextDouble();
-        }
-
-        Path path = new Path(p, center, pathType);
+        Path path = new Path(p, pathType);
 
         if(path.getTopY() < min){
             min = path.getTopY();

@@ -9,11 +9,12 @@ import neurogame.gameplay.PowerUp;
 import neurogame.library.Library;
 
 public enum EnumPathType{
-    SPIKE( .01,  .1,  .1, .6, null, null, Color.ORANGE),
-    SMOOTH(.01, .01, .01, .3, null, null, Color.ORANGE),
-    CURVED(.01,  .1,  .1, .5, null, null, Color.ORANGE),
-    SQUARE(.01,  .1,  .2, .5, null, null, Color.ORANGE),
-    FLAT(  .01,  .1,  .1, .8, null, null, Color.ORANGE);
+    SPIKE( .0005,  .1,  .1, .4, null, null, Color.ORANGE),
+    SMOOTH(.0005, .01, .01, .3, null, null, Color.ORANGE),
+    CURVED(.0005,  .1,  .1, .4, null, null, Color.ORANGE),
+    SQUARE(.0005,  .1,  .2, .4, null, null, Color.ORANGE),
+    FLAT(  .0005,  .1,  .1, .8, null, null, Color.ORANGE)
+    ;
 
     private final double speed;
     private final double maxChange;
