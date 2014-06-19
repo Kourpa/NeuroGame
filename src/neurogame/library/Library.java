@@ -69,7 +69,7 @@ public final class Library
 
   public static final int HEALTH_PER_COIN = 1;
 
-  public static final int DAMAGE_PER_WALL_HIT = 5;
+  public static final int DAMAGE_PER_WALL_HIT = 10;
   public static final int DAMAGE_PER_SEC_IN_ZAPPER = 1;
 
   private static DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);

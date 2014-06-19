@@ -217,8 +217,9 @@ public class Player extends GameObject
   public void crashedIntoEnemy(EnumEnemyType type)
   {
     if (type == EnumEnemyType.STRAIGHT)
-    { skillEnemyStraight =- 1.2;
+    { skillEnemyStraight -= 1.2;
       if (skillEnemyStraight < 1) skillEnemyStraight = 1;
+      //System.out.println("crashedIntoEnemy(): skillEnemyStraight="+skillEnemyStraight);
     }
   }
   

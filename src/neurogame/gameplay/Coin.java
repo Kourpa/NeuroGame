@@ -39,7 +39,7 @@ public class Coin extends GameObject
   private static final int spriteSheetHeight = 384;
   private static final int animationFrames = 6;
 
-  public static final double MIN_PROBALITY_SPAWN_PER_SEC = 0.1;
+  public static final double MIN_PROBALITY_SPAWN_PER_SEC = 0.2;
   public static final double MAX_PROBALITY_SPAWN_PER_SEC = 0.9;
 
   private static double lastCoinSpawnX = 0;

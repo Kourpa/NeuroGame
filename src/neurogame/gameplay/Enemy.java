@@ -65,9 +65,12 @@ public class Enemy extends GameObject
   
   public void die()
   { 
-    super.die();
-    activeEnemyCount--; 
-    player.defeatedEnemy(type);
+    if (isAlive())
+    { super.die();
+      activeEnemyCount--; 
+      //System.out.println("   die(): activeEnemyCount=" + activeEnemyCount);
+      player.defeatedEnemy(type);
+    }
   }
 
   
@@ -126,13 +129,13 @@ public class Enemy extends GameObject
 
     if (collision(player))
     {
-      die();
       // Library.log(getName() + " collided with player", world.getRisk());
       double hitX = (getCenterX() + player.getCenterX()) / 2.0;
       double hitY = (getCenterY() + player.getCenterY()) / 2.0;
 
       player.crashedIntoEnemy(type);
       player.loseHealth(hitX, hitY, type.getDamageToPlayer());
+      die();
       return true;
     }
     return false;
@@ -170,7 +173,7 @@ public class Enemy extends GameObject
     
     //System.out.println("Enemy Spawn: r=" + r + ", activeEnemyCount=" + activeEnemyCount +", maxEnemy=" + maxEnemy);
     
-    if (r > (0.5 * deltaTime)/(maxEnemy-activeEnemyCount)) return 0;
+    if (r > (0.75 * deltaTime)*(maxEnemy-activeEnemyCount)) return 0;
 
     
 
@@ -191,13 +194,14 @@ public class Enemy extends GameObject
    
     gameObjects.add(myEnemy);
     activeEnemyCount++;
+    //System.out.println("   ===> activeEnemyCount=" + activeEnemyCount);
 
     return 1;
 
   }
   
   public static void initGame() 
-  { activeEnemyCount = 0;;
+  { activeEnemyCount = 0;
   }
   
   
