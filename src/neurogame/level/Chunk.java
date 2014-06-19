@@ -22,7 +22,7 @@ public final class Chunk
 
   private List<PathVertex> vertexList;
   private Path2D.Double[] topAndBottom = new Path2D.Double[2];
-  private EnumChunkType pathType;
+  private EnumChunkType chunkType;
   private double minYofBottom;
   private double maxYofTop;
   private double shipPadding;
@@ -55,7 +55,7 @@ public final class Chunk
     minYofBottom = 1.0;
     maxYofTop = 0.0;
 
-    this.pathType = pathType;
+    this.chunkType = pathType;
     vertexList = new ArrayList<>();
 
     PathVertex firstVertex;
@@ -130,7 +130,7 @@ public final class Chunk
     PathVertex vertex2;
     for (int c = 0; c < chunkSize; c++)
     {
-      double x = vertex.getX() - pathType.getStepSize();
+      double x = vertex.getX() - chunkType.getStepSize();
       vertex2 = new PathVertex(x, vertex.getTopY(), vertex.getBottomY());
 
       topAndBottom[0].lineTo(vertex2.getX(), vertex2.getTopY());
@@ -139,7 +139,7 @@ public final class Chunk
       topAndBottom[0].lineTo(vertex.getX(), vertex.getTopY());
       topAndBottom[1].lineTo(vertex.getX(), vertex.getBottomY());
 
-      vertex = new PathVertex(vertex, pathType, shipPadding);
+      vertex = new PathVertex(vertex, chunkType, shipPadding);
       vertexList.add(vertex2);
       vertexList.add(vertex);
 
@@ -169,7 +169,7 @@ public final class Chunk
       lastTopY = vertex.getTopY();
       lastBottomY = vertex.getBottomY();
 
-      vertex = new PathVertex(vertex, pathType, shipPadding);
+      vertex = new PathVertex(vertex, chunkType, shipPadding);
       vertexList.add(vertex);
 
       topAndBottom[0].curveTo(lastX, lastTopY, (lastX + vertex.getX()) / 2,
@@ -194,7 +194,7 @@ public final class Chunk
    */
   public void setPathType(EnumChunkType pathType)
   {
-    this.pathType = pathType;
+    this.chunkType = pathType;
   }
 
   // ///////////////////////////////////////////////////////////////
@@ -296,8 +296,8 @@ public final class Chunk
     return startX;
   }
 
-  public EnumChunkType getpathType()
+  public EnumChunkType getChunkType()
   {
-    return pathType;
+    return chunkType;
   }
 }

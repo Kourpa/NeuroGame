@@ -120,7 +120,7 @@ public class Coin extends GameObject
   {
 
     double r = Library.RANDOM.nextDouble();
-    EnumChunkType type = myChunk.getpathType();
+    EnumChunkType type = myChunk.getChunkType();
     if (type == EnumChunkType.FLAT) return 0;
 
     if (r > world.getPlayer().skillProbabilitySpawnCoinPerSec * deltaTime) return 0;

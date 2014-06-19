@@ -17,7 +17,6 @@ import java.util.LinkedList;
 
 import neurogame.gameplay.Enemy.EnumEnemyType;
 import neurogame.gameplay.EnemySinusoidal;
-import neurogame.gameplay.EnemyFollow;
 import neurogame.main.NeuroFrame;
 
 /**
@@ -82,8 +81,8 @@ public class SpriteMap extends HashMap<String, BufferedImage>
         Library.worldUnitToScreen(EnemySinusoidal.width),
         Library.worldUnitToScreen(EnemySinusoidal.height));
     add("EnemyFollow", "/images/enemyFollow.png",
-        Library.worldUnitToScreen(EnemyFollow.width),
-        Library.worldUnitToScreen(EnemyFollow.height));
+        Library.worldUnitToScreen(EnumEnemyType.FOLLOW.getWidth()),
+        Library.worldUnitToScreen(EnumEnemyType.FOLLOW.getHeight()));
     add("powerUp", "/images/powerup-container.png", 68, 68);
     add("coin", "/images/coin.png", 64, 384);
     add("zapper", "/images/zapper.png", 48, 48);

@@ -33,6 +33,7 @@ public class Player extends GameObject
   
   public double skillProbabilitySpawnCoinPerSec;
   private double skillEnemyStraight;
+  private double skillEnemyFollow;
 
   private QuickSet<Spark> sparkList;
 
@@ -64,6 +65,7 @@ public class Player extends GameObject
     lastVelocityY = 0;
     
     skillEnemyStraight = 1;
+    skillEnemyFollow = 1;
     Enemy.initGame();
   }
 
@@ -211,6 +213,10 @@ public class Player extends GameObject
     { skillEnemyStraight += 0.2;
       if (skillEnemyStraight > 6) skillEnemyStraight = 6;
     }
+    else if (type == EnumEnemyType.FOLLOW)
+    { skillEnemyFollow += 0.2;
+      if (skillEnemyFollow > 6) skillEnemyFollow = 6;
+    }
   }
   
   
@@ -219,6 +225,11 @@ public class Player extends GameObject
     if (type == EnumEnemyType.STRAIGHT)
     { skillEnemyStraight -= 1.2;
       if (skillEnemyStraight < 1) skillEnemyStraight = 1;
+      //System.out.println("crashedIntoEnemy(): skillEnemyStraight="+skillEnemyStraight);
+    }
+    else if (type == EnumEnemyType.FOLLOW)
+    { skillEnemyFollow -= 1.2;
+      if (skillEnemyFollow < 1) skillEnemyFollow = 1;
       //System.out.println("crashedIntoEnemy(): skillEnemyStraight="+skillEnemyStraight);
     }
   }
@@ -277,6 +288,7 @@ public class Player extends GameObject
   public int getMaxEnemy(EnumEnemyType type)
   {
     if (type == EnumEnemyType.STRAIGHT) return (int)skillEnemyStraight;
+    else if (type == EnumEnemyType.FOLLOW) return (int)skillEnemyFollow;
     return 1;
   }
   

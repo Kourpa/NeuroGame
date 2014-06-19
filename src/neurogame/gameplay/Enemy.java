@@ -9,6 +9,7 @@ import neurogame.level.EnumChunkType;
 import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
+import neurogame.library.Vector2;
 
 public class Enemy extends GameObject
 {
@@ -46,18 +47,25 @@ public class Enemy extends GameObject
   
   private Image image;
   private EnumEnemyType type;
-  private double startY, startDistanceFromTop;
+  private double lastMovementX, lastMovementY;
   
   public Enemy(EnumEnemyType type, double x, double y, double width, double height, String name, World world)
   {
     super(x, y, width, height, name, world);
     
+    lastMovementX = 0.0;
+    lastMovementY = 0.0;
+    
     this.type = type;
     if (type == EnumEnemyType.STRAIGHT)
     { 
       image = Library.getSprites().get(name);
-      startY = y;
       maxSpeed = 0.65f;
+    }
+    else if (type == EnumEnemyType.FOLLOW)
+    { 
+      image = Library.getSprites().get(name);
+      maxSpeed = 0.25f;
     }
     
   }
@@ -72,6 +80,8 @@ public class Enemy extends GameObject
       player.defeatedEnemy(type);
     }
   }
+  
+  
 
   
   public boolean update(double deltaSec, double scrollDistance)
@@ -82,46 +92,77 @@ public class Enemy extends GameObject
     if (checkCollisionWithWall()) return false;
     
     double maxDistanceChange = maxSpeed * deltaSec;
-
-    double dx = scrollDistance - maxDistanceChange;
-    double dy = 0;//getY() - startY;
     
-    double speed = Math.sqrt(dx*dx + dy*dy);
-    if (speed > maxDistanceChange)
-    {
-      dx = (dx / speed) * maxDistanceChange;
-      dy = (dy / speed) * maxDistanceChange;
+    Vector2 deltaPos;
+    
+    if (type == EnumEnemyType.STRAIGHT)
+    { deltaPos = strategyStraight(maxDistanceChange, scrollDistance);
+    }
+    else if (type == EnumEnemyType.FOLLOW)
+    { deltaPos = strategyFollow(maxDistanceChange, scrollDistance);
+    }
+    else
+    { deltaPos = new Vector2();
     }
     
+    move(deltaPos.x, deltaPos.y);
+    lastMovementX = deltaPos.x;
+    lastMovementY = deltaPos.y;
     
-    double xx = getX()+dx;
-    double yy = getY()+dy;
+    return true;
+  }
+    
+  public Vector2 strategyStraight(double maxDistanceChange, double scrollDistance)
+  {
+    double dx = scrollDistance - maxDistanceChange;
+    double dy = lastMovementY * 0.75;
+    Vector2 deltaPos = new Vector2(dx, dy);
+    
+
+    
+    deltaPos.setMaxMagnitude(maxDistanceChange);
+    
+   
+    double xx = getX()+deltaPos.x;
+    double yy = getY()+deltaPos.y;
     
     boolean changedSpeedToAvoidWall = false;
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(xx);
     if (vertex != null)
     { if (yy - type.getHeight() < vertex.getTopY())
       { changedSpeedToAvoidWall = true;
-        dy = maxDistanceChange/2.0;
+        deltaPos.y = maxDistanceChange/2.0;
       }
       else if (yy + type.getHeight()*2.0 > vertex.getBottomY())    
       { changedSpeedToAvoidWall = true;
-        dy = -maxDistanceChange/2.0;
+        deltaPos.y = -maxDistanceChange/2.0;
       }
     
       if (changedSpeedToAvoidWall)
-      { speed = Math.sqrt(dx*dx + dy*dy);
-        if (speed > maxDistanceChange)
-        {
-          dx = (dx / speed) * maxDistanceChange;
-          dy = (dy / speed) * maxDistanceChange;
-        }
+      { deltaPos.setMaxMagnitude(maxDistanceChange);
       }
     }
-    move(dx, dy);
-
-    return true;
+    return deltaPos;
   }
+  
+  
+  
+  public Vector2 strategyFollow(double maxDistanceChange, double scrollDistance)
+  {
+    
+    double dx = scrollDistance + player.getCenterX() - (getX() + type.getWidth()/2);
+    double dy = player.getCenterY() - (getY() + type.getHeight()/2);
+    
+    Vector2 deltaPos = new Vector2(dx, dy);
+    
+
+    
+    deltaPos.setMaxMagnitude(maxDistanceChange);
+    
+
+    return deltaPos;
+  }
+
 
   public boolean checkCollisionWithPlayer()
   {
@@ -163,7 +204,7 @@ public class Enemy extends GameObject
   
   public static int spawn(Chunk myChunk, World world, List<GameObject> gameObjects, double deltaTime)
   {
-    EnumEnemyType type = myChunk.getpathType().getEnemyType();
+    EnumEnemyType type = myChunk.getChunkType().getEnemyType();
     if (type == null) return 0;
     int maxEnemy = world.getPlayer().getMaxEnemy(type);
     

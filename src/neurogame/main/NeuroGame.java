@@ -8,6 +8,18 @@
  * Marcos Lemus
  */
 
+
+//GIT Repository
+//git clone https://github.com/Kourpa/NeuroGame  //initial set up
+
+//git status
+//git add -A //when you create new fines that need to be added
+//git commit -am 'comment'
+//git pull origin master
+//git push origin master
+
+//git stash //kill all local changes
+
 package neurogame.main;
 
 import javax.swing.UnsupportedLookAndFeelException;

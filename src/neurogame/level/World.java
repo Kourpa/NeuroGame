@@ -56,6 +56,11 @@ public class World
     skillBasedChunkGapHeight = EnumChunkType.SMOOTH.getDefaultOpeningHeight();
     chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SMOOTH,
         skillBasedChunkGapHeight);
+    
+//    skillBasedChunkGapHeight = EnumChunkType.SPIKE.getDefaultOpeningHeight();
+//    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SPIKE,
+//        skillBasedChunkGapHeight);
+
 
     crystalWalls = new CrystalGrower(chunkLeft, chunkRight);
   }
@@ -72,7 +77,7 @@ public class World
     double visibleWorldLeftBeforeUpdate = Library.leftEdgeOfWorld;
     // System.out.println("update("+deltaTime+"), chunkLeft.getWidth() =
 
-    double deltaDistance = deltaTime * chunkLeft.getpathType().getSpeed();
+    double deltaDistance = deltaTime * chunkLeft.getChunkType().getSpeed();
 
     /** add the scrollSpeed to the distance* */
     chunkScolledDistance += deltaDistance;
@@ -102,12 +107,12 @@ public class World
       }
       player.resetCollisionCountInCurrentChunk();
 
-      EnumChunkType pathType = chunkRight.getpathType();
-      if (Library.RANDOM.nextInt(10) == 0)
+      EnumChunkType pathType = chunkRight.getChunkType();
+      if (Library.RANDOM.nextInt(15) == 0)
       {
         pathType = EnumChunkType.getRandomType();
 
-        if (pathType != chunkRight.getpathType())
+        if (pathType != chunkRight.getChunkType())
         { // reset for new chunkType;
           skillBasedChunkGapHeight = pathType.getDefaultOpeningHeight();
         }
