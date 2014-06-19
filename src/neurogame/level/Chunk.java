@@ -47,6 +47,7 @@ public final class Chunk
   {
     this.shipPadding = shipPadding;
     int vertexPairCount = 1 + (int) (requestedWidth / pathType.getStepSize());
+    if (pathType == EnumChunkType.CURVED) vertexPairCount++;
 
     vertexList = new ArrayList<>();
     topAndBottom[0] = new Path2D.Double();

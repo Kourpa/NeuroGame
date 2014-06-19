@@ -65,7 +65,7 @@ public class Enemy extends GameObject
     else if (type == EnumEnemyType.FOLLOW)
     { 
       image = Library.getSprites().get(name);
-      maxSpeed = 0.25f;
+      maxSpeed = 0.30f;
     }
     
   }
@@ -152,6 +152,8 @@ public class Enemy extends GameObject
     
     double dx = scrollDistance + player.getCenterX() - (getX() + type.getWidth()/2);
     double dy = player.getCenterY() - (getY() + type.getHeight()/2);
+    
+    if (getX() < player.getX()) dx = -maxDistanceChange;
     
     Vector2 deltaPos = new Vector2(dx, dy);
     
