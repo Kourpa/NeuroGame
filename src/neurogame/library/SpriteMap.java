@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import neurogame.gameplay.EnemyStraight;
+import neurogame.gameplay.Enemy.EnumEnemyType;
 import neurogame.gameplay.EnemySinusoidal;
 import neurogame.gameplay.EnemyFollow;
 import neurogame.main.NeuroFrame;
@@ -43,8 +43,8 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     try
     {
 
-        addResources();
-        loadResources();
+      addResources();
+      loadResources();
     }
     catch (IOException ex)
     {
@@ -59,12 +59,13 @@ public class SpriteMap extends HashMap<String, BufferedImage>
   {
 
     // Title screen.
-    
-    System.out.println("SpriteMap.addResources(): Library.getWindowWidth()="+Library.getWindowWidth()+
-        "Library.getWindowHeight()="+Library.getWindowHeight());
-    
+
+    System.out.println("SpriteMap.addResources(): Library.getWindowWidth()="
+        + Library.getWindowPixelWidth() + "Library.getWindowHeight()="
+        + Library.getWindowPixelHeight());
+
     add("titleBackground", "/images/title-screen.png",
-        Library.getWindowWidth(), Library.getWindowHeight());
+        Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
     add("startButtonPlain", "/images/start-button.png", 200, 100);
     add("startButtonSelected", "/images/start-selected.png", 200, 100);
     add("exitButtonPlain", "/images/exit-button.png", 200, 100);
@@ -75,14 +76,14 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("pDmg2", "/images/damage2.png", 68, 68);
 
     add("EnemyStraight", "/images/enemyStraight.png",
-        Library.worldToScreen(EnemyStraight.width),
-        Library.worldToScreen(EnemyStraight.height));
+        Library.worldUnitToScreen(EnumEnemyType.STRAIGHT.getWidth()),
+        Library.worldUnitToScreen(EnumEnemyType.STRAIGHT.getHeight()));
     add("EnemySinusoidal", "/images/enemySinusoidal.png",
-        Library.worldToScreen(EnemySinusoidal.width),
-        Library.worldToScreen(EnemySinusoidal.height));
+        Library.worldUnitToScreen(EnemySinusoidal.width),
+        Library.worldUnitToScreen(EnemySinusoidal.height));
     add("EnemyFollow", "/images/enemyFollow.png",
-        Library.worldToScreen(EnemyFollow.width),
-        Library.worldToScreen(EnemyFollow.height));
+        Library.worldUnitToScreen(EnemyFollow.width),
+        Library.worldUnitToScreen(EnemyFollow.height));
     add("powerUp", "/images/powerup-container.png", 68, 68);
     add("coin", "/images/coin.png", 64, 384);
     add("zapper", "/images/zapper.png", 48, 48);
@@ -129,8 +130,10 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     {
       BufferedImage original = Library.loadImage(s.path, frame);
       System.out.println("Loading Sprite: " + s.path);
-      BufferedImage resized = new BufferedImage(s.width, s.height, BufferedImage.TYPE_INT_ARGB);
-      resized.createGraphics().drawImage(original, 0, 0, s.width, s.height, null);
+      BufferedImage resized = new BufferedImage(s.width, s.height,
+          BufferedImage.TYPE_INT_ARGB);
+      resized.createGraphics().drawImage(original, 0, 0, s.width, s.height,
+          null);
       put(s.name, resized);
     }
   }

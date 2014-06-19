@@ -3,6 +3,7 @@ package neurogame.gameplay;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+import neurogame.gameplay.Enemy.EnumEnemyType;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.QuickSet;
@@ -20,33 +21,50 @@ public class Player extends GameObject
 
   private boolean invulnerable = false;
 
-  private int collisionTimer;
-
-  private double score;
-
-  private int coins;
-  private int maxCoins;
+  private int wallCollisionCountInCurrentChunk;
+ 
+  private double timeOfLastWallCollision;
   
+
+  private int gameWallCollisionCount;
+  private double gameScore;
+  private int gameCoinsEarned;
+  private double gameTotalSeconds;
+  
+  public double skillProbabilitySpawnCoinPerSec;
+  private double skillEnemyStraight;
+
   private QuickSet<Spark> sparkList;
-  
+
   private DirectionVector directionVector = new DirectionVector();
   private double lastVelocityX, lastVelocityY;
 
   public Player(double x, double y, double width, double height, World world)
   {
-    super(x, y, width, height, name, image, world);
+    super(x, y, width, height, name, world);
+    setIsVisible(true);
+    initGame();
+  }
 
+  public void initGame()
+  {
     health = Library.HEALTH_MAX;
-    collisionTimer= 0;
-    maxSpeed = 0.0005f;
+    wallCollisionCountInCurrentChunk = 0;
+    gameWallCollisionCount = 0;
+    gameScore = 0;
+    gameCoinsEarned = 0;
+    gameTotalSeconds = 0;
+    timeOfLastWallCollision = 0;
+    
+    skillProbabilitySpawnCoinPerSec = (Coin.MIN_PROBALITY_SPAWN_PER_SEC + Coin.MAX_PROBALITY_SPAWN_PER_SEC)/2.0;
 
-    score = 0;
-    coins = 0;
-    maxCoins = 0;
+    maxSpeed = 0.5f;
+
     lastVelocityX = 0;
     lastVelocityY = 0;
     
-    setIsVisible(true);
+    skillEnemyStraight = 1;
+    Enemy.initGame();
   }
 
   /**
@@ -55,136 +73,160 @@ public class Player extends GameObject
    * @param dir
    *          Direction to move the player obj, if any.
    */
-  public void update(long deltaTime)
+  public boolean update(double deltaSec, double scrollDistance)
   {
-//    System.out.println(this);
-    updateColTimer();
-    
-    
-    double speed = directionVector.getSpeed();
-    if (speed > maxSpeed) speed = maxSpeed;
-    
-    double velocityX = lastVelocityX*0.9 + directionVector.x * speed;
-    double velocityY = lastVelocityY*0.9 + directionVector.y * speed;
-    
-    lastVelocityY = directionVector.y * speed;
-    //System.out.println(directionVector);
-    
-    speed = Math.sqrt(velocityX*velocityX + velocityY*velocityY);
-    if (speed > maxSpeed) speed = maxSpeed;
-    
-    
-    move(deltaTime, speed, velocityX, velocityY);
-    
+    gameTotalSeconds += deltaSec;
+    // System.out.println(this);
+
+    double inputSpeed = directionVector.getAcceleration();
+    if (inputSpeed > maxSpeed) inputSpeed = maxSpeed;
+
+    double velocityX = lastVelocityX * 0.75 + directionVector.x * inputSpeed;
+    double velocityY = lastVelocityY * 0.75 + directionVector.y * inputSpeed;
+
+    // System.out.println(directionVector);
+
+    double speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+    if (speed > maxSpeed)
+    {
+      velocityX = (velocityX / speed) * maxSpeed;
+      velocityY = (velocityY / speed) * maxSpeed;
+    }
     lastVelocityX = velocityX;
     lastVelocityY = velocityY;
-    
-    
-    if (wallCollision()){
-//    {  System.out.println("wallCollision()=true");
-       lastVelocityX = 0;
-       lastVelocityY = -lastVelocityY;
+
+    double dx = velocityX * deltaSec + scrollDistance;
+    double dy = velocityY * deltaSec;
+
+    double nextX = getX() + dx;
+    double nextY = getY() + dy;
+    if (nextY < 0) nextY = 0;
+    if (nextY + getHeight() > 1.0) nextY = 1.0 - getHeight();
+    if (nextX < Library.leftEdgeOfWorld) nextX = Library.leftEdgeOfWorld;
+    if (nextX + getWidth() > Library.leftEdgeOfWorld
+        + world.getVisibleWorldRight())
+    {
+      nextX = (Library.leftEdgeOfWorld + world.getVisibleWorldRight()) - getWidth();
+    }
+
+    setLocation(nextX, nextY);
+    EnumCollisionType collisionLocation = wallCollision();
+    if (collisionLocation != EnumCollisionType.NONE)
+    {
+      
+      lastVelocityX = 0;
+      lastVelocityY = -lastVelocityY;
+      
       loseHealth(getX(), getY(), Library.DAMAGE_PER_WALL_HIT);
       
-      if (Math.abs(lastVelocityY) < 0.002) 
-      { if (lastVelocityY >= 0) lastVelocityY = 0.002;
+      double stepSize = getHeight()/10.0;
+      if (collisionLocation == EnumCollisionType.WALL_BOTTOM) stepSize = -stepSize;
       
-        else lastVelocityY = -0.002;
-      }
+      setLocation(getX(), getY() + stepSize);
       
-      
-      while (wallCollision())
-      { 
-        //System.out.println("Hit: (" + getX()+", "+getY()+") velY = "+velY);
+      while (wallCollision() != EnumCollisionType.NONE)
+      {
+        setLocation(getX(), getY() + stepSize);
         
-        setLocation(getX()+lastVelocityX, getY()+lastVelocityY);
-
-        if (getY() < Library.VERTICAL_MIN) lastVelocityY = 0.002;
-        else if (getY()+getHeight() > Library.VERTICAL_MAX) lastVelocityY = -0.002;
-        
+        if (getY() < 0 || getY() > 1) 
+        { setLocation(getX(), 0.5);
+          break;
+        }
       }
     }
 
-    // if the player got pushed off the screen
-    if (getX()+getWidth() < world.getDeltaX())
-    {
-//      System.out.println("Die (off screen Left): " + getX()+getWidth() + "<" + world.getDeltaX());
-      health = 0;
-    }
-    
     if (sparkList != null)
-    { for (int i=0; i < sparkList.size(); i++)
-      { Spark spark = sparkList.get(i);
+    {
+      for (int i = 0; i < sparkList.size(); i++)
+      {
+        Spark spark = sparkList.get(i);
         boolean alive = spark.move();
         if (!alive) sparkList.remove(i);
       }
     }
-    
-    
-    
+
+    return true;
   }
 
   public void setDirection(DirectionVector directionVector)
   {
 
-    
     this.directionVector.x = lastVelocityX * 0.25 + directionVector.x;
     this.directionVector.y = lastVelocityY * 0.25 + directionVector.y;
   }
 
-
-  
-  
-//  public void move(double dx, double dy)
-//  {
-//    double x = getX()+dx;
-//    if (x < world.getDeltaX()) x = world.getDeltaX();
-//    setLocation(x, getY()+dy);
-//  }
-
-  public void updateColTimer()
-  {
-    if (collisionTimer > 0) collisionTimer --;
-  }
-
   public void loseHealth(double hitX, double hitY, int damage)
   {
-    if (collisionTimer > 0 || invulnerable) return;
+    if (invulnerable) return;
+    if (gameTotalSeconds - timeOfLastWallCollision < 0.25) return;
+    
+    timeOfLastWallCollision = gameTotalSeconds;
     
     health -= damage;
     if (health < 0) health = 0;
-      
-    collisionTimer = Library.INVULNERABLE_FRAMES;
-      
-    int sparkCount = Library.RANDOM.nextInt(20)+Library.RANDOM.nextInt(20)+Library.RANDOM.nextInt(20)+25;
+
+    wallCollisionCountInCurrentChunk++;
+    
+    skillProbabilitySpawnCoinPerSec += 0.05;
+    if (skillProbabilitySpawnCoinPerSec > Coin.MAX_PROBALITY_SPAWN_PER_SEC)
+    { skillProbabilitySpawnCoinPerSec = Coin.MAX_PROBALITY_SPAWN_PER_SEC;
+    }
+    
+
+    int sparkCount = Library.RANDOM.nextInt(20) + Library.RANDOM.nextInt(20)
+        + Library.RANDOM.nextInt(20) + 25;
     sparkList = new QuickSet<Spark>(sparkCount);
-    for (int i=0; i<sparkCount; i++)
-    { 
+    for (int i = 0; i < sparkCount; i++)
+    {
       sparkList.add(new Spark(hitX, hitY, world));
     }
   }
 
-  public void collectCoin()
+  public void collectCoin(Coin myCoin)
   {
-    coins++;
-    score += Library.COIN_POINTS;
+    gameCoinsEarned++;
+    gameScore += Library.COIN_POINTS;
 
-    if (coins > maxCoins)
-    {
-      maxCoins = coins;
-    }
     health += Library.HEALTH_PER_COIN;
-    if (health > Library.HEALTH_MAX) health = Library.HEALTH_MAX;
+    
+    skillProbabilitySpawnCoinPerSec -= 0.005;
+    if (health > Library.HEALTH_MAX) 
+    { health = Library.HEALTH_MAX;
+      skillProbabilitySpawnCoinPerSec -= 0.025;
+    }
+    if (skillProbabilitySpawnCoinPerSec < Coin.MIN_PROBALITY_SPAWN_PER_SEC)
+    { skillProbabilitySpawnCoinPerSec = Coin.MIN_PROBALITY_SPAWN_PER_SEC;
+    }
+    
+    
   }
 
   public void collectPowerUp()
   {
-    score += Library.POWERUP_POINTS;
+    gameScore += Library.POWERUP_POINTS;
   }
 
+  public void defeatedEnemy(EnumEnemyType type)
+  {
+    if (type == EnumEnemyType.STRAIGHT)
+    { skillEnemyStraight += 0.2;
+      if (skillEnemyStraight > 6) skillEnemyStraight = 6;
+    }
+  }
+  
+  
+  public void crashedIntoEnemy(EnumEnemyType type)
+  {
+    if (type == EnumEnemyType.STRAIGHT)
+    { skillEnemyStraight =- 1.2;
+      if (skillEnemyStraight < 1) skillEnemyStraight = 1;
+    }
+  }
+  
+  
   public void enemyKilled()
   {
-    score += Library.ENEMY_POINTS;
+    gameScore += Library.ENEMY_POINTS;
   }
 
   public PowerUp getPowerUp()
@@ -207,57 +249,61 @@ public class Player extends GameObject
     this.invulnerable = invulnerable;
   }
 
-  public int getCoins()
+  public int getTotalCoinsEarnedThisGame()
   {
-    return coins;
-  }
-
-  public int getMaxCoins()
-  {
-    return maxCoins;
+    return gameCoinsEarned;
   }
 
   public int getScore()
   {
-    return (int)score;
+    return (int) gameScore;
   }
-  
-  public void zeroScore()
+
+  public void resetCollisionCountInCurrentChunk()
   {
-    score = 0;
+    wallCollisionCountInCurrentChunk = 0;
+  }
+
+  public int getCollisionCountInCurrentChunk()
+  {
+    return wallCollisionCountInCurrentChunk;
   }
 
   public void addScore(double score)
   {
-    this.score += score;
+    gameScore += score;
   }
-
-
-  public void render(Graphics2D g)
+  
+  public int getMaxEnemy(EnumEnemyType type)
   {
-    int xx = Library.worldToScreen(getX() - world.getDeltaX());
-    int yy = Library.worldToScreen(getY());
-    g.drawImage(image, xx, yy, null);
+    if (type == EnumEnemyType.STRAIGHT) return (int)skillEnemyStraight;
+    return 1;
+  }
+  
 
-    if (health == 2) g.drawImage(Library.getSprites().get("pDmg1"), xx, yy,
-        null);
+  public void render(Graphics2D canvas)
+  {
+    int xx = Library.worldPosXToScreen(getX());
+    int yy = Library.worldPosYToScreen(getY());
+    canvas.drawImage(image, xx, yy, null);
 
-    else if (health == 1) g.drawImage(Library.getSprites().get("pDmg2"), xx,
-        yy, null);
-    
+    if (health == 2) canvas.drawImage(Library.getSprites().get("pDmg1"), xx, yy, null);
+
+    else if (health == 1) canvas.drawImage(Library.getSprites().get("pDmg2"), xx,  yy, null);
+
     if (sparkList != null)
-    { 
-      for (int i=0; i < sparkList.size(); i++)
-      { Spark spark = sparkList.get(i);
-        spark.draw(g);
+    {
+      for (int i = 0; i < sparkList.size(); i++)
+      {
+        Spark spark = sparkList.get(i);
+        spark.render(canvas);
       }
     }
   }
-  
-  
+
   public String toString()
   {
-    return "Player: ("+getX()+","+getY()+")";
+    return "Player: (" + getX() + "," + getY() + ")";
   }
 
 }

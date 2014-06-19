@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+import neurogame.gameplay.Enemy.EnumEnemyType;
 import neurogame.level.World;
 import neurogame.library.Library;
 
@@ -13,33 +14,33 @@ public class EnemyFollow extends Enemy
   static Image image = Library.getSprites().get(name);
   public static final double width = 0.05;
   public static final double height = 0.05;
- 
 
   public EnemyFollow(double x, double y, World world)
   {
-    super(x, y, width, height, name, image, world);
+    super(EnumEnemyType.STRAIGHT, x, y, width, height, name, world);
 
     maxSpeed = 0.05f;
   }
 
-  public void update(long deltaTime)
+  public boolean update(double deltaTime, double scrollDistance)
   {
+    if (getX() < Library.leftEdgeOfWorld) return false;
     checkCollisionWithPlayer();
     checkCollisionWithWall();
 
-    if (isActive())
+    if (isAlive())
     {
-      double dx =  player.getCenterX() - getCenterX();
-      double dy =  player.getCenterY() - getCenterY();
-      move(deltaTime, maxSpeed, dx, dy);
+      double dx = player.getCenterX() - getCenterX();
+      double dy = player.getCenterY() - getCenterY();
+      // move(deltaTime, maxSpeed, dx, dy);
     }
- 
+    return true;
   }
 
   public void render(Graphics2D g)
   {
-    int xx = Library.worldToScreen(getX() - world.getDeltaX());
-    int yy = Library.worldToScreen(getY());
+    int xx = Library.worldPosXToScreen(getX());
+    int yy = Library.worldPosYToScreen(getY());
     g.drawImage(image, xx, yy, null);
   }
 }

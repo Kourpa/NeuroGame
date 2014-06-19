@@ -48,18 +48,16 @@ public class NeuroGame
     startTime = elapsedTime = System.currentTimeMillis();
 
     final NeuroGame game = this;
-   
+
     frame = new NeuroFrame(game);
     Library.initSprites(frame);
-    
-
 
     executor = new IOExecutor();
     Library.setExecutor(executor);
     controller = new GameController(this, frame, executor);
-    
+
     frame.setGameMode(GameMode.TITLE);
-    frame.render();
+    frame.render(null);
   }
 
   /**
@@ -200,7 +198,6 @@ public class NeuroGame
           game.controller.setGlobalDebug(false);
           Library.setDebug(false);
         }
-
 
         // Sound mode.
         if (s.contains("s"))

@@ -14,6 +14,7 @@ import java.awt.Container;
 import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.text.DateFormat;
@@ -38,16 +39,17 @@ public final class Library
   public static final String NEWLINE = System.getProperty("line.separator");
   public static final String SEPARATOR = System.getProperty("file.separator");
 
-  public static final String GAME_TITLE = "NeuroSideScroller Version 2014-05-28";
+  public static final String GAME_TITLE = "NeuroSideScroller Version 2014-06-12";
 
   public static final int MIN_FRAME_MILLISEC = 20;
   public static final String ARGS_REGEX = "\\-[hdDlLfFwsSgG]+";
   public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
   public static final String FILE_DATE_FORMAT = "yyyy-MM-dd HH-mm-ss.SSS";
+  public static final String NUM2_FORMAT = "%.2f";
 
   public static final java.util.Random RANDOM = new java.util.Random();
 
-  private static int windowWidth, windowHeight;
+  private static int windowPixelWidth, windowPixelHeight;
 
   // The initial u-value is set to the screen height. When the frame is
   // resized, the setter is called and the uValue updated to the new height.
@@ -58,33 +60,24 @@ public final class Library
   public static final double VERTICAL_MIN = 0.0;
   public static final double VERTICAL_MAX = 1.0;
   public static final double HORIZONTAL_MIN = 0.0;
-  public static double HORIZONTAL_MAX;
-//  public static final double HORIZONTAL_MAX = (double) SCREEN_WIDTH
-//      / (double) SCREEN_HEIGHT;
-  
-  // For calculating risk.
-//  public static final double ANGULAR_MAX = Math
-//      .sqrt((HORIZONTAL_MAX * HORIZONTAL_MAX) + (VERTICAL_MAX + VERTICAL_MAX));
 
-  public static final double SCORE_PER_MILLSEC = 0.01;
+  public static final double SCORE_PER_SEC = 0.01;
   public static final int HEALTH_MAX = 100;
-  public static final int INVULNERABLE_FRAMES = 30;
   public static final int COIN_POINTS = 100;
   public static final int POWERUP_POINTS = 200;
   public static final int ENEMY_POINTS = 150;
-  
+
   public static final int HEALTH_PER_COIN = 1;
-  
-  public static final int DAMAGE_PER_ENEMY_HIT = 10;
-  public static final int DAMAGE_PER_WALL_HIT = 4;
+
+  public static final int DAMAGE_PER_WALL_HIT = 5;
   public static final int DAMAGE_PER_SEC_IN_ZAPPER = 1;
 
   private static DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-  private static DateFormat fileDateFormat = new SimpleDateFormat(FILE_DATE_FORMAT);
+  private static DateFormat fileDateFormat = new SimpleDateFormat(
+      FILE_DATE_FORMAT);
 
   private static boolean debug = false;
-  private static double deltaX = 0;
-  private static double deltaY = 0;
+  public static double leftEdgeOfWorld = 0;
 
   private static IOExecutor executor;
   private static SpriteMap sprites;
@@ -98,11 +91,30 @@ public final class Library
     return dateFormat.format(Calendar.getInstance().getTime());
   }
 
-  public static int getWindowWidth() {return windowWidth;}
-  public static int getWindowHeight() {return windowHeight;}
-  
-  public static void setWindowWidth(int width) {windowWidth = width;}
-  public static void setWindowHeight(int height) {windowHeight= height;}
+  public static int getWindowPixelWidth()
+  {
+    return windowPixelWidth;
+  }
+
+  public static int getWindowPixelHeight()
+  {
+    return windowPixelHeight;
+  }
+
+  public static double getWindowAspect()
+  {
+    return (double) windowPixelWidth / (double) windowPixelHeight;
+  }
+
+  public static void setWindowPixelWidth(int width)
+  {
+    windowPixelWidth = width;
+  }
+
+  public static void setWindowPixelHeight(int height)
+  {
+    windowPixelHeight = height;
+  }
 
   /**
    * Convenience getter for a String containing the current system date and
@@ -123,8 +135,6 @@ public final class Library
   {
     RANDOM.setSeed(seed);
   }
-
-
 
   /**
    * Queue the passed String for logging if the IOExecutor has been set.
@@ -198,36 +208,24 @@ public final class Library
    *          Screen (int) coordinate to convert to u-scale world coordinate.
    * @return Result of converting the parameter to u-scale.
    */
-  public static double screenToWorld(int w)
-  {
-    return (double) w / U_VALUE;
-  }
+  // public static double screenToWorld(int w)
+  // {
+  // return (double) w / U_VALUE;
+  // }
 
-  /**
-   * Converts u-scale (double) world-scale coordinates to pixel scale by
-   * multiplying the passed value by the current u-value.
-   * 
-   * @param u
-   *          U-scale float to convert to pixel scale.
-   * @return The product of the input and uValue, rounded to an int.
-   */
-  public static int worldToScreen(double u)
+  public static int worldUnitToScreen(double u)
   {
     return (int) (u * U_VALUE);
   }
 
-  /**
-   * Set the delta values.
-   * 
-   * @param dX
-   *          Double to assign to deltaX.
-   * @param dY
-   *          Double to assign to deltaY.
-   */
-  public static void setDeltas(double dX, double dY)
+  public static int worldPosXToScreen(double x)
   {
-    deltaX = dX;
-    deltaY = dY;
+    return (int) ((x - leftEdgeOfWorld) * U_VALUE);
+  }
+
+  public static int worldPosYToScreen(double y)
+  {
+    return (int) (y * U_VALUE);
   }
 
   /**
@@ -238,10 +236,14 @@ public final class Library
    *          Point2D to check if on screen.
    * @return True if p is on screen, else false.
    */
-  public static boolean isOnScreen(Point2D.Double p)
+  public static boolean isOnScreen(double x, double y)
   {
-    return (p.x >= deltaX && p.x < deltaX + screenToWorld(Library.getWindowWidth())
-        && p.y >= deltaY && p.y < deltaY + screenToWorld(Library.getWindowHeight()));
+    if (y < 0.0) return false;
+    if (y > 1.0) return false;
+    if (x < leftEdgeOfWorld) return false;
+
+    if (worldPosXToScreen(x) >= getWindowPixelWidth()) return false;
+    return true;
   }
 
   /**
@@ -258,31 +260,36 @@ public final class Library
     double y = o.getY();
     double width = o.getWidth();
     double height = o.getHeight();
-    return (x + width >= deltaX && x < deltaX + screenToWorld(Library.getWindowWidth())
-        && y + height >= deltaY && y < deltaY + screenToWorld(Library.getWindowHeight()));
+
+    if (isOnScreen(x, y)) return true;
+    if (isOnScreen(x + width, y)) return true;
+    if (isOnScreen(x, y + height)) return true;
+    if (isOnScreen(x + width, y + height)) return true;
+    return false;
   }
 
-  /**
-   * Get the drawing position of a Point2D.
-   * 
-   * @param p
-   *          Point2D.Double in world coordinates for which to determine the
-   *          screen position.
-   * @return Point containing p's location on screen or null if the location is
-   *         not on screen.
-   */
-  public static Point getScreenPosition(Point2D.Double p)
-  {
-    if (!isOnScreen(p))
-    {
-      return null;
-    }
-    else
-    {
-      return new Point(worldToScreen(p.x - deltaX),
-          worldToScreen(worldToScreen(p.y - deltaY)));
-    }
-  }
+  // /**
+  // * Get the drawing position of a Point2D.
+  // *
+  // * @param p
+  // * Point2D.Double in world coordinates for which to determine the
+  // * screen position.
+  // * @return Point containing p's location on screen or null if the location
+  // is
+  // * not on screen.
+  // */
+  // public static Point getScreenPosition(Point2D.Double p)
+  // {
+  // if (!isOnScreen(p))
+  // {
+  // return null;
+  // }
+  // else
+  // {
+  // return new Point(worldToScreen(p.x - deltaX),
+  // worldToScreen(worldToScreen(p.y - deltaY)));
+  // }
+  // }
 
   /**
    * Getter for executor.
@@ -323,7 +330,7 @@ public final class Library
    *          for which to store a reference.
    */
   public static void initSprites(NeuroFrame frame)
-  { System.out.println("Library.initSprites(): Enter");
+  { // System.out.println("Library.initSprites(): Enter");
     sprites = new SpriteMap(frame);
   }
 
@@ -354,21 +361,30 @@ public final class Library
     {
       fileURL = widgit.getClass().getResource(imagePath);
       loadedImage = ImageIO.read(fileURL);
-      
 
       // Register it with media tracker
       tracker.addImage(loadedImage, 1);
       tracker.waitForAll();
-      
-      System.out.println("Library.loadImage("+imagePath+")  size=(" + loadedImage.getWidth() +", " + loadedImage.getHeight() + ")");
+
+      // System.out.println("Library.loadImage("+imagePath+")  size=(" +
+      // loadedImage.getWidth() +", " + loadedImage.getHeight() + ")");
     }
     catch (Exception e)
-    { System.out.println("Cannot Open image: " + imagePath);
+    {
+      System.out.println("Cannot Open image: " + imagePath);
       e.printStackTrace();
       System.exit(0);
     }
 
     return loadedImage;
+  }
+
+  public static String bounds2DString(Rectangle2D bounds)
+  {
+
+    return String.format("[x=" + NUM2_FORMAT + ", y=" + NUM2_FORMAT + ", w="
+        + NUM2_FORMAT + ", h=" + NUM2_FORMAT + "]", bounds.getX(),
+        bounds.getY(), bounds.getWidth(), bounds.getHeight());
   }
 
 }

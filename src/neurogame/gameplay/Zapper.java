@@ -28,8 +28,8 @@ public class Zapper extends GameObject
 {
   public static final int spriteWidth = 48;
   public static final int spriteHeight = 48;
-  public static final double width = Library.screenToWorld(spriteWidth);
-  public static final double height = Library.screenToWorld(spriteHeight);
+  public static final double width = Library.worldUnitToScreen(spriteWidth);
+  public static final double height = Library.worldUnitToScreen(spriteHeight);
   private static final String name = "zapper";
   private static final int timeOn = Library.MIN_FRAME_MILLISEC;
   private static final BufferedImage masterImage = Library.getSprites().get(
@@ -69,7 +69,7 @@ public class Zapper extends GameObject
    */
   public Zapper(double x1, double y1, double x2, double y2, World world)
   {
-    super(x1, y1, width, height, name, masterImage, world);
+    super(x1, y1, width, height, name, world);
     zapNodeWorldX1 = x1;
     zapNodeWorldX2 = x2;
     zapNodeWorldY1 = y1;
@@ -78,7 +78,8 @@ public class Zapper extends GameObject
     // BufferedImage.TYPE_INT_ARGB);
     // graphics = image.createGraphics();
     // graphics.drawImage(masterImage, 0, 0, spriteWidth, spriteHeight, null);
-    frameDelay = (Library.RANDOM.nextInt(3) + 1) * Library.MIN_FRAME_MILLISEC + timeOn;
+    frameDelay = (Library.RANDOM.nextInt(3) + 1) * Library.MIN_FRAME_MILLISEC
+        + timeOn;
     frameCounter = Library.RANDOM.nextInt(frameDelay);
     on = false;
     player = world.getPlayer();
@@ -190,8 +191,9 @@ public class Zapper extends GameObject
    * Override of GameObject's update.
    */
   @Override
-  public void update(long deltaTime)
+  public boolean update(double deltaTime, double scrollDistance)
   {
+    if (getX() < Library.leftEdgeOfWorld) return false;
     if (++frameCounter >= frameDelay)
     {
       frameCounter = 0;
@@ -205,21 +207,23 @@ public class Zapper extends GameObject
 
     if (collision(player))
     {
-      player.loseHealth(player.getCenterX(), player.getCenterY(), Library.DAMAGE_PER_SEC_IN_ZAPPER);
+      player.loseHealth(player.getCenterX(), player.getCenterY(),
+          Library.DAMAGE_PER_SEC_IN_ZAPPER);
     }
-  }
 
+    return true;
+  }
 
   public void render(Graphics2D g)
   {
 
-    int zapMinX = Library.worldToScreen(zapWorldMinX - world.getDeltaX());
-    int zapMinY = Library.worldToScreen(zapWorldMinY);
+    int zapMinX = Library.worldPosXToScreen(zapWorldMinX);
+    int zapMinY = Library.worldPosYToScreen(zapWorldMinY);
 
-    int zapX1 = Library.worldToScreen(zapNodeWorldX1 - world.getDeltaX());
-    int zapY1 = Library.worldToScreen(zapNodeWorldY1);
-    int zapX2 = Library.worldToScreen(zapNodeWorldX2 - world.getDeltaX());
-    int zapY2 = Library.worldToScreen(zapNodeWorldY2);
+    int zapX1 = Library.worldPosXToScreen(zapNodeWorldX1);
+    int zapY1 = Library.worldPosYToScreen(zapNodeWorldY1);
+    int zapX2 = Library.worldPosXToScreen(zapNodeWorldX2);
+    int zapY2 = Library.worldPosYToScreen(zapNodeWorldY2);
 
     if (on)
     {
@@ -240,26 +244,26 @@ public class Zapper extends GameObject
     zapAreaCanvas.setColor(Color.BLACK);
     zapAreaCanvas.fillRect(0, 0, zapAreaWidth, zapAreaHeight);
 
-    if (hitPlayer)
-    {
-
-      int playerX = Library.worldToScreen(player.getX() / player.getWidth()
-          - world.getDeltaX());
-      int playerY = Library.worldToScreen(player.getY() / player.getHeight());
-      if (playerX < 1) playerX = 1;
-      if (playerY < 1) playerY = 1;
-      if (playerX >= zapAreaWidth - 1) playerX = zapAreaWidth - 2;
-      if (playerY >= zapAreaHeight - 1) playerY = zapAreaHeight - 2;
-
-      int displace = zapAreaHypotenuse / 2;
-      drawBolt(1, 1, playerX, playerY, displace);
-      drawBolt(playerX, playerY, zapAreaWidth - 2, zapAreaHeight - 2, displace);
-    }
-    else
-    {
-      int displace = zapAreaHypotenuse / 2;
-      drawBolt(1, 1, zapAreaWidth - 2, zapAreaHeight - 2, displace);
-    }
+    // if (hitPlayer)
+    // {
+    //
+    // int playerX = Library.worldToScreen(player.getX() / player.getWidth());
+    // int playerY = Library.worldToScreen(player.getY() / player.getHeight());
+    // if (playerX < 1) playerX = 1;
+    // if (playerY < 1) playerY = 1;
+    // if (playerX >= zapAreaWidth - 1) playerX = zapAreaWidth - 2;
+    // if (playerY >= zapAreaHeight - 1) playerY = zapAreaHeight - 2;
+    //
+    // int displace = zapAreaHypotenuse / 2;
+    // drawBolt(1, 1, playerX, playerY, displace);
+    // drawBolt(playerX, playerY, zapAreaWidth - 2, zapAreaHeight - 2,
+    // displace);
+    // }
+    // else
+    // {
+    int displace = zapAreaHypotenuse / 2;
+    drawBolt(1, 1, zapAreaWidth - 2, zapAreaHeight - 2, displace);
+    // }
     // myPic.repaint();
   }
 

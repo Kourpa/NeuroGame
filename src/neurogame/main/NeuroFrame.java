@@ -10,18 +10,18 @@
 
 package neurogame.main;
 
-
 import java.awt.Container;
 import java.awt.Dimension;
-
 import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 import javax.swing.JFrame;
 
+import neurogame.gameplay.GameObject;
 import neurogame.gameplay.PowerUp;
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -40,14 +40,14 @@ public class NeuroFrame extends JFrame
 {
   private static final int MIN_WINDOW_WIDTH = 200;
   private static final int MIN_WINDOW_HEIGHT = 200;
-  
-  //private BufferStrategy strategy;
-  //private DrawingEngine engine;
-  
+
+  // private BufferStrategy strategy;
+  // private DrawingEngine engine;
+
   private MainDrawPanel drawPanel;
   private TitleScreen title;
   private World world;
-  private int windowWidth, windowHeight;
+  private int windowPixelWidth, windowPixelHeight;
   private GameMode mode = GameMode.INITIALIZING;
   private int score;
   private int coins;
@@ -55,7 +55,7 @@ public class NeuroFrame extends JFrame
   private PowerUp powerUp;
 
   private SpriteMap sprites;
-  
+
   private Container contentPane;
 
   private boolean debug;
@@ -67,25 +67,23 @@ public class NeuroFrame extends JFrame
   {
     System.out.println("NeuroFrame(): Enter");
     this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-    
+
     this.setResizable(false);
     this.setTitle(Library.GAME_TITLE);
-   
-    
+
     Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
     int screenWidth = screenSize.width;
     int screenHeight = screenSize.height;
-    
-    
+
     this.setBounds(0, 0, screenWidth, screenHeight);
     this.setVisible(true);
     contentPane = getContentPane();
     contentPane.setLayout(null);
-    
+
     drawPanel = new MainDrawPanel(game, this);
     contentPane.add(drawPanel);
-    
-    //setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+    // setDefaultCloseOperation(EXIT_ON_CLOSE);
     score = 0;
     coins = 0;
     health = 0;
@@ -93,14 +91,16 @@ public class NeuroFrame extends JFrame
     debug = false;
 
     resizeHelper();
-    
+
     sprites = Library.getSprites();
     drawPanel.setSprites(sprites);
 
-
-    
-    this.addComponentListener ( new ComponentAdapter()
-    {  public void componentResized(ComponentEvent e) {resizeEvent(); }
+    this.addComponentListener(new ComponentAdapter()
+    {
+      public void componentResized(ComponentEvent e)
+      {
+        resizeEvent();
+      }
     });
 
     // Listener to check for the frame closing and cleanly exit.
@@ -113,10 +113,7 @@ public class NeuroFrame extends JFrame
       }
     });
 
-
-
   }
-
 
   /**
    * Show the game using the provided DrawingEngine.
@@ -128,22 +125,42 @@ public class NeuroFrame extends JFrame
   public void startGame(World world)
   {
     this.world = world;
-    //engine = new DrawingEngine(this, world);
+    // engine = new DrawingEngine(this, world);
+    drawPanel.setWorld(world);
     mode = GameMode.PLAYING;
-    //title = null;
+    // title = null;
 
   }
-  
-  public void setGameMode(GameMode mode){ this.mode = mode;}
-  public GameMode getGameMode(){ return mode;}
-  
-  
-  public int getHealth() {return health;}
-  
-  public int getCoins() {return coins;}
-  public int getScore() {return score;}
-  public PowerUp getPowerUp() {return powerUp;}
 
+  public void setGameMode(GameMode mode)
+  {
+    this.mode = mode;
+  }
+
+  public GameMode getGameMode()
+  {
+    return mode;
+  }
+
+  public int getHealth()
+  {
+    return health;
+  }
+
+  public int getCoins()
+  {
+    return coins;
+  }
+
+  public int getScore()
+  {
+    return score;
+  }
+
+  public PowerUp getPowerUp()
+  {
+    return powerUp;
+  }
 
   /**
    * Changes the display for when the game is paused.
@@ -174,8 +191,7 @@ public class NeuroFrame extends JFrame
     mode = GameMode.TITLE;
     return title;
   }
-  
-  
+
   private void resizeEvent()
   {
     if (mode == GameMode.INITIALIZING) return;
@@ -189,53 +205,55 @@ public class NeuroFrame extends JFrame
    */
   private void resizeHelper()
   {
-    
+
     boolean sizeIsOkay = true;
     int outsideFrameWidth = this.getWidth();
     int outsideFrameHeight = this.getHeight();
-    System.out.println("NeuroFrame.resizeHelper(): Enter ("+ this.getWidth() + ", " +
-        this.getHeight() + ")");
-    
-    if (outsideFrameWidth < MIN_WINDOW_WIDTH) 
+
+    if (outsideFrameWidth < MIN_WINDOW_WIDTH)
     {
       outsideFrameWidth = MIN_WINDOW_WIDTH;
       sizeIsOkay = false;
     }
-    
-    if (outsideFrameHeight < MIN_WINDOW_HEIGHT) 
+
+    if (outsideFrameHeight < MIN_WINDOW_HEIGHT)
     {
       outsideFrameHeight = MIN_WINDOW_HEIGHT;
       sizeIsOkay = false;
     }
-    
+
     if (outsideFrameHeight > outsideFrameWidth)
-    { outsideFrameHeight = outsideFrameWidth;
+    {
+      outsideFrameHeight = outsideFrameWidth;
       sizeIsOkay = false;
     }
-    if (outsideFrameWidth > outsideFrameHeight*2)
-    { outsideFrameWidth = outsideFrameHeight*2;
+    if (outsideFrameWidth > outsideFrameHeight * 2)
+    {
+      outsideFrameWidth = outsideFrameHeight * 2;
       sizeIsOkay = false;
     }
-    if (!sizeIsOkay) this.setSize(outsideFrameWidth, outsideFrameHeight);
-    
-   
+
     Insets inset = this.getInsets();
-    windowWidth = outsideFrameWidth - inset.left - inset.right;
-    windowHeight = outsideFrameHeight - inset.top - inset.bottom;
-    
-    Library.setWindowWidth(windowWidth);
-    Library.setWindowHeight(windowHeight);
-    Library.HORIZONTAL_MAX = (double) windowWidth/(double) windowHeight;
-    Library.U_VALUE = windowHeight;
-    
-    drawPanel.resizeHelper(windowWidth,windowHeight);
+    windowPixelWidth = outsideFrameWidth - inset.left - inset.right;
+    windowPixelHeight = outsideFrameHeight - inset.top - inset.bottom;
+
+    System.out.println("NeuroFrame.resizeHelper(): Enter (" + windowPixelWidth
+        + ", " + windowPixelHeight + ")");
+
+    if (sizeIsOkay)
+    {
+      Library.setWindowPixelWidth(windowPixelWidth);
+      Library.setWindowPixelHeight(windowPixelHeight);
+      Library.U_VALUE = windowPixelHeight;
+
+      drawPanel.resizeHelper(windowPixelWidth, windowPixelHeight);
+    }
+    else
+    {
+      this.setSize(outsideFrameWidth, outsideFrameHeight);
+    }
+
   }
-
-
-
-
-
-
 
   /**
    * Setter for the HUD statistics. Called by the GameController when the HUD
@@ -252,8 +270,7 @@ public class NeuroFrame extends JFrame
    * @param powerUp
    *          PowerUp whose icon should be displayed on the hud.
    */
-  public void setStats(int score, int coins, int health,
-      PowerUp powerUp)
+  public void setStats(int score, int coins, int health, PowerUp powerUp)
   {
     this.score = score;
     this.coins = coins;
@@ -261,21 +278,14 @@ public class NeuroFrame extends JFrame
     this.powerUp = powerUp;
   }
 
-
-
-
-
-
-  
-  public void render()
+  public void render(List<GameObject> gameObjList)
   {
-    drawPanel.render();
+    drawPanel.render(gameObjList);
   }
-  
-//  public void renderBackground()
-//  { drawPanel.renderBackground();
-//  }
 
+  // public void renderBackground()
+  // { drawPanel.renderBackground();
+  // }
 
   /**
    * Enable or disable the debugging overlay.
@@ -286,46 +296,46 @@ public class NeuroFrame extends JFrame
   }
 
   /**
-//   * Draw the debugging overlay. Draws vertical lines with labels every 0.5 u
-//   * within the world.
-//   */
-//  public void debug()
-//  {
-//    Player player = world.getPlayer();
-//    // U-coordinates.
-//    graphics.setColor(Color.CYAN);
-//    graphics.setFont(new Font("Serif", Font.PLAIN, 14));
-//    double deltaX = world.getDeltaX();
-//
-//    // xMin and yMin use integer rounding to guarantee that the demarcated
-//    // lines are aligned to u values of 0.5.
-//    double xMin = (int) deltaX - 2;
-//    double xMax = deltaX + Library.HORIZONTAL_MAX;
-//    double yMin = -2;
-//    double yMax = Library.VERTICAL_MAX;
-//    // X-axes.
-//    for (double x = xMin; x < xMax; x += 0.5)
-//    {
-//      int w = (int) ((x - deltaX) * getHeight());
-//      String xString = String.format("x = %.1f u", x);
-//      graphics.drawLine(w, 0, w, windowHeight - 14);
-//      graphics.drawString(xString, w - 14, windowHeight - 5);
-//    }
-//    // Y-axes.
-//    graphics.setColor(Color.PINK);
-//    for (double y = yMin; y < yMax; y += 0.5)
-//    {
-//      int w = (int) ((y) * windowHeight);
-//      String yString = String.format("y = %.1f u", y);
-//      graphics.drawLine(yString.length() * 7, w, windowWidth, w);
-//      graphics.drawString(yString, 5, w + 5);
-//    }
-//    graphics.setColor(Color.WHITE);
-//    graphics.drawString(String.format("deltaX: %.16f u", deltaX), 5, 50);
-//    graphics
-//        .drawString(String.format("playerX: %.16f u", player.getX()), 5, 90);
-//    graphics.drawString(String.format("playerY: %.16f u", player.getY()), 5,
-//        110);
-//  }
+   * // * Draw the debugging overlay. Draws vertical lines with labels every 0.5
+   * u // * within the world. //
+   */
+  // public void debug()
+  // {
+  // Player player = world.getPlayer();
+  // // U-coordinates.
+  // graphics.setColor(Color.CYAN);
+  // graphics.setFont(new Font("Serif", Font.PLAIN, 14));
+  // double deltaX = world.getDeltaX();
+  //
+  // // xMin and yMin use integer rounding to guarantee that the demarcated
+  // // lines are aligned to u values of 0.5.
+  // double xMin = (int) deltaX - 2;
+  // double xMax = deltaX + Library.HORIZONTAL_MAX;
+  // double yMin = -2;
+  // double yMax = Library.VERTICAL_MAX;
+  // // X-axes.
+  // for (double x = xMin; x < xMax; x += 0.5)
+  // {
+  // int w = (int) ((x - deltaX) * getHeight());
+  // String xString = String.format("x = %.1f u", x);
+  // graphics.drawLine(w, 0, w, windowHeight - 14);
+  // graphics.drawString(xString, w - 14, windowHeight - 5);
+  // }
+  // // Y-axes.
+  // graphics.setColor(Color.PINK);
+  // for (double y = yMin; y < yMax; y += 0.5)
+  // {
+  // int w = (int) ((y) * windowHeight);
+  // String yString = String.format("y = %.1f u", y);
+  // graphics.drawLine(yString.length() * 7, w, windowWidth, w);
+  // graphics.drawString(yString, 5, w + 5);
+  // }
+  // graphics.setColor(Color.WHITE);
+  // graphics.drawString(String.format("deltaX: %.16f u", deltaX), 5, 50);
+  // graphics
+  // .drawString(String.format("playerX: %.16f u", player.getX()), 5, 90);
+  // graphics.drawString(String.format("playerY: %.16f u", player.getY()), 5,
+  // 110);
+  // }
 
 }

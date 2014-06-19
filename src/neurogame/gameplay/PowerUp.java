@@ -98,7 +98,7 @@ public class PowerUp extends GameObject
   public PowerUp(double x, double y, World world, Direction direction,
       PowerType type)
   {
-    super(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT, name, image, world);
+    super(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT, name, world);
     this.type = type;
     uiImage = type.getUIImage();
     timer = type.getTimerMax();
@@ -114,9 +114,10 @@ public class PowerUp extends GameObject
    * Override of GameObject's update - updates object state every frame.
    */
   @Override
-  public void update(long deltaTime)
+  public boolean update(double deltaTime, double scrollDistance)
   {
-    if (isActive())
+    if (getX() < Library.leftEdgeOfWorld) return false;
+    if (isAlive())
     {
       animate();
       if (direction != Direction.NONE)
@@ -125,16 +126,13 @@ public class PowerUp extends GameObject
       }
       // update the player obj
       player = world.getPlayer();
-      
-  
-      
-//      System.out.println(collision(player) + "Player: ("+ player.getHitMinX() + "," + player.getHitMinY() + ") - (" +
-//          player.getHitMaxX() + "," + player.getHitMaxY() + ")  " + 
-//          getName() + ":(" + getHitMinX() + "," + getHitMinY() + ") - (" +
-//          getHitMaxX() + "," + getHitMaxY() + ")  ");
-      
-      
-      
+
+      // System.out.println(collision(player) + "Player: ("+ player.getHitMinX()
+      // + "," + player.getHitMinY() + ") - (" +
+      // player.getHitMaxX() + "," + player.getHitMaxY() + ")  " +
+      // getName() + ":(" + getHitMinX() + "," + getHitMinY() + ") - (" +
+      // getHitMaxX() + "," + getHitMaxY() + ")  ");
+
       if (collision(player))
       {
         pickUp();
@@ -152,6 +150,8 @@ public class PowerUp extends GameObject
         animateUI();
       }
     }
+
+    return false;
   }
 
   /**
@@ -196,11 +196,11 @@ public class PowerUp extends GameObject
     double y = getY();
     if (direction == Direction.LEFT)
     {
-      setLocation(x-speed, y);
+      setLocation(x - speed, y);
     }
     else if (direction == Direction.RIGHT)
     {
-      setLocation(x+speed, y);
+      setLocation(x + speed, y);
     }
   }
 
@@ -212,7 +212,7 @@ public class PowerUp extends GameObject
     if (player != null && !alreadyUsed && !inUse)
     {
       inUse = true;
-//      Library.log("Player used powerup " + type, world.getRisk());
+      // Library.log("Player used powerup " + type, world.getRisk());
       switch (type)
       {
       // TODO
@@ -239,69 +239,66 @@ public class PowerUp extends GameObject
     switch (type)
     {
 
-    case BLINK:
-      if (player.getX() + blinkRange < (world.getDeltaX()
-          + Library.HORIZONTAL_MAX - getWidth())
-          && getX() + blinkRange > world.getDeltaX()) player.setLocation(
-          player.getX() + blinkRange, player.getY());
-      break;
     case BOMB:
       bombDraw = true;
-//      for (GameObject o : world.getObjectList())
-//      {
-//        if (o instanceof Enemy && Library.isOnScreen(o))
-//        {
-//          // o.active = false;
-//          o.hitByEmp();
-//        }
-//      }
-//      break;
-//    case BOOST:
-//      for (GameObject o : world.getObjectList())
-//      {
-//        if (o instanceof Enemy && player.collision(o))
-//        {
-//          o.killedByBoost();
-//        }
-//      }
-//      break;
-//    case LASER:
-//      laserDraw = true;
-//
-//      // update laser polygon
-//      updateLaserPoly();
-//
-//      for (GameObject o : world.getObjectList())
-//      {
-//        if (o instanceof Enemy && Library.isOnScreen(o))
-//        {
-//          Area areaLaser = new Area(laserPoly);
-//          boolean hit = false;
-//          if (areaLaser.contains(o.getX(), o.getY())) hit = true;
-//          else if (areaLaser.contains(o.getX() + getWidth(), o.getY())) hit = true;
-//          else if (areaLaser.contains(o.getX(), o.getY() + getHeight())) hit = true;
-//          else if (areaLaser.contains(o.getX() + getWidth(), o.getY() + getHeight())) hit = true;
-//
-//          if (hit)
-//          {
-//            o.killedByLaser();
-//          }
-//        }
-//      }
-//
-//      break;
-//    case SUPER:
-//      superDraw = true;
-//      for (GameObject o : world.getObjectList())
-//      {
-//        if (player.collision(o) && (o instanceof Enemy))
-//        {
-//          o.killedBySuper();
-//        }
-//      }
-//      break;
-//    default:
-//      break;
+      // for (GameObject o : world.getObjectList())
+      // {
+      // if (o instanceof Enemy && Library.isOnScreen(o))
+      // {
+      // // o.active = false;
+      // o.hitByEmp();
+      // }
+      // }
+      // break;
+      // case BOOST:
+      // for (GameObject o : world.getObjectList())
+      // {
+      // if (o instanceof Enemy && player.collision(o))
+      // {
+      // o.killedByBoost();
+      // }
+      // }
+      // break;
+      // case LASER:
+      // laserDraw = true;
+      //
+      // // update laser polygon
+      // updateLaserPoly();
+      //
+      // for (GameObject o : world.getObjectList())
+      // {
+      // if (o instanceof Enemy && Library.isOnScreen(o))
+      // {
+      // Area areaLaser = new Area(laserPoly);
+      // boolean hit = false;
+      // if (areaLaser.contains(o.getX(), o.getY())) hit = true;
+      // else if (areaLaser.contains(o.getX() + getWidth(), o.getY())) hit =
+      // true;
+      // else if (areaLaser.contains(o.getX(), o.getY() + getHeight())) hit =
+      // true;
+      // else if (areaLaser.contains(o.getX() + getWidth(), o.getY() +
+      // getHeight())) hit = true;
+      //
+      // if (hit)
+      // {
+      // o.killedByLaser();
+      // }
+      // }
+      // }
+      //
+      // break;
+      // case SUPER:
+      // superDraw = true;
+      // for (GameObject o : world.getObjectList())
+      // {
+      // if (player.collision(o) && (o instanceof Enemy))
+      // {
+      // o.killedBySuper();
+      // }
+      // }
+      // break;
+      // default:
+      // break;
     }
   }
 
@@ -312,7 +309,7 @@ public class PowerUp extends GameObject
   {
     if (inUse)
     {
-//      Library.log("Powerup " + type + " deactivated", world.getRisk());
+      // Library.log("Powerup " + type + " deactivated", world.getRisk());
       switch (type)
       {
       // TODO
@@ -344,7 +341,7 @@ public class PowerUp extends GameObject
   public void pickUp()
   {
     // If the PowerUp is inactive, it was already picked up, so ignore it.
-    if (isActive())
+    if (isAlive())
     {
       PowerUp old = player.getPowerUp();
       if (old != null)
@@ -356,10 +353,10 @@ public class PowerUp extends GameObject
       player.collectPowerUp();
 
       System.out.println("Player collected powerup " + type);
-//      Library.log("Player collected powerup " + type, world.getRisk());
+      // Library.log("Player collected powerup " + type, world.getRisk());
 
       player.setPowerUp(this);
-      setActive(false);
+      die();
     }
 
     // set the size of the laser power up
@@ -387,32 +384,32 @@ public class PowerUp extends GameObject
       g.setTransform(oldTransform);
     }
 
-    if (bombDraw)
-    {
-      double radius = 0.1;
-      g.setColor(Color.BLUE);
-      for (int i = 0; i < 10; i++)
-      {
-        g.drawOval(
-            Library.worldToScreen(player.getX() - world.getDeltaX() - radius),
-            Library.worldToScreen(player.getY() - radius),
-            Library.worldToScreen(player.getWidth() + radius * 2),
-            Library.worldToScreen(player.getHeight() + radius * 2));
-        radius -= 0.01;
-      }
-    }
+    // if (bombDraw)
+    // {
+    // double radius = 0.1;
+    // g.setColor(Color.BLUE);
+    // for (int i = 0; i < 10; i++)
+    // {
+    // g.drawOval(
+    // Library.worldPosXToScreen(player.getX() - radius),
+    // Library.worldPosXToScreen(player.getY() - radius),
+    // Library.worldToScreen(player.getWidth() + radius * 2),
+    // Library.worldToScreen(player.getHeight() + radius * 2));
+    // radius -= 0.01;
+    // }
+    // }
 
-    if (superDraw)
-    {
-
-      int a = (int) (255 * alpha);
-
-      g.setColor(new Color(255, 255, 224, a));
-      g.fillOval(Library.worldToScreen(player.getX() - world.getDeltaX()),
-          Library.worldToScreen(player.getY()),
-          Library.worldToScreen(player.getWidth()),
-          Library.worldToScreen(player.getHeight()));
-    }
+    // if (superDraw)
+    // {
+    //
+    // int a = (int) (255 * alpha);
+    //
+    // g.setColor(new Color(255, 255, 224, a));
+    // g.fillOval(Library.worldToScreen(player.getX()),
+    // Library.worldToScreen(player.getY()),
+    // Library.worldToScreen(player.getWidth()),
+    // Library.worldToScreen(player.getHeight()));
+    // }
   }
 
   public void updateLaserPoly()
@@ -428,16 +425,15 @@ public class PowerUp extends GameObject
 
     laserPoly.reset();
 
-    laserPoly.moveTo(p.getX() + p.getWidth() - world.getDeltaX(),
-        p.getY() + p.getHeight() / 2);
-    laserPoly.lineTo(p.getX() + p.getWidth() * 2 - world.getDeltaX(), p.getY()
-        + p.getHeight() / 2 - laserHeight / 2);
-    laserPoly.lineTo(p.getX() + p.getWidth() * 2 - world.getDeltaX() + c,
-        p.getY() + p.getHeight() / 2 - laserHeight / 2);
-    laserPoly.lineTo(p.getX() + p.getWidth() * 2 - world.getDeltaX() + c,
-        p.getY() + p.getHeight() / 2 + laserHeight / 2);
-    laserPoly.lineTo(p.getX() + p.getWidth() * 2 - world.getDeltaX(), p.getY()
-        + p.getHeight() / 2 + laserHeight / 2);
+    laserPoly.moveTo(p.getX() + p.getWidth(), p.getY() + p.getHeight() / 2);
+    laserPoly.lineTo(p.getX() + p.getWidth() * 2, p.getY() + p.getHeight() / 2
+        - laserHeight / 2);
+    laserPoly.lineTo(p.getX() + p.getWidth() * 2 + c, p.getY() + p.getHeight()
+        / 2 - laserHeight / 2);
+    laserPoly.lineTo(p.getX() + p.getWidth() * 2 + c, p.getY() + p.getHeight()
+        / 2 + laserHeight / 2);
+    laserPoly.lineTo(p.getX() + p.getWidth() * 2, p.getY() + p.getHeight() / 2
+        + laserHeight / 2);
 
     laserPoly.closePath();
   }
@@ -554,13 +550,12 @@ public class PowerUp extends GameObject
     this.direction = direction;
   }
 
-
   public void render(Graphics2D g)
   {
-    if (isActive())
+    if (isAlive())
     {
-      int xx = Library.worldToScreen(getX() - world.getDeltaX());
-      int yy = Library.worldToScreen(getY());
+      int xx = Library.worldPosXToScreen(getX());
+      int yy = Library.worldPosYToScreen(getY());
       g.drawImage(image, xx, yy, null);
     }
     if (inUse)
@@ -583,10 +578,12 @@ public class PowerUp extends GameObject
   public static enum PowerType
   {
     BLINK(2, "Now You're Thinking With...", "powerupBlinkForeground"), BOOST(
-        Library.MIN_FRAME_MILLISEC / 2, "I Like to Go Fast", "powerupBoostForeground"), LASER(
-        3 * Library.MIN_FRAME_MILLISEC, "Huge Freakin' Laser", "powerupLaserForeground"), BOMB(
-            Library.MIN_FRAME_MILLISEC / 4, "Surprisingly Useful Bomb", "powerupBombForeground"), SUPER(
-        5 * Library.MIN_FRAME_MILLISEC, "Don't-Die Button", "powerupSuperForeground");
+        Library.MIN_FRAME_MILLISEC / 2, "I Like to Go Fast",
+        "powerupBoostForeground"), LASER(3 * Library.MIN_FRAME_MILLISEC,
+        "Huge Freakin' Laser", "powerupLaserForeground"), BOMB(
+        Library.MIN_FRAME_MILLISEC / 4, "Surprisingly Useful Bomb",
+        "powerupBombForeground"), SUPER(5 * Library.MIN_FRAME_MILLISEC,
+        "Don't-Die Button", "powerupSuperForeground");
 
     public final String name;
     public final String uiImageName;

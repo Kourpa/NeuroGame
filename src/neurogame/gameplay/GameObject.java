@@ -11,235 +11,241 @@ import neurogame.library.Library;
  *
  * @author Danny Gomez
  */
-public abstract class GameObject {
+public abstract class GameObject
+{
 
-    private static int globalID; // object id
-    private final int id;
-    private final String name; // type of object
-    private double x; // starting x
-    private double y; // starting y
-    private double width; // width of obj
-    private double height; // height of obj
-    private double centerX, centerY;
-    private double hitMinX, hitMaxX, hitMinY, hitMaxY;
-    protected World world;
-    private boolean active = true; // determines if the object is active/alive
-    private boolean isVisible = false; // determines if the object is on screen
+  private static int globalID; // object id
+  private final int id;
+  private final String name; // type of object
+  private double x; // starting x
+  private double y; // starting y
+  private double width; // width of obj
+  private double height; // height of obj
+  private double centerX, centerY;
+  private double hitMinX, hitMaxX, hitMinY, hitMaxY;
+  protected World world;
+  private boolean isAlive = true; // determines if the object is active/alive
+  private boolean isVisible = false; // determines if the object is on screen
 
-    protected Player player;
+  protected Player player;
 
   // protected Path2D hitBox = new Path2D.Double(); //it's a hit box
-    private boolean empHit = false;
+  private boolean empHit = false;
 
-    // movement variables
-    protected double maxSpeed = 0.01;
-    protected double velD = 0.003;
+  // movement variables
+  protected double maxSpeed = 0.01;
+  protected double velD = 0.003;
 
-    protected int health = 1;
+  protected int health = 1;
 
-    public GameObject(double x, double y, double width, double height,
-                      String name, Image image, World world){
-        this.name = name;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.world = world;
-        this.player = world.getPlayer();
+  public GameObject(double x, double y, double width, double height, String name, World world)
+  {
+    this.name = name;
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.world = world;
+    this.player = world.getPlayer();
 
-        setLocation(x, y);
+    setLocation(x, y);
 
-        id = globalID;
-        globalID++;
-    }
+    id = globalID;
+    globalID++;
+  }
 
-    public abstract void update(long deltaTime);
+  public abstract boolean update(double deltaSec, double scrollDistance);
 
-    /**
-     * Checks if this objects is colliding with another object.
-     * @param graphics
-     */
-    public abstract void render(Graphics2D graphics);
+  /**
+   * Checks if this objects is colliding with another object.
+   * 
+   * @param graphics
+   */
+  public abstract void render(Graphics2D graphics);
 
-    public boolean collision(GameObject other){
+  public boolean collision(GameObject other)
+  {
 
     // System.out.println("collision("+name+") " + other.active + ", " +
-        // other.isVisible);
-        if(other.active == false){
-            return false;
-        }
-        if(other.isVisible == false){
-            return false;
-        }
-
-    // Area areaThis = new Area(object.getHitBox());
-        // Area areaThat = new Area(getHitBox());
-        //
-        // areaThis.intersect(areaThat);
-        //
-        // return !areaThis.isEmpty();
-        if(hitMaxX < other.hitMinX){
-            return false;
-        }
-        if(hitMinX > other.hitMaxX){
-            return false;
-        }
-        if(hitMaxY < other.hitMinY){
-            return false;
-        }
-        if(hitMinY > other.hitMaxY){
-            return false;
-        }
-        return true;
-
+    // other.isVisible);
+    if (other.isAlive == false)
+    {
+      return false;
+    }
+    if (other.isVisible == false)
+    {
+      return false;
     }
 
-    public static int getGlobalID(){
-        return globalID;
+    if (hitMaxX < other.hitMinX)
+    {
+      return false;
     }
-
-    public int getId(){
-        return id;
+    if (hitMinX > other.hitMaxX)
+    {
+      return false;
     }
-
-    public String getName(){
-        return name;
+    if (hitMaxY < other.hitMinY)
+    {
+      return false;
     }
-
-    public double getX(){
-        return x;
+    if (hitMinY > other.hitMaxY)
+    {
+      return false;
     }
+    return true;
 
-    public double getY(){
-        return y;
-    }
+  }
 
-    public double getWidth(){
-        return width;
-    }
+  public static int getGlobalID()
+  {
+    return globalID;
+  }
 
-    public double getHeight(){
-        return height;
-    }
+  public int getId()
+  {
+    return id;
+  }
 
-    public void setLocation(double x, double y){
-        this.x = x;
-        this.y = y;
+  public String getName()
+  {
+    return name;
+  }
 
-        centerX = x + width / 2.0;
-        centerY = y + height / 2.0;
+  public double getX()
+  {
+    return x;
+  }
 
-        hitMinX = centerX - 0.75 * (width / 2.0);
-        hitMaxX = centerX + 0.75 * (width / 2.0);
-        hitMinY = centerY - 0.75 * (height / 2.0);
-        hitMaxY = centerY + 0.75 * (height / 2.0);
-    }
+  public double getY()
+  {
+    return y;
+  }
 
-    public double getCenterX(){
-        return centerX;
-    }
+  public double getWidth()
+  {
+    return width;
+  }
 
-    public double getCenterY(){
-        return centerY;
-    }
+  public double getHeight()
+  {
+    return height;
+  }
 
-    public double getHitMinX(){
-        return hitMinX;
-    }
+  public void setLocation(double x, double y)
+  {
+    this.x = x;
+    this.y = y;
 
-    public double getHitMaxX(){
-        return hitMaxX;
-    }
+    centerX = x + width / 2.0;
+    centerY = y + height / 2.0;
 
-    public double getHitMinY(){
-        return hitMinY;
-    }
+    hitMinX = centerX - 0.75 * (width / 2.0);
+    hitMaxX = centerX + 0.75 * (width / 2.0);
+    hitMinY = centerY - 0.75 * (height / 2.0);
+    hitMaxY = centerY + 0.75 * (height / 2.0);
+  }
 
-    public double getHitMaxY(){
-        return hitMaxY;
-    }
+  public double getCenterX()
+  {
+    return centerX;
+  }
 
-    public boolean isActive(){
-        return active;
-    }
+  public double getCenterY()
+  {
+    return centerY;
+  }
 
-    public void setActive(boolean state){
-        active = state;
-    }
+  public double getHitMinX()
+  {
+    return hitMinX;
+  }
 
-    public void setEmpHit(boolean empHit){
-        this.empHit = empHit;
-    }
+  public double getHitMaxX()
+  {
+    return hitMaxX;
+  }
 
-    public boolean isVisible(){
-        return isVisible;
-    }
+  public double getHitMinY()
+  {
+    return hitMinY;
+  }
 
-    public void setIsVisible(boolean isVisible){
-        this.isVisible = isVisible;
-    }
+  public double getHitMaxY()
+  {
+    return hitMaxY;
+  }
 
-    public void killedByLaser(){
-        active = false;
-//    Library.log(name + " killed by laser", world.getRisk());
-    }
+  public boolean isAlive()
+  {
+    return isAlive;
+  }
 
-    public void killedBySuper(){
-        active = false;
-//    Library.log(name + " killed by super", world.getRisk());
-    }
+  public void die()
+  { 
+    isAlive = false;
+  }
 
-    public void killedByBoost(){
-        active = false;
-//    Library.log(name + " killed by boost", world.getRisk());
-    }
+  public void setEmpHit(boolean empHit)
+  {
+    this.empHit = empHit;
+  }
 
-    public void hitByEmp(){
-        empHit = true;
-//    Library.log(name + " hit by emp", world.getRisk());
-    }
+  public boolean isVisible()
+  {
+    return isVisible;
+  }
 
-    public void move(long deltaTime, double speed, double dx, double dy){
+  public void setIsVisible(boolean isVisible)
+  {
+    this.isVisible = isVisible;
+  }
 
-        double targetDistance = Math.sqrt(dx * dx + dy * dy);
-        if(targetDistance < 0.00001){
-            return;
-        }
+  public void killedByLaser()
+  {
+    isAlive = false;
+    // Library.log(name + " killed by laser", world.getRisk());
+  }
 
-        double distance = speed * deltaTime;
+  public void killedBySuper()
+  {
+    isAlive = false;
+    // Library.log(name + " killed by super", world.getRisk());
+  }
 
-        x = x + dx * distance / targetDistance;
-        y = y + dy * distance / targetDistance;
-    }
+  public void killedByBoost()
+  {
+    isAlive = false;
+    // Library.log(name + " killed by boost", world.getRisk());
+  }
 
-  // end of the movement methods-----------------------------------
-    protected boolean wallCollision(){
-        Area walls = world.getCollisionArea();
+  public void hitByEmp()
+  {
+    empHit = true;
+    // Library.log(name + " hit by emp", world.getRisk());
+  }
 
-    // boolean hit = false;
-        //System.out.println("walls="+walls.getBounds2D()+", " + getName() + "("+
-        //    getHitMinX() + ", " + getHitMinY() + ") - (" + getHitMaxX() + ", " + getHitMaxY() + ")");
-        if(walls.contains(hitMinX - world.getDeltaX(), hitMinY)){
-            return true;
-        }
-        if(walls.contains(hitMaxX - world.getDeltaX(), hitMinY)){
-            return true;
-        }
-        if(walls.contains(hitMinX - world.getDeltaX(), hitMaxY)){
-            return true;
-        }
-        if(walls.contains(hitMaxX - world.getDeltaX(), hitMaxY)){
-            return true;
-        }
+  public void move(double dx, double dy)
+  {
+    setLocation(x + dx, y + dy);
+  }
 
-        return false;
-    }
+  protected EnumCollisionType wallCollision()
+  {
+    EnumCollisionType collision = world.collisionWithWall(hitMinX, hitMinY);
+    if (collision != EnumCollisionType.NONE) return collision;
 
-    public int getHealth(){
-        return health;
-    }
+    collision = world.collisionWithWall(hitMaxX, hitMinY);
+    if (collision != EnumCollisionType.NONE) return collision;
+    
+    collision = world.collisionWithWall(hitMinX, hitMaxY);
+    if (collision != EnumCollisionType.NONE) return collision;
+    
+    collision = world.collisionWithWall(hitMaxX, hitMaxY);
+    return collision;
+  }
 
-    public void setHealth(int health){
-        this.health = health;
-    }
+  public int getHealth() { return health;}
+
+  public void setHealth(int health) { this.health = health; }
 }
