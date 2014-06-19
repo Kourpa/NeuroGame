@@ -103,10 +103,9 @@ public class Player extends GameObject
     if (nextY < 0) nextY = 0;
     if (nextY + getHeight() > 1.0) nextY = 1.0 - getHeight();
     if (nextX < Library.leftEdgeOfWorld) nextX = Library.leftEdgeOfWorld;
-    if (nextX + getWidth() > Library.leftEdgeOfWorld
-        + world.getVisibleWorldRight())
+    if (nextX + getWidth() > world.getVisibleWorldRight())
     {
-      nextX = (Library.leftEdgeOfWorld + world.getVisibleWorldRight()) - getWidth();
+      nextX = (world.getVisibleWorldRight()) - getWidth();
     }
 
     setLocation(nextX, nextY);
