@@ -59,6 +59,9 @@ public class NeuroGame
   {
     startTime = elapsedTime = System.currentTimeMillis();
 
+    // Load user profiles
+    Library.loadUsers();
+    
     final NeuroGame game = this;
 
     frame = new NeuroFrame(game);

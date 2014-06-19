@@ -16,9 +16,17 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import javax.imageio.ImageIO;
@@ -81,6 +89,85 @@ public final class Library
 
   private static IOExecutor executor;
   private static SpriteMap sprites;
+  private static ArrayList<User> users = new ArrayList<User>();
+  
+  /**
+	 * Creates a new user file
+	 * 
+	 * @param userName
+	 */
+	public static void addUser(String userName) {
+		String path = System.getProperty("user.dir");
+		path += "/Users/";
+		
+		try {
+			User newUser = new User(userName);
+
+			FileOutputStream saveFile = new FileOutputStream(path+userName + ".user");
+			ObjectOutputStream save = new ObjectOutputStream(saveFile);
+			save.writeObject(newUser);
+			save.close();
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.out.println("FileNotFound. Failed to save User: " + userName);
+		} catch (IOException e) {
+			System.out.println("IO. Failed to save User: " + userName);
+		}
+	}
+
+	/**
+	 * Load all user files in the directory
+	 */
+	public static void loadUsers() {
+		String path = System.getProperty("user.dir");
+		path += "/Users/";
+		File dir = new File(path);
+
+		for (File file : dir.listFiles()) {
+			if (file.getName().endsWith((".user"))) {
+				parseUser(file);
+			}
+		}
+	}
+
+	/**
+	 * Parse a user file into a user object
+	 */
+	private static void parseUser(File file) {
+		User newUser;
+		try {
+			FileInputStream saveFile = new FileInputStream(file);
+			ObjectInputStream save = new ObjectInputStream(saveFile);
+			newUser = (User) save.readObject();
+			users.add(newUser);
+			save.close();
+		} catch (Exception e) {
+			e.getStackTrace();
+			System.out.println("Problem Parsing User: "+file.getName());
+		}
+	}
+
+	/**
+	 * @return a list of the names of the users
+	 */
+	public static String[] getUserNames() {
+		System.out.println("-- Get Names: "+users.size());
+		if (users.size() > 0) {
+			String[] names = new String[users.size()];
+			for (int i = 0; i < users.size(); i++) {
+				names[i] = users.get(0).getName();
+			}
+			return names;
+		}
+		
+		String[] nullString = {"No Users"};
+		return nullString;
+	}
+	
+	public static User getUser(int i){
+		return users.get(i);
+	}
 
   /**
    * Convenience getter for a String containing the current system date and

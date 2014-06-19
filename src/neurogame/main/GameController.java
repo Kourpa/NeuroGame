@@ -618,7 +618,7 @@ public class GameController
     if (title != null)
     {
       // Controls.
-      if (inputs.get("left") || inputs.get("right"))
+      /*if (inputs.get("left") || inputs.get("right"))
       {
         controls.disableAll();
         title.switchButton();
@@ -635,13 +635,49 @@ public class GameController
           controls.disableAll();
           game.quit();
         }
-      }
+      }*/
+      
+      if(title.IsStarting){
+  		controls.disableAll();
+  		newGame();
+  		SelectJoystick(title.selectedJoystick);
+  		
+	  	}
+	  	else if(title.IsExiting){
+	  		controls.disableAll();
+	  		game.quit();
+	  	}
+	  	else if(title.IsOption){
+	  		
+	  	}
 
       if (inputs.get("sound"))
       {
         soundEnabled = !soundEnabled;
       }
     }
+  }
+  
+  /**
+   * Selects Joystick based on Options Dialog choice
+   * @param selectedIndex
+   */
+  private void SelectJoystick(int selectedIndex){
+      try{
+          Controllers.create();
+      } catch(Exception e){
+          e.printStackTrace();
+          System.exit(0);
+      }
+
+      joystickReady = false;
+      if(selectedIndex > 0){
+	        Controller controller = Controllers.getController(selectedIndex-1);
+	        joystick = controller;
+	        joystick.poll();
+	        joystickLastX = joystick.getAxisValue(JOYSTICK_X);
+	        joystickLastY = joystick.getAxisValue(JOYSTICK_Y);
+      }
   }
 
   /**
