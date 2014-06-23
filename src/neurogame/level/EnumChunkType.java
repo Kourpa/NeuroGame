@@ -19,8 +19,7 @@ public enum EnumChunkType
   },
 
   SMOOTH
-  { public double getSpeed() { return .3; }
-    public double getMaxChange() { return 0.01; }
+  { public double getMaxChange() { return 0.01; }
     public double getStepSize()  { return 0.01; }
     public double getDefaultOpeningHeight()  { return 0.3; }
     public PowerUp getPowerUp()  { return null; }
@@ -28,8 +27,7 @@ public enum EnumChunkType
   },
 
   SPIKE
-  { public double getSpeed() { return .3; }
-    public double getMaxChange() { return 0.1; }
+  { public double getMaxChange() { return 0.1; }
     public double getStepSize() { return 0.1; }
     public double getDefaultOpeningHeight() { return 0.4; }
     public PowerUp getPowerUp() { return null; }
@@ -37,17 +35,15 @@ public enum EnumChunkType
   },
 
   CURVED
-  { public double getSpeed() { return .3; }
-    public double getMaxChange() { return 0.1; }
+  { public double getMaxChange() { return 0.1; }
     public double getStepSize() { return 0.1; }
     public double getDefaultOpeningHeight() { return 0.4; }
     public PowerUp getPowerUp() { return null; }
-    public EnumEnemyType getEnemyType() { return EnumEnemyType.FOLLOW; }
+    public EnumEnemyType getEnemyType() { return EnumEnemyType.SINUSOIDAL; }
   },
 
   SQUARE
-  { public double getSpeed() { return .3; }
-    public double getMaxChange() { return 0.06; }
+  { public double getMaxChange() { return 0.06; }
     public double getStepSize() { return 0.06; }
     public double getDefaultOpeningHeight() { return 0.4; }
     public PowerUp getPowerUp() { return null; }
@@ -62,7 +58,6 @@ public enum EnumChunkType
   }
 
   public static final double MAX_STEP_SIZE = 0.1;
-  public abstract double getSpeed();
   public abstract double getMaxChange();
   public abstract double getStepSize();
   public abstract double getDefaultOpeningHeight();

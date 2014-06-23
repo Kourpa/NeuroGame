@@ -53,13 +53,13 @@ public class World
     chunkLeft = new Chunk(null, windowWidth, EnumChunkType.FLAT,
         EnumChunkType.FLAT.getDefaultOpeningHeight());
 
-    skillBasedChunkGapHeight = EnumChunkType.SMOOTH.getDefaultOpeningHeight();
-    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SMOOTH,
-        skillBasedChunkGapHeight);
-    
-//    skillBasedChunkGapHeight = EnumChunkType.SPIKE.getDefaultOpeningHeight();
-//    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SPIKE,
+//    skillBasedChunkGapHeight = EnumChunkType.SMOOTH.getDefaultOpeningHeight();
+//    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SMOOTH,
 //        skillBasedChunkGapHeight);
+    
+    skillBasedChunkGapHeight = EnumChunkType.CURVED.getDefaultOpeningHeight();
+    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.CURVED,
+        skillBasedChunkGapHeight);
 
 
     crystalWalls = new CrystalGrower(chunkLeft, chunkRight);
@@ -77,7 +77,7 @@ public class World
     double visibleWorldLeftBeforeUpdate = Library.leftEdgeOfWorld;
     // System.out.println("update("+deltaTime+"), chunkLeft.getWidth() =
 
-    double deltaDistance = deltaTime * chunkLeft.getChunkType().getSpeed();
+    double deltaDistance = deltaTime * Library.WORLD_SCROLL_SPEED;
 
     /** add the scrollSpeed to the distance* */
     chunkScolledDistance += deltaDistance;
