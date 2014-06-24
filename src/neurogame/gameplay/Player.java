@@ -299,7 +299,7 @@ public class Player extends GameObject
     int yy = Library.worldPosYToScreen(getY());
     canvas.drawImage(image, xx, yy, null);
 
-    if (health < Library.HEALTH_MAX/4) canvas.drawImage(Library.getSprites().get("pDmg2"), xx, yy, null);
+    if (health < Library.HEALTH_MAX/10) canvas.drawImage(Library.getSprites().get("pDmg2"), xx, yy, null);
 
     else if (health < Library.HEALTH_MAX/2) canvas.drawImage(Library.getSprites().get("pDmg1"), xx,  yy, null);
 

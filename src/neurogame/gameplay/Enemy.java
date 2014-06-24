@@ -56,11 +56,13 @@ public class Enemy extends GameObject
     lastMovementX = 0.0;
     lastMovementY = 0.0;
     
+    
+    
     this.type = type;
     if (type == EnumEnemyType.STRAIGHT)
     { 
       image = Library.getSprites().get(name);
-      maxSpeed = 0.60 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/20.0;
+      maxSpeed = 0.60 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/20.0;      
     }
     else if (type == EnumEnemyType.FOLLOW)
     { 
@@ -107,7 +109,7 @@ public class Enemy extends GameObject
     { deltaPos = strategyFollow(maxDistanceChange, scrollDistance);
     }
     else if (type == EnumEnemyType.SINUSOIDAL)
-    { deltaPos = strategyFollow(maxDistanceChange, scrollDistance);
+    { deltaPos = strategySinusoidal(maxDistanceChange, scrollDistance);
     }
     else
     { deltaPos = new Vector2();
@@ -180,41 +182,35 @@ public class Enemy extends GameObject
   public Vector2 strategySinusoidal(double maxDistanceChange, double scrollDistance)
   {
     double dx = -maxDistanceChange/2.0;
-    double dy =  0.0;
+    double dy =  lastMovementY;
+    if (dy == 0.0)
+    { dy = maxDistanceChange;
+      if (Library.RANDOM.nextBoolean())  dy = - maxDistanceChange;
+    }
 
     double xx = getX() + dx;
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(xx);
-    if (vertex == null) return new Vector2(lastMovementX, lastMovementY);
+    if (vertex == null) return new Vector2(lastMovementX, 0);
     
-    double gap = getHeight()/5.0;
-    double stopTop = vertex.getTopY() + gap;
+    //double gap = getHeight()/2.0;
+    //double stopTop = vertex.getTopY() + gap;
     
-    double stopBot = (vertex.getBottomY() - getHeight()) - gap;
-    double center = (stopBot + stopTop)/2;
+    //double stopBot = (vertex.getBottomY() - getHeight()) - gap;
+    
 
-    if (getY() < center)
+    if (getY()+getHeight()/2 > vertex.getCenter())
     { 
-      double speed = maxDistanceChange * ((getY() - stopTop) / (center - stopTop));
-      if (speed < maxDistanceChange/10.0) speed = maxDistanceChange/10.0;
-      
-      if (lastMovementY > 0.0) dy = speed;
-      else
-      {  if (getY() <= stopTop) dy = 0.0;
-         else dy = -speed;
-      }
+      dy = lastMovementY - maxDistanceChange/10;
     }
     else
     { 
-      double speed = maxDistanceChange * ((stopBot - getY()) / (stopBot - center));
-      if (lastMovementY < 0.0) dy = -speed;
-      else
-      {  if (getY() >= stopBot) dy = 0.0;
-         else dy = speed;
-      }
-    }  
+      dy = lastMovementY + maxDistanceChange/10;
+    }
+ 
+    if (getY() + dy > vertex.getBottomY() - getHeight()) dy = - maxDistanceChange;
+    if (getY() + dy < vertex.getTopY()) dy = maxDistanceChange; 
     
-    Vector2 deltaPos = new Vector2(dx, dy);
-    return deltaPos;
+    return new Vector2(dx, dy);
   }
 
 
@@ -278,13 +274,13 @@ public class Enemy extends GameObject
     if (vertex == null) return 0;
 
     double x = vertex.getX(); 
-
-    double rangeY = (vertex.getBottomY() - vertex.getTopY()) - type.getHeight() * 2;
+    double rangeY = (vertex.getBottomY() - vertex.getTopY()) - type.getHeight();
     if (rangeY < 0.01) return 0;
     
-    
-    double y = (Library.RANDOM.nextDouble() * rangeY) + vertex.getTopY() + type.getHeight(); 
+    double y = world.getPlayer().getY() + type.getHeight()*(Library.RANDOM.nextDouble() - Library.RANDOM.nextDouble());
+    if ((y <= vertex.getTopY()) || y > vertex.getBottomY() - type.getHeight()) y = vertex.getCenter()-type.getHeight()/2;
 
+    
     Enemy myEnemy = new Enemy(type, x, y, type.getWidth(), type.getHeight(), type.getName(), world);
    
     gameObjects.add(myEnemy);
