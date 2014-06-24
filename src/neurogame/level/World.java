@@ -25,6 +25,7 @@ public class World
   private List<GameObject> gameObjects;
 
   private double windowWidth;
+  private int frameCountSinceLastChunkTypeChange;
 
   // private double visibleWorldLeft = 0; //total horizontal change
   private double chunkScolledDistance = 0; // used to determine when to generate
@@ -46,6 +47,7 @@ public class World
   {
     Library.leftEdgeOfWorld = 0.0;
     windowWidth = Library.getWindowAspect();
+    frameCountSinceLastChunkTypeChange = 0;
 
     player = new Player(0.1, 1 / 2.0, 0.075, 0.075, this);
     gameObjects = new ArrayList<>();
@@ -53,13 +55,13 @@ public class World
     chunkLeft = new Chunk(null, windowWidth, EnumChunkType.FLAT,
         EnumChunkType.FLAT.getDefaultOpeningHeight());
 
-//    skillBasedChunkGapHeight = EnumChunkType.SMOOTH.getDefaultOpeningHeight();
-//    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SMOOTH,
-//        skillBasedChunkGapHeight);
-    
-    skillBasedChunkGapHeight = EnumChunkType.CURVED.getDefaultOpeningHeight();
-    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.CURVED,
+    skillBasedChunkGapHeight = EnumChunkType.SMOOTH.getDefaultOpeningHeight();
+    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SMOOTH,
         skillBasedChunkGapHeight);
+    
+//    skillBasedChunkGapHeight = EnumChunkType.CURVED.getDefaultOpeningHeight();
+//    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.CURVED,
+//        skillBasedChunkGapHeight);
 
 
     crystalWalls = new CrystalGrower(chunkLeft, chunkRight);
@@ -108,15 +110,20 @@ public class World
       player.resetCollisionCountInCurrentChunk();
 
       EnumChunkType pathType = chunkRight.getChunkType();
-      if (Library.RANDOM.nextInt(15) == 0)
+      System.out.println("frameCountSinceLastChunkTypeChange="+frameCountSinceLastChunkTypeChange);
+      
+      if ((frameCountSinceLastChunkTypeChange > 5) && (Library.RANDOM.nextInt(30) < frameCountSinceLastChunkTypeChange))
       {
         pathType = EnumChunkType.getRandomType();
 
         if (pathType != chunkRight.getChunkType())
         { // reset for new chunkType;
           skillBasedChunkGapHeight = pathType.getDefaultOpeningHeight();
+          frameCountSinceLastChunkTypeChange = 0;
         }
       }
+      
+      if (pathType == chunkRight.getChunkType()) frameCountSinceLastChunkTypeChange++;
 
       chunkRight = new Chunk(chunkLeft, windowWidth, pathType,
           skillBasedChunkGapHeight);
