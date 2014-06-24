@@ -50,6 +50,7 @@ public class NeuroGame
   public NeuroGame()
   {
     init();
+    
   }
 
   /**
@@ -58,6 +59,7 @@ public class NeuroGame
   private void init()
   {
     startTime = elapsedTime = System.currentTimeMillis();
+    
 
     // Load user profiles
     Library.loadUsers();

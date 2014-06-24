@@ -42,7 +42,7 @@ public class Coin extends GameObject
   public static final double MIN_PROBALITY_SPAWN_PER_SEC = 0.2;
   public static final double MAX_PROBALITY_SPAWN_PER_SEC = 0.9;
 
-  private static double lastCoinSpawnX = 0;
+  private static double lastCoinSpawnX;
 
   private int frameCounter;
 
@@ -69,6 +69,11 @@ public class Coin extends GameObject
     totalCount++;
     id = totalCount;
     lastCoinSpawnX = x;
+  }
+  
+  public static void initGame()
+  {
+    lastCoinSpawnX = 0;
   }
 
   /**
@@ -125,7 +130,7 @@ public class Coin extends GameObject
 
     if (r > world.getPlayer().skillProbabilitySpawnCoinPerSec * deltaTime) return 0;
 
-    //System.out.println("probabilitySpawnCoinPerSec=" + probabilitySpawnCoinPerSec);
+    //System.out.println("probabilitySpawnCoinPerSec=" + world.getPlayer().skillProbabilitySpawnCoinPerSec);
 
     double rightEdgeOfScreen = Library.leftEdgeOfWorld
         + Library.getWindowAspect();

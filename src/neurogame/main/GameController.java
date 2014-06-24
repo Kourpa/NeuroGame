@@ -568,8 +568,10 @@ public class GameController
     mode = GameMode.PLAYING;
     deltaX = 0;
 
+    
     world = new World();
     gameObjectList = world.getObjectList();
+    Coin.initGame();
     // zappers = world.getZappers();
     frame.startGame(world);
     controllable = true;

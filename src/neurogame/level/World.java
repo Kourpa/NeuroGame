@@ -110,7 +110,7 @@ public class World
       player.resetCollisionCountInCurrentChunk();
 
       EnumChunkType pathType = chunkRight.getChunkType();
-      System.out.println("frameCountSinceLastChunkTypeChange="+frameCountSinceLastChunkTypeChange);
+      //System.out.println("frameCountSinceLastChunkTypeChange="+frameCountSinceLastChunkTypeChange);
       
       if ((frameCountSinceLastChunkTypeChange > 5) && (Library.RANDOM.nextInt(30) < frameCountSinceLastChunkTypeChange))
       {
