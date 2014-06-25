@@ -13,19 +13,17 @@ import neurogame.library.Library;
  */
 public abstract class GameObject
 {
-
   private static int globalID; // object id
+  
   private final int id;
-  private final String name; // type of object
+  private GameObjectType type;
+
   private double x; // starting x
   private double y; // starting y
-  private double width; // width of obj
-  private double height; // height of obj
   private double centerX, centerY;
-  private double hitMinX, hitMaxX, hitMinY, hitMaxY;
+  private double hitBoxMinX, hitBoxMaxX, hitBoxMinY, hitBoxMaxY;
   protected World world;
   private boolean isAlive = true; // determines if the object is active/alive
-  private boolean isVisible = false; // determines if the object is on screen
 
   protected Player player;
 
@@ -38,15 +36,18 @@ public abstract class GameObject
 
   protected int health = 1;
 
-  public GameObject(double x, double y, double width, double height, String name, World world)
+  public GameObject(GameObjectType type, double x, double y, World world)
   {
-    this.name = name;
+    this.type = type;
     this.x = x;
     this.y = y;
-    this.width = width;
-    this.height = height;
     this.world = world;
     this.player = world.getPlayer();
+    
+    hitBoxMinX = centerX - 0.75 * (type.getWidth() / 2.0);
+    hitBoxMaxX = centerX + 0.75 * (type.getWidth() / 2.0);
+    hitBoxMinY = centerY - 0.75 * (type.getHeight() / 2.0);
+    hitBoxMaxY = centerY + 0.75 * (type.getHeight() / 2.0);
 
     setLocation(x, y);
 
@@ -72,24 +73,20 @@ public abstract class GameObject
     {
       return false;
     }
-    if (other.isVisible == false)
-    {
-      return false;
-    }
 
-    if (hitMaxX < other.hitMinX)
+    if (getHitMaxX() < other.getHitMinX())
     {
       return false;
     }
-    if (hitMinX > other.hitMaxX)
+    if (getHitMinX() > other.getHitMaxX())
     {
       return false;
     }
-    if (hitMaxY < other.hitMinY)
+    if (getHitMaxY() < other.getHitMinY())
     {
       return false;
     }
-    if (hitMinY > other.hitMaxY)
+    if (getHitMinY() > other.getHitMaxY())
     {
       return false;
     }
@@ -109,7 +106,7 @@ public abstract class GameObject
 
   public String getName()
   {
-    return name;
+    return type.getName();
   }
 
   public double getX()
@@ -124,12 +121,12 @@ public abstract class GameObject
 
   public double getWidth()
   {
-    return width;
+    return type.getWidth();
   }
 
   public double getHeight()
   {
-    return height;
+    return type.getHeight();
   }
 
   public void setLocation(double x, double y)
@@ -137,69 +134,47 @@ public abstract class GameObject
     this.x = x;
     this.y = y;
 
-    centerX = x + width / 2.0;
-    centerY = y + height / 2.0;
-
-    hitMinX = centerX - 0.75 * (width / 2.0);
-    hitMaxX = centerX + 0.75 * (width / 2.0);
-    hitMinY = centerY - 0.75 * (height / 2.0);
-    hitMaxY = centerY + 0.75 * (height / 2.0);
+    centerX = x + type.getWidth() / 2.0;
+    centerY = y + type.getHeight() / 2.0;
   }
 
-  public double getCenterX()
-  {
-    return centerX;
-  }
+  public double getCenterX() { return centerX;}
 
-  public double getCenterY()
-  {
-    return centerY;
-  }
+  public double getCenterY(){return centerY;}
 
+  public boolean isAlive()  { return isAlive; }
+  
+  public void die() {   isAlive = false; }
+  
+  
+  
   public double getHitMinX()
-  {
-    return hitMinX;
+  { return centerX + hitBoxMinX;
   }
 
   public double getHitMaxX()
-  {
-    return hitMaxX;
+  { return centerX + hitBoxMaxX;
   }
-
+  
   public double getHitMinY()
-  {
-    return hitMinY;
+  { return centerY + hitBoxMinY;
   }
 
   public double getHitMaxY()
-  {
-    return hitMaxY;
+  { return centerY + hitBoxMaxY;
   }
 
-  public boolean isAlive()
-  {
-    return isAlive;
-  }
-
-  public void die()
-  { 
-    isAlive = false;
-  }
+  
+  public GameObjectType getType() {return type;}
+  
 
   public void setEmpHit(boolean empHit)
   {
     this.empHit = empHit;
   }
 
-  public boolean isVisible()
-  {
-    return isVisible;
-  }
 
-  public void setIsVisible(boolean isVisible)
-  {
-    this.isVisible = isVisible;
-  }
+
 
   public void killedByLaser()
   {
@@ -232,16 +207,16 @@ public abstract class GameObject
 
   protected EnumCollisionType wallCollision()
   {
-    EnumCollisionType collision = world.collisionWithWall(hitMinX, hitMinY);
+    EnumCollisionType collision = world.collisionWithWall(getHitMinX(), getHitMinY());
     if (collision != EnumCollisionType.NONE) return collision;
 
-    collision = world.collisionWithWall(hitMaxX, hitMinY);
+    collision = world.collisionWithWall(getHitMaxX(), getHitMinY());
     if (collision != EnumCollisionType.NONE) return collision;
     
-    collision = world.collisionWithWall(hitMinX, hitMaxY);
+    collision = world.collisionWithWall(getHitMinX(), getHitMaxY());
     if (collision != EnumCollisionType.NONE) return collision;
     
-    collision = world.collisionWithWall(hitMaxX, hitMaxY);
+    collision = world.collisionWithWall(getHitMaxX(), getHitMaxY());
     return collision;
   }
 

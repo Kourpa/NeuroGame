@@ -3,7 +3,6 @@ package neurogame.gameplay;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-import neurogame.gameplay.Enemy.EnumEnemyType;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.QuickSet;
@@ -34,16 +33,16 @@ public class Player extends GameObject
   public double skillProbabilitySpawnCoinPerSec;
   private double skillEnemyStraight;
   private double skillEnemyFollow;
+  private double skillEnemySinusoidal;
 
   private QuickSet<Spark> sparkList;
 
   private DirectionVector directionVector = new DirectionVector();
   private double lastVelocityX, lastVelocityY;
 
-  public Player(double x, double y, double width, double height, World world)
+  public Player(double x, double y, World world)
   {
-    super(x, y, width, height, name, world);
-    setIsVisible(true);
+    super(GameObjectType.PLAYER, x, y, world);
     initGame();
   }
 
@@ -66,6 +65,7 @@ public class Player extends GameObject
     
     skillEnemyStraight = 1;
     skillEnemyFollow = 1;
+    skillEnemySinusoidal = 1;
     Enemy.initGame();
   }
 
@@ -207,27 +207,32 @@ public class Player extends GameObject
     gameScore += Library.POWERUP_POINTS;
   }
 
-  public void defeatedEnemy(EnumEnemyType type)
+  public void defeatedEnemy(GameObjectType type)
   {
-    if (type == EnumEnemyType.STRAIGHT)
+    if (type == GameObjectType.ENEMY_STRAIGHT)
     { skillEnemyStraight += 0.2;
       if (skillEnemyStraight > 6) skillEnemyStraight = 6;
     }
-    else if (type == EnumEnemyType.FOLLOW)
+    else if (type == GameObjectType.ENEMY_FOLLOW)
     { skillEnemyFollow += 0.2;
       if (skillEnemyFollow > 6) skillEnemyFollow = 6;
     }
+    else if (type == GameObjectType.ENEMY_FOLLOW)
+    { skillEnemySinusoidal += 0.2;
+      if (skillEnemySinusoidal > 6) skillEnemySinusoidal = 6;
+    }
+
   }
   
   
-  public void crashedIntoEnemy(EnumEnemyType type)
+  public void crashedIntoEnemy(GameObjectType type)
   {
-    if (type == EnumEnemyType.STRAIGHT)
+    if (type == GameObjectType.ENEMY_STRAIGHT)
     { skillEnemyStraight -= 1.2;
       if (skillEnemyStraight < 1) skillEnemyStraight = 1;
       //System.out.println("crashedIntoEnemy(): skillEnemyStraight="+skillEnemyStraight);
     }
-    else if (type == EnumEnemyType.FOLLOW)
+    else if (type == GameObjectType.ENEMY_FOLLOW)
     { skillEnemyFollow -= 1.2;
       if (skillEnemyFollow < 1) skillEnemyFollow = 1;
       //System.out.println("crashedIntoEnemy(): skillEnemyStraight="+skillEnemyStraight);
@@ -285,10 +290,11 @@ public class Player extends GameObject
     gameScore += score;
   }
   
-  public int getMaxEnemy(EnumEnemyType type)
+  public int getMaxEnemy(GameObjectType type)
   {
-    if (type == EnumEnemyType.STRAIGHT) return (int)skillEnemyStraight;
-    else if (type == EnumEnemyType.FOLLOW) return (int)skillEnemyFollow;
+    if (type == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
+    else if (type == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
+    else if (type == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
     return 1;
   }
   

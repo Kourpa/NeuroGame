@@ -14,62 +14,31 @@ import neurogame.library.Vector2;
 public class Enemy extends GameObject
 {
 
-  public enum EnumEnemyType
-  {
-    STRAIGHT
-    { public String getName() {return "EnemyStraight";}
-      public double getWidth() {return 0.05;}
-      public double getHeight() {return 0.05;}
-      public int getDamageToPlayer() {return 10;}
-    }, 
-    
-    FOLLOW
-    { public String getName() {return "EnemyFollow";}
-      public double getWidth() {return 0.05;}
-      public double getHeight() {return 0.05;}
-      public int getDamageToPlayer() {return 15;}
-    }, 
-    
-    SINUSOIDAL
-    { public String getName() {return "EnemySinusoidal";}
-      public double getWidth() {return 0.05;}
-      public double getHeight() {return 0.05;}
-      public int getDamageToPlayer() {return 10;}
-    };
-    
-    public abstract String getName();
-    public abstract double getWidth();
-    public abstract double getHeight();
-    public abstract int getDamageToPlayer();
-  }
+
   
   private static int activeEnemyCount;
   
   private Image image;
-  private EnumEnemyType type;
   private double lastMovementX, lastMovementY;
   
-  public Enemy(EnumEnemyType type, double x, double y, double width, double height, String name, World world)
+  public Enemy(GameObjectType type, double x, double y, double width, double height, String name, World world)
   {
-    super(x, y, width, height, name, world);
+    super(type, x, y, world);
     
     lastMovementX = 0.0;
     lastMovementY = 0.0;
-    
-    
-    
-    this.type = type;
-    if (type == EnumEnemyType.STRAIGHT)
+
+    if (type == GameObjectType.ENEMY_STRAIGHT)
     { 
       image = Library.getSprites().get(name);
       maxSpeed = 0.60 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/20.0;      
     }
-    else if (type == EnumEnemyType.FOLLOW)
+    else if (type == GameObjectType.ENEMY_FOLLOW)
     { 
       image = Library.getSprites().get(name);
       maxSpeed = 0.25 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/50.0;
     }
-    else if (type == EnumEnemyType.SINUSOIDAL)
+    else if (type == GameObjectType.ENEMY_SINUSOIDAL)
     { 
       image = Library.getSprites().get(name);
       maxSpeed = 0.20 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/20.0;
@@ -84,7 +53,7 @@ public class Enemy extends GameObject
     { super.die();
       activeEnemyCount--; 
       //System.out.println("   die(): activeEnemyCount=" + activeEnemyCount);
-      player.defeatedEnemy(type);
+      player.defeatedEnemy(getType());
     }
   }
   
@@ -97,18 +66,21 @@ public class Enemy extends GameObject
     
     if (checkCollisionWithPlayer()) return false;
     if (checkCollisionWithWall()) return false;
+    checkCollisionWithOtherGameObject();
+    if (!isAlive()) return false;
+    
     
     double maxDistanceChange = maxSpeed * deltaSec;
     
     Vector2 deltaPos;
     
-    if (type == EnumEnemyType.STRAIGHT)
+    if (getType() == GameObjectType.ENEMY_STRAIGHT)
     { deltaPos = strategyStraight(maxDistanceChange, scrollDistance);
     }
-    else if (type == EnumEnemyType.FOLLOW)
+    else if (getType() == GameObjectType.ENEMY_FOLLOW)
     { deltaPos = strategyFollow(maxDistanceChange, scrollDistance);
     }
-    else if (type == EnumEnemyType.SINUSOIDAL)
+    else if (getType() == GameObjectType.ENEMY_SINUSOIDAL)
     { deltaPos = strategySinusoidal(maxDistanceChange, scrollDistance);
     }
     else
@@ -139,11 +111,11 @@ public class Enemy extends GameObject
     boolean changedSpeedToAvoidWall = false;
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(xx);
     if (vertex != null)
-    { if (yy - type.getHeight() < vertex.getTopY())
+    { if (yy - getType().getHeight() < vertex.getTopY())
       { changedSpeedToAvoidWall = true;
         deltaPos.y = maxDistanceChange/2.0;
       }
-      else if (yy + type.getHeight()*2.0 > vertex.getBottomY())    
+      else if (yy + getType().getHeight()*2.0 > vertex.getBottomY())    
       { changedSpeedToAvoidWall = true;
         deltaPos.y = -maxDistanceChange/2.0;
       }
@@ -160,8 +132,8 @@ public class Enemy extends GameObject
   public Vector2 strategyFollow(double maxDistanceChange, double scrollDistance)
   {
     
-    double dx = scrollDistance + player.getCenterX() - (getX() + type.getWidth()/2);
-    double dy = player.getCenterY() - (getY() + type.getHeight()/2);
+    double dx = scrollDistance + player.getCenterX() - (getX() + getType().getWidth()/2);
+    double dy = player.getCenterY() - (getY() + getType().getHeight()/2);
     
     if (getX() < (player.getX() - player.getWidth() * (1.0 + Library.RANDOM.nextDouble()))) 
     { dx = -maxDistanceChange;
@@ -224,8 +196,8 @@ public class Enemy extends GameObject
       double hitX = (getCenterX() + player.getCenterX()) / 2.0;
       double hitY = (getCenterY() + player.getCenterY()) / 2.0;
 
-      player.crashedIntoEnemy(type);
-      player.loseHealth(hitX, hitY, type.getDamageToPlayer());
+      player.crashedIntoEnemy(getType());
+      player.loseHealth(hitX, hitY, getType().getHitDamage());
       die();
       return true;
     }
@@ -244,6 +216,18 @@ public class Enemy extends GameObject
     return false;
   }
   
+  public void checkCollisionWithOtherGameObject()
+  {
+    List<GameObject> gameObjList = world.getObjectList();
+   
+    //for (GameObject obj : gameObjList)
+    //{
+    //  if (this.collision(obj))
+    //  { if (obj.enemy
+    //}
+  }
+  
+  
   public void render(Graphics2D g)
   {
     int xx = Library.worldPosXToScreen(getX());
@@ -254,7 +238,7 @@ public class Enemy extends GameObject
   
   public static int spawn(Chunk myChunk, World world, List<GameObject> gameObjects, double deltaTime)
   {
-    EnumEnemyType type = myChunk.getChunkType().getEnemyType();
+    GameObjectType type = myChunk.getChunkType().getEnemyType();
     if (type == null) return 0;
     int maxEnemy = world.getPlayer().getMaxEnemy(type);
     

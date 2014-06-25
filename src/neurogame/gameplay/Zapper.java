@@ -69,7 +69,7 @@ public class Zapper extends GameObject
    */
   public Zapper(double x1, double y1, double x2, double y2, World world)
   {
-    super(x1, y1, width, height, name, world);
+    super(null, x1, y1, world);
     zapNodeWorldX1 = x1;
     zapNodeWorldX2 = x2;
     zapNodeWorldY1 = y1;

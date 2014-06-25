@@ -49,7 +49,7 @@ public class World
     windowWidth = Library.getWindowAspect();
     frameCountSinceLastChunkTypeChange = 0;
 
-    player = new Player(0.1, 1 / 2.0, 0.075, 0.075, this);
+    player = new Player(0.1, 1 / 2.0, this);
     gameObjects = new ArrayList<>();
 
     chunkLeft = new Chunk(null, windowWidth, EnumChunkType.FLAT,

@@ -76,11 +76,11 @@ public class PowerUp extends GameObject
    * @param direction
    *          Direction this PowerUp should move.
    */
-  public PowerUp(double x, double y, World world, Direction direction)
-  {
-    this(x, y, world, direction, PowerType.values()[Library.RANDOM
-        .nextInt(PowerType.values().length)]);
-  }
+//  public PowerUp(double x, double y, World world, Direction direction)
+//  {
+//    //this(null, x, y, world, direction, PowerType.values()[Library.RANDOM
+//    //    .nextInt(PowerType.values().length)]);
+//  }
 
   /**
    * Instantiate a new PowerUp of the provided type.
@@ -95,13 +95,12 @@ public class PowerUp extends GameObject
    * @param type
    *          PowerType to give this PowerUp.
    */
-  public PowerUp(double x, double y, World world, Direction direction,
-      PowerType type)
+  public PowerUp(GameObjectType type, double x, double y, World world, Direction direction)
   {
-    super(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT, name, world);
-    this.type = type;
-    uiImage = type.getUIImage();
-    timer = type.getTimerMax();
+    super(type, x, y, world);
+    
+    //uiImage = type.getUIImage();
+    //timer = type.getTimerMax();
     inUse = false;
     alreadyUsed = false;
     frameCounter = 0;
@@ -438,15 +437,7 @@ public class PowerUp extends GameObject
     laserPoly.closePath();
   }
 
-  /**
-   * Getter for this PowerUp's type.
-   * 
-   * @return PowerType for this PowerUp.
-   */
-  public PowerType getType()
-  {
-    return type;
-  }
+
 
   /**
    * Getter for this PowerUp's current timer.

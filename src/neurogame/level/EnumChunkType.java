@@ -3,8 +3,8 @@
  * */
 package neurogame.level;
 
+import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.PowerUp;
-import neurogame.gameplay.Enemy.EnumEnemyType;
 import neurogame.library.Library;
 
 public enum EnumChunkType
@@ -15,7 +15,7 @@ public enum EnumChunkType
     public double getStepSize()  { return 0.1; }
     public double getDefaultOpeningHeight()  { return 0.8; }
     public PowerUp getPowerUp() { return null; }
-    public EnumEnemyType getEnemyType() { return null; }
+    public GameObjectType getEnemyType() { return null; }
   },
 
   SMOOTH
@@ -23,7 +23,7 @@ public enum EnumChunkType
     public double getStepSize()  { return 0.01; }
     public double getDefaultOpeningHeight()  { return 0.3; }
     public PowerUp getPowerUp()  { return null; }
-    public EnumEnemyType getEnemyType()  { return EnumEnemyType.STRAIGHT; }
+    public GameObjectType getEnemyType()  { return GameObjectType.ENEMY_STRAIGHT; }
   },
 
   SPIKE
@@ -31,7 +31,7 @@ public enum EnumChunkType
     public double getStepSize() { return 0.1; }
     public double getDefaultOpeningHeight() { return 0.4; }
     public PowerUp getPowerUp() { return null; }
-    public EnumEnemyType getEnemyType() {  return EnumEnemyType.FOLLOW; }
+    public GameObjectType getEnemyType() {  return GameObjectType.ENEMY_FOLLOW; }
   },
 
   CURVED
@@ -39,7 +39,7 @@ public enum EnumChunkType
     public double getStepSize() { return 0.1; }
     public double getDefaultOpeningHeight() { return 0.4; }
     public PowerUp getPowerUp() { return null; }
-    public EnumEnemyType getEnemyType() { return EnumEnemyType.SINUSOIDAL; }
+    public GameObjectType getEnemyType() { return GameObjectType.ENEMY_SINUSOIDAL; }
   },
 
   SQUARE
@@ -47,7 +47,7 @@ public enum EnumChunkType
     public double getStepSize() { return 0.06; }
     public double getDefaultOpeningHeight() { return 0.4; }
     public PowerUp getPowerUp() { return null; }
-    public EnumEnemyType getEnemyType() { return EnumEnemyType.STRAIGHT; }
+    public GameObjectType getEnemyType() { return GameObjectType.ENEMY_STRAIGHT; }
   };
 
   public static EnumChunkType getRandomType()
@@ -62,5 +62,5 @@ public enum EnumChunkType
   public abstract double getStepSize();
   public abstract double getDefaultOpeningHeight();
   public abstract PowerUp getPowerUp();
-  public abstract EnumEnemyType getEnemyType();
+  public abstract GameObjectType getEnemyType();
 }
