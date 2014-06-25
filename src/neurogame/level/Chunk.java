@@ -27,6 +27,7 @@ public final class Chunk
   private double startX;
   private double chunkWidth;
   private static final double CHUNK_HEIGHT = 1.0;
+  public static final int EXTRA_VERTEX_COUNT_PER_CHUNK = 15;
   public static final int TOP = 0;
   public static final int BOTTOM = 1;
 
@@ -43,7 +44,7 @@ public final class Chunk
       double shipPadding)
   {
     this.shipPadding = shipPadding;
-    int vertexPairCount = 1 + (int) (requestedWidth / pathType.getStepSize());
+    int vertexPairCount = EXTRA_VERTEX_COUNT_PER_CHUNK + (int) (requestedWidth / pathType.getStepSize());
     if (pathType == EnumChunkType.CURVED) vertexPairCount++;
 
     vertexList = new ArrayList<>();

@@ -12,9 +12,6 @@ import neurogame.library.Vector2;
 
 public class Enemy extends GameObject
 {
-
-
-  
   private static int activeEnemyCount;
   
   private Image image;
