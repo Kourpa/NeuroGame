@@ -81,7 +81,7 @@ public class Player extends GameObject
    * @param dir
    *          Direction to move the player obj, if any.
    */
-  public boolean update(double deltaSec, double scrollDistance)
+  public void update(double deltaSec, double scrollDistance)
   {
     gameTotalSeconds += deltaSec;
     // System.out.println(this);
@@ -151,9 +151,18 @@ public class Player extends GameObject
         if (!alive) sparkList.remove(i);
       }
     }
-
-    return true;
   }
+  
+  
+  public void hit(GameObject obj)
+  {
+    GameObjectType type = obj.getType();
+    if (type == GameObjectType.COIN) collectCoin();
+    else if (type.isEnemy()) crashedIntoEnemy(obj);
+      
+ 
+  }
+  
 
   public void setDirection(DirectionVector directionVector)
   {
@@ -161,6 +170,9 @@ public class Player extends GameObject
     this.directionVector.x = lastVelocityX * 0.25 + directionVector.x;
     this.directionVector.y = lastVelocityY * 0.25 + directionVector.y;
   }
+  
+  
+  
 
   public void loseHealth(double hitX, double hitY, int damage)
   {
@@ -189,7 +201,7 @@ public class Player extends GameObject
     }
   }
 
-  public void collectCoin(Coin myCoin)
+  public void collectCoin()
   {
     gameCoinsEarned++;
     gameScore += Library.COIN_POINTS;
@@ -215,6 +227,8 @@ public class Player extends GameObject
 
   public void defeatedEnemy(GameObjectType type)
   {
+    gameScore += Library.ENEMY_POINTS;
+    
     if (type == GameObjectType.ENEMY_STRAIGHT)
     { skillEnemyStraight += 0.2;
       if (skillEnemyStraight > 6) skillEnemyStraight = 6;
@@ -231,8 +245,14 @@ public class Player extends GameObject
   }
   
   
-  public void crashedIntoEnemy(GameObjectType type)
+  public void crashedIntoEnemy(GameObject obj)
   {
+    double hitX = (getCenterX() + obj.getCenterX()) / 2.0;
+    double hitY = (getCenterY() + obj.getCenterY()) / 2.0;
+
+    GameObjectType type = obj.getType();
+    player.loseHealth(hitX, hitY, type.getHitDamage());
+    
     if (type == GameObjectType.ENEMY_STRAIGHT)
     { skillEnemyStraight -= 1.2;
       if (skillEnemyStraight < 1) skillEnemyStraight = 1;
@@ -241,15 +261,13 @@ public class Player extends GameObject
     else if (type == GameObjectType.ENEMY_FOLLOW)
     { skillEnemyFollow -= 1.2;
       if (skillEnemyFollow < 1) skillEnemyFollow = 1;
-      //System.out.println("crashedIntoEnemy(): skillEnemyStraight="+skillEnemyStraight);
+    }
+    else if (type == GameObjectType.ENEMY_SINUSOIDAL)
+    { skillEnemySinusoidal -= 1.2;
+      if (skillEnemySinusoidal < 1) skillEnemySinusoidal = 1;
     }
   }
   
-  
-  public void enemyKilled()
-  {
-    gameScore += Library.ENEMY_POINTS;
-  }
 
   public PowerUp getPowerUp()
   {

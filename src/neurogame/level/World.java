@@ -21,7 +21,7 @@ public class World
   private final Player player;
   private Chunk chunkLeft, chunkRight;
   // private final Area walls = new Area(); // The wrong way to do walls
-  private List<GameObject> gameObjects;
+  private ArrayList<GameObject> gameObjectList = new ArrayList<GameObject>();
 
   private double windowWidth;
   private int frameCountSinceLastChunkTypeChange;
@@ -47,7 +47,7 @@ public class World
     frameCountSinceLastChunkTypeChange = 0;
 
     player = new Player(0.1, 1 / 2.0, this);
-    gameObjects = new ArrayList<>();
+    gameObjectList.clear();
 
     chunkLeft = new Chunk(null, windowWidth, EnumChunkType.FLAT,
         EnumChunkType.FLAT.getDefaultOpeningHeight());
@@ -143,8 +143,8 @@ public class World
    */
   private void spawner(double deltaTime)
   {
-    Coin.spawn(chunkRight, this, gameObjects, deltaTime);
-    Enemy.spawn(chunkRight, this, gameObjects, deltaTime);
+    Coin.spawn(chunkRight, this, gameObjectList, deltaTime);
+    Enemy.spawn(chunkRight, this, gameObjectList, deltaTime);
 
   }
 
@@ -159,9 +159,9 @@ public class World
     return player;
   }
 
-  public List<GameObject> getObjectList()
+  public ArrayList<GameObject> getObjectList()
   {
-    return gameObjects;
+    return gameObjectList;
   }
 
   public double getVisibleWorldLeft()

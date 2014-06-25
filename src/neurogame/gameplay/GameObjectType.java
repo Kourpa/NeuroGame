@@ -9,6 +9,7 @@ public enum GameObjectType
     public double getHeight() {return 0.075;}
     public int getHitDamage() {return 0;}
     public boolean isEnemy() {return false;}
+    public boolean isDynamic() {return false;}
   },
 
   COIN
@@ -17,6 +18,7 @@ public enum GameObjectType
     public double getHeight() {return 0.05;}
     public int getHitDamage() {return 0;}
     public boolean isEnemy() {return false;}
+    public boolean isDynamic() {return false;}
   },
   
 
@@ -26,6 +28,7 @@ public enum GameObjectType
     public double getHeight() {return 0.05;}
     public int getHitDamage() {return 10;}
     public boolean isEnemy() {return true;}
+    public boolean isDynamic() {return true;}
   }, 
   
   ENEMY_FOLLOW
@@ -34,6 +37,7 @@ public enum GameObjectType
     public double getHeight() {return 0.05;}
     public int getHitDamage() {return 15;}
     public boolean isEnemy() {return true;}
+    public boolean isDynamic() {return true;}
   }, 
   
   ENEMY_SINUSOIDAL
@@ -42,6 +46,7 @@ public enum GameObjectType
     public double getHeight() {return 0.05;}
     public int getHitDamage() {return 10;}
     public boolean isEnemy() {return true;}
+    public boolean isDynamic() {return true;}
   };
   
   public abstract String getName();
@@ -49,4 +54,5 @@ public enum GameObjectType
   public abstract double getHeight();
   public abstract int getHitDamage();
   public abstract boolean isEnemy();
+  public abstract boolean isDynamic();
 }

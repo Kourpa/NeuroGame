@@ -65,7 +65,7 @@ public abstract class GameObject
     hitBoxMaxY = ((double)y2 * scaleY) - y0;
   }
 
-  public abstract boolean update(double deltaSec, double scrollDistance);
+  public abstract void update(double deltaSec, double scrollDistance);
 
   /**
    * Checks if this objects is colliding with another object.
@@ -73,6 +73,8 @@ public abstract class GameObject
    * @param graphics
    */
   public abstract void render(Graphics2D graphics);
+  
+  public abstract void hit(GameObject other);
 
   public boolean collision(GameObject other)
   {
@@ -101,7 +103,6 @@ public abstract class GameObject
       return false;
     }
     return true;
-
   }
 
   public static int getGlobalID() { return globalID;  }

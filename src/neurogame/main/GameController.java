@@ -11,6 +11,7 @@ package neurogame.main;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,8 +77,6 @@ public class GameController
   private World world;
   private Player player;
   private PowerUp powerUp;
-  private List<GameObject> gameObjectList;
-  private List<GameObject> zappers;
 
   private Controller joystick = null;
   private static final int JOYSTICK_X = 1;
@@ -108,8 +107,6 @@ public class GameController
     keyBinds = new KeyBinds((JComponent) frame.getContentPane(), controls);
     inputs = controls.getInputs();
 
-    gameObjectList = null;
-    zappers = null;
     loggingMode = false;
     soundEnabled = true;
     godMode = false;
@@ -266,6 +263,10 @@ public class GameController
       break;
     }
 
+    ArrayList<GameObject> gameObjectList = null;
+    if (world != null)
+    { gameObjectList = world.getObjectList();
+    }
     frame.render(gameObjectList);
   }
 
@@ -279,7 +280,7 @@ public class GameController
     // Draw the Zappers.
     // updateObjectList(zappers, deltaTime);
     // Update and draw GameObjects.
-    updateObjectList(gameObjectList, deltaTime, scrollDistance);
+    updateObjectList(world.getObjectList(), deltaTime, scrollDistance);
     player.update(deltaTime, scrollDistance);
 
     health = (godMode ? Library.HEALTH_MAX : player.getHealth());
@@ -307,25 +308,39 @@ public class GameController
    *          List<GameObject> to iterate over and update.
    * @param deltaTime
    */
-  public void updateObjectList(List<GameObject> gameObjList, double deltaTime,
-      double scrollDistance)
-
+  public void updateObjectList(List<GameObject> gameObjList, double deltaTime, double scrollDistance)
   {
-    for (ListIterator<GameObject> iterator = gameObjList.listIterator(); iterator
-        .hasNext();)
+    for (ListIterator<GameObject> iterator = gameObjList.listIterator(); iterator.hasNext();)
     {
       GameObject obj = iterator.next();
-
-      boolean isAlive = obj.update(deltaTime, scrollDistance);
-      
-      if (!isAlive) 
-      { obj.die();
-        iterator.remove();
-      }
-      else
+     
+      if (obj.isAlive())
       {
+        obj.update(deltaTime, scrollDistance);
       }
-
+      if (obj.isAlive() == false) iterator.remove();
+    }
+    
+    //Check for object / object collisions after all objects have updated
+    for (int i = 0; i < gameObjList.size(); i++)
+    {
+      GameObject obj1 = gameObjList.get(i);
+      GameObjectType type1 = obj1.getType();
+      if (obj1.isAlive() == false) continue;
+      
+      for (int k = i+1; k < gameObjList.size(); k++)
+      {
+        GameObject obj2 = gameObjList.get(i);
+        GameObjectType type2 = obj2.getType();
+        if (!obj2.isAlive()) continue;
+        
+        if ((!type1.isDynamic()) && (!type2.isDynamic())) continue;
+        
+        if (obj1.collision(obj2))
+        { obj1.hit(obj2);
+          obj2.hit(obj1);
+        }
+      }
     }
   }
 
@@ -525,7 +540,6 @@ public class GameController
 
     
     world = new World();
-    gameObjectList = world.getObjectList();
     Coin.initGame();
     // zappers = world.getZappers();
     frame.startGame(world);

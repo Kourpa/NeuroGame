@@ -11,12 +11,15 @@
 
 //GIT Repository
 //git clone https://github.com/Kourpa/NeuroGame  //initial set up
+//git config core.autocrlf false
+
 
 //git status
 //git add -A //when you create new fines that need to be added
-//git commit -am 'comment'
+//git commit -am 'comment' //commit -a (all) -m (message)
 //git pull origin master
 //git push origin master
+
 
 //git stash //kill all local changes
 

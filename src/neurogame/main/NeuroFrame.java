@@ -17,7 +17,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
@@ -278,7 +278,7 @@ public class NeuroFrame extends JFrame
     this.powerUp = powerUp;
   }
 
-  public void render(List<GameObject> gameObjList)
+  public void render(ArrayList<GameObject> gameObjList)
   {
     drawPanel.render(gameObjList);
   }

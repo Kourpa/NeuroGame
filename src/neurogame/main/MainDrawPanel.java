@@ -7,7 +7,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -203,7 +203,7 @@ public class MainDrawPanel extends JPanel
     }
   }
 
-  public void render(List<GameObject> gameObjList)
+  public void render(ArrayList<GameObject> gameObjList)
   {
     if (frame.getGameMode() == GameState.INITIALIZING) return;
 
