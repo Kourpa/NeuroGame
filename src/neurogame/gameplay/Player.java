@@ -14,8 +14,7 @@ import neurogame.library.QuickSet;
 public class Player extends GameObject
 {
 
-  private static String name = "player";
-  private static Image image = Library.getSprites().get(name);
+  private static Image image = Library.getSprites().get(GameObjectType.PLAYER.getName());
   private PowerUp powerUp;
 
   private boolean invulnerable = false;
@@ -84,7 +83,7 @@ public class Player extends GameObject
   public void update(double deltaSec, double scrollDistance)
   {
     gameTotalSeconds += deltaSec;
-    // System.out.println(this);
+    addScore(deltaSec * Library.SCORE_PER_SEC);
 
     double inputSpeed = directionVector.getAcceleration();
     if (inputSpeed > maxSpeed) inputSpeed = maxSpeed;
@@ -251,7 +250,7 @@ public class Player extends GameObject
     double hitY = (getCenterY() + obj.getCenterY()) / 2.0;
 
     GameObjectType type = obj.getType();
-    player.loseHealth(hitX, hitY, type.getHitDamage());
+    loseHealth(hitX, hitY, type.getHitDamage());
     
     if (type == GameObjectType.ENEMY_STRAIGHT)
     { skillEnemyStraight -= 1.2;

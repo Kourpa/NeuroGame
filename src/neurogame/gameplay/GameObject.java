@@ -211,4 +211,9 @@ public abstract class GameObject
   public int getHealth() { return health;}
 
   public void setHealth(int health) { this.health = health; }
+  
+  public String toString()
+  {
+    return type.getName() + "["+id+"]";
+  }
 }

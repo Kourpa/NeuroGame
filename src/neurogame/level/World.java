@@ -48,6 +48,7 @@ public class World
 
     player = new Player(0.1, 1 / 2.0, this);
     gameObjectList.clear();
+    gameObjectList.add(player);
 
     chunkLeft = new Chunk(null, windowWidth, EnumChunkType.FLAT,
         EnumChunkType.FLAT.getDefaultOpeningHeight());

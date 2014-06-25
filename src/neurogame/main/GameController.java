@@ -272,7 +272,7 @@ public class GameController
 
   private void playUpdate(double deltaTime)
   {
-    player.addScore(deltaTime * Library.SCORE_PER_SEC);
+    
     // Player input.
     keyHandler();
     double scrollDistance = world.update(deltaTime);
@@ -281,7 +281,6 @@ public class GameController
     // updateObjectList(zappers, deltaTime);
     // Update and draw GameObjects.
     updateObjectList(world.getObjectList(), deltaTime, scrollDistance);
-    player.update(deltaTime, scrollDistance);
 
     health = (godMode ? Library.HEALTH_MAX : player.getHealth());
 
@@ -297,8 +296,7 @@ public class GameController
     // }
 
     // Set the info for the HUD.
-    frame.setStats(player.getScore(), player.getTotalCoinsEarnedThisGame(),
-        health, powerUp);
+    frame.setStats(player.getScore(), player.getTotalCoinsEarnedThisGame(),health, powerUp);
   }
 
   /**
@@ -330,14 +328,16 @@ public class GameController
       
       for (int k = i+1; k < gameObjList.size(); k++)
       {
-        GameObject obj2 = gameObjList.get(i);
+        GameObject obj2 = gameObjList.get(k);
         GameObjectType type2 = obj2.getType();
         if (!obj2.isAlive()) continue;
         
         if ((!type1.isDynamic()) && (!type2.isDynamic())) continue;
         
         if (obj1.collision(obj2))
-        { obj1.hit(obj2);
+        { 
+          //System.out.println("HIT: " + obj1 + " <--> " + obj2);
+          obj1.hit(obj2);
           obj2.hit(obj1);
         }
       }

@@ -4,12 +4,12 @@ package neurogame.gameplay;
 public enum GameObjectType
 {
   PLAYER
-  { public String getName() {return "coin";}
+  { public String getName() {return "player";}
     public double getWidth() {return 0.075;}
     public double getHeight() {return 0.075;}
     public int getHitDamage() {return 0;}
     public boolean isEnemy() {return false;}
-    public boolean isDynamic() {return false;}
+    public boolean isDynamic() {return true;}
   },
 
   COIN
