@@ -11,6 +11,7 @@ package neurogame.main;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,15 @@ import neurogame.level.*;
 public class GameController
 {
 
+  public enum GameState
+  {
+    INITIALIZING, //Skip all rendering
+    TITLE,        //Title / option screen displayed
+    PLAYING,      // Normal game play
+    PAUSED,       // Normal game play paused
+    DEAD;         // TODO : Player has died, continue showing game moving, no player controls, display "Game Over" overlay.
+  }
+  
   private final NeuroGame game;
   private final PlayerControls controls;
   private final KeyBinds keyBinds;
@@ -61,15 +71,12 @@ public class GameController
   private boolean controllable;
   private boolean scrolling;
 
-  private GameMode mode;
+  private GameState gameState;
   private TitleScreen title;
 
   private World world;
   private Player player;
   private PowerUp powerUp;
-  private List<GameObject> gameObjectList;
-  private List<GameObject> zappers;
-  private double deltaX;
 
   private Controller joystick = null;
   private static final int JOYSTICK_X = 1;
@@ -100,9 +107,6 @@ public class GameController
     keyBinds = new KeyBinds((JComponent) frame.getContentPane(), controls);
     inputs = controls.getInputs();
 
-    gameObjectList = null;
-    zappers = null;
-    deltaX = 0;
     loggingMode = false;
     soundEnabled = true;
     godMode = false;
@@ -209,28 +213,13 @@ public class GameController
 
     while (true)
     {
-      while (mode == GameMode.PAUSED)
-      {
-        try
-        {
-          Thread.sleep(Library.MIN_FRAME_MILLISEC);
-        }
-        catch (Exception e)
-        {
-        }
-      }
 
       long deltaMilliSec = System.currentTimeMillis() - timeMS_last;
 
       if (deltaMilliSec < Library.MIN_FRAME_MILLISEC)
       {
-        try
-        {
-          Thread.sleep(Library.MIN_FRAME_MILLISEC - deltaMilliSec);
-        }
-        catch (Exception e)
-        {
-        }
+        try { Thread.sleep(Library.MIN_FRAME_MILLISEC - deltaMilliSec); }
+        catch (Exception e) { }
       }
       timeMS_curr = System.currentTimeMillis();
       double deltaSec = (timeMS_curr - timeMS_last) / 1000.0;
@@ -253,11 +242,10 @@ public class GameController
    */
   private void update(double deltaSec)
   {
-    frameCounter++;
-
-    switch (mode)
+    switch (gameState)
     {
     case PLAYING:
+      frameCounter++;
       playUpdate(deltaSec);
       if (health <= 0)
       {
@@ -275,12 +263,16 @@ public class GameController
       break;
     }
 
+    ArrayList<GameObject> gameObjectList = null;
+    if (world != null)
+    { gameObjectList = world.getObjectList();
+    }
     frame.render(gameObjectList);
   }
 
   private void playUpdate(double deltaTime)
   {
-    player.addScore(deltaTime * Library.SCORE_PER_SEC);
+    
     // Player input.
     keyHandler();
     double scrollDistance = world.update(deltaTime);
@@ -288,8 +280,7 @@ public class GameController
     // Draw the Zappers.
     // updateObjectList(zappers, deltaTime);
     // Update and draw GameObjects.
-    updateObjectList(gameObjectList, deltaTime, scrollDistance);
-    player.update(deltaTime, scrollDistance);
+    updateObjectList(world.getObjectList(), deltaTime, scrollDistance);
 
     health = (godMode ? Library.HEALTH_MAX : player.getHealth());
 
@@ -305,8 +296,7 @@ public class GameController
     // }
 
     // Set the info for the HUD.
-    frame.setStats(player.getScore(), player.getTotalCoinsEarnedThisGame(),
-        health, powerUp);
+    frame.setStats(player.getScore(), player.getTotalCoinsEarnedThisGame(),health, powerUp);
   }
 
   /**
@@ -316,25 +306,41 @@ public class GameController
    *          List<GameObject> to iterate over and update.
    * @param deltaTime
    */
-  public void updateObjectList(List<GameObject> gameObjList, double deltaTime,
-      double scrollDistance)
-
+  public void updateObjectList(List<GameObject> gameObjList, double deltaTime, double scrollDistance)
   {
-    for (ListIterator<GameObject> iterator = gameObjList.listIterator(); iterator
-        .hasNext();)
+    for (ListIterator<GameObject> iterator = gameObjList.listIterator(); iterator.hasNext();)
     {
       GameObject obj = iterator.next();
-
-      boolean isAlive = obj.update(deltaTime, scrollDistance);
-      
-      if (!isAlive) 
-      { obj.die();
-        iterator.remove();
-      }
-      else
+     
+      if (obj.isAlive())
       {
+        obj.update(deltaTime, scrollDistance);
       }
-
+      if (obj.isAlive() == false) iterator.remove();
+    }
+    
+    //Check for object / object collisions after all objects have updated
+    for (int i = 0; i < gameObjList.size(); i++)
+    {
+      GameObject obj1 = gameObjList.get(i);
+      GameObjectType type1 = obj1.getType();
+      if (obj1.isAlive() == false) continue;
+      
+      for (int k = i+1; k < gameObjList.size(); k++)
+      {
+        GameObject obj2 = gameObjList.get(k);
+        GameObjectType type2 = obj2.getType();
+        if (!obj2.isAlive()) continue;
+        
+        if ((!type1.isDynamic()) && (!type2.isDynamic())) continue;
+        
+        if (obj1.collision(obj2))
+        { 
+          //System.out.println("HIT: " + obj1 + " <--> " + obj2);
+          obj1.hit(obj2);
+          obj2.hit(obj1);
+        }
+      }
     }
   }
 
@@ -383,7 +389,7 @@ public class GameController
     if (inputs.get("pause"))
     {
       controls.disableAll();
-      if (mode == GameMode.PAUSED)
+      if (gameState == GameState.PAUSED)
       {
         unpause();
       }
@@ -400,8 +406,8 @@ public class GameController
       // When toggling screen mode, we need to stop the timer to make
       // sure render() doesn't get called while the switch is taking
       // place, as this could cause multithreading issues.
-      mode = GameMode.PAUSED;
-      mode = GameMode.PLAYING;
+      gameState = GameState.PAUSED;
+      gameState = GameState.PLAYING;
     }
     // Movement. If controllable is false, ignore.
     if (controllable)
@@ -430,41 +436,6 @@ public class GameController
         gameOver();
       }
 
-      // // Toggle centered - only if debug.
-      // if (inputs.get("toggle_centered") && debug)
-      // {
-      // inputs.put("toggle_centered", false);
-      // engine.toggleCentered();
-      // }
-      // Debug enemy spawners.
-//      if (inputs.get("enemy_a") && debug)
-//      {
-//        inputs.put("enemy_a", false);
-//        gameObjectList.add(new EnemyStraight(deltaX + 1.0, 0.5, world));
-//      }
-//      if (inputs.get("enemy_b") && debug)
-//      {
-//        inputs.put("enemy_b", false);
-//        gameObjectList.add(new EnemySinusoidal(deltaX + 1.0, 0.5, world));
-//      }
-//      if (inputs.get("enemy_c") && debug)
-//      {
-//        inputs.put("enemy_c", false);
-//        gameObjectList.add(new EnemyFollow(deltaX + 1.0, 0.5, world));
-//      }
-//      // Debug coin spawner.
-//      if (inputs.get("coin") && debug)
-//      {
-//        inputs.put("coin", false);
-//        gameObjectList.add(new Coin(deltaX + 1.0, 0.5, world));
-//      }
-//      // Debug zapper spawner.
-//      if (inputs.get("zapper") && debug)
-//      {
-//        inputs.put("zapper", false);
-//        gameObjectList.add(new Zapper(deltaX + 1.25, 0.3, deltaX + 1.25, 0.7,
-//            world));
-//      }
     }
   }
 
@@ -565,12 +536,10 @@ public class GameController
     {
       executor.setupLogger();
     }
-    mode = GameMode.PLAYING;
-    deltaX = 0;
+    gameState = GameState.PLAYING;
 
     
     world = new World();
-    gameObjectList = world.getObjectList();
     Coin.initGame();
     // zappers = world.getZappers();
     frame.startGame(world);
@@ -587,7 +556,7 @@ public class GameController
    */
   private void pause()
   {
-    mode = GameMode.PAUSED;
+    gameState = GameState.PAUSED;
     frame.pause();
     log("Game paused.");
   }
@@ -597,7 +566,7 @@ public class GameController
    */
   private void unpause()
   {
-    mode = GameMode.PLAYING;
+    gameState = GameState.PLAYING;
     frame.unpause();
     log("Game unpaused.");
   }
@@ -687,7 +656,7 @@ public class GameController
    */
   private void showTitle()
   {
-    mode = GameMode.TITLE;
+    gameState = GameState.TITLE;
     title = frame.showTitle();
   }
 
@@ -842,13 +811,6 @@ public class GameController
     Library.setDebug(debug);
   }
 
-  /**
-   * A nested enum for the current game mode.
-   */
-  public enum GameMode
-  {
 
-    INITIALIZING, TITLE, PLAYING, PAUSED, DEAD;
-  }
 
 }

@@ -78,24 +78,22 @@ public class Coin extends GameObject
    * sprite is being clipped from the sheet.
    */
 
-  public boolean update(double deltaTime, double scrollDistance)
+  public void update(double deltaTime, double scrollDistance)
   {
     // System.out.println("coin["+id+"]: ("+getX() + ", " + getY() +
     // ") left world edge="+Library.leftEdgeOfWorld);
 
-    if (!isAlive()) return false;
-    if (getX() + GameObjectType.COIN.getWidth() < Library.leftEdgeOfWorld) return false;
-    // check collision with player
-    if (collision(world.getPlayer()) && isAlive())
-    {
-      world.getPlayer().collectCoin(this);
-      // Library.log("Player Collected Coin", world.getRisk());
-      return false;
-    }
+    if (getX()+getWidth() < Library.leftEdgeOfWorld) die();
+    
+    if (!isAlive()) return;
+    
 
     // Animation.
     frameCounter++;
-    return true;
+  }
+  
+  public void hit(GameObject obj)
+  { die();
   }
 
   public void render(Graphics2D g)

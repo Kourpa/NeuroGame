@@ -13,7 +13,6 @@ package neurogame.gameplay;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
@@ -113,9 +112,9 @@ public class PowerUp extends GameObject
    * Override of GameObject's update - updates object state every frame.
    */
   @Override
-  public boolean update(double deltaTime, double scrollDistance)
+  public void update(double deltaTime, double scrollDistance)
   {
-    if (getX() < Library.leftEdgeOfWorld) return false;
+    if (getX() < Library.leftEdgeOfWorld) die();
     if (isAlive())
     {
       animate();
@@ -150,7 +149,10 @@ public class PowerUp extends GameObject
       }
     }
 
-    return false;
+  }
+  
+  public void hit(GameObject obj)
+  { die();
   }
 
   /**

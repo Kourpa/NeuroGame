@@ -5,7 +5,6 @@ import java.awt.Image;
 import java.util.List;
 
 import neurogame.level.Chunk;
-import neurogame.level.EnumChunkType;
 import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -60,14 +59,14 @@ public class Enemy extends GameObject
   
 
   
-  public boolean update(double deltaSec, double scrollDistance)
+  public void update(double deltaSec, double scrollDistance)
   {
-    if (getX()+getWidth() < Library.leftEdgeOfWorld) return false;
+    if (getX()+getWidth() < Library.leftEdgeOfWorld) die();
     
-    if (checkCollisionWithPlayer()) return false;
-    if (checkCollisionWithWall()) return false;
-    checkCollisionWithOtherGameObject();
-    if (!isAlive()) return false;
+    else if (checkCollisionWithWall()) die();
+
+    if (!isAlive()) return;
+   
     
     
     double maxDistanceChange = maxSpeed * deltaSec;
@@ -91,7 +90,14 @@ public class Enemy extends GameObject
     lastMovementX = deltaPos.x;
     lastMovementY = deltaPos.y;
     
-    return true;
+  }
+  
+  
+  public void hit(GameObject obj)
+  { 
+    GameObjectType type = obj.getType();
+    if (type == GameObjectType.COIN) return;
+    die();
   }
     
   public Vector2 strategyStraight(double maxDistanceChange, double scrollDistance)
@@ -186,23 +192,8 @@ public class Enemy extends GameObject
   }
 
 
-  public boolean checkCollisionWithPlayer()
-  {
-    if (!isAlive()) return false;
-
-    if (collision(player))
-    {
-      // Library.log(getName() + " collided with player", world.getRisk());
-      double hitX = (getCenterX() + player.getCenterX()) / 2.0;
-      double hitY = (getCenterY() + player.getCenterY()) / 2.0;
-
-      player.crashedIntoEnemy(getType());
-      player.loseHealth(hitX, hitY, getType().getHitDamage());
-      die();
-      return true;
-    }
-    return false;
-  }
+  
+ 
 
   public boolean checkCollisionWithWall()
   {

@@ -191,9 +191,11 @@ public class Zapper extends GameObject
    * Override of GameObject's update.
    */
   @Override
-  public boolean update(double deltaTime, double scrollDistance)
+  public void update(double deltaTime, double scrollDistance)
   {
-    if (getX() < Library.leftEdgeOfWorld) return false;
+    if (getX() < Library.leftEdgeOfWorld) die();
+    if (!isAlive()) return;
+    
     if (++frameCounter >= frameDelay)
     {
       frameCounter = 0;
@@ -211,9 +213,12 @@ public class Zapper extends GameObject
           Library.DAMAGE_PER_SEC_IN_ZAPPER);
     }
 
-    return true;
   }
 
+  public void hit(GameObject obj)
+  { die();
+  }
+  
   public void render(Graphics2D g)
   {
 
