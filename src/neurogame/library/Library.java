@@ -12,8 +12,6 @@ package neurogame.library;
 
 import java.awt.Container;
 import java.awt.MediaTracker;
-import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;

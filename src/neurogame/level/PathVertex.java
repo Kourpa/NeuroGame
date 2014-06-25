@@ -3,7 +3,6 @@
  */
 package neurogame.level;
 
-import java.util.Random;
 import neurogame.library.Library;
 
 /*

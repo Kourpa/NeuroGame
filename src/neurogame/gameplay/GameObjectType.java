@@ -1,6 +1,5 @@
 package neurogame.gameplay;
 
-import neurogame.level.World;
 
 public enum GameObjectType
 {

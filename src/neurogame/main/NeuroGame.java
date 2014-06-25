@@ -26,7 +26,7 @@ import java.io.IOException;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import neurogame.library.Library;
-import neurogame.main.GameController.GameMode;
+import neurogame.main.GameController.GameState;
 import neurogame.io.IOExecutor;
 
 /**
@@ -83,7 +83,7 @@ public class NeuroGame
     Library.setExecutor(executor);
     controller = new GameController(this, frame, executor);
 
-    frame.setGameMode(GameMode.TITLE);
+    frame.setGameMode(GameState.TITLE);
     frame.render(null);
   }
 

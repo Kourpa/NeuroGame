@@ -43,6 +43,12 @@ public class Player extends GameObject
   public Player(double x, double y, World world)
   {
     super(GameObjectType.PLAYER, x, y, world);
+    
+    final int hitPixel_x1 = 13;
+    final int hitPixel_x2 = 43;
+    final int hitPixel_y1 = 5;
+    final int hitPixel_y2 = 90;
+    overrideDefaultHitBoxInPixels(75, 99, hitPixel_x1, hitPixel_y1, hitPixel_x2, hitPixel_y2);
     initGame();
   }
 
@@ -308,6 +314,8 @@ public class Player extends GameObject
     if (health < Library.HEALTH_MAX/10) canvas.drawImage(Library.getSprites().get("pDmg2"), xx, yy, null);
 
     else if (health < Library.HEALTH_MAX/2) canvas.drawImage(Library.getSprites().get("pDmg1"), xx,  yy, null);
+    
+   
 
     if (sparkList != null)
     {

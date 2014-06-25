@@ -8,7 +8,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.ListIterator;
 
 import javax.swing.JPanel;
 
@@ -17,7 +16,7 @@ import neurogame.gameplay.PowerUp;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.SpriteMap;
-import neurogame.main.GameController.GameMode;
+import neurogame.main.GameController.GameState;
 
 /**
  * The main game frame for NeuroGame.
@@ -206,10 +205,10 @@ public class MainDrawPanel extends JPanel
 
   public void render(List<GameObject> gameObjList)
   {
-    if (frame.getGameMode() == GameMode.INITIALIZING) return;
+    if (frame.getGameMode() == GameState.INITIALIZING) return;
 
     // System.out.println("NeuroFrame.render(): graphics=" + graphics);
-    if (frame.getGameMode() == GameMode.TITLE)
+    if (frame.getGameMode() == GameState.TITLE)
     {
       canvasObjectLayer.drawImage(title.getImage(), 0, 0, null);
     }

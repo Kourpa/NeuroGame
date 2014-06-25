@@ -1,11 +1,7 @@
 package neurogame.gameplay;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.geom.Area;
-
 import neurogame.level.World;
-import neurogame.library.Library;
 
 /**
  *
@@ -44,15 +40,29 @@ public abstract class GameObject
     this.world = world;
     this.player = world.getPlayer();
     
-    hitBoxMinX = centerX - 0.75 * (type.getWidth() / 2.0);
-    hitBoxMaxX = centerX + 0.75 * (type.getWidth() / 2.0);
-    hitBoxMinY = centerY - 0.75 * (type.getHeight() / 2.0);
-    hitBoxMaxY = centerY + 0.75 * (type.getHeight() / 2.0);
+    
+    hitBoxMinX =  - 0.80 * (type.getWidth() / 2.0);
+    hitBoxMaxX =  + 0.80 * (type.getWidth() / 2.0);
+    hitBoxMinY =  - 0.80 * (type.getHeight() / 2.0);
+    hitBoxMaxY =  + 0.80 * (type.getHeight() / 2.0);
 
     setLocation(x, y);
 
     id = globalID;
     globalID++;
+  }
+  
+  public void overrideDefaultHitBoxInPixels(int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2)
+  {
+    double scaleX = type.getWidth()/(double) pixelWidth;
+    double scaleY = type.getHeight()/(double) pixelHeight;
+    double x0 = type.getWidth() / 2.0;
+    double y0 = type.getHeight() / 2.0;
+    
+    hitBoxMinX = ((double)x1 * scaleX) - x0;
+    hitBoxMaxX = ((double)x2 * scaleX) - x0;
+    hitBoxMinY = ((double)y1 * scaleY) - y0;
+    hitBoxMaxY = ((double)y2 * scaleY) - y0;
   }
 
   public abstract boolean update(double deltaSec, double scrollDistance);
@@ -94,40 +104,17 @@ public abstract class GameObject
 
   }
 
-  public static int getGlobalID()
-  {
-    return globalID;
-  }
+  public static int getGlobalID() { return globalID;  }
 
-  public int getId()
-  {
-    return id;
-  }
+  public int getId() {  return id; }
 
-  public String getName()
-  {
-    return type.getName();
-  }
+  public double getX() { return x; }
 
-  public double getX()
-  {
-    return x;
-  }
+  public double getY() { return y; }
 
-  public double getY()
-  {
-    return y;
-  }
+  public double getWidth() { return type.getWidth();  }
 
-  public double getWidth()
-  {
-    return type.getWidth();
-  }
-
-  public double getHeight()
-  {
-    return type.getHeight();
-  }
+  public double getHeight() { return type.getHeight(); }
 
   public void setLocation(double x, double y)
   {

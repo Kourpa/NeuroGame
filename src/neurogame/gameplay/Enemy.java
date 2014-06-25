@@ -5,7 +5,6 @@ import java.awt.Image;
 import java.util.List;
 
 import neurogame.level.Chunk;
-import neurogame.level.EnumChunkType;
 import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
