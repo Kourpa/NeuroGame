@@ -18,7 +18,7 @@
 //git add -A //when you create new fines that need to be added
 //git commit -am 'comment' //commit -a (all) -m (message)
 //git pull origin master
-//git push origin master
+//git push origin master //use --force when fracking git is being a git.
 
 
 //git stash //kill all local changes
