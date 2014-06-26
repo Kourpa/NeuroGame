@@ -67,13 +67,16 @@ public class NeuroGame
   {
     startTime = elapsedTime = System.currentTimeMillis();
     
-    try{
-        cTimer = Runtime.getRuntime().exec("Resources/Timer/timer.exe " + PORT);
-        System.out.println("Timer Started");
-    } catch(IOException ex){
-        System.out.println("Starting CTimer Failed.");
-    }
+//    try{
+//        cTimer = Runtime.getRuntime().exec("Resources/Timer/timer.exe " + PORT);
+//        System.out.println("Timer Started");
+//    } catch(IOException ex){
+//        System.out.println("Starting CTimer Failed.");
+//    }
 
+    System.out.println("Starting CTimer Failed: (Joel Turned it off because it keeps running - even after the java program exits!!!.)");
+    
+    
     // Load user profiles
     Library.loadUsers();
     

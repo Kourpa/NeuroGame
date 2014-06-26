@@ -430,10 +430,13 @@ public final class Library
   public static BufferedImage loadImage(String imagePath, Container widgit)
   {
     if (imagePath == null) return null;
+    
     if (widgit == null)
     {
       widgit = new Container();
     }
+    
+    
 
     // Create a MediaTracker instance, to montior loading of images
     MediaTracker tracker = new MediaTracker(widgit);
@@ -443,9 +446,18 @@ public final class Library
     // BufferedImage loadedImage = //tk.getImage(imagePath);
     BufferedImage loadedImage = null;
     URL fileURL = null;
+    
+    
     try
-    {
-      fileURL = widgit.getClass().getResource(imagePath);
+    { //System.out.println("imagePath="+imagePath);
+      //fileURL = new URL(new URL("file:"), imagePath);
+      
+      imagePath = "resources" + imagePath;
+      fileURL = new URL("file:" + imagePath);
+      
+      
+      //fileURL = widgit.getClass().getResource(imagePath);
+      
       loadedImage = ImageIO.read(fileURL);
 
       // Register it with media tracker
