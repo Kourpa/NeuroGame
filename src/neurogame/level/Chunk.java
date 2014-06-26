@@ -27,7 +27,7 @@ public final class Chunk
   private double startX;
   private double chunkWidth;
   private static final double CHUNK_HEIGHT = 1.0;
-  public static final int EXTRA_VERTEX_COUNT_PER_CHUNK = 15;
+  public static final int EXTRA_VERTEX_COUNT_PER_CHUNK = 1;
   public static final int TOP = 0;
   public static final int BOTTOM = 1;
 

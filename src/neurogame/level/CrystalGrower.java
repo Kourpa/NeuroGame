@@ -166,26 +166,24 @@ public class CrystalGrower extends Thread
   private void spawnCrystalsInNewChunk(Chunk chunk, int pixelStartOfNewChunk)
   {
     List<PathVertex> vertexList = chunk.getPathList();
+    int palett = Crystal.getPalettIdxOfChunkType(chunk.getChunkType());
+    
     
     for (PathVertex vertex : vertexList)
     {
       int x = pixelStartOfNewChunk + (int)(Library.U_VALUE*(vertex.getX() - chunk.getStartX()));
 
-      if (Library.RANDOM.nextDouble() < 0.9)
-      { int y = (int)(Library.U_VALUE*vertex.getTopY()) - Library.RANDOM.nextInt(10);
-        if (y < 0) y = 0;
-        makeCrystal(x, y);
-      }
+      int y = (int)(Library.U_VALUE*vertex.getTopY()) - Library.RANDOM.nextInt(10);
+      if (y < 0) y = 0;
+      makeCrystal(x, y, palett);
       
-      if (Library.RANDOM.nextDouble() < 0.9)
-      { int y = (int)(Library.U_VALUE*vertex.getBottomY()) + Library.RANDOM.nextInt(10);
-        if (y >= bufferPixelHeight) y = bufferPixelHeight-1;
-        makeCrystal(x, y);
-      }
+      y = (int)(Library.U_VALUE*vertex.getBottomY()) + Library.RANDOM.nextInt(10);
+      if (y >= bufferPixelHeight) y = bufferPixelHeight-1;
+      makeCrystal(x, y, palett);
     }
   }
 
-  private void makeCrystal(int x, int y)
+  private void makeCrystal(int x, int y, int palett)
   {
     if (crystalList.size() >= MAX_CRYSTALS)
     {
@@ -203,7 +201,8 @@ public class CrystalGrower extends Thread
     {
       if (imageBuffer.getRGB(x, y) != ROCK_AREA_INT) return;
 
-      Crystal crystal = new Crystal(imageBuffer, x, y, chunkIdx);
+      
+      Crystal crystal = new Crystal(imageBuffer, x, y, chunkIdx, palett);
       crystalList.add(crystal);
     }
     // canvas.setColor(Color.CYAN);
@@ -240,7 +239,7 @@ public class CrystalGrower extends Thread
                 Point p = crystal.getRandomBirthSite(chunkIdx);
                 if ((p != null) && (p != Crystal.NONE))
                 {
-                  makeCrystal(p.x, p.y);
+                  makeCrystal(p.x, p.y, crystal.getPalettIdx());
                 }
               }
             }

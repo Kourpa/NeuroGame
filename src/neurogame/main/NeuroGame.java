@@ -25,7 +25,6 @@
 
 package neurogame.main;
 
-import java.io.IOException;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import neurogame.library.Library;

@@ -37,7 +37,7 @@ public class Enemy extends GameObject
     else if (type == GameObjectType.ENEMY_SINUSOIDAL)
     { 
       image = Library.getSprites().get(name);
-      maxSpeed = 0.20 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/20.0;
+      maxSpeed = 0.40 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/50.0;
     }
     
   }
