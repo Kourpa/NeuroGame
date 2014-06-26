@@ -54,6 +54,7 @@ public final class Library
   public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
   public static final String FILE_DATE_FORMAT = "yyyy-MM-dd HH-mm-ss.SSS";
   public static final String NUM2_FORMAT = "%.2f";
+  public static final double WORLD_SCROLL_SPEED = 0.20;
 
   public static final java.util.Random RANDOM = new java.util.Random();
 
@@ -107,6 +108,8 @@ public final class Library
 			ObjectOutputStream save = new ObjectOutputStream(saveFile);
 			save.writeObject(newUser);
 			save.close();
+			
+			users.add(newUser);
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
