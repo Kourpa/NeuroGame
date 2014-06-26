@@ -33,8 +33,8 @@ public class Coin extends GameObject
   private static final BufferedImage image = Library.getSprites().get(GameObjectType.COIN.getName());
   private static final int spriteWidth = 64;
   private static final int spriteHeight = 64;
-  private static final int spriteSheetHeight = 384;
-  private static final int animationFrames = 6;
+  private static final int spriteSheetHeight = 2560;
+  private static final int animationFrames = 40;
 
   public static final double MIN_PROBALITY_SPAWN_PER_SEC = 0.2;
   public static final double MAX_PROBALITY_SPAWN_PER_SEC = 0.9;
@@ -98,22 +98,16 @@ public class Coin extends GameObject
 
   public void render(Graphics2D g)
   {
-    if (frameCounter % animationFrames == 0)
-    {
-      if (spriteY + spriteHeight >= spriteSheetHeight)
-      {
-        spriteY = 0;
-      }
-      else
-      {
-        spriteY += spriteHeight;
-      }
-    }
+    spriteY = (spriteY + spriteHeight) % spriteSheetHeight;
+    
 
     int xx = Library.worldPosXToScreen(getX());
     int yy = Library.worldPosYToScreen(getY());
-    Image curImage = image.getSubimage(0, spriteY, spriteWidth, spriteHeight);
-    g.drawImage(curImage, xx, yy, null);
+    //Image curImage = image.getSubimage(0, spriteY, spriteWidth, spriteHeight);
+    //int dstx1, int dsty1, int dstx2, int dsty2,
+    //int srcx1, int srcy1, int srcx2, int srcy2,
+    g.drawImage(image, xx, yy, xx+spriteWidth, yy+spriteHeight, 
+                       0, spriteY, spriteWidth, spriteY+spriteHeight, null);
   }
 
   public static int spawn(Chunk myChunk, World world, List<GameObject> gameObjects, double deltaTime)
