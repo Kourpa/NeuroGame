@@ -10,6 +10,7 @@
 
 package neurogame.main;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -81,7 +82,9 @@ public class NeuroFrame extends JFrame
     contentPane.setLayout(null);
 
     drawPanel = new MainDrawPanel(game, this);
-    contentPane.add(drawPanel);
+    //contentPane.add(drawPanel);
+    drawPanel.setVisible(false);
+    //contentPane.setBackground(Color.black);
 
     // setDefaultCloseOperation(EXIT_ON_CLOSE);
     score = 0;
@@ -126,10 +129,12 @@ public class NeuroFrame extends JFrame
   {
     this.world = world;
     // engine = new DrawingEngine(this, world);
+    //setContentPane(drawPanel);
+    contentPane.add(drawPanel);
+    drawPanel.setVisible(true);
     drawPanel.setWorld(world);
     mode = GameState.PLAYING;
     // title = null;
-
   }
 
   public void setGameMode(GameState mode)
@@ -186,6 +191,7 @@ public class NeuroFrame extends JFrame
   public TitleScreen showTitle()
   {
     System.out.println("NeuroFrame.showTitle() Enter");
+    drawPanel.setVisible(false);
     title = new TitleScreen(this);
     drawPanel.setTitle(title);
     mode = GameState.TITLE;
