@@ -25,7 +25,7 @@ import java.util.ListIterator;
 
 import neurogame.library.*;
 import neurogame.gameplay.*;
-import neurogame.io.IOExecutor;
+import neurogame.io.Logger;
 import neurogame.level.*;
 
 /**
@@ -54,7 +54,7 @@ public class GameController
   private final Map<String, Boolean> previousInputs;
   private NeuroFrame frame;
 
-  private IOExecutor executor;
+  private Logger log;
 
   private static Graphics2D graphics;
 
@@ -96,18 +96,17 @@ public class GameController
    * @param executor
    *          IOExecutor for handling logging and communications.
    */
-  public GameController(NeuroGame game, NeuroFrame frame, IOExecutor executor)
+  public GameController(NeuroGame game, NeuroFrame frame)
   {
     System.out.println("GameController() Enter");
     this.game = game;
     this.frame = frame;
-    this.executor = executor;
 
     controls = new PlayerControls();
     keyBinds = new KeyBinds((JComponent) frame.getContentPane(), controls);
     inputs = controls.getInputs();
 
-    loggingMode = false;
+    loggingMode = true;
     soundEnabled = true;
     godMode = false;
     suicideEnabled = false;
@@ -229,13 +228,7 @@ public class GameController
     }
   }
 
-  /**
-   * Kill the IOExecutor. Called when exiting the program.
-   */
-  public void killExecutor()
-  {
-    executor.killAll();
-  }
+
 
   /**
    * Perform framewise updates.
@@ -246,6 +239,7 @@ public class GameController
     {
     case PLAYING:
       frameCounter++;
+      if (loggingMode) log.writeLogRecord();
       playUpdate(deltaSec);
       if (health <= 0)
       {
@@ -349,8 +343,6 @@ public class GameController
    */
   private void keyHandler()
   {
-    // Log key changes.
-    logInputs();
     // Use power-up.
     if (inputs.get("space"))
     {
@@ -532,9 +524,10 @@ public class GameController
    */
   private void newGame()
   {
+    System.out.println("GameController.newGame()  loggingMode="+loggingMode );
     if (loggingMode)
     {
-      executor.setupLogger();
+      log = new Logger();
     }
     gameState = GameState.PLAYING;
 
@@ -548,7 +541,6 @@ public class GameController
     player = world.getPlayer();
     health = player.getHealth();
 
-    log("New game.");
   }
 
   /**
@@ -558,7 +550,6 @@ public class GameController
   {
     gameState = GameState.PAUSED;
     frame.pause();
-    log("Game paused.");
   }
 
   /**
@@ -568,7 +559,6 @@ public class GameController
   {
     gameState = GameState.PLAYING;
     frame.unpause();
-    log("Game unpaused.");
   }
 
   /**
@@ -576,8 +566,7 @@ public class GameController
    */
   private void gameOver()
   {
-    log("Game over.");
-    executor.killLogger();
+    if (loggingMode) log.closeLog();
     showTitle();
   }
 
@@ -588,39 +577,23 @@ public class GameController
   {
     if (title != null)
     {
-      // Controls.
-      /*if (inputs.get("left") || inputs.get("right"))
+
+      if (title.IsStarting)
       {
         controls.disableAll();
-        title.switchButton();
+        newGame();
+        SelectJoystick(title.selectedJoystick);
+
       }
-      if (inputs.get("enter"))
+      else if (title.IsExiting)
       {
-        if (title.getSelected() == "start")
-        {
-          controls.disableAll();
-          newGame();
-        }
-        else
-        {
-          controls.disableAll();
-          game.quit();
-        }
-      }*/
-      
-      if(title.IsStarting){
-  		controls.disableAll();
-  		newGame();
-  		SelectJoystick(title.selectedJoystick);
-  		
-	  	}
-	  	else if(title.IsExiting){
-	  		controls.disableAll();
-	  		game.quit();
-	  	}
-	  	else if(title.IsOption){
-	  		
-	  	}
+        controls.disableAll();
+        game.quit();
+      }
+      else if (title.IsOption)
+      {
+
+      }
 
       if (inputs.get("sound"))
       {
@@ -685,61 +658,9 @@ public class GameController
    *          String to send to the IOExecutor. The executor's Logger will add
    *          the time stamp automatically.
    */
-  public void log(String s)
-  {
-    if (loggingMode)
-    {
-      executor.logEntry(s);
-    }
-  }
 
-  /**
-   * Send the passed String to the IOExecutor to be queued for logging with an
-   * attached risk. Does nothing if logging is disabled.
-   *
-   * @param s
-   *          String to send to the IOExecutor. The executor's Logger will add
-   *          the time stamp automatically.
-   * @param risk
-   *          Double representing the risk to attach to the log entry.
-   */
-  public void log(String s, double risk)
-  {
-    if (loggingMode)
-    {
-      executor.logEntry(s, risk);
-    }
-  }
 
-  /**
-   * Log changes in the inputs map.
-   */
-  public void logInputs()
-  {
-    for (Map.Entry<String, Boolean> e : inputs.entrySet())
-    {
-      String key = e.getKey();
-      // Prevent debugging keys from being logged.
-      if (previousInputs.containsKey(key))
-      {
-        boolean value = e.getValue().booleanValue();
-        boolean previousValue = previousInputs.get(key);
-        if (value != previousValue)
-        {
-          String logString = (value ? "pressed" : "released");
-          if (world != null)
-          {
-            // log("Input " + key + " " + logString + ".", world.getRisk());
-          }
-          else
-          {
-            log("Input " + key + " " + logString + ".");
-          }
-        }
-        previousInputs.put(key, value);
-      }
-    }
-  }
+
 
   /**
    * Setter for loggingMode.

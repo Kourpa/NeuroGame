@@ -34,7 +34,6 @@ public class Coin extends GameObject
   private static final int spriteWidth = 64;
   private static final int spriteHeight = 64;
   private static final int spriteSheetHeight = 2560;
-  private static final int animationFrames = 40;
 
   public static final double MIN_PROBALITY_SPAWN_PER_SEC = 0.2;
   public static final double MAX_PROBALITY_SPAWN_PER_SEC = 0.9;
@@ -61,7 +60,6 @@ public class Coin extends GameObject
   public Coin(double x, double y, World world)
   {
     super(GameObjectType.COIN, x, y, world);
-    frameCounter = Library.RANDOM.nextInt(animationFrames);
     spriteY = 0;
     totalCount++;
     id = totalCount;
@@ -98,7 +96,9 @@ public class Coin extends GameObject
 
   public void render(Graphics2D g)
   {
-    spriteY = (spriteY + spriteHeight) % spriteSheetHeight;
+    if (frameCounter % 2 == 0)
+    { spriteY = (spriteY + spriteHeight) % spriteSheetHeight;
+    }
     
 
     int xx = Library.worldPosXToScreen(getX());

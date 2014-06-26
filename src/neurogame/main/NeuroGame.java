@@ -29,7 +29,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import neurogame.library.Library;
 import neurogame.main.GameController.GameState;
-import neurogame.io.IOExecutor;
 
 /**
  * NeuroGame's main class.
@@ -42,7 +41,6 @@ public class NeuroGame
 {
   private NeuroFrame frame;
   private GameController controller;
-  private IOExecutor executor;
 
   private long startTime;
   private long elapsedTime;
@@ -56,7 +54,6 @@ public class NeuroGame
   public NeuroGame()
   {
     init();
-    
   }
 
   /**
@@ -84,9 +81,7 @@ public class NeuroGame
     frame = new NeuroFrame(game);
     Library.initSprites(frame);
 
-    executor = new IOExecutor();
-    Library.setExecutor(executor);
-    controller = new GameController(this, frame, executor);
+    controller = new GameController(this, frame);
 
     frame.setGameMode(GameState.TITLE);
     frame.render(null);
@@ -165,20 +160,12 @@ public class NeuroGame
         + "{'g', 'G'}, {'l', 'L'} and {'s', 'S'} are " + "mutually exclusive.");
   }
 
-  /**
-   * Finish any outstanding tasks to prepare for cleanly exiting game.
-   */
-  public void cleanup()
-  {
-    controller.killExecutor();
-  }
 
   /**
    * Finish any outstanding tasks and exit the game cleanly.
    */
   public void quit()
   {
-    cleanup();
     System.exit(0);
   }
 
@@ -271,7 +258,7 @@ public class NeuroGame
     else
     {
       game.controller.setSound(true);
-      game.controller.setLoggingMode(false);
+      //game.controller.setLoggingMode(false);
       game.controller.setGodMode(false);
       game.controller.setSuicideEnabled(false);
       game.controller.setGlobalDebug(false);

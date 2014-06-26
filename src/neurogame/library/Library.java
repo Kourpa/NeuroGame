@@ -22,15 +22,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import javax.imageio.ImageIO;
 
 import neurogame.gameplay.GameObject;
-import neurogame.io.IOExecutor;
 import neurogame.main.NeuroFrame;
 
 /**
@@ -47,10 +43,9 @@ public final class Library
 
   public static final String GAME_TITLE = "NeuroSideScroller Version 2014-06-12";
 
-  public static final int MIN_FRAME_MILLISEC = 20;
+  public static final int MIN_FRAME_MILLISEC = 10;
   public static final String ARGS_REGEX = "\\-[hdDlLfFwsSgG]+";
-  public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
-  public static final String FILE_DATE_FORMAT = "yyyy-MM-dd HH-mm-ss.SSS";
+
   public static final String NUM2_FORMAT = "%.2f";
   public static final double WORLD_SCROLL_SPEED = 0.20;
 
@@ -79,14 +74,11 @@ public final class Library
   public static final int DAMAGE_PER_WALL_HIT = 10;
   public static final int DAMAGE_PER_SEC_IN_ZAPPER = 1;
 
-  private static DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-  private static DateFormat fileDateFormat = new SimpleDateFormat(
-      FILE_DATE_FORMAT);
+
 
   private static boolean debug = false;
   public static double leftEdgeOfWorld = 0;
 
-  private static IOExecutor executor;
   private static SpriteMap sprites;
   private static ArrayList<User> users = new ArrayList<User>();
   
@@ -168,14 +160,7 @@ public final class Library
 		return users.get(i);
 	}
 
-  /**
-   * Convenience getter for a String containing the current system date and
-   * time, formatted as "yyyy/MM/dd HH:mm:ss.SSSS."
-   */
-  public static String timeStamp()
-  {
-    return dateFormat.format(Calendar.getInstance().getTime());
-  }
+
 
   public static int getWindowPixelWidth()
   {
@@ -202,14 +187,7 @@ public final class Library
     windowPixelHeight = height;
   }
 
-  /**
-   * Convenience getter for a String containing the current system date and
-   * time, formatted as "yyyy-MM-dd HH-mm-ss.SSSS for file output"
-   */
-  public static String fileTimeStamp()
-  {
-    return fileDateFormat.format(Calendar.getInstance().getTime());
-  }
+
 
   /**
    * Set the random number generator's seed.
@@ -222,48 +200,9 @@ public final class Library
     RANDOM.setSeed(seed);
   }
 
-  /**
-   * Queue the passed String for logging if the IOExecutor has been set.
-   * 
-   * Note: this method is provided for convenience and makes no guarantees about
-   * the log being open when called. If the log is closed, a stack trace will be
-   * printed for the LogClosedException. If it's possible that the log might be
-   * closed when calling log, the IOExecutor should first be acquired using
-   * getExecutor and its methods used instead.
-   * 
-   * @param s
-   *          String to queue for logging.
-   */
-  public static void log(String s)
-  {
-    if (executor != null)
-    {
-      executor.logEntry(s);
-    }
-  }
 
-  /**
-   * Queue the passed String for logging if the IOExecutor has been set and
-   * appends the risk.
-   * 
-   * Note: this method is provided for convenience and makes no guarantees about
-   * the log being open when called. If the log is closed, a stack trace will be
-   * printed for the LogClosedException. If it's possible that the log might be
-   * closed when calling log, the IOExecutor should first be acquired using
-   * getExecutor and its methods used instead.
-   * 
-   * @param s
-   *          String to queue for logging.
-   * @param risk
-   *          Double for the risk to append to the entry.
-   */
-  public static void log(String s, double risk)
-  {
-    if (executor != null)
-    {
-      executor.logEntry(s, risk);
-    }
-  }
+
+
 
   /**
    * Getter for debug.
@@ -354,50 +293,6 @@ public final class Library
     return false;
   }
 
-  // /**
-  // * Get the drawing position of a Point2D.
-  // *
-  // * @param p
-  // * Point2D.Double in world coordinates for which to determine the
-  // * screen position.
-  // * @return Point containing p's location on screen or null if the location
-  // is
-  // * not on screen.
-  // */
-  // public static Point getScreenPosition(Point2D.Double p)
-  // {
-  // if (!isOnScreen(p))
-  // {
-  // return null;
-  // }
-  // else
-  // {
-  // return new Point(worldToScreen(p.x - deltaX),
-  // worldToScreen(worldToScreen(p.y - deltaY)));
-  // }
-  // }
-
-  /**
-   * Getter for executor.
-   * 
-   * @return IOExecutor responsible for managing logging and communications for
-   *         the current game.
-   */
-  public static IOExecutor getExecutor()
-  {
-    return executor;
-  }
-
-  /**
-   * Setter for executor.
-   * 
-   * @param executorIn
-   *          IOExecutor for which to store a reference.
-   */
-  public static void setExecutor(IOExecutor executorIn)
-  {
-    executor = executorIn;
-  }
 
   /**
    * Getter for sprites.
