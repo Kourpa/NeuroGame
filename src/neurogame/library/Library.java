@@ -156,7 +156,7 @@ public final class Library
 		if (users.size() > 0) {
 			String[] names = new String[users.size()];
 			for (int i = 0; i < users.size(); i++) {
-				names[i] = users.get(0).getName();
+				names[i] = users.get(i).getName();
 			}
 			return names;
 		}

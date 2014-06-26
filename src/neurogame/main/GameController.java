@@ -126,31 +126,7 @@ public class GameController
       System.exit(0);
     }
 
-    int count = Controllers.getControllerCount();
-    // System.out.println(count + " Controllers Found");
-
-    // Cursor myCursor = org.lwjgl.input.Mouse.getNativeCursor();
-    // myCursor.setCursorPosition(0, 0);
-    // org.lwjgl.input.Mouse.setGrabbed(true);
-    // org.lwjgl.input.Mouse.setCursorPosition(0, 0);
-    // Display.getImplementation().setCursorPosition(0, 0);
-    joystickReady = false;
-    for (int i = 0; i < count; i++)
-    {
-      Controller controller = Controllers.getController(i);
-      if (controller.getName().contains("Gamepad"))
-      {
-        joystick = controller;
-        System.out.println("Gamepad found at index " + i);
-
-        joystick.poll();
-        joystickLastX = joystick.getAxisValue(JOYSTICK_X);
-        joystickLastY = joystick.getAxisValue(JOYSTICK_Y);
-
-        break;
-      }
-    }
-
+   
     // //////////////
     controls.addBinding("sound");
     keyBinds.addBinding(KeyEvent.VK_F1, "sound");
