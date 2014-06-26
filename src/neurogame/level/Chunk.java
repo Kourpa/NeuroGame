@@ -4,13 +4,10 @@
 package neurogame.level;
 
 import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import neurogame.gameplay.EnumCollisionType;
 import neurogame.library.Library;
 
 /**
@@ -30,6 +27,7 @@ public final class Chunk
   private double startX;
   private double chunkWidth;
   private static final double CHUNK_HEIGHT = 1.0;
+  public static final int EXTRA_VERTEX_COUNT_PER_CHUNK = 1;
   public static final int TOP = 0;
   public static final int BOTTOM = 1;
 
@@ -46,7 +44,7 @@ public final class Chunk
       double shipPadding)
   {
     this.shipPadding = shipPadding;
-    int vertexPairCount = 1 + (int) (requestedWidth / pathType.getStepSize());
+    int vertexPairCount = EXTRA_VERTEX_COUNT_PER_CHUNK + (int) (requestedWidth / pathType.getStepSize());
     if (pathType == EnumChunkType.CURVED) vertexPairCount++;
 
     vertexList = new ArrayList<>();

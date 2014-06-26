@@ -6,7 +6,6 @@ package neurogame.level;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +21,10 @@ public class World
   private final Player player;
   private Chunk chunkLeft, chunkRight;
   // private final Area walls = new Area(); // The wrong way to do walls
-  private List<GameObject> gameObjects;
+  private ArrayList<GameObject> gameObjectList = new ArrayList<GameObject>();
 
   private double windowWidth;
+  private int frameCountSinceLastChunkTypeChange;
 
   // private double visibleWorldLeft = 0; //total horizontal change
   private double chunkScolledDistance = 0; // used to determine when to generate
@@ -33,9 +33,7 @@ public class World
   private double skillBasedChunkGapHeight;
 
   private final Color grey = new Color(25, 25, 25); // Colors!
-  private final Color[] colors = new Color[]
-  { Color.CYAN, Color.MAGENTA };
-
+ 
   private CrystalGrower crystalWalls; // fractals!
 
   /**
@@ -46,9 +44,11 @@ public class World
   {
     Library.leftEdgeOfWorld = 0.0;
     windowWidth = Library.getWindowAspect();
+    frameCountSinceLastChunkTypeChange = 0;
 
-    player = new Player(0.1, 1 / 2.0, 0.075, 0.075, this);
-    gameObjects = new ArrayList<>();
+    player = new Player(0.1, 1 / 2.0, this);
+    gameObjectList.clear();
+    gameObjectList.add(player);
 
     chunkLeft = new Chunk(null, windowWidth, EnumChunkType.FLAT,
         EnumChunkType.FLAT.getDefaultOpeningHeight());
@@ -57,8 +57,8 @@ public class World
     chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SMOOTH,
         skillBasedChunkGapHeight);
     
-//    skillBasedChunkGapHeight = EnumChunkType.SPIKE.getDefaultOpeningHeight();
-//    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SPIKE,
+//    skillBasedChunkGapHeight = EnumChunkType.CURVED.getDefaultOpeningHeight();
+//    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.CURVED,
 //        skillBasedChunkGapHeight);
 
 
@@ -77,7 +77,7 @@ public class World
     double visibleWorldLeftBeforeUpdate = Library.leftEdgeOfWorld;
     // System.out.println("update("+deltaTime+"), chunkLeft.getWidth() =
 
-    double deltaDistance = deltaTime * chunkLeft.getChunkType().getSpeed();
+    double deltaDistance = deltaTime * Library.WORLD_SCROLL_SPEED;
 
     /** add the scrollSpeed to the distance* */
     chunkScolledDistance += deltaDistance;
@@ -108,15 +108,20 @@ public class World
       player.resetCollisionCountInCurrentChunk();
 
       EnumChunkType pathType = chunkRight.getChunkType();
-      if (Library.RANDOM.nextInt(15) == 0)
+      //System.out.println("frameCountSinceLastChunkTypeChange="+frameCountSinceLastChunkTypeChange);
+      
+      if ((frameCountSinceLastChunkTypeChange > 5) && (Library.RANDOM.nextInt(30) < frameCountSinceLastChunkTypeChange))
       {
         pathType = EnumChunkType.getRandomType();
 
         if (pathType != chunkRight.getChunkType())
         { // reset for new chunkType;
           skillBasedChunkGapHeight = pathType.getDefaultOpeningHeight();
+          frameCountSinceLastChunkTypeChange = 0;
         }
       }
+      
+      if (pathType == chunkRight.getChunkType()) frameCountSinceLastChunkTypeChange++;
 
       chunkRight = new Chunk(chunkLeft, windowWidth, pathType,
           skillBasedChunkGapHeight);
@@ -139,8 +144,8 @@ public class World
    */
   private void spawner(double deltaTime)
   {
-    Coin.spawn(chunkRight, this, gameObjects, deltaTime);
-    Enemy.spawn(chunkRight, this, gameObjects, deltaTime);
+    Coin.spawn(chunkRight, this, gameObjectList, deltaTime);
+    Enemy.spawn(chunkRight, this, gameObjectList, deltaTime);
 
   }
 
@@ -155,9 +160,9 @@ public class World
     return player;
   }
 
-  public List<GameObject> getObjectList()
+  public ArrayList<GameObject> getObjectList()
   {
-    return gameObjects;
+    return gameObjectList;
   }
 
   public double getVisibleWorldLeft()

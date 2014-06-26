@@ -3,7 +3,6 @@ package neurogame.gameplay;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-import neurogame.gameplay.Enemy.EnumEnemyType;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.QuickSet;
@@ -15,8 +14,7 @@ import neurogame.library.QuickSet;
 public class Player extends GameObject
 {
 
-  private static String name = "player";
-  private static Image image = Library.getSprites().get(name);
+  private static Image image = Library.getSprites().get(GameObjectType.PLAYER.getName());
   private PowerUp powerUp;
 
   private boolean invulnerable = false;
@@ -34,16 +32,22 @@ public class Player extends GameObject
   public double skillProbabilitySpawnCoinPerSec;
   private double skillEnemyStraight;
   private double skillEnemyFollow;
+  private double skillEnemySinusoidal;
 
   private QuickSet<Spark> sparkList;
 
   private DirectionVector directionVector = new DirectionVector();
   private double lastVelocityX, lastVelocityY;
 
-  public Player(double x, double y, double width, double height, World world)
+  public Player(double x, double y, World world)
   {
-    super(x, y, width, height, name, world);
-    setIsVisible(true);
+    super(GameObjectType.PLAYER, x, y, world);
+    
+    final int hitPixel_x1 = 13;
+    final int hitPixel_x2 = 43;
+    final int hitPixel_y1 = 5;
+    final int hitPixel_y2 = 90;
+    overrideDefaultHitBoxInPixels(75, 99, hitPixel_x1, hitPixel_y1, hitPixel_x2, hitPixel_y2);
     initGame();
   }
 
@@ -66,6 +70,7 @@ public class Player extends GameObject
     
     skillEnemyStraight = 1;
     skillEnemyFollow = 1;
+    skillEnemySinusoidal = 1;
     Enemy.initGame();
   }
 
@@ -75,10 +80,10 @@ public class Player extends GameObject
    * @param dir
    *          Direction to move the player obj, if any.
    */
-  public boolean update(double deltaSec, double scrollDistance)
+  public void update(double deltaSec, double scrollDistance)
   {
     gameTotalSeconds += deltaSec;
-    // System.out.println(this);
+    addScore(deltaSec * Library.SCORE_PER_SEC);
 
     double inputSpeed = directionVector.getAcceleration();
     if (inputSpeed > maxSpeed) inputSpeed = maxSpeed;
@@ -145,9 +150,18 @@ public class Player extends GameObject
         if (!alive) sparkList.remove(i);
       }
     }
-
-    return true;
   }
+  
+  
+  public void hit(GameObject obj)
+  {
+    GameObjectType type = obj.getType();
+    if (type == GameObjectType.COIN) collectCoin();
+    else if (type.isEnemy()) crashedIntoEnemy(obj);
+      
+ 
+  }
+  
 
   public void setDirection(DirectionVector directionVector)
   {
@@ -155,6 +169,9 @@ public class Player extends GameObject
     this.directionVector.x = lastVelocityX * 0.25 + directionVector.x;
     this.directionVector.y = lastVelocityY * 0.25 + directionVector.y;
   }
+  
+  
+  
 
   public void loseHealth(double hitX, double hitY, int damage)
   {
@@ -183,7 +200,7 @@ public class Player extends GameObject
     }
   }
 
-  public void collectCoin(Coin myCoin)
+  public void collectCoin()
   {
     gameCoinsEarned++;
     gameScore += Library.COIN_POINTS;
@@ -207,38 +224,49 @@ public class Player extends GameObject
     gameScore += Library.POWERUP_POINTS;
   }
 
-  public void defeatedEnemy(EnumEnemyType type)
+  public void defeatedEnemy(GameObjectType type)
   {
-    if (type == EnumEnemyType.STRAIGHT)
+    gameScore += Library.ENEMY_POINTS;
+    
+    if (type == GameObjectType.ENEMY_STRAIGHT)
     { skillEnemyStraight += 0.2;
       if (skillEnemyStraight > 6) skillEnemyStraight = 6;
     }
-    else if (type == EnumEnemyType.FOLLOW)
+    else if (type == GameObjectType.ENEMY_FOLLOW)
     { skillEnemyFollow += 0.2;
       if (skillEnemyFollow > 6) skillEnemyFollow = 6;
     }
+    else if (type == GameObjectType.ENEMY_FOLLOW)
+    { skillEnemySinusoidal += 0.2;
+      if (skillEnemySinusoidal > 6) skillEnemySinusoidal = 6;
+    }
+
   }
   
   
-  public void crashedIntoEnemy(EnumEnemyType type)
+  public void crashedIntoEnemy(GameObject obj)
   {
-    if (type == EnumEnemyType.STRAIGHT)
+    double hitX = (getCenterX() + obj.getCenterX()) / 2.0;
+    double hitY = (getCenterY() + obj.getCenterY()) / 2.0;
+
+    GameObjectType type = obj.getType();
+    loseHealth(hitX, hitY, type.getHitDamage());
+    
+    if (type == GameObjectType.ENEMY_STRAIGHT)
     { skillEnemyStraight -= 1.2;
       if (skillEnemyStraight < 1) skillEnemyStraight = 1;
       //System.out.println("crashedIntoEnemy(): skillEnemyStraight="+skillEnemyStraight);
     }
-    else if (type == EnumEnemyType.FOLLOW)
+    else if (type == GameObjectType.ENEMY_FOLLOW)
     { skillEnemyFollow -= 1.2;
       if (skillEnemyFollow < 1) skillEnemyFollow = 1;
-      //System.out.println("crashedIntoEnemy(): skillEnemyStraight="+skillEnemyStraight);
+    }
+    else if (type == GameObjectType.ENEMY_SINUSOIDAL)
+    { skillEnemySinusoidal -= 1.2;
+      if (skillEnemySinusoidal < 1) skillEnemySinusoidal = 1;
     }
   }
   
-  
-  public void enemyKilled()
-  {
-    gameScore += Library.ENEMY_POINTS;
-  }
 
   public PowerUp getPowerUp()
   {
@@ -285,10 +313,11 @@ public class Player extends GameObject
     gameScore += score;
   }
   
-  public int getMaxEnemy(EnumEnemyType type)
+  public int getMaxEnemy(GameObjectType type)
   {
-    if (type == EnumEnemyType.STRAIGHT) return (int)skillEnemyStraight;
-    else if (type == EnumEnemyType.FOLLOW) return (int)skillEnemyFollow;
+    if (type == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
+    else if (type == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
+    else if (type == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
     return 1;
   }
   
@@ -299,9 +328,11 @@ public class Player extends GameObject
     int yy = Library.worldPosYToScreen(getY());
     canvas.drawImage(image, xx, yy, null);
 
-    if (health == 2) canvas.drawImage(Library.getSprites().get("pDmg1"), xx, yy, null);
+    if (health < Library.HEALTH_MAX/8) canvas.drawImage(Library.getSprites().get("pDmg2"), xx, yy, null);
 
-    else if (health == 1) canvas.drawImage(Library.getSprites().get("pDmg2"), xx,  yy, null);
+    else if (health < Library.HEALTH_MAX/2) canvas.drawImage(Library.getSprites().get("pDmg1"), xx,  yy, null);
+    
+   
 
     if (sparkList != null)
     {

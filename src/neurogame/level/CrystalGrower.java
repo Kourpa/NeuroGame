@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.Random;
 
 import neurogame.library.Library;
@@ -14,7 +15,7 @@ import neurogame.library.QuickSet;
 
 public class CrystalGrower extends Thread
 {
-  private static boolean DEBUG_CHUNKS = true;
+  private static boolean DEBUG_CHUNKS = false;
   private static Random rand = new Random();
 
   public final int bufferPixelWidth;
@@ -46,7 +47,9 @@ public class CrystalGrower extends Thread
   public CrystalGrower(Chunk firstChunk, Chunk secondChunk)
   {
 
-    int maxChunkWidth = (int) (Library.U_VALUE * (Library.getWindowAspect() + EnumChunkType.MAX_STEP_SIZE));
+    int maxChunkWidth = (int) (Library.U_VALUE * (Library.getWindowAspect() + 
+        Chunk.EXTRA_VERTEX_COUNT_PER_CHUNK*EnumChunkType.MAX_STEP_SIZE));
+    
     bufferPixelWidth = maxChunkWidth * 2;
     bufferPixelHeight = (int) (Library.U_VALUE * firstChunk.getHeight());
 
@@ -124,11 +127,11 @@ public class CrystalGrower extends Thread
       chunkList[1] = chunk;
 
       double widthWorldChunk0 = 0;
-      int widthChunk0 = 0;
+      int pixelStartOfNewChunk = 0;
       if (chunkIdx > 1)
       {
         widthWorldChunk0 = chunkList[0].getWidth();
-        widthChunk0 = (int) (Library.U_VALUE * widthWorldChunk0);
+        pixelStartOfNewChunk = (int) (Library.U_VALUE * widthWorldChunk0);
       }
 
       Path2D.Double chunkPathTop = chunk.getTop();
@@ -139,7 +142,7 @@ public class CrystalGrower extends Thread
       // ", " + Library.bounds2DString(chunkPathBot.getBounds2D()));
 
       canvas.setColor(PLAY_AREA_COLOR);
-      canvas.fillRect(widthChunk0, 0, bufferPixelWidth - widthChunk0,
+      canvas.fillRect(pixelStartOfNewChunk, 0, bufferPixelWidth - pixelStartOfNewChunk,
           bufferPixelHeight);
 
       AffineTransform orginalTransform = canvas.getTransform();
@@ -147,62 +150,40 @@ public class CrystalGrower extends Thread
           Library.U_VALUE));
       canvas.translate(widthWorldChunk0 - chunk.getStartX(), 0);
 
-      // canvas.setColor(ROCK_AREA_COLOR);
-      if (chunkIdx % 2 == 0) canvas.setColor(FOREST_GREEN);
-      else canvas.setColor(PUMPKIN);
+      canvas.setColor(ROCK_AREA_COLOR);
+      //if (chunkIdx % 2 == 0) canvas.setColor(FOREST_GREEN);
+      //else canvas.setColor(PUMPKIN);
       canvas.fill(chunkPathTop);
       canvas.fill(chunkPathBot);
 
       canvas.setTransform(orginalTransform);
 
-      //if (!DEBUG_CHUNKS) spawnCrystalsInNewChunk(chunk);
+      if (!DEBUG_CHUNKS) spawnCrystalsInNewChunk(chunk, pixelStartOfNewChunk);
       chunkOffsetX = 0;
     }
   }
 
-  private void spawnCrystalsInNewChunk(Path2D.Double chunk)
+  private void spawnCrystalsInNewChunk(Chunk chunk, int pixelStartOfNewChunk)
   {
-    Rectangle bounds = chunk.getBounds();
-    // System.out.println("CrystalGrower.spawnCrystalsInNewChunk("+chunkIdx+"): "+bounds);
+    List<PathVertex> vertexList = chunk.getPathList();
+    int palett = Crystal.getPalettIdxOfChunkType(chunk.getChunkType());
+    
+    
+    for (PathVertex vertex : vertexList)
+    {
+      int x = pixelStartOfNewChunk + (int)(Library.U_VALUE*(vertex.getX() - chunk.getStartX()));
 
-    int x = bounds.x + 3 + rand.nextInt(5);
-    int maxX = x + bounds.width - 50;
-
-    while (x < maxX)
-    { // System.out.println("     x="+x);
-      int y = bounds.y + 3;
-      int maxY = y + bounds.height - 4;
-
-      boolean plotNextIn = false;
-      int lastYIn = -1;
-      while (y < maxY)
-      { // System.out.println("chunk.contains("+x+", y="+y+")="+chunk.contains(x,y));
-        if (chunk.contains(x, y))
-        {
-          if (plotNextIn)
-          {
-            makeCrystal(x, y);
-            plotNextIn = false;
-          }
-          lastYIn = y;
-        }
-        else
-        {
-          if (!plotNextIn && (lastYIn >= 0))
-          {
-            makeCrystal(x, lastYIn);
-            plotNextIn = true;
-            lastYIn = -1;
-          }
-        }
-
-        y += 10 + rand.nextInt(10);
-      }
-      // x += rand.nextInt(chunkWidth/15) + 10;
+      int y = (int)(Library.U_VALUE*vertex.getTopY()) - Library.RANDOM.nextInt(10);
+      if (y < 0) y = 0;
+      makeCrystal(x, y, palett);
+      
+      y = (int)(Library.U_VALUE*vertex.getBottomY()) + Library.RANDOM.nextInt(10);
+      if (y >= bufferPixelHeight) y = bufferPixelHeight-1;
+      makeCrystal(x, y, palett);
     }
   }
 
-  private void makeCrystal(int x, int y)
+  private void makeCrystal(int x, int y, int palett)
   {
     if (crystalList.size() >= MAX_CRYSTALS)
     {
@@ -220,7 +201,8 @@ public class CrystalGrower extends Thread
     {
       if (imageBuffer.getRGB(x, y) != ROCK_AREA_INT) return;
 
-      Crystal crystal = new Crystal(imageBuffer, x, y, chunkIdx);
+      
+      Crystal crystal = new Crystal(imageBuffer, x, y, chunkIdx, palett);
       crystalList.add(crystal);
     }
     // canvas.setColor(Color.CYAN);
@@ -257,7 +239,7 @@ public class CrystalGrower extends Thread
                 Point p = crystal.getRandomBirthSite(chunkIdx);
                 if ((p != null) && (p != Crystal.NONE))
                 {
-                  makeCrystal(p.x, p.y);
+                  makeCrystal(p.x, p.y, crystal.getPalettIdx());
                 }
               }
             }

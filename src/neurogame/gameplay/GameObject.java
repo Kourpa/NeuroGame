@@ -1,11 +1,7 @@
 package neurogame.gameplay;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.geom.Area;
-
 import neurogame.level.World;
-import neurogame.library.Library;
 
 /**
  *
@@ -13,19 +9,17 @@ import neurogame.library.Library;
  */
 public abstract class GameObject
 {
-
   private static int globalID; // object id
+  
   private final int id;
-  private final String name; // type of object
+  private GameObjectType type;
+
   private double x; // starting x
   private double y; // starting y
-  private double width; // width of obj
-  private double height; // height of obj
   private double centerX, centerY;
-  private double hitMinX, hitMaxX, hitMinY, hitMaxY;
+  private double hitBoxMinX, hitBoxMaxX, hitBoxMinY, hitBoxMaxY;
   protected World world;
   private boolean isAlive = true; // determines if the object is active/alive
-  private boolean isVisible = false; // determines if the object is on screen
 
   protected Player player;
 
@@ -38,23 +32,40 @@ public abstract class GameObject
 
   protected int health = 1;
 
-  public GameObject(double x, double y, double width, double height, String name, World world)
+  public GameObject(GameObjectType type, double x, double y, World world)
   {
-    this.name = name;
+    this.type = type;
     this.x = x;
     this.y = y;
-    this.width = width;
-    this.height = height;
     this.world = world;
     this.player = world.getPlayer();
+    
+    
+    hitBoxMinX =  - 0.80 * (type.getWidth() / 2.0);
+    hitBoxMaxX =  + 0.80 * (type.getWidth() / 2.0);
+    hitBoxMinY =  - 0.80 * (type.getHeight() / 2.0);
+    hitBoxMaxY =  + 0.80 * (type.getHeight() / 2.0);
 
     setLocation(x, y);
 
     id = globalID;
     globalID++;
   }
+  
+  public void overrideDefaultHitBoxInPixels(int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2)
+  {
+    double scaleX = type.getWidth()/(double) pixelWidth;
+    double scaleY = type.getHeight()/(double) pixelHeight;
+    double x0 = type.getWidth() / 2.0;
+    double y0 = type.getHeight() / 2.0;
+    
+    hitBoxMinX = ((double)x1 * scaleX) - x0;
+    hitBoxMaxX = ((double)x2 * scaleX) - x0;
+    hitBoxMinY = ((double)y1 * scaleY) - y0;
+    hitBoxMaxY = ((double)y2 * scaleY) - y0;
+  }
 
-  public abstract boolean update(double deltaSec, double scrollDistance);
+  public abstract void update(double deltaSec, double scrollDistance);
 
   /**
    * Checks if this objects is colliding with another object.
@@ -62,6 +73,8 @@ public abstract class GameObject
    * @param graphics
    */
   public abstract void render(Graphics2D graphics);
+  
+  public abstract void hit(GameObject other);
 
   public boolean collision(GameObject other)
   {
@@ -72,134 +85,84 @@ public abstract class GameObject
     {
       return false;
     }
-    if (other.isVisible == false)
-    {
-      return false;
-    }
 
-    if (hitMaxX < other.hitMinX)
+    if (getHitMaxX() < other.getHitMinX())
     {
       return false;
     }
-    if (hitMinX > other.hitMaxX)
+    if (getHitMinX() > other.getHitMaxX())
     {
       return false;
     }
-    if (hitMaxY < other.hitMinY)
+    if (getHitMaxY() < other.getHitMinY())
     {
       return false;
     }
-    if (hitMinY > other.hitMaxY)
+    if (getHitMinY() > other.getHitMaxY())
     {
       return false;
     }
     return true;
-
   }
 
-  public static int getGlobalID()
-  {
-    return globalID;
-  }
+  public static int getGlobalID() { return globalID;  }
 
-  public int getId()
-  {
-    return id;
-  }
+  public int getId() {  return id; }
 
-  public String getName()
-  {
-    return name;
-  }
+  public double getX() { return x; }
 
-  public double getX()
-  {
-    return x;
-  }
+  public double getY() { return y; }
 
-  public double getY()
-  {
-    return y;
-  }
+  public double getWidth() { return type.getWidth();  }
 
-  public double getWidth()
-  {
-    return width;
-  }
-
-  public double getHeight()
-  {
-    return height;
-  }
+  public double getHeight() { return type.getHeight(); }
 
   public void setLocation(double x, double y)
   {
     this.x = x;
     this.y = y;
 
-    centerX = x + width / 2.0;
-    centerY = y + height / 2.0;
-
-    hitMinX = centerX - 0.75 * (width / 2.0);
-    hitMaxX = centerX + 0.75 * (width / 2.0);
-    hitMinY = centerY - 0.75 * (height / 2.0);
-    hitMaxY = centerY + 0.75 * (height / 2.0);
+    centerX = x + type.getWidth() / 2.0;
+    centerY = y + type.getHeight() / 2.0;
   }
 
-  public double getCenterX()
-  {
-    return centerX;
-  }
+  public double getCenterX() { return centerX;}
 
-  public double getCenterY()
-  {
-    return centerY;
-  }
+  public double getCenterY(){return centerY;}
 
+  public boolean isAlive()  { return isAlive; }
+  
+  public void die() {   isAlive = false; }
+  
+  
+  
   public double getHitMinX()
-  {
-    return hitMinX;
+  { return centerX + hitBoxMinX;
   }
 
   public double getHitMaxX()
-  {
-    return hitMaxX;
+  { return centerX + hitBoxMaxX;
   }
-
+  
   public double getHitMinY()
-  {
-    return hitMinY;
+  { return centerY + hitBoxMinY;
   }
 
   public double getHitMaxY()
-  {
-    return hitMaxY;
+  { return centerY + hitBoxMaxY;
   }
 
-  public boolean isAlive()
-  {
-    return isAlive;
-  }
-
-  public void die()
-  { 
-    isAlive = false;
-  }
+  
+  public GameObjectType getType() {return type;}
+  
 
   public void setEmpHit(boolean empHit)
   {
     this.empHit = empHit;
   }
 
-  public boolean isVisible()
-  {
-    return isVisible;
-  }
 
-  public void setIsVisible(boolean isVisible)
-  {
-    this.isVisible = isVisible;
-  }
+
 
   public void killedByLaser()
   {
@@ -232,20 +195,25 @@ public abstract class GameObject
 
   protected EnumCollisionType wallCollision()
   {
-    EnumCollisionType collision = world.collisionWithWall(hitMinX, hitMinY);
+    EnumCollisionType collision = world.collisionWithWall(getHitMinX(), getHitMinY());
     if (collision != EnumCollisionType.NONE) return collision;
 
-    collision = world.collisionWithWall(hitMaxX, hitMinY);
+    collision = world.collisionWithWall(getHitMaxX(), getHitMinY());
     if (collision != EnumCollisionType.NONE) return collision;
     
-    collision = world.collisionWithWall(hitMinX, hitMaxY);
+    collision = world.collisionWithWall(getHitMinX(), getHitMaxY());
     if (collision != EnumCollisionType.NONE) return collision;
     
-    collision = world.collisionWithWall(hitMaxX, hitMaxY);
+    collision = world.collisionWithWall(getHitMaxX(), getHitMaxY());
     return collision;
   }
 
   public int getHealth() { return health;}
 
   public void setHealth(int health) { this.health = health; }
+  
+  public String toString()
+  {
+    return type.getName() + "["+id+"]";
+  }
 }

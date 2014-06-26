@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+
 import neurogame.library.QuickSet;
 
 public class Crystal
@@ -57,7 +58,7 @@ public class Crystal
   private static final int PALETT_COLORS = PALETT[0].length;
   private static final int PALETT_COUNT = PALETT.length;
 
-  private static int palettIdx;
+  private int palettIdx;
   private static Random rand = new Random();
 
   private BufferedImage image;
@@ -70,12 +71,16 @@ public class Crystal
 
   private int chunkId;
   private int offsetX;
+  
 
-  public Crystal(BufferedImage imageBuffer, int x, int y, int chunkId)
+  public Crystal(BufferedImage imageBuffer, int x, int y, int chunkId, int palettIdx)
   {
     this.chunkId = chunkId;
     this.image = imageBuffer;
+    this.palettIdx = palettIdx;
+    
     offsetX = 0;
+   
     colorIdx1 = rand.nextInt(PALETT_COLORS);
     colorIdx2 = colorIdx1;
     while (colorIdx1 == colorIdx2)
@@ -86,10 +91,17 @@ public class Crystal
     createCell(x, y, null);
 
   }
+  
+  
+  public static int getPalettIdxOfChunkType(EnumChunkType chunkType)
+  {
+    if (chunkType == EnumChunkType.CURVED) return 0;
+    else if (chunkType == EnumChunkType.SPIKE) return 1;
+    return 2;
+  }
 
   public static void setup(int gridX, int gridY)
   {
-    palettIdx = rand.nextInt(PALETT_COUNT);
     Crystal.gridX = gridX;
     Crystal.gridY = gridY;
 
@@ -312,6 +324,8 @@ public class Crystal
     }
     return false;
   }
+  
+  public int getPalettIdx() {return palettIdx;}
 
   // =========================================================================
   // setRGB(int x, int y, int r, int g, int b)

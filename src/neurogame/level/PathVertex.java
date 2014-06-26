@@ -3,7 +3,6 @@
  */
 package neurogame.level;
 
-import java.util.Random;
 import neurogame.library.Library;
 
 /*
@@ -15,7 +14,8 @@ public class PathVertex
   private double topY;
   private double bottomY;
   private static final double ROCK_PADDING = .01;
-
+  private Direction directionMoved;
+  
   /**
    * Generates vertices given the specified values.
    * 
@@ -23,6 +23,7 @@ public class PathVertex
    *          keep the vertices flush between chunks
    * @param pathType
    *          type of generation
+   * @param shipPadding
    */
   public PathVertex(PathVertex reference, EnumChunkType pathType,
       double shipPadding)
@@ -38,16 +39,34 @@ public class PathVertex
     {
       x = reference.getX() + stepSize;
 
-      int r = Library.RANDOM.nextInt(2);
-      if (r == 1)
+      int r = Library.RANDOM.nextInt(20);
+      if (reference.directionMoved == Direction.UP)
       {
-        topY = reference.topY - Library.RANDOM.nextDouble() * maxChange;
-        bottomY = reference.bottomY - Library.RANDOM.nextDouble() * maxChange;
+        if(r == 1){
+          directionMoved = Direction.DOWN;
+          topY = reference.topY + Library.RANDOM.nextDouble() * maxChange;
+          bottomY = reference.bottomY + Library.RANDOM.nextDouble() * maxChange;
+        }
+        else
+        {
+          directionMoved = Direction.UP;
+          topY = reference.topY - Library.RANDOM.nextDouble() * maxChange;
+          bottomY = reference.bottomY - Library.RANDOM.nextDouble() * maxChange;
+        }
       }
       else
       {
-        topY = reference.topY + Library.RANDOM.nextDouble() * maxChange;
-        bottomY = reference.bottomY + Library.RANDOM.nextDouble() * maxChange;
+        if(r == 1){
+          directionMoved = Direction.UP;
+          topY = reference.topY - Library.RANDOM.nextDouble() * maxChange;
+          bottomY = reference.bottomY - Library.RANDOM.nextDouble() * maxChange;
+        }
+        else
+        {
+          directionMoved = Direction.DOWN;
+          topY = reference.topY + Library.RANDOM.nextDouble() * maxChange;
+          bottomY = reference.bottomY + Library.RANDOM.nextDouble() * maxChange;
+        }
       }
     }
 
@@ -60,20 +79,20 @@ public class PathVertex
     }
 
     if (bottomY > 1 - ROCK_PADDING)
-    {
+    { directionMoved = Direction.UP;
       bottomY += 1 - ROCK_PADDING - bottomY;
     }
     else if (bottomY < shipPadding)
-    {
+    { directionMoved = Direction.DOWN;
       bottomY += shipPadding - bottomY;
     }
 
     if (topY < ROCK_PADDING)
-    {
+    { directionMoved = Direction.DOWN;
       topY += ROCK_PADDING - topY;
     }
     else if (topY > 1 - shipPadding)
-    {
+    { directionMoved = Direction.UP;
       topY += 1 - shipPadding - topY;
     }
 
@@ -119,10 +138,14 @@ public class PathVertex
   {
     return (bottomY + topY) / 2;
   }
-
+  
   @Override
   public String toString()
   {
     return "X:" + x + " TopY:" + topY + " BottomY:" + bottomY;
+  }
+  
+  enum Direction{
+      UP, DOWN;
   }
 }

@@ -30,19 +30,16 @@ import neurogame.library.Library;
  */
 public class Coin extends GameObject
 {
-  public static final double WIDTH = 0.05;
-  public static final double HEIGHT = 0.05;
-  private static final String name = "coin";
-  private static final BufferedImage image = Library.getSprites().get(name);
+  private static final BufferedImage image = Library.getSprites().get(GameObjectType.COIN.getName());
   private static final int spriteWidth = 64;
   private static final int spriteHeight = 64;
-  private static final int spriteSheetHeight = 384;
-  private static final int animationFrames = 6;
+  private static final int spriteSheetHeight = 2560;
+  private static final int animationFrames = 40;
 
   public static final double MIN_PROBALITY_SPAWN_PER_SEC = 0.2;
   public static final double MAX_PROBALITY_SPAWN_PER_SEC = 0.9;
 
-  private static double lastCoinSpawnX = 0;
+  private static double lastCoinSpawnX;
 
   private int frameCounter;
 
@@ -63,12 +60,17 @@ public class Coin extends GameObject
    */
   public Coin(double x, double y, World world)
   {
-    super(x, y, WIDTH, HEIGHT, name, world);
+    super(GameObjectType.COIN, x, y, world);
     frameCounter = Library.RANDOM.nextInt(animationFrames);
     spriteY = 0;
     totalCount++;
     id = totalCount;
     lastCoinSpawnX = x;
+  }
+  
+  public static void initGame()
+  {
+    lastCoinSpawnX = 0;
   }
 
   /**
@@ -76,44 +78,36 @@ public class Coin extends GameObject
    * sprite is being clipped from the sheet.
    */
 
-  public boolean update(double deltaTime, double scrollDistance)
+  public void update(double deltaTime, double scrollDistance)
   {
     // System.out.println("coin["+id+"]: ("+getX() + ", " + getY() +
     // ") left world edge="+Library.leftEdgeOfWorld);
 
-    if (!isAlive()) return false;
-    if (getX() + Coin.WIDTH < Library.leftEdgeOfWorld) return false;
-    // check collision with player
-    if (collision(world.getPlayer()) && isAlive())
-    {
-      world.getPlayer().collectCoin(this);
-      // Library.log("Player Collected Coin", world.getRisk());
-      return false;
-    }
+    if (getX()+getWidth() < Library.leftEdgeOfWorld) die();
+    
+    if (!isAlive()) return;
+    
 
     // Animation.
     frameCounter++;
-    return true;
+  }
+  
+  public void hit(GameObject obj)
+  { die();
   }
 
   public void render(Graphics2D g)
   {
-    if (frameCounter % animationFrames == 0)
-    {
-      if (spriteY + spriteHeight >= spriteSheetHeight)
-      {
-        spriteY = 0;
-      }
-      else
-      {
-        spriteY += spriteHeight;
-      }
-    }
+    spriteY = (spriteY + spriteHeight) % spriteSheetHeight;
+    
 
     int xx = Library.worldPosXToScreen(getX());
     int yy = Library.worldPosYToScreen(getY());
-    Image curImage = image.getSubimage(0, spriteY, spriteWidth, spriteHeight);
-    g.drawImage(curImage, xx, yy, null);
+    //Image curImage = image.getSubimage(0, spriteY, spriteWidth, spriteHeight);
+    //int dstx1, int dsty1, int dstx2, int dsty2,
+    //int srcx1, int srcy1, int srcx2, int srcy2,
+    g.drawImage(image, xx, yy, xx+spriteWidth, yy+spriteHeight, 
+                       0, spriteY, spriteWidth, spriteY+spriteHeight, null);
   }
 
   public static int spawn(Chunk myChunk, World world, List<GameObject> gameObjects, double deltaTime)
@@ -125,7 +119,7 @@ public class Coin extends GameObject
 
     if (r > world.getPlayer().skillProbabilitySpawnCoinPerSec * deltaTime) return 0;
 
-    //System.out.println("probabilitySpawnCoinPerSec=" + probabilitySpawnCoinPerSec);
+    //System.out.println("probabilitySpawnCoinPerSec=" + world.getPlayer().skillProbabilitySpawnCoinPerSec);
 
     double rightEdgeOfScreen = Library.leftEdgeOfWorld
         + Library.getWindowAspect();
@@ -134,19 +128,19 @@ public class Coin extends GameObject
     if (vertex == null) return 0;
 
     double x = vertex.getX();
-    if (x < lastCoinSpawnX + 4 * Coin.WIDTH) return 0;
+    if (x < lastCoinSpawnX + 4 * GameObjectType.COIN.getWidth()) return 0;
 
     
 
     int targetSpawnCount = Library.RANDOM.nextInt(5) + 1;
     int numCoinsSpawned = 0;
 
-    double y = vertex.getTopY() + Coin.HEIGHT / 3;
+    double y = vertex.getTopY() + GameObjectType.COIN.getHeight() / 3;
     double direction = 1.0;
 
     if (Library.RANDOM.nextBoolean())
     {
-      y = vertex.getBottomY() - 1.3 * Coin.HEIGHT;
+      y = vertex.getBottomY() - 1.3 * GameObjectType.COIN.getHeight();
       direction = -1.0;
     }
 
@@ -157,9 +151,9 @@ public class Coin extends GameObject
       gameObjects.add(myCoin);
       numCoinsSpawned++;
 
-      if (Library.RANDOM.nextDouble() > .75) x += Coin.WIDTH
+      if (Library.RANDOM.nextDouble() > .75) x += GameObjectType.COIN.getWidth()
           * (Library.RANDOM.nextDouble() * 2.0);
-      y += direction * Coin.HEIGHT * (1.0 + Library.RANDOM.nextDouble() / 2);
+      y += direction * GameObjectType.COIN.getHeight() * (1.0 + Library.RANDOM.nextDouble() / 2);
     }
 
     return numCoinsSpawned;

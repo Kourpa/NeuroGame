@@ -11,12 +11,15 @@
 
 //GIT Repository
 //git clone https://github.com/Kourpa/NeuroGame  //initial set up
+//git config core.autocrlf false
+
 
 //git status
 //git add -A //when you create new fines that need to be added
-//git commit -am 'comment'
+//git commit -am 'comment' //commit -a (all) -m (message)
 //git pull origin master
 //git push origin master
+
 
 //git stash //kill all local changes
 
@@ -25,7 +28,7 @@ package neurogame.main;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import neurogame.library.Library;
-import neurogame.main.GameController.GameMode;
+import neurogame.main.GameController.GameState;
 import neurogame.io.IOExecutor;
 
 /**
@@ -43,6 +46,9 @@ public class NeuroGame
 
   private long startTime;
   private long elapsedTime;
+  
+  private final int PORT = 0xF050;
+  private Process cTimer;
 
   /**
    * Initializes a new NeuroGame session.
@@ -50,6 +56,7 @@ public class NeuroGame
   public NeuroGame()
   {
     init();
+    
   }
 
   /**
@@ -58,7 +65,17 @@ public class NeuroGame
   private void init()
   {
     startTime = elapsedTime = System.currentTimeMillis();
+    
+//    try{
+//        cTimer = Runtime.getRuntime().exec("Resources/Timer/timer.exe " + PORT);
+//        System.out.println("Timer Started");
+//    } catch(IOException ex){
+//        System.out.println("Starting CTimer Failed.");
+//    }
 
+    System.out.println("Starting CTimer Failed: (Joel Turned it off because it keeps running - even after the java program exits!!!.)");
+    
+    
     // Load user profiles
     Library.loadUsers();
     
@@ -71,7 +88,7 @@ public class NeuroGame
     Library.setExecutor(executor);
     controller = new GameController(this, frame, executor);
 
-    frame.setGameMode(GameMode.TITLE);
+    frame.setGameMode(GameState.TITLE);
     frame.render(null);
   }
 
@@ -264,6 +281,7 @@ public class NeuroGame
     // timer must not be started until after setting the frame to full-
     // screen-exclusive mode, as it can cause concurrency issues.
     game.controller.mainGameLoop();
+    game.cTimer.destroy();
+    System.out.println("CTimer killed!");
   }
-
 }

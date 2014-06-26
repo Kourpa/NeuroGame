@@ -15,8 +15,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import neurogame.gameplay.Enemy.EnumEnemyType;
-import neurogame.gameplay.EnemySinusoidal;
+import neurogame.gameplay.GameObjectType;
 import neurogame.main.NeuroFrame;
 
 /**
@@ -87,16 +86,16 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("pDmg2", "/images/damage2.png", 68, 68);
 
     add("EnemyStraight", "/images/enemyStraight.png",
-        Library.worldUnitToScreen(EnumEnemyType.STRAIGHT.getWidth()),
-        Library.worldUnitToScreen(EnumEnemyType.STRAIGHT.getHeight()));
+        Library.worldUnitToScreen(GameObjectType.ENEMY_STRAIGHT.getWidth()),
+        Library.worldUnitToScreen(GameObjectType.ENEMY_STRAIGHT.getHeight()));
     add("EnemySinusoidal", "/images/enemySinusoidal.png",
-        Library.worldUnitToScreen(EnemySinusoidal.width),
-        Library.worldUnitToScreen(EnemySinusoidal.height));
+        Library.worldUnitToScreen(GameObjectType.ENEMY_SINUSOIDAL.getWidth()),
+        Library.worldUnitToScreen(GameObjectType.ENEMY_SINUSOIDAL.getHeight()));
     add("EnemyFollow", "/images/enemyFollow.png",
-        Library.worldUnitToScreen(EnumEnemyType.FOLLOW.getWidth()),
-        Library.worldUnitToScreen(EnumEnemyType.FOLLOW.getHeight()));
+        Library.worldUnitToScreen(GameObjectType.ENEMY_FOLLOW.getWidth()),
+        Library.worldUnitToScreen(GameObjectType.ENEMY_FOLLOW.getHeight()));
     add("powerUp", "/images/powerup-container.png", 68, 68);
-    add("coin", "/images/coin.png", 64, 384);
+    add("coin", "/images/coin.png", 64, 2560);
     add("zapper", "/images/zapper.png", 48, 48);
     // Power-up HUD icons.
     add("powerupBackground", "/images/powerup-background.png", 96, 96);

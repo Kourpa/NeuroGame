@@ -18,7 +18,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
@@ -27,7 +27,7 @@ import neurogame.gameplay.PowerUp;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.SpriteMap;
-import neurogame.main.GameController.GameMode;
+import neurogame.main.GameController.GameState;
 
 /**
  * The main game frame for NeuroGame.
@@ -49,7 +49,7 @@ public class NeuroFrame extends JFrame
   private TitleScreen title;
   private World world;
   private int windowPixelWidth, windowPixelHeight;
-  private GameMode mode = GameMode.INITIALIZING;
+  private GameState mode = GameState.INITIALIZING;
   private int score;
   private int coins;
   private int health;
@@ -133,17 +133,16 @@ public class NeuroFrame extends JFrame
     contentPane.add(drawPanel);
     drawPanel.setVisible(true);
     drawPanel.setWorld(world);
-    mode = GameMode.PLAYING;
-    drawPanel.requestFocus();
+    mode = GameState.PLAYING;
     // title = null;
   }
 
-  public void setGameMode(GameMode mode)
+  public void setGameMode(GameState mode)
   {
     this.mode = mode;
   }
 
-  public GameMode getGameMode()
+  public GameState getGameMode()
   {
     return mode;
   }
@@ -173,7 +172,7 @@ public class NeuroFrame extends JFrame
    */
   public void pause()
   {
-    mode = GameMode.PAUSED;
+    mode = GameState.PAUSED;
   }
 
   /**
@@ -181,7 +180,7 @@ public class NeuroFrame extends JFrame
    */
   public void unpause()
   {
-    mode = GameMode.PLAYING;
+    mode = GameState.PLAYING;
   }
 
   /**
@@ -195,13 +194,13 @@ public class NeuroFrame extends JFrame
     drawPanel.setVisible(false);
     title = new TitleScreen(this);
     drawPanel.setTitle(title);
-    mode = GameMode.TITLE;
+    mode = GameState.TITLE;
     return title;
   }
 
   private void resizeEvent()
   {
-    if (mode == GameMode.INITIALIZING) return;
+    if (mode == GameState.INITIALIZING) return;
     resizeHelper();
   }
 
@@ -285,7 +284,7 @@ public class NeuroFrame extends JFrame
     this.powerUp = powerUp;
   }
 
-  public void render(List<GameObject> gameObjList)
+  public void render(ArrayList<GameObject> gameObjList)
   {
     drawPanel.render(gameObjList);
   }
