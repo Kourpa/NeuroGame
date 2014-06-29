@@ -95,6 +95,9 @@ public class NeuroFrame extends JFrame
     resizeHelper();
 
     sprites = Library.getSprites();
+
+
+
     drawPanel.setSprites(sprites);
 
     this.addComponentListener(new ComponentAdapter()

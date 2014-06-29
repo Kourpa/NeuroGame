@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import neurogame.gameplay.GameObjectType;
+import neurogame.level.SpriteParticles;
 import neurogame.main.NeuroFrame;
 
 /**
@@ -40,9 +41,12 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     this.frame = frame;
     try
     {
-
       addResources();
       loadResources();
+
+      SpriteParticles.setSprite("EnemyStraight", get("EnemyStraight"));
+      SpriteParticles.setSprite("EnemySinusoidal", get("EnemySinusoidal"));
+      SpriteParticles.setSprite("EnemyFollow", get("EnemyFollow"));
     }
     catch (IOException ex)
     {
