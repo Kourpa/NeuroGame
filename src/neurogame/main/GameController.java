@@ -318,7 +318,7 @@ public class GameController
              obj.getType() == GameObjectType.ENEMY_STRAIGHT ||
              obj.getType() == GameObjectType.ENEMY_SINUSOIDAL)
           {
-            iterator.add(new Particles(obj.getType(), obj.getX(), obj.getY(),0, 0, world, deltaTime));
+            iterator.add(new Particles(obj.getType(), obj.getX(), obj.getY(), ((Enemy)(obj)).getLastMovementX(), ((Enemy)(obj)).getLastMovementX(), world, deltaTime));
           }
 
       }

@@ -43,8 +43,8 @@ public class Pixel extends Vector2f
   }
 
   public void applyForces(double x_force, double y_force)
-  { this.x_force -= x_force/10;
-    this.y_force -= y_force/10;
+  { this.x_force -= x_force/100;
+    this.y_force -= y_force/100;
   }
   
   public Color getColor()

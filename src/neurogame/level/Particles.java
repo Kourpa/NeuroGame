@@ -16,13 +16,14 @@ public class Particles extends GameObject
   private long maxTime = 500;
   private int scrollDistance;
 
-  public Particles(GameObjectType type, double x, double y, double x_vel, double y_vel, World world, double startTime)
+  public Particles(GameObjectType type, double x, double y, double lastX, double lastY, World world, double startTime)
   {
     super(GameObjectType.PARTICLE, x, y, world);
     scrollDistance = 0;
     this.startTime = startTime;
     pixels = SpriteParticles.getPixels(type.getName());
-    pixels.forEach((p) -> p.move(Library.worldUnitToScreen(x), Library.worldUnitToScreen(y)));
+    pixels.forEach((p) ->
+        p.move(Library.worldUnitToScreen(x), Library.worldUnitToScreen(y)));
   }
 
   @Override
