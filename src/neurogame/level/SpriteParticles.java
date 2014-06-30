@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- * @author kourpa
+ * Creates a List of pixel objects to avoid going through the image multiple times.
+ * @author Marcos
  */
 public class SpriteParticles
 {
@@ -29,7 +29,12 @@ public class SpriteParticles
     
     nameSpriteMap.put(name, pixels);
   }
-  
+
+  /**
+   * Makes a new list to return so that nothing gets altered.
+   * @param name
+   * @return
+   */
   public static ArrayList<Pixel> getPixels(String name)
   { ArrayList<Pixel> newList = new ArrayList<>();
     Pixel p;

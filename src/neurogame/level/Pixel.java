@@ -5,8 +5,9 @@ import org.lwjgl.util.vector.Vector2f;
 import java.awt.Color;
 
 /**
- *
- * @author kourpa
+ * Simple Pixel object used to create different types of particle effects.
+ * extends Vector2f for simple vector methods.
+ * @author Marcos
  */
 public class Pixel extends Vector2f
 {
@@ -33,8 +34,6 @@ public class Pixel extends Vector2f
     
     x_force = 0;
     y_force = 0;
-    x_vel /= 100;
-    y_vel /= 100;
   }
 
   public void move(double x, double y){
@@ -43,8 +42,8 @@ public class Pixel extends Vector2f
   }
 
   public void applyForces(double x_force, double y_force)
-  { this.x_force -= x_force/100;
-    this.y_force -= y_force/100;
+  { this.x_force -= x_force;
+    this.y_force -= y_force;
   }
   
   public Color getColor()
