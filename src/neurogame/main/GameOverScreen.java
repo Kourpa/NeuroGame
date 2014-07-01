@@ -193,9 +193,11 @@ public class GameOverScreen {
 
 			public void actionPerformed(ActionEvent e) {
 				background.setVisible(false);
+				lpane.setVisible(false);
 				frame.getContentPane().setLayout(new GridLayout(1, 1));
 				frame.getContentPane().remove(lpane);
 				frame.removeKeyListener(Keys);
+				IsStarting = true;
 			}
 		});
 

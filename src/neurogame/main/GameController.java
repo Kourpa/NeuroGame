@@ -603,7 +603,7 @@ public class GameController
 	      if (gameOver.IsStarting)
 	      {
 	        controls.disableAll();
-	        newGame();
+	        this.showTitle();
 	      }
 	      else if (gameOver.IsExiting)
 	      {
