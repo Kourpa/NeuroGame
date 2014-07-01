@@ -15,15 +15,19 @@ public class Particles extends GameObject
 {
 
   private final ArrayList<Pixel> pixels;
-  private double startTime;
-  private long maxTime = 500;
   private int scrollDistance;
 
-  public Particles(GameObjectType type, double x, double y, double lastX, double lastY, World world, double startTime)
+  /**
+   * Fancy particle effects
+   * @param type source for particles
+   * @param x position
+   * @param y position
+   * @param world reference to the world
+   */
+  public Particles(GameObjectType type, double x, double y, World world)
   {
     super(GameObjectType.PARTICLE, x, y, world);
     scrollDistance = 0;
-    this.startTime = startTime;
     pixels = SpriteParticles.getPixels(type.getName());
     pixels.forEach((p) ->{
 //      p.applyForces(Library.worldPosXToScreen(x - lastX)/100, 0);//Library.worldUnitToScreen(y - lastY)/100);
@@ -40,6 +44,7 @@ public class Particles extends GameObject
   { if (getX()+getWidth() < Library.leftEdgeOfWorld) die();
     Pixel p1, p2;
     this.scrollDistance = (int)scrollDistance;
+
     float[] xy_push;
     for (int i = 0; i < pixels.size(); i++) {
       p1 = pixels.get(i);
@@ -48,7 +53,7 @@ public class Particles extends GameObject
         p2 = pixels.get(j);
         xy_push = getPush(p1, p2);
 
-        /* devide by 1000 to slow it down a bit */
+        /* divide by 1000 to slow it down a bit */
         p1.applyForces(-xy_push[0]/1000, -xy_push[1]/1000);
         p2.applyForces(xy_push[0]/1000, xy_push[1]/1000);
       }
@@ -64,9 +69,7 @@ public class Particles extends GameObject
    */
   private float[] getPush(Pixel p1, Pixel p2)
   { double x_push, y_push;
-    double distance;
-    double angle;
-    
+
     Pixel p3 = new Pixel(p1.getX() - p2.getX(), p1.getY() - p2.getY(), null);
     p3.normalise();
 
@@ -87,7 +90,5 @@ public class Particles extends GameObject
   }
 
   @Override
-  public void hit(GameObject other)
-  {
-  }
+  public void hit(GameObject other){}
 }
