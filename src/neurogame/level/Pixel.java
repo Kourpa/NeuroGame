@@ -47,7 +47,7 @@ public class Pixel extends Vector2f
   }
   
   public Color getColor()
-  { if(alpha > 10) alpha-=7;
+  { if(alpha > 10) alpha-=20;
     else dead = true;
     return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
   }

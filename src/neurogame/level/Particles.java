@@ -85,7 +85,7 @@ public class Particles extends GameObject
       graphics.setColor(p.getColor());
       int xx = (int)p.getX() + Library.worldPosXToScreen(scrollDistance);
       int yy = (int)p.getY();
-      graphics.fillRect(xx, yy, 4, 4);
+      graphics.fillRect(xx, yy, 8, 8);
     });
   }
 
