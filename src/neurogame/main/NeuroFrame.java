@@ -178,7 +178,9 @@ public class NeuroFrame extends JFrame
 public void setUser(User newUser){
 	  this.CurrentUser = newUser;
   }
-
+public User getUser(){
+	return this.CurrentUser;
+}
   /**
    * Changes the display for when the game is paused.
    */

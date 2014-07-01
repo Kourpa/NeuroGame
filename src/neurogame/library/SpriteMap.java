@@ -87,6 +87,9 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("rewindButtonPlain", "/images/rewind-button.png", 300, 50);
     add("rewindButtonSelected", "/images/rewind-selected.png", 300, 50);
     
+    add("backButtonPlain", "/images/back-button.png", 300, 50);
+    add("backButtonSelected", "/images/back-selected.png", 300, 50);
+    
     // Game graphics.
     add("player", "/images/playerShip.png", 68, 68);
     add("pDmg1", "/images/damage1.png", 68, 68);

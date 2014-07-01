@@ -15,19 +15,26 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import javax.swing.JComponent;
 
+import neurogame.gameplay.Coin;
+import neurogame.gameplay.DirectionVector;
+import neurogame.gameplay.GameObject;
+import neurogame.gameplay.GameObjectType;
+import neurogame.gameplay.Player;
+import neurogame.gameplay.PowerUp;
+import neurogame.io.Logger;
+import neurogame.level.Particles;
+import neurogame.level.World;
+import neurogame.library.KeyBinds;
+import neurogame.library.Library;
+import neurogame.library.PlayerControls;
+
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
-
-import java.util.ListIterator;
-
-import neurogame.library.*;
-import neurogame.gameplay.*;
-import neurogame.io.Logger;
-import neurogame.level.*;
 
 /**
  * The main game controller for NeuroGame.
@@ -583,7 +590,9 @@ public class GameController
   private void gameOver()
   {
     if (loggingMode) log.closeLog();
-    //showTitle();
+    
+    frame.getUser().saveHighscore(player.getScore());
+    Library.saveUser(frame.getUser());
     showGameOver();
   }
 
