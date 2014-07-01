@@ -311,31 +311,41 @@ public class GameController
     for (ListIterator<GameObject> iterator = gameObjList.listIterator(); iterator.hasNext();)
     {
       GameObject obj = iterator.next();
-     
+
       if (obj.isAlive())
       {
         obj.update(deltaTime, scrollDistance);
       }
-      if (obj.isAlive() == false) iterator.remove();
+      if (obj.isAlive() == false)
+      {
+        iterator.remove();
+        if(obj.getType() == GameObjectType.ENEMY_FOLLOW ||
+             obj.getType() == GameObjectType.ENEMY_STRAIGHT ||
+             obj.getType() == GameObjectType.ENEMY_SINUSOIDAL)
+          {
+            iterator.add(new Particles(obj.getType(), obj.getX(), obj.getY(), world));
+          }
+
+      }
     }
-    
+
     //Check for object / object collisions after all objects have updated
     for (int i = 0; i < gameObjList.size(); i++)
     {
       GameObject obj1 = gameObjList.get(i);
       GameObjectType type1 = obj1.getType();
       if (obj1.isAlive() == false) continue;
-      
+
       for (int k = i+1; k < gameObjList.size(); k++)
       {
         GameObject obj2 = gameObjList.get(k);
         GameObjectType type2 = obj2.getType();
         if (!obj2.isAlive()) continue;
-        
+
         if ((!type1.isDynamic()) && (!type2.isDynamic())) continue;
-        
+
         if (obj1.collision(obj2))
-        { 
+        {
           //System.out.println("HIT: " + obj1 + " <--> " + obj2);
           obj1.hit(obj2);
           obj2.hit(obj1);

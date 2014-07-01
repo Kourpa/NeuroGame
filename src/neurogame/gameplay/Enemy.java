@@ -143,12 +143,9 @@ public class Enemy extends GameObject
     }
     
     Vector2 deltaPos = new Vector2(dx, dy);
-    
 
-    
     deltaPos.setMaxMagnitude(maxDistanceChange);
     
-
     return deltaPos;
   }
   
@@ -262,7 +259,10 @@ public class Enemy extends GameObject
     return 1;
 
   }
-  
+
+  public double getLastMovementX(){return lastMovementX;}
+  public double getLastMovementY(){return lastMovementY;}
+
   public static void initGame() 
   { activeEnemyCount = 0;
   }

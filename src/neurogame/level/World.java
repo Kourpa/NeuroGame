@@ -32,8 +32,6 @@ public class World
 
   private double skillBasedChunkGapHeight;
 
-  private final Color grey = new Color(25, 25, 25); // Colors!
- 
   private CrystalGrower crystalWalls; // fractals!
 
   /**

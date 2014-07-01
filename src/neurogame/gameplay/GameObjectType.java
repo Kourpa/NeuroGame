@@ -20,6 +20,15 @@ public enum GameObjectType
     public boolean isEnemy() {return false;}
     public boolean isDynamic() {return false;}
   },
+
+  PARTICLE
+  { public String getName() {return "particle";}
+    public double getWidth() {return 0.01;}
+    public double getHeight() {return 0.01;}
+    public int getHitDamage() {return 0;}
+    public boolean isEnemy() {return false;}
+    public boolean isDynamic() {return true;}
+  },
   
 
   ENEMY_STRAIGHT

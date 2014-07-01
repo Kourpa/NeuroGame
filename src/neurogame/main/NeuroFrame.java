@@ -70,7 +70,7 @@ public class NeuroFrame extends JFrame
   public NeuroFrame(final NeuroGame game)
   {
     System.out.println("NeuroFrame(): Enter");
-    this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
 
     this.setResizable(false);
     this.setTitle(Library.GAME_TITLE);
@@ -85,11 +85,10 @@ public class NeuroFrame extends JFrame
     contentPane.setLayout(null);
 
     drawPanel = new MainDrawPanel(game, this);
-    //contentPane.add(drawPanel);
+    contentPane.add(drawPanel);
     drawPanel.setVisible(false);
     //contentPane.setBackground(Color.black);
 
-    // setDefaultCloseOperation(EXIT_ON_CLOSE);
     score = 0;
     coins = 0;
     health = 0;
@@ -99,6 +98,9 @@ public class NeuroFrame extends JFrame
     resizeHelper();
 
     sprites = Library.getSprites();
+
+
+
     drawPanel.setSprites(sprites);
 
     this.addComponentListener(new ComponentAdapter()

@@ -18,7 +18,7 @@
 //git add -A //when you create new fines that need to be added
 //git commit -am 'comment' //commit -a (all) -m (message)
 //git pull origin master
-//git push origin master
+//git push origin master //use --force when fracking git is being a git.
 
 
 //git stash //kill all local changes
@@ -62,16 +62,6 @@ public class NeuroGame
   private void init()
   {
     startTime = elapsedTime = System.currentTimeMillis();
-    
-//    try{
-//        cTimer = Runtime.getRuntime().exec("Resources/Timer/timer.exe " + PORT);
-//        System.out.println("Timer Started");
-//    } catch(IOException ex){
-//        System.out.println("Starting CTimer Failed.");
-//    }
-
-    System.out.println("Starting CTimer Failed: (Joel Turned it off because it keeps running - even after the java program exits!!!.)");
-    
     
     // Load user profiles
     Library.loadUsers();
@@ -268,7 +258,5 @@ public class NeuroGame
     // timer must not be started until after setting the frame to full-
     // screen-exclusive mode, as it can cause concurrency issues.
     game.controller.mainGameLoop();
-    game.cTimer.destroy();
-    System.out.println("CTimer killed!");
   }
 }
