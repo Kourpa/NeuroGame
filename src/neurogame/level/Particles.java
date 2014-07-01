@@ -29,9 +29,11 @@ public class Particles extends GameObject
     super(GameObjectType.PARTICLE, x, y, world);
     scrollDistance = 0;
     pixels = SpriteParticles.getPixels(type.getName());
-    pixels.forEach((p) ->{
-//      p.applyForces(Library.worldPosXToScreen(x - lastX)/100, 0);//Library.worldUnitToScreen(y - lastY)/100);
-      p.move(Library.worldUnitToScreen(x), Library.worldUnitToScreen(y));});
+    
+    for(Pixel p )//pixels.forEach(p {
+    	p.applyForces(Library.worldPosXToScreen(x - lastX)/100, 0);//Library.worldUnitToScreen(y - lastY)/100);
+    	p.move(Library.worldUnitToScreen(x), Library.worldUnitToScreen(y));
+    	});
   }
 
   /**
