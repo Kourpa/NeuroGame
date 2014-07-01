@@ -29,9 +29,12 @@ public class Particles extends GameObject
     super(GameObjectType.PARTICLE, x, y, world);
     scrollDistance = 0;
     pixels = SpriteParticles.getPixels(type.getName());
-    pixels.forEach((p) ->{
+    for (Pixel p : pixels) 
+    {
+    
 //      p.applyForces(Library.worldPosXToScreen(x - lastX)/100, 0);//Library.worldUnitToScreen(y - lastY)/100);
-      p.move(Library.worldUnitToScreen(x), Library.worldUnitToScreen(y));});
+      p.move(Library.worldUnitToScreen(x), Library.worldUnitToScreen(y));
+    }
   }
 
   /**
@@ -81,12 +84,14 @@ public class Particles extends GameObject
 
   @Override
   public void render(Graphics2D graphics)
-  { pixels.forEach(p->{
+  { 
+    for (Pixel p : pixels) 
+    {
       graphics.setColor(p.getColor());
       int xx = (int)p.getX() + Library.worldPosXToScreen(scrollDistance);
       int yy = (int)p.getY();
       graphics.fillRect(xx, yy, 4, 4);
-    });
+    }
   }
 
   @Override
