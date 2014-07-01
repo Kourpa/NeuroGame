@@ -173,6 +173,7 @@ public class TitleScreen {
 
 				frame.getContentPane().setLayout(null);
 				selectedJoystick = controllerList.getSelectedIndex();
+				selectedUser = Library.getUser(userList.getSelectedIndex());
 				savePreferences();
 				IsStarting = true;
 			}
@@ -249,6 +250,7 @@ public class TitleScreen {
 
 		userList = new JComboBox<String>(Library.getUserNames());
 		userList.setPreferredSize(new Dimension(250, 50));
+		userList.setFont( new Font("Consolas", Font.BOLD, 12));
 		userInfo.add(userList);
 
 		JLabel text2 = new JLabel("   New User: ");
@@ -259,6 +261,9 @@ public class TitleScreen {
 		userInfo.add(nameInputField);
 
 		newUserButton = new JButton("New User");
+		newUserButton.setFont( new Font("Karmatic Arcade", Font.BOLD, 12));
+		newUserButton.setIcon(null);
+		
 		newUserButton.setPreferredSize(new Dimension(100, 50));
 		userInfo.add(newUserButton);
 
@@ -290,6 +295,7 @@ public class TitleScreen {
 
 		JCheckBox loggingBox = new JCheckBox();
 		loggingBox.setBackground(Color.BLACK);
+		
 		JCheckBox debugBox = new JCheckBox();
 		debugBox.setBackground(Color.BLACK);
 
@@ -340,7 +346,7 @@ public class TitleScreen {
 				frame.getContentPane().setLayout(new GridLayout(1, 1));
 				frame.getContentPane().remove(lpane);
 				frame.removeKeyListener(Keys);
-				// selectedUser = Library.getUser(userList.getSelectedIndex());
+				//selectedUser = Library.getUser(userList.getSelectedIndex());
 				// IsStarting = true;
 				CreateProfileScreen(frame);
 			}
@@ -595,6 +601,7 @@ public class TitleScreen {
 		controllerList = new JComboBox<String>(
 				ControllerNames.toArray(new String[0]));
 		controllerList.setPreferredSize(new Dimension(250, 40));
+		controllerList.setFont( new Font("Consolas", Font.BOLD, 12));
 
 		JPanel mainBox = new JPanel();
 		mainBox.setLayout(new BoxLayout(mainBox, BoxLayout.Y_AXIS));

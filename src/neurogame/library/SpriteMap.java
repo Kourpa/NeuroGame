@@ -68,6 +68,9 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("profileBackground", "/images/profile-screen.png",
             Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
     
+    add("highscoreBackground", "/images/highscore-screen.png",
+            Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
+    
     add("startButtonPlain", "/images/start-button.png", 300, 50);
     add("startButtonSelected", "/images/start-selected.png", 300, 50);
     

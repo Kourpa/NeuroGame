@@ -45,7 +45,8 @@ public class GameController
     TITLE,        //Title / option screen displayed
     PLAYING,      // Normal game play
     PAUSED,       // Normal game play paused
-    DEAD;         // TODO : Player has died, continue showing game moving, no player controls, display "Game Over" overlay.
+    DEAD,         // TODO : Player has died, continue showing game moving, no player controls, display "Game Over" overlay.
+    GAMEOVER;     // show the high scores 
   }
   
   private final NeuroGame game;
@@ -74,6 +75,7 @@ public class GameController
 
   private GameState gameState;
   private TitleScreen title;
+  private GameOverScreen gameOver;
 
   private World world;
   private Player player;
@@ -253,6 +255,9 @@ public class GameController
       break;
     case TITLE:
       titleUpdate();
+      break;
+    case GAMEOVER:
+      highscoreUpdate();
       break;
     default:
       break;
@@ -568,9 +573,27 @@ public class GameController
   private void gameOver()
   {
     if (loggingMode) log.closeLog();
-    showTitle();
+    //showTitle();
+    showGameOver();
   }
 
+  private void highscoreUpdate(){
+	  if (gameOver != null)
+	    {
+
+	      if (gameOver.IsStarting)
+	      {
+	        controls.disableAll();
+	        newGame();
+	      }
+	      else if (gameOver.IsExiting)
+	      {
+	        controls.disableAll();
+	        game.quit();
+	      }
+	    }
+
+  }
   /**
    * A helper method to handle keyboard input on the title screen.
    */
@@ -584,6 +607,7 @@ public class GameController
         controls.disableAll();
         newGame();
         SelectJoystick(title.selectedJoystick);
+        frame.setUser(title.selectedUser);
 
       }
       else if (title.IsExiting)
@@ -632,6 +656,11 @@ public class GameController
   {
     gameState = GameState.TITLE;
     title = frame.showTitle();
+  }
+  
+  private void showGameOver(){
+	  gameState = GameState.GAMEOVER;
+	  gameOver = frame.showGameOver();
   }
 
   /**
