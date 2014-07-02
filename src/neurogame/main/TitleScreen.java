@@ -40,6 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -69,8 +70,8 @@ import org.xml.sax.SAXException;
  */
 public class TitleScreen {
 	private Image titleBackground, profileBackground, startButtonPlain,
-			startButtonSelected, rewindButtonSelected;
-	private Image exitButtonPlain, exitButtonSelected, rewindButtonPlain;
+			startButtonSelected, rewindButtonSelected,backButtonPlain;
+	private Image exitButtonPlain, exitButtonSelected, rewindButtonPlain,backButtonSelected;
 	private Image configButtonPlain, configButtonSelected;
 
 	public boolean IsExiting, IsStarting, IsOption;
@@ -83,7 +84,7 @@ public class TitleScreen {
 	private ArrayList<MenuButtons> MenuButtons = new ArrayList<MenuButtons>();
 
 	private static MenuButtons configButton, exitButton, startButton,
-			startButtonProfile, rewindButton;
+			startButtonProfile, rewindButton,backButtonProfile;
 	private static JButton newUserButton;
 	private static ArrayList<String> Users;
 	private static JTextField nameInputField;
@@ -132,6 +133,8 @@ public class TitleScreen {
 		configButtonSelected = sprites.get("configButtonSelected");
 		rewindButtonPlain = sprites.get("rewindButtonPlain");
 		rewindButtonSelected = sprites.get("rewindButtonSelected");
+		backButtonPlain = sprites.get("backButtonPlain");
+		backButtonSelected = sprites.get("backButtonSelected");
 
 		// New UI
 		CreateMainMenu(frame);
@@ -160,9 +163,18 @@ public class TitleScreen {
 		JLabel img = new JLabel("");
 		background.add(img);
 
+		/* Buttons */
+		
+		// Back Button
+		backButtonProfile = new MenuButtons(backButtonPlain,
+				backButtonSelected);
+		
+		// Start Button
 		startButtonProfile = new MenuButtons(startButtonPlain,
 				startButtonSelected);
-
+		startButtonProfile.b.setBorder(new LineBorder(Color.WHITE,5));
+		startButtonProfile.b.requestFocus();
+		
 		startButtonProfile.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.requestFocus();
@@ -173,6 +185,7 @@ public class TitleScreen {
 
 				frame.getContentPane().setLayout(null);
 				selectedJoystick = controllerList.getSelectedIndex();
+				selectedUser = Library.getUser(userList.getSelectedIndex());
 				savePreferences();
 				IsStarting = true;
 			}
@@ -221,12 +234,21 @@ public class TitleScreen {
 		});
 
 		// Button Panel
+		final JPanel backArea = new JPanel();
+		backArea.setBackground(Color.BLACK);
+		backArea.setLayout(new BoxLayout(backArea, 1));
+		backArea.setBackground(Color.BLACK);
+		backArea.setBounds((int) (width * 0.27) - 110, (int) (height * 0.81), 220,50);
+		backArea.setOpaque(true);
+		
+		backArea.add("North", backButtonProfile.b);
+		
+		//
 		final JPanel test = new JPanel();
 		test.setBackground(Color.BLACK);
 		test.setLayout(new BoxLayout(test, 1));
 		test.setBackground(Color.BLACK);
-		test.setBounds((int) (width * 0.5) - 150, (int) (height * 0.3), 300,
-				200);
+		test.setBounds((int) (width * 0.715) - 110, (int) (height * 0.81), 220,50);
 		test.setOpaque(true);
 		test.add("North", startButtonProfile.b);
 
@@ -249,6 +271,7 @@ public class TitleScreen {
 
 		userList = new JComboBox<String>(Library.getUserNames());
 		userList.setPreferredSize(new Dimension(250, 50));
+		userList.setFont( new Font("Consolas", Font.BOLD, 12));
 		userInfo.add(userList);
 
 		JLabel text2 = new JLabel("   New User: ");
@@ -259,6 +282,9 @@ public class TitleScreen {
 		userInfo.add(nameInputField);
 
 		newUserButton = new JButton("New User");
+		newUserButton.setFont( new Font("Karmatic Arcade", Font.BOLD, 12));
+		newUserButton.setIcon(null);
+		
 		newUserButton.setPreferredSize(new Dimension(100, 50));
 		userInfo.add(newUserButton);
 
@@ -271,25 +297,26 @@ public class TitleScreen {
 		userPanel2.add(userList);
 		userPanel2.add(newUserButton);
 		userPanel2.setBackground(Color.BLACK);
-		userPanel2.setBounds((int) (width * 0.6) - 250, (int) (height * 0.4),
+		userPanel2.setBounds((int) (width * 0.6) - 250, (int) (height * 0.35),
 				500, 150);
 
 		// Controller
 		final JPanel userPanel3 = Options(frame);
 		userPanel3.setBackground(Color.BLACK);
 		userPanel3.setLayout(new FlowLayout());
-		userPanel3.setBounds((int) (width * 0.6) - 300, (int) (height * 0.5),
+		userPanel3.setBounds((int) (width * 0.6) - 300, (int) (height * 0.45),
 				500, 50);
 
 		// Logging
 		final JPanel userPanel4 = new JPanel();
 		userPanel4.setBackground(Color.BLACK);
 		userPanel4.setLayout(new BoxLayout(userPanel4, BoxLayout.Y_AXIS));
-		userPanel4.setBounds((int) (width * 0.6) - 200, (int) (height * 0.63),
+		userPanel4.setBounds((int) (width * 0.6) - 200, (int) (height * 0.58),
 				400, 70);
 
 		JCheckBox loggingBox = new JCheckBox();
 		loggingBox.setBackground(Color.BLACK);
+		
 		JCheckBox debugBox = new JCheckBox();
 		debugBox.setBackground(Color.BLACK);
 
@@ -304,6 +331,7 @@ public class TitleScreen {
 		lpane.add(userPanel2, 2, 0);
 		lpane.add(userPanel3, 3, 0);
 		lpane.add(userPanel4, 4, 0);
+		lpane.add(backArea,5,0);
 		lpane.setBackground(Color.YELLOW);
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
@@ -340,7 +368,7 @@ public class TitleScreen {
 				frame.getContentPane().setLayout(new GridLayout(1, 1));
 				frame.getContentPane().remove(lpane);
 				frame.removeKeyListener(Keys);
-				// selectedUser = Library.getUser(userList.getSelectedIndex());
+				//selectedUser = Library.getUser(userList.getSelectedIndex());
 				// IsStarting = true;
 				CreateProfileScreen(frame);
 			}
@@ -595,6 +623,7 @@ public class TitleScreen {
 		controllerList = new JComboBox<String>(
 				ControllerNames.toArray(new String[0]));
 		controllerList.setPreferredSize(new Dimension(250, 40));
+		controllerList.setFont( new Font("Consolas", Font.BOLD, 12));
 
 		JPanel mainBox = new JPanel();
 		mainBox.setLayout(new BoxLayout(mainBox, BoxLayout.Y_AXIS));

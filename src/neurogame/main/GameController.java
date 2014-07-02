@@ -15,19 +15,26 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import javax.swing.JComponent;
 
+import neurogame.gameplay.Coin;
+import neurogame.gameplay.DirectionVector;
+import neurogame.gameplay.GameObject;
+import neurogame.gameplay.GameObjectType;
+import neurogame.gameplay.Player;
+import neurogame.gameplay.PowerUp;
+import neurogame.io.Logger;
+import neurogame.level.Particles;
+import neurogame.level.World;
+import neurogame.library.KeyBinds;
+import neurogame.library.Library;
+import neurogame.library.PlayerControls;
+
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
-
-import java.util.ListIterator;
-
-import neurogame.library.*;
-import neurogame.gameplay.*;
-import neurogame.io.Logger;
-import neurogame.level.*;
 
 /**
  * The main game controller for NeuroGame.
@@ -45,7 +52,8 @@ public class GameController
     TITLE,        //Title / option screen displayed
     PLAYING,      // Normal game play
     PAUSED,       // Normal game play paused
-    DEAD;         // TODO : Player has died, continue showing game moving, no player controls, display "Game Over" overlay.
+    DEAD,         // TODO : Player has died, continue showing game moving, no player controls, display "Game Over" overlay.
+    GAMEOVER;     // show the high scores 
   }
   
   private final NeuroGame game;
@@ -74,6 +82,7 @@ public class GameController
 
   private GameState gameState;
   private TitleScreen title;
+  private GameOverScreen gameOver;
 
   private World world;
   private Player player;
@@ -253,6 +262,9 @@ public class GameController
       break;
     case TITLE:
       titleUpdate();
+      break;
+    case GAMEOVER:
+      highscoreUpdate();
       break;
     default:
       break;
@@ -578,9 +590,29 @@ public class GameController
   private void gameOver()
   {
     if (loggingMode) log.closeLog();
-    showTitle();
+    
+    frame.getUser().saveHighscore(player.getScore());
+    Library.saveUser(frame.getUser());
+    showGameOver();
   }
 
+  private void highscoreUpdate(){
+	  if (gameOver != null)
+	    {
+
+	      if (gameOver.IsStarting)
+	      {
+	        controls.disableAll();
+	        this.showTitle();
+	      }
+	      else if (gameOver.IsExiting)
+	      {
+	        controls.disableAll();
+	        game.quit();
+	      }
+	    }
+
+  }
   /**
    * A helper method to handle keyboard input on the title screen.
    */
@@ -594,6 +626,7 @@ public class GameController
         controls.disableAll();
         newGame();
         SelectJoystick(title.selectedJoystick);
+        frame.setUser(title.selectedUser);
 
       }
       else if (title.IsExiting)
@@ -642,6 +675,11 @@ public class GameController
   {
     gameState = GameState.TITLE;
     title = frame.showTitle();
+  }
+  
+  private void showGameOver(){
+	  gameState = GameState.GAMEOVER;
+	  gameOver = frame.showGameOver();
   }
 
   /**

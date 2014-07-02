@@ -107,6 +107,24 @@ public final class Library
 			System.out.println("IO. Failed to save User: " + userName);
 		}
 	}
+	
+	public static void saveUser(User newUser){
+		String path = System.getProperty("user.dir");
+		path += "/Users/";
+		
+		try {
+			FileOutputStream saveFile = new FileOutputStream(path+newUser.getName() + ".user");
+			ObjectOutputStream save = new ObjectOutputStream(saveFile);
+			save.writeObject(newUser);
+			save.close();
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.out.println("FileNotFound. Failed to save User: " + newUser.getName());
+		} catch (IOException e) {
+			System.out.println("IO. Failed to save User: " + newUser.getName());
+		}
+	}
 
 	/**
 	 * Load all user files in the directory

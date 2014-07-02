@@ -10,7 +10,6 @@
 
 package neurogame.main;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -27,6 +26,7 @@ import neurogame.gameplay.PowerUp;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.SpriteMap;
+import neurogame.library.User;
 import neurogame.main.GameController.GameState;
 
 /**
@@ -47,6 +47,7 @@ public class NeuroFrame extends JFrame
 
   private MainDrawPanel drawPanel;
   private TitleScreen title;
+  private GameOverScreen gameOver;
   private World world;
   private int windowPixelWidth, windowPixelHeight;
   private GameState mode = GameState.INITIALIZING;
@@ -59,6 +60,8 @@ public class NeuroFrame extends JFrame
 
   private Container contentPane;
 
+  private User CurrentUser;
+  
   private boolean debug;
 
   /**
@@ -148,7 +151,7 @@ public class NeuroFrame extends JFrame
   {
     return mode;
   }
-
+  
   public int getHealth()
   {
     return health;
@@ -168,7 +171,16 @@ public class NeuroFrame extends JFrame
   {
     return powerUp;
   }
-
+  
+  /**
+ * Sets the user for the session
+ */
+public void setUser(User newUser){
+	  this.CurrentUser = newUser;
+  }
+public User getUser(){
+	return this.CurrentUser;
+}
   /**
    * Changes the display for when the game is paused.
    */
@@ -198,6 +210,16 @@ public class NeuroFrame extends JFrame
     drawPanel.setTitle(title);
     mode = GameState.TITLE;
     return title;
+  }
+  
+  public GameOverScreen showGameOver(){
+	  System.out.println("NeuroFrame.showTitle() Enter");
+	  drawPanel.setVisible(false);
+	  gameOver = new GameOverScreen(this,this.CurrentUser);
+	  drawPanel.setGameOver(gameOver);
+	  
+	  mode = GameState.GAMEOVER;
+	  return gameOver;
   }
 
   private void resizeEvent()

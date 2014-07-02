@@ -72,6 +72,9 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("profileBackground", "/images/profile-screen.png",
             Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
     
+    add("highscoreBackground", "/images/highscore-screen.png",
+            Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
+    
     add("startButtonPlain", "/images/start-button.png", 300, 50);
     add("startButtonSelected", "/images/start-selected.png", 300, 50);
     
@@ -83,6 +86,9 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     
     add("rewindButtonPlain", "/images/rewind-button.png", 300, 50);
     add("rewindButtonSelected", "/images/rewind-selected.png", 300, 50);
+    
+    add("backButtonPlain", "/images/back-button.png", 300, 50);
+    add("backButtonSelected", "/images/back-selected.png", 300, 50);
     
     // Game graphics.
     add("player", "/images/playerShip.png", 68, 68);

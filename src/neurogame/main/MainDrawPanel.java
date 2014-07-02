@@ -30,6 +30,7 @@ public class MainDrawPanel extends JPanel
 {
 
   private TitleScreen title;
+  private GameOverScreen gameOver;
   private Graphics2D canvasObjectLayer;
   private BufferedImage imageObjectLayer;
 
@@ -68,6 +69,10 @@ public class MainDrawPanel extends JPanel
   public void setTitle(TitleScreen title)
   {
     this.title = title;
+  }
+  
+  public void setGameOver(GameOverScreen screen){
+	  this.gameOver = screen;
   }
 
   public void setWorld(World world)
@@ -112,14 +117,14 @@ public class MainDrawPanel extends JPanel
   {
     canvasObjectLayer.setFont(new Font("Serif", Font.PLAIN, 14));
     canvasObjectLayer.setColor(Color.WHITE);
+    
     canvasObjectLayer.drawString("Coins: " + frame.getCoins(), 5,
         windowHeight - 20);
     canvasObjectLayer.drawString("Score: " + frame.getScore(), 5,
         windowHeight - 5);
-
+    
     drawHealth();
-    // drawPowerUp();
-  }
+}
 
   /**
    * Draw the health display.
