@@ -1,5 +1,6 @@
 package neurogame.level;
 
+import neurogame.library.Library;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -13,8 +14,7 @@ public class Pixel extends Vector2f
 {
   private float x_vel, y_vel, x_force, y_force;
   private final Color color;
-  private int alpha = 255;
-  public boolean dead = false;
+  private boolean dead;
 
   public Pixel(float x, float y, Color color)
   { super(x, y);
@@ -23,10 +23,12 @@ public class Pixel extends Vector2f
     this.x_vel = 0;
     this.y_vel = 0;
     this.color = color;
+    dead = false;
   }
   
   public void update()
-  { x_vel += x_force;
+  {
+    x_vel += x_force;
     y_vel += y_force;
 
     x += x_vel;
@@ -34,6 +36,10 @@ public class Pixel extends Vector2f
     
     x_force = 0;
     y_force = 0;
+    x_vel /= 10;
+    y_vel /= 10;
+
+    if(Library.RANDOM.nextInt(10) == 0) dead = true;
   }
 
   public void move(double x, double y){
@@ -46,9 +52,6 @@ public class Pixel extends Vector2f
     this.y_force -= y_force;
   }
   
-  public Color getColor()
-  { if(alpha > 10) alpha-=20;
-    else dead = true;
-    return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-  }
+  public Color getColor(){return color;}
+  public boolean getDead(){return dead;}
 }

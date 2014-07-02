@@ -250,7 +250,7 @@ public class Player extends GameObject
     double hitY = (getCenterY() + obj.getCenterY()) / 2.0;
 
     GameObjectType type = obj.getType();
-    loseHealth(hitX, hitY, type.getHitDamage());
+//    loseHealth(hitX, hitY, type.getHitDamage());
     
     if (type == GameObjectType.ENEMY_STRAIGHT)
     { skillEnemyStraight -= 1.2;

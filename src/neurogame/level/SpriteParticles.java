@@ -35,12 +35,13 @@ public class SpriteParticles
    * @param name
    * @return
    */
-  public static ArrayList<Pixel> getPixels(String name)
-  { ArrayList<Pixel> newList = new ArrayList<>();
-    Pixel p;
-    for(Pixel pp: nameSpriteMap.get(name)){
-      p = new Pixel(pp.getX(), pp.getY(), pp.getColor());
-      newList.add(p);
+  public static Pixel[] getPixels(String name)
+  {
+    ArrayList<Pixel> pixels = nameSpriteMap.get(name);
+    Pixel[] newList = new Pixel[pixels.size()];
+    for(int i = 0; i < newList.length; i++){
+      Pixel pp = pixels.get(i);
+      newList[i] = new Pixel(pp.getX(), pp.getY(), pp.getColor());
     }
     return newList;
   }

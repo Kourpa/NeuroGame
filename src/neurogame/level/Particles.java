@@ -14,8 +14,10 @@ import org.lwjgl.util.vector.Vector2f;
 public class Particles extends GameObject
 {
 
-  private final ArrayList<Pixel> pixels;
+  private final Pixel[] pixels;
   private int scrollDistance;
+  private float alpha;
+  private int i = 0,  j = 0;
 
   /**
    * Fancy particle effects
@@ -27,11 +29,12 @@ public class Particles extends GameObject
   public Particles(GameObjectType type, double x, double y, World world)
   {
     super(GameObjectType.PARTICLE, x, y, world);
+    alpha = 1;
     scrollDistance = 0;
     pixels = SpriteParticles.getPixels(type.getName());
-    pixels.forEach((p) ->{
-//      p.applyForces(Library.worldPosXToScreen(x - lastX)/100, 0);//Library.worldUnitToScreen(y - lastY)/100);
-      p.move(Library.worldUnitToScreen(x), Library.worldUnitToScreen(y));});
+    for(int i = 0; i < pixels.length; i++){
+      pixels[i].move(Library.worldUnitToScreen(x), Library.worldUnitToScreen(y));
+    }
   }
 
   /**
@@ -41,21 +44,24 @@ public class Particles extends GameObject
    */
   @Override
   public void update(double deltaSec, double scrollDistance)
-  { if (getX()+getWidth() < Library.leftEdgeOfWorld) die();
+  { alpha -= .02;
+    if (getX()+getWidth() < Library.leftEdgeOfWorld || alpha <= 0) die();
     Pixel p1, p2;
     this.scrollDistance = (int)scrollDistance;
 
     float[] xy_push;
-    for (int i = 0; i < pixels.size(); i++) {
-      p1 = pixels.get(i);
-      if(p1.dead) die();
-      for (int j = i + 1; j < pixels.size(); j++) {
-        p2 = pixels.get(j);
+    for (int i = 0; i < pixels.length; i++)
+    {
+      p1 = pixels[i];
+      if(p1.getDead()) continue;
+      for (int j = i + 1; j < pixels.length; j++) {
+        p2 = pixels[j];
+        if(p2.getDead()) continue;
         xy_push = getPush(p1, p2);
 
         /* divide by 1000 to slow it down a bit */
-        p1.applyForces(-xy_push[0]/1000, -xy_push[1]/1000);
-        p2.applyForces(xy_push[0]/1000, xy_push[1]/1000);
+        p1.applyForces(-xy_push[0]/100, -xy_push[1]/100);
+        p2.applyForces(xy_push[0]/100, xy_push[1]/100);
       }
       p1.update();
     }
@@ -68,25 +74,35 @@ public class Particles extends GameObject
    * @return
    */
   private float[] getPush(Pixel p1, Pixel p2)
-  { double x_push, y_push;
+  { float x_push, y_push;
 
-    Pixel p3 = new Pixel(p1.getX() - p2.getX(), p1.getY() - p2.getY(), null);
-    p3.normalise();
+    x_push = p1.getX() - p2.getX();
+    y_push = p1.getY() - p2.getY();
+    double mag = Math.sqrt(x_push*x_push + y_push*y_push);
 
-    x_push = p3.getX();
-    y_push = p3.getY();
+    x_push/=mag;
+    y_push/=mag;
 
-    return new float[]{(float)x_push, (float)y_push};
+    return new float[]{x_push, y_push};
   }
 
   @Override
   public void render(Graphics2D graphics)
-  { pixels.forEach(p->{
-      graphics.setColor(p.getColor());
-      int xx = (int)p.getX() + Library.worldPosXToScreen(scrollDistance);
-      int yy = (int)p.getY();
-      graphics.fillRect(xx, yy, 8, 8);
-    });
+  {
+    Composite oldAlpha = graphics.getComposite();
+    AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+    graphics.setComposite(alphaComposite);
+
+    for(int i = 0; i < pixels.length; i++)
+    {
+      if(pixels[i].getDead()) continue;
+      graphics.setColor(pixels[i].getColor());
+      int xx = (int)pixels[i].getX() + Library.worldPosXToScreen(scrollDistance);
+      int yy = (int)pixels[i].getY();
+      graphics.fillRect(xx, yy, 4, 4);
+    }
+
+    graphics.setComposite(oldAlpha);
   }
 
   @Override
