@@ -72,7 +72,7 @@ public class GameOverScreen {
 	private Image exitButtonPlain, exitButtonSelected, restartButtonSelected,
 			restartButtonPlain;
 
-	public boolean IsExiting, IsStarting, IsOption;
+	public boolean IsExiting, IsStarting, IsOption,IsRestarting;
 	public int selectedJoystick;
 	public User selectedUser;
 	private KeyAdapter Keys;
@@ -233,7 +233,12 @@ public class GameOverScreen {
 		restartButton.b.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				IsExiting = true;
+				background.setVisible(false);
+				lpane.setVisible(false);
+				frame.getContentPane().setLayout(new GridLayout(1, 1));
+				frame.getContentPane().remove(lpane);
+				frame.removeKeyListener(Keys);
+				IsRestarting = true;
 			}
 		});
 

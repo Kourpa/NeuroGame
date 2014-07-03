@@ -610,6 +610,10 @@ public class GameController
 	        controls.disableAll();
 	        game.quit();
 	      }
+	      else if(gameOver.IsRestarting){
+	    	  controls.disableAll();
+	          newGame();
+	      }
 	    }
 
   }
