@@ -190,7 +190,7 @@ public class TitleScreen {
 				IsStarting = true;
 			}
 		});
-
+		
 		exitButton.b.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -244,6 +244,18 @@ public class TitleScreen {
 		// Back Button
 		backButtonProfile = new MenuButtons(backButtonPlain,backButtonSelected);
 		backArea.add("North", backButtonProfile.b);
+		
+		backButtonProfile.b.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				background.setVisible(false);
+				frame.getContentPane().setLayout(new GridLayout(1, 1));
+				frame.getContentPane().remove(lpane);
+				frame.removeKeyListener(Keys);
+				
+				CreateMainMenu(frame);
+			}
+		});
+
 		
 		//
 		final JPanel test = new JPanel();

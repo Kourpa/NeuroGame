@@ -258,10 +258,10 @@ public class GameOverScreen {
 		Buttons.setBounds(width / 2 - 150, (int) (height * 0.65), 300, 180);
 
 		highscores.setBackground(Color.BLACK);
-		highscores.setBounds(width / 2 - 520, (int) (height * 0.45), 500, 150);
+		highscores.setBounds(width / 2 - 420, (int) (height * 0.45), 300, 150);
 
 		besthighscores.setBackground(Color.BLACK);
-		besthighscores.setBounds((int)(width * 0.48), (int) (height * 0.45), 400, 150);
+		besthighscores.setBounds((int)(width * 0.52), (int) (height * 0.45), 300, 150);
 
 		background.setBackground(Color.BLACK);
 		background.setBounds(0, 0, width, height);
