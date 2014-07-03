@@ -29,15 +29,16 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -66,10 +67,10 @@ import org.xml.sax.SAXException;
  * @team Martin Lidy
  */
 public class GameOverScreen {
-	private Image titleBackground, profileBackground, startButtonPlain,
-			startButtonSelected, rewindButtonSelected;
-	private Image exitButtonPlain, exitButtonSelected, rewindButtonPlain;
-	private Image configButtonPlain, configButtonSelected;
+	private Image profileBackground, startButtonPlain, startButtonSelected;
+
+	private Image exitButtonPlain, exitButtonSelected, restartButtonSelected,
+			restartButtonPlain;
 
 	public boolean IsExiting, IsStarting, IsOption;
 	public int selectedJoystick;
@@ -80,10 +81,7 @@ public class GameOverScreen {
 	private int maxButton = 3;
 	private ArrayList<MenuButtons> MenuButtons = new ArrayList<MenuButtons>();
 
-	private static MenuButtons configButton, exitButton, startButton,
-			startButtonProfile, rewindButton;
-	private static JButton newUserButton;
-	private static ArrayList<String> Users;
+	private static MenuButtons exitButton, restartButton, startButton;
 	private static JTextField nameInputField;
 	private JComboBox<String> userList;
 
@@ -103,8 +101,8 @@ public class GameOverScreen {
 	 *            NeuroFrame to contain this TitleScreen.
 	 */
 	public GameOverScreen(final NeuroFrame frame, User newUser) {
-		
-		this.selectedUser = newUser;		
+
+		this.selectedUser = newUser;
 
 		// For Polling
 		IsExiting = false;
@@ -122,16 +120,16 @@ public class GameOverScreen {
 		sprites = Library.getSprites();
 
 		// Get the images.
-		titleBackground = sprites.get("titleBackground");
 		profileBackground = sprites.get("highscoreBackground");
-		startButtonPlain = sprites.get("startButtonPlain");
-		startButtonSelected = sprites.get("startButtonSelected");
+
+		startButtonPlain = sprites.get("mainMenuButtonPlain");
+		startButtonSelected = sprites.get("mainMenuButtonSelected");
+		
 		exitButtonPlain = sprites.get("exitButtonPlain");
 		exitButtonSelected = sprites.get("exitButtonSelected");
-		configButtonPlain = sprites.get("configButtonPlain");
-		configButtonSelected = sprites.get("configButtonSelected");
-		rewindButtonPlain = sprites.get("rewindButtonPlain");
-		rewindButtonSelected = sprites.get("rewindButtonSelected");
+		
+		restartButtonPlain = sprites.get("restartButtonPlain");
+		restartButtonSelected = sprites.get("restartButtonSelected");
 
 		// New UI
 		CreateMainMenu(frame);
@@ -146,51 +144,68 @@ public class GameOverScreen {
 
 		selected = "start";
 	}
-	
+
 	private void CreateMainMenu(final NeuroFrame frame) {
+		frame.getContentPane().setLayout(new BorderLayout());
+
+		// Main pane for the UI
 		final JLayeredPane lpane = new JLayeredPane();
 
 		// Background
-		frame.getContentPane().setLayout(new BorderLayout());
-
 		final JLabel background = new JLabel(new ImageIcon(profileBackground));
-		background.setBackground(Color.GRAY);
-
-		// To align the buttons...
 		JLabel img = new JLabel("");
 		background.add(img);
 
-		// Panels
+		// High Score Panels
 		final JPanel highscores = new JPanel();
 		highscores.setBackground(Color.BLACK);
 		highscores.setLayout(new BoxLayout(highscores, 1));
-				
+
+		final JPanel besthighscores = new JPanel();
+		besthighscores.setBackground(Color.BLACK);
+		besthighscores.setLayout(new BoxLayout(besthighscores, 1));
+
+		// Grab the highscore arrays
 		Object[] data = frame.getUser().getHighScores(5);
-		
-		List list = new List(data.length);
-		for(int i=0;i<data.length;i++){
-			list.add(""+data[i]);
+		String[] highscoresPersonal = new String[data.length];
+
+		// Parse the highscore bits: YYMMDD + Highscore
+		for (int i = 0; i < data.length; i++) {
+			highscoresPersonal[i] = " "
+					+ data[i].toString().substring(0, 2)
+					+ "-"
+					+ data[i].toString().substring(2, 4)
+					+ "-"
+					+ data[i].toString().substring(4, 6)
+					+ ":       "
+					+ data[i].toString().substring(6,
+							data[i].toString().length());
 		}
-		
-		list.setBackground(Color.BLACK);
-		list.setForeground(Color.WHITE);
-		
-		list.setFont( new Font("Karmatic Arcade", Font.BOLD, 12));
-		//JList list = new JList(testing);
-		//list.setPreferredSize(new Dimension(1000,1000));
 
-		highscores.add(list);
-		
-		//
-		final JPanel test = new JPanel();
-		test.setBackground(Color.BLACK);
-		test.setLayout(new BoxLayout(test, 1));
+		// Personal best highscores JList
+		JList<String> personalJList = new JList<String>(highscoresPersonal);
+		personalJList.setBackground(Color.BLACK);
+		personalJList.setForeground(new Color(110, 170, 255));
+		personalJList.setFont(new Font("Karmatic Arcade", Font.PLAIN, 20));
 
-		// Buttons
+		// Global best highscores JList
+		JList<String> globalJList = new JList<String>(highscoresPersonal);
+		globalJList.setBackground(Color.BLACK);
+		globalJList.setForeground(new Color(110, 170, 255));
+		globalJList.setFont(new Font("Karmatic Arcade", Font.PLAIN, 20));
+
+		highscores.add(personalJList);
+		besthighscores.add(globalJList);
+
+		// Menu Buttons
+		final JPanel Buttons = new JPanel();
+		Buttons.setBackground(Color.BLACK);
+		Buttons.setLayout(new BoxLayout(Buttons, 1));
+
+		// Start Button
 		startButton = new MenuButtons(startButtonPlain, startButtonSelected);
 		MenuButtons.add(0, startButton);
 		startButton.b.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
 				background.setVisible(false);
 				lpane.setVisible(false);
@@ -201,6 +216,7 @@ public class GameOverScreen {
 			}
 		});
 
+		// ExitButton
 		exitButton = new MenuButtons(exitButtonPlain, exitButtonSelected);
 		MenuButtons.add(exitButton);
 		exitButton.b.addActionListener(new ActionListener() {
@@ -210,132 +226,50 @@ public class GameOverScreen {
 			}
 		});
 
+		// RestartButton
+		restartButton = new MenuButtons(restartButtonPlain,
+				restartButtonSelected);
+		MenuButtons.add(restartButton);
+		restartButton.b.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				IsExiting = true;
+			}
+		});
+
+		// Keyboard/Joystick support
 		startButton.b.addKeyListener(Keys);
+		restartButton.b.addKeyListener(Keys);
 		exitButton.b.addKeyListener(Keys);
+		startButton.b.requestFocus();
 		frame.addKeyListener(Keys);
 
 		//
-		test.add("East", startButton.b);
-		test.add("West", exitButton.b);
-
-		test.setBackground(Color.BLACK);
-		test.setBounds(width / 2 - 150, (int)(height*0.7), 300, 100);
-		test.setOpaque(true);
+		Buttons.add(startButton.b);
+		Buttons.add(restartButton.b);
+		Buttons.add(exitButton.b);
 		
+		Buttons.setBackground(Color.BLACK);
+		Buttons.setBounds(width / 2 - 150, (int) (height * 0.65), 300, 180);
+
 		highscores.setBackground(Color.BLACK);
-		highscores.setPreferredSize(new Dimension(500,500));
-		highscores.setBounds(width / 2 - 150, (int)(height*0.4), 300, 200);
-		highscores.setOpaque(true);
+		highscores.setBounds(width / 2 - 520, (int) (height * 0.45), 500, 150);
+
+		besthighscores.setBackground(Color.BLACK);
+		besthighscores.setBounds((int)(width * 0.48), (int) (height * 0.45), 400, 150);
 
 		background.setBackground(Color.BLACK);
 		background.setBounds(0, 0, width, height);
-		background.setOpaque(true);
 
 		lpane.setBounds(0, 0, 600, 400);
 		lpane.add(background, 0, 0);
-		lpane.add(test, 1, 0);
-		lpane.add(highscores,2,0);
+		lpane.add(Buttons, 1, 0);
+		lpane.add(highscores, 2, 0);
+		lpane.add(besthighscores, 3, 0);
 		lpane.setBackground(Color.YELLOW);
+
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
-	}
-
-	/**
-	 * Save user preferences to a file
-	 */
-	private void savePreferences() {
-		Document dom;
-		Element e = null;
-		String path = System.getProperty("user.dir");
-		path += "/Users/";
-
-		// instance of a DocumentBuilderFactory
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		try {
-			// use factory to get an instance of document builder
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			// create instance of DOM
-			dom = db.newDocument();
-
-			// create the root element
-			Element rootEle = dom.createElement("pref");
-
-			// create data elements and place them under root
-			e = dom.createElement("Controller");
-			e.appendChild(dom.createTextNode(""
-					+ controllerList.getSelectedIndex()));
-			rootEle.appendChild(e);
-
-			e = dom.createElement("User");
-			e.appendChild(dom.createTextNode("" + userList.getSelectedIndex()));
-			rootEle.appendChild(e);
-
-			dom.appendChild(rootEle);
-
-			try {
-				Transformer tr = TransformerFactory.newInstance()
-						.newTransformer();
-				tr.setOutputProperty(OutputKeys.INDENT, "yes");
-				tr.setOutputProperty(OutputKeys.METHOD, "xml");
-				tr.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-				tr.setOutputProperty(
-						"{http://xml.apache.org/xslt}indent-amount", "4");
-
-				// send DOM to file
-				tr.transform(new DOMSource(dom), new StreamResult(
-						new FileOutputStream(path + "pref.xml")));
-
-			} catch (TransformerException te) {
-				System.out.println(te.getMessage());
-			} catch (IOException ioe) {
-				System.out.println(ioe.getMessage());
-			}
-		} catch (ParserConfigurationException pce) {
-			System.out
-					.println("UsersXML: Error trying to instantiate DocumentBuilder "
-							+ pce);
-		}
-
-		System.out.println("Finished Saving Perfs: ");
-	}
-
-	/**
-	 * Restore the saved user preferences file
-	 */
-	private void restorePreferences() {
-		String path = System.getProperty("user.dir");
-		path += "/Users/";
-
-		ArrayList<String> perfs = new ArrayList<String>();
-		Document dom;
-		// Make an instance of the DocumentBuilderFactory
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		try {
-			// use the factory to take an instance of the document builder
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			// parse using the builder to get the DOM mapping of the
-			// XML file
-			dom = db.parse(path + "pref.xml");
-
-			Element doc = dom.getDocumentElement();
-
-			perfs.add(doc.getElementsByTagName("Controller").item(0)
-					.getFirstChild().getNodeValue());
-			perfs.add(doc.getElementsByTagName("User").item(0).getFirstChild()
-					.getNodeValue());
-
-		} catch (ParserConfigurationException pce) {
-			System.out.println(pce.getMessage());
-		} catch (SAXException se) {
-			System.out.println(se.getMessage());
-		} catch (IOException ioe) {
-			System.err.println(ioe.getMessage());
-		}
-
-		System.out.println("Finished Loading Perfs: ");
-		userList.setSelectedIndex(Integer.parseInt(perfs.get(1)));
-		controllerList.setSelectedIndex(Integer.parseInt(perfs.get(0)));
-
 	}
 
 	/**

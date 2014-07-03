@@ -1,7 +1,14 @@
 package neurogame.library;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 public class User implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -21,17 +28,26 @@ public class User implements Serializable{
 	public Integer[] getHighScores(int amount){
 		Integer[] best;
 		
+		Collections.sort(HighScores);
+		Collections.reverse(HighScores);
+		
 		if(amount > HighScores.size()){
 			best = HighScores.subList(0,HighScores.size()).toArray(new Integer[0]);
 		}
 		else{
-			best = HighScores.subList(0, amount).toArray(new Integer[0]);
+			best = HighScores.subList(0,amount).toArray(new Integer[0]);
 		}
 		
 		return best;
-	}	
+	}
 	
 	public void saveHighscore(int score){
+		DateFormat dateFormat = new SimpleDateFormat("yyMMdd");
+		Date date = new Date();
+		System.out.println(dateFormat.format(date));
+		
+		score = Integer.parseInt(dateFormat.format(date).toString() + score+"");
+		System.out.println(score);
 		HighScores.add(score);
 	}
 	
@@ -44,4 +60,16 @@ public class User implements Serializable{
 	public void setName(String newName){
 		Name = newName;
 	}
+}
+
+class HighscoreComparator implements Comparator<Integer>{
+	@Override
+	public int compare(Integer arg0, Integer arg1) {
+		boolean result = arg0 < arg1;
+		if(result){
+			return 1;
+		}
+		return 0;
+	}
+  
 }

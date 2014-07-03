@@ -115,13 +115,12 @@ public class MainDrawPanel extends JPanel
    */
   private void drawHUD()
   {
-    canvasObjectLayer.setFont(new Font("Serif", Font.PLAIN, 14));
+    canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN, 30));
     canvasObjectLayer.setColor(Color.WHITE);
+    canvasObjectLayer.drawString("Score: ", (int)(windowWidth*0.5 - 100), (int)(windowHeight*0.05));
     
-    canvasObjectLayer.drawString("Coins: " + frame.getCoins(), 5,
-        windowHeight - 20);
-    canvasObjectLayer.drawString("Score: " + frame.getScore(), 5,
-        windowHeight - 5);
+    canvasObjectLayer.setColor(new Color(100,151,255));
+    canvasObjectLayer.drawString(""+frame.getScore(), (int)(windowWidth*0.5 + 100), (int)(windowHeight*0.05));
     
     drawHealth();
 }
