@@ -368,7 +368,9 @@ public class TitleScreen {
 				frame.removeKeyListener(Keys);
 				//selectedUser = Library.getUser(userList.getSelectedIndex());
 				// IsStarting = true;
+				
 				CreateProfileScreen(frame);
+				//Oddball o = new Oddball(startButtonPlain, startButtonSelected, startButtonPlain);
 			}
 		});
 
@@ -379,6 +381,7 @@ public class TitleScreen {
 			public void actionPerformed(ActionEvent e) {
 				IsOption = true;
 				Options(frame);
+				
 			}
 		});
 

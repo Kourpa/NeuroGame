@@ -13,7 +13,7 @@ import java.util.List;
 public class User implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String Name;
-	private ArrayList<Integer> HighScores = new ArrayList<Integer>();
+	private ArrayList<Long> HighScores = new ArrayList<Long>();
 	private String path;
 	
 	public User(String initName){
@@ -25,29 +25,28 @@ public class User implements Serializable{
 	 * Get the highest scores
 	 * @param amount
 	 */
-	public Integer[] getHighScores(int amount){
-		Integer[] best;
+	public Long[] getHighScores(int amount){
+		Long[] best;
 		
 		Collections.sort(HighScores);
 		Collections.reverse(HighScores);
 		
 		if(amount > HighScores.size()){
-			best = HighScores.subList(0,HighScores.size()).toArray(new Integer[0]);
+			best = HighScores.subList(0,HighScores.size()).toArray(new Long[0]);
 		}
 		else{
-			best = HighScores.subList(0,amount).toArray(new Integer[0]);
+			best = HighScores.subList(0,amount).toArray(new Long[0]);
 		}
 		
 		return best;
 	}
 	
-	public void saveHighscore(int score){
+	public void saveHighscore(long score){
 		DateFormat dateFormat = new SimpleDateFormat("yyMMdd");
 		Date date = new Date();
 		System.out.println(dateFormat.format(date));
 		
-		score = Integer.parseInt(dateFormat.format(date).toString() + score+"");
-		System.out.println(score);
+		score = Long.parseLong(dateFormat.format(date).toString() + score+"");
 		HighScores.add(score);
 	}
 	
@@ -62,9 +61,9 @@ public class User implements Serializable{
 	}
 }
 
-class HighscoreComparator implements Comparator<Integer>{
+class HighscoreComparator implements Comparator<Long>{
 	@Override
-	public int compare(Integer arg0, Integer arg1) {
+	public int compare(Long arg0, Long arg1) {
 		boolean result = arg0 < arg1;
 		if(result){
 			return 1;
