@@ -89,7 +89,7 @@ public class TitleScreen {
 			startButtonProfile, rewindButton,backButtonProfile,newUserButton;
 	private static ArrayList<String> Users;
 	private static JTextField nameInputField;
-	private JComboBox<String> userList;
+	private JComboBox<String> userList = new JComboBox<String>(Library.getUserNames());
 
 	private String selected;
 
@@ -271,7 +271,6 @@ public class TitleScreen {
 		text.setForeground(Color.WHITE);
 		userInfo.add(text);
 
-		userList = new JComboBox<String>(Library.getUserNames());
 		userList.setPreferredSize(new Dimension(250, 40));
 		userList.setFont( new Font("Consolas", Font.BOLD, 12));
 		userList.setBackground(Color.BLACK);
@@ -458,6 +457,7 @@ public class TitleScreen {
 
 		// instance of a DocumentBuilderFactory
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		
 		try {
 			// use factory to get an instance of document builder
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -489,8 +489,10 @@ public class TitleScreen {
 						"{http://xml.apache.org/xslt}indent-amount", "4");
 
 				// send DOM to file
-				tr.transform(new DOMSource(dom), new StreamResult(
-						new FileOutputStream(path + "pref.xml")));
+				FileOutputStream out = new FileOutputStream(path+"pref.xml");
+				out.close();
+				
+				tr.transform(new DOMSource(dom), new StreamResult(new FileOutputStream(path + "pref.xml")));
 
 			} catch (TransformerException te) {
 				System.out.println(te.getMessage());
@@ -538,8 +540,12 @@ public class TitleScreen {
 		}
 		
 		System.out.println("Finished Loading Perfs: ");
-		userList.setSelectedIndex(Integer.parseInt(perfs.get(1)));
-		controllerList.setSelectedIndex(Integer.parseInt(perfs.get(0)));
+		try{
+			userList.setSelectedIndex(Integer.parseInt(perfs.get(1)));
+			controllerList.setSelectedIndex(Integer.parseInt(perfs.get(0)));
+		}
+		catch(Exception e){
+		}
 		
 	}
 
@@ -686,9 +692,11 @@ public class TitleScreen {
 	 */
 	private void updateUsers() {
 		String[] names = Library.getUserNames();
+		System.out.println("Update Users: Length " + names.length);
+		
 		userList.removeAllItems();
-
 		for (int i = 0; i < names.length; i++) {
+			System.out.println(names[i]);
 			userList.addItem(names[i]);
 		}
 	}

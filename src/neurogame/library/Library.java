@@ -163,6 +163,8 @@ public final class Library
 	 */
 	public static String[] getUserNames() {
 		System.out.println("-- Get Names: "+users.size());
+		users.clear();
+		loadUsers();
 		if (users.size() > 0) {
 			String[] names = new String[users.size()];
 			for (int i = 0; i < users.size(); i++) {
