@@ -21,7 +21,7 @@ public class SpriteParticles
     for(int x = 0; x < image.getWidth(); x++){
       for(int y = 0; y < image.getHeight(); y++){
         c = image.getRGB(x, y);
-        if(c != 0 && x % 1 == 0 && y % 1 == 0){
+        if(c != 0){// && x % 2 == 0 && y % 2 == 0){
           pixels.add(new Pixel(x, y, new Color(c)));
         }
       }
@@ -35,12 +35,13 @@ public class SpriteParticles
    * @param name
    * @return
    */
-  public static ArrayList<Pixel> getPixels(String name)
-  { ArrayList<Pixel> newList = new ArrayList<>();
-    Pixel p;
-    for(Pixel pp: nameSpriteMap.get(name)){
-      p = new Pixel(pp.getX(), pp.getY(), pp.getColor());
-      newList.add(p);
+  public static Pixel[] getPixels(String name)
+  {
+    ArrayList<Pixel> pixels = nameSpriteMap.get(name);
+    Pixel[] newList = new Pixel[pixels.size()];
+    for(int i = 0; i < newList.length; i++){
+      Pixel pp = pixels.get(i);
+      newList[i] = new Pixel(pp.getX(), pp.getY(), pp.getColor());
     }
     return newList;
   }
