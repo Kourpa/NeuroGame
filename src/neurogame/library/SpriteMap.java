@@ -90,6 +90,15 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("backButtonPlain", "/images/back-button.png", 300, 50);
     add("backButtonSelected", "/images/back-selected.png", 300, 50);
     
+    add("mainMenuButtonPlain", "/images/mainMenu-button.png", 300, 50);
+    add("mainMenuButtonSelected", "/images/mainMenu-selected.png", 300, 50);
+    
+    add("restartButtonPlain", "/images/restart-button.png", 300, 50);
+    add("restartButtonSelected", "/images/restart-selected.png", 300, 50);
+    
+    add("newUserButtonPlain", "/images/newUser-button.png", 200, 40);
+    add("newUserButtonSelected", "/images/newUser-selected.png", 200, 40);
+    
     // Game graphics.
     add("player", "/images/playerShip.png", 68, 68);
     add("pDmg1", "/images/damage1.png", 68, 68);
