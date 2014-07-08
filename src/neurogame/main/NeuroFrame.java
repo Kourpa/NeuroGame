@@ -293,8 +293,6 @@ public User getUser(){
    *          Number of points (long).
    * @param coins
    *          Number of coins (int).
-   * @param coinsToHealth
-   *          Number of coins (int) until the next health chunk.
    * @param health
    *          Player health (int).
    * @param powerUp
