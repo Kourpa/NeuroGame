@@ -28,7 +28,7 @@ import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Player;
 import neurogame.gameplay.PowerUp;
 import neurogame.io.Logger;
-import neurogame.level.Particles;
+import neurogame.level.ParticleEffect;
 import neurogame.level.World;
 import neurogame.library.KeyBinds;
 import neurogame.library.Library;
@@ -331,7 +331,7 @@ public class GameController
              obj.getType() == GameObjectType.ENEMY_STRAIGHT ||
              obj.getType() == GameObjectType.ENEMY_SINUSOIDAL)
           {
-            iterator.add(new Particles(obj.getType(), obj.getX(), obj.getY(), world));
+            iterator.add(new ParticleEffect(obj.getType(), obj.getCenterX(), obj.getCenterY(), world));
           }
 
       }
@@ -614,10 +614,6 @@ public class GameController
 	      {
 	        controls.disableAll();
 	        game.quit();
-	      }
-	      else if(gameOver.IsRestarting){
-	    	  controls.disableAll();
-	          newGame();
 	      }
 	    }
 
