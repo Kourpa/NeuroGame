@@ -605,7 +605,7 @@ public class GameController
 	  if (gameOver != null)
 	    {
 
-	      if (gameOver.IsStarting)
+		  if (gameOver.IsStarting)
 	      {
 	        controls.disableAll();
 	        this.showTitle();
@@ -614,6 +614,10 @@ public class GameController
 	      {
 	        controls.disableAll();
 	        game.quit();
+	      }
+	      else if(gameOver.IsRestarting){
+	    	  controls.disableAll();
+	          newGame();
 	      }
 	    }
 
