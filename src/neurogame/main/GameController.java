@@ -12,6 +12,7 @@ package neurogame.main;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -541,6 +542,10 @@ public class GameController
     controllable = false;
     scrolling = false;
   }
+  
+  private void newOddBall(){
+	  //Oddball o = new Oddball(frame);
+  }
 
   /**
    * Start a new game.
@@ -640,7 +645,7 @@ public class GameController
       }
       else if (title.IsOption)
       {
-
+    	  //newOddBall();
       }
 
       if (inputs.get("sound"))

@@ -381,7 +381,6 @@ public class TitleScreen {
 				// IsStarting = true;
 				
 				CreateProfileScreen(frame);
-				//Oddball o = new Oddball(startButtonPlain, startButtonSelected, startButtonPlain);
 			}
 		});
 
@@ -389,10 +388,20 @@ public class TitleScreen {
 		MenuButtons.add(configButton);
 		configButton.b.addActionListener(new ActionListener() {
 
-			public void actionPerformed(ActionEvent e) {
-				IsOption = true;
-				Options(frame);
+			public void actionPerformed(ActionEvent e) {				
+				background.setVisible(false);
+				frame.getContentPane().setLayout(new GridLayout(1, 1));
+				frame.getContentPane().remove(lpane);
+				frame.removeKeyListener(Keys);
 				
+				IsOption = true;
+				System.out.println("OddBall Test");
+				
+				BufferedImage img1 = sprites.get("player");
+				BufferedImage img2 = sprites.get("EnemyStraight");
+				BufferedImage img3 = sprites.get("powerupBackground");				
+				
+				Oddball o = new Oddball(frame,img1,img2,img3);
 			}
 		});
 
