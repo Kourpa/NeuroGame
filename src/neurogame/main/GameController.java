@@ -327,13 +327,6 @@ public class GameController
       if (obj.isAlive() == false)
       {
         iterator.remove();
-        if(obj.getType() == GameObjectType.ENEMY_FOLLOW ||
-             obj.getType() == GameObjectType.ENEMY_STRAIGHT ||
-             obj.getType() == GameObjectType.ENEMY_SINUSOIDAL)
-          {
-            iterator.add(new ParticleEffect(obj.getType(), obj.getCenterX(), obj.getCenterY(), world));
-          }
-
       }
     }
 

@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.util.List;
 
 import neurogame.level.Chunk;
+import neurogame.level.ParticleEffect;
 import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -42,6 +43,12 @@ public class Enemy extends GameObject
     
   }
   
+  public void explode()
+  {
+    System.out.println("Explode: ");
+    world.addGameObject(new ParticleEffect(getType(), getCenterX(), getCenterY(), world));
+    die(); 
+  }
   
   public void die()
   { 
@@ -60,7 +67,7 @@ public class Enemy extends GameObject
   {
     if (getX()+getWidth() < Library.leftEdgeOfWorld) die();
     
-    else if (checkCollisionWithWall()) die();
+    else if (checkCollisionWithWall()) explode();
 
     if (!isAlive()) return;
    
@@ -94,7 +101,7 @@ public class Enemy extends GameObject
   { 
     GameObjectType type = obj.getType();
     if (type == GameObjectType.COIN) return;
-    die();
+    explode();
   }
     
   public Vector2 strategyStraight(double maxDistanceChange, double scrollDistance)

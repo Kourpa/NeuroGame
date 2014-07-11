@@ -13,6 +13,7 @@ import neurogame.gameplay.Coin;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.EnumCollisionType;
 import neurogame.gameplay.GameObject;
+import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Player;
 import neurogame.library.Library;
 
@@ -22,6 +23,7 @@ public class World
   private Chunk chunkLeft, chunkRight;
   // private final Area walls = new Area(); // The wrong way to do walls
   private ArrayList<GameObject> gameObjectList = new ArrayList<GameObject>();
+  private ArrayList<GameObject> objectWaitList = new ArrayList<GameObject>();
 
   private double windowWidth;
   private int frameCountSinceLastChunkTypeChange;
@@ -72,6 +74,14 @@ public class World
    */
   public double update(double deltaTime)
   {
+    
+    for (GameObject obj : objectWaitList) 
+    {
+      System.out.println("World.update() adding object from waitlist");
+      gameObjectList.add(obj);
+    }
+    objectWaitList.clear();
+    
     double visibleWorldLeftBeforeUpdate = Library.leftEdgeOfWorld;
     // System.out.println("update("+deltaTime+"), chunkLeft.getWidth() =
 
@@ -145,6 +155,15 @@ public class World
     Coin.spawn(chunkRight, this, gameObjectList, deltaTime);
     Enemy.spawn(chunkRight, this, gameObjectList, deltaTime);
 
+  }
+  
+  public void addGameObject(GameObject obj)
+  {
+    //This method may be called while another part of the program is iterating through the game list
+    //Therefore, add the object to a waitlist that gets updated on the next call to world.update
+    
+    objectWaitList.add(obj);
+    
   }
 
   public void render(Graphics2D g)
