@@ -5,11 +5,13 @@
 package neurogame.level;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+
 import neurogame.gameplay.Coin;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.EnumCollisionType;
 import neurogame.gameplay.GameObject;
 import neurogame.gameplay.Player;
+import neurogame.gameplay.PowerUp;
 import neurogame.library.Library;
 
 public class World
@@ -149,6 +151,7 @@ public class World
   {
     Coin.spawn(chunkRight, this, gameObjectList, deltaTime);
     Enemy.spawn(chunkRight, this, gameObjectList, deltaTime);
+    PowerUp.spawn(chunkRight, this, gameObjectList, deltaTime);
 
   }
   

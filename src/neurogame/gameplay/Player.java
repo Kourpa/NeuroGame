@@ -33,6 +33,7 @@ public class Player extends GameObject
   private double skillEnemyStraight;
   private double skillEnemyFollow;
   private double skillEnemySinusoidal;
+  public double skillProbabilitySpawnPowerUpPerSec;
 
   private QuickSet<Spark> sparkList;
 
@@ -71,6 +72,7 @@ public class Player extends GameObject
     skillEnemyStraight = 1;
     skillEnemyFollow = 1;
     skillEnemySinusoidal = 1;
+    skillProbabilitySpawnPowerUpPerSec = 0.05;
     Enemy.initGame();
   }
 
@@ -159,8 +161,9 @@ public class Player extends GameObject
     GameObjectType type = obj.getType();
     if (type == GameObjectType.COIN) collectCoin();
     else if (type.isEnemy()) crashedIntoEnemy(obj);
-      
- 
+    else if (type == GameObjectType.POWER_UP)
+    { addMissileCount(10);
+    }
   }
   
   public void addMissileCount(int count)

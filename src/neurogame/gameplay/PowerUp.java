@@ -13,7 +13,11 @@ package neurogame.gameplay;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Path2D;
+import java.util.List;
 
+import neurogame.level.Chunk;
+import neurogame.level.EnumChunkType;
+import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
 
@@ -29,9 +33,9 @@ public class PowerUp extends GameObject
 {
   private static Image image = Library.getSprites().get(GameObjectType.POWER_UP.getName());
 
-  public PowerUp(GameObjectType type, double x, double y, World world)
+  public PowerUp(double x, double y, World world)
   {
-    super(type, x, y, world);
+    super(GameObjectType.POWER_UP, x, y, world);
   }
 
   /**
@@ -51,28 +55,48 @@ public class PowerUp extends GameObject
   { die(false);
   }
 
+  
+  public static int spawn(Chunk myChunk, World world, List<GameObject> gameObjects, double deltaTime)
+  {
+
+    double r = Library.RANDOM.nextDouble();
+    EnumChunkType type = myChunk.getChunkType();
+    if (type == EnumChunkType.FLAT) return 0;
+
+    if (r > world.getPlayer().skillProbabilitySpawnPowerUpPerSec * deltaTime) return 0;
+
+    //System.out.println("probabilitySpawnCoinPerSec=" + world.getPlayer().skillProbabilitySpawnCoinPerSec);
+
+    double rightEdgeOfScreen = Library.leftEdgeOfWorld
+        + Library.getWindowAspect();
+    PathVertex vertex = myChunk.getVertexRightOf(rightEdgeOfScreen);
+
+    if (vertex == null) return 0;
+
+    double x = vertex.getX();
+   
+
+    double y = vertex.getTopY() + GameObjectType.POWER_UP.getHeight() / 2;
+
+    if (Library.RANDOM.nextBoolean())
+    {
+      y = vertex.getBottomY() - 1.5 * GameObjectType.POWER_UP.getHeight();
+    }
+
+    PowerUp ammoBox = new PowerUp(x, y, world);
+    gameObjects.add(ammoBox);
+    return 1;
+
+  }
+
+  
+  
 
   public void die(boolean showDeathEffect)
   { 
     isAlive = false;
   }
 
-
-  /**
-   * Pick up the PowerUp - links it to the Player and stops drawing it in the
-   * world.
-   */
-  public void pickUp()
-  {
-    // If the PowerUp is inactive, it was already picked up, so ignore it.
-    if (isAlive())
-    {
-      player.addMissileCount(10);
-      die(true);
-    }
-
-
-  }
 
   public void render(Graphics2D g)
   {
