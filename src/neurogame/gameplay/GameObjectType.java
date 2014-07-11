@@ -9,7 +9,8 @@ public enum GameObjectType
     public double getHeight() {return 0.075;}
     public int getHitDamage() {return 0;}
     public boolean isEnemy() {return false;}
-    public boolean isDynamic() {return true;}
+    public boolean isDynamic() {return true;}  
+    public double getMaxSpeed() {return 0.5;}
   },
 
   COIN
@@ -19,6 +20,7 @@ public enum GameObjectType
     public int getHitDamage() {return 0;}
     public boolean isEnemy() {return false;}
     public boolean isDynamic() {return false;}
+    public double getMaxSpeed() {return 0;}
   },
 
   PARTICLE
@@ -28,8 +30,19 @@ public enum GameObjectType
     public int getHitDamage() {return 0;}
     public boolean isEnemy() {return false;}
     public boolean isDynamic() {return true;}
+    public double getMaxSpeed() {return 0.5;}
   },
   
+  
+  MISSILE
+  { public String getName() {return "missile";}
+    public double getWidth() {return 0.03;}
+    public double getHeight() {return 0.01;}
+    public int getHitDamage() {return 0;}
+    public boolean isEnemy() {return false;}
+    public boolean isDynamic() {return true;}
+    public double getMaxSpeed() {return 1.25;}
+    },
 
   ENEMY_STRAIGHT
   { public String getName() {return "EnemyStraight";}
@@ -38,6 +51,7 @@ public enum GameObjectType
     public int getHitDamage() {return 10;}
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
+    public double getMaxSpeed() {return 0.7;}
   }, 
   
   ENEMY_FOLLOW
@@ -47,6 +61,7 @@ public enum GameObjectType
     public int getHitDamage() {return 15;}
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
+    public double getMaxSpeed() {return 0.5;}
   }, 
   
   ENEMY_SINUSOIDAL
@@ -56,6 +71,7 @@ public enum GameObjectType
     public int getHitDamage() {return 10;}
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
+    public double getMaxSpeed() {return 0.6;}
   };
   
   public abstract String getName();
@@ -64,4 +80,5 @@ public enum GameObjectType
   public abstract int getHitDamage();
   public abstract boolean isEnemy();
   public abstract boolean isDynamic();
+  public abstract double getMaxSpeed();
 }

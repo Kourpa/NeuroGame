@@ -298,7 +298,7 @@ public User getUser(){
    * @param powerUp
    *          PowerUp whose icon should be displayed on the hud.
    */
-  public void setStats(int score, int coins, int health, PowerUp powerUp)
+  public void setStats(int score, int health, PowerUp powerUp)
   {
     this.score = score;
     this.coins = coins;

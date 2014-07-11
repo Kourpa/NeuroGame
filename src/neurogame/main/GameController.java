@@ -304,7 +304,7 @@ public class GameController
     // }
 
     // Set the info for the HUD.
-    frame.setStats(player.getScore(), player.getTotalCoinsEarnedThisGame(),health, powerUp);
+    frame.setStats(player.getScore(), health, powerUp);
   }
 
   /**

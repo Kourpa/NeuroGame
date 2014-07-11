@@ -19,16 +19,12 @@ public abstract class GameObject
   private double centerX, centerY;
   private double hitBoxMinX, hitBoxMaxX, hitBoxMinY, hitBoxMaxY;
   protected World world;
-  private boolean isAlive = true; // determines if the object is active/alive
+  protected boolean isAlive = true; // determines if the object is active/alive
 
   protected Player player;
 
   // protected Path2D hitBox = new Path2D.Double(); //it's a hit box
   private boolean empHit = false;
-
-  // movement variables
-  protected double maxSpeed = 0.01;
-  protected double velD = 0.003;
 
   protected int health = 1;
 
@@ -132,7 +128,7 @@ public abstract class GameObject
 
   public boolean isAlive()  { return isAlive; }
   
-  public void die() {   isAlive = false; }
+  public abstract void die(boolean showDeathEffect);
   
   
   

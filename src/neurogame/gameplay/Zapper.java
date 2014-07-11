@@ -193,7 +193,7 @@ public class Zapper extends GameObject
   @Override
   public void update(double deltaTime, double scrollDistance)
   {
-    if (getX() < Library.leftEdgeOfWorld) die();
+    if (getX() < Library.leftEdgeOfWorld) die(false);
     if (!isAlive()) return;
     
     if (++frameCounter >= frameDelay)
@@ -216,9 +216,14 @@ public class Zapper extends GameObject
   }
 
   public void hit(GameObject obj)
-  { die();
+  { die(false);
   }
   
+  
+  public void die(boolean showDeathEffect)
+  { 
+    isAlive = false;
+  }
   public void render(Graphics2D g)
   {
 

@@ -81,7 +81,7 @@ public class Coin extends GameObject
     // System.out.println("coin["+id+"]: ("+getX() + ", " + getY() +
     // ") left world edge="+Library.leftEdgeOfWorld);
 
-    if (getX()+getWidth() < Library.leftEdgeOfWorld) die();
+    if (getX()+getWidth() < Library.leftEdgeOfWorld) die(false);
     
     if (!isAlive()) return;
     
@@ -90,8 +90,13 @@ public class Coin extends GameObject
     frameCounter++;
   }
   
+  public void die(boolean showDeathEffect)
+  { 
+    isAlive = false;
+  }
+  
   public void hit(GameObject obj)
-  { die();
+  { die(true);
   }
 
   public void render(Graphics2D g)

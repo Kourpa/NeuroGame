@@ -18,6 +18,8 @@ public class Enemy extends GameObject
   private Image image;
   private double lastMovementX, lastMovementY;
   
+  private double maxSpeed;
+  
   public Enemy(GameObjectType type, double x, double y, double width, double height, String name, World world)
   {
     super(type, x, y, world);
@@ -43,20 +45,17 @@ public class Enemy extends GameObject
     
   }
   
-  public void explode()
-  {
-    System.out.println("Explode: ");
-    world.addGameObject(new ParticleEffect(getType(), getCenterX(), getCenterY(), world));
-    die(); 
-  }
   
-  public void die()
+  public void die(boolean showDeathEffect)
   { 
+    if (showDeathEffect) 
+    { world.addGameObject(new ParticleEffect(getType(), getCenterX(), getCenterY(), world));
+    }
     if (isAlive())
-    { super.die();
+    { isAlive = false;
       activeEnemyCount--; 
       //System.out.println("   die(): activeEnemyCount=" + activeEnemyCount);
-      player.defeatedEnemy(getType());
+      //player.defeatedEnemy(getType());
     }
   }
   
@@ -65,9 +64,9 @@ public class Enemy extends GameObject
   
   public void update(double deltaSec, double scrollDistance)
   {
-    if (getX()+getWidth() < Library.leftEdgeOfWorld) die();
+    if (getX()+getWidth() < Library.leftEdgeOfWorld) die(false);
     
-    else if (checkCollisionWithWall()) explode();
+    else if (checkCollisionWithWall()) die(true);
 
     if (!isAlive()) return;
    
@@ -101,7 +100,7 @@ public class Enemy extends GameObject
   { 
     GameObjectType type = obj.getType();
     if (type == GameObjectType.COIN) return;
-    explode();
+    die(true);
   }
     
   public Vector2 strategyStraight(double maxDistanceChange, double scrollDistance)
@@ -202,22 +201,12 @@ public class Enemy extends GameObject
 
     if (wallCollision() != EnumCollisionType.NONE)
     {
-      die();
+      die(true);
       return true;
     }
     return false;
   }
   
-  public void checkCollisionWithOtherGameObject()
-  {
-    List<GameObject> gameObjList = world.getObjectList();
-   
-    //for (GameObject obj : gameObjList)
-    //{
-    //  if (this.collision(obj))
-    //  { if (obj.enemy
-    //}
-  }
   
   
   public void render(Graphics2D g)

@@ -3,17 +3,12 @@
  * @author Marcos
  */
 package neurogame.level;
-
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.List;
-
 import neurogame.gameplay.Coin;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.EnumCollisionType;
 import neurogame.gameplay.GameObject;
-import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Player;
 import neurogame.library.Library;
 
@@ -77,7 +72,7 @@ public class World
     
     for (GameObject obj : objectWaitList) 
     {
-      System.out.println("World.update() adding object from waitlist");
+      //System.out.println("World.update() adding object from waitlist");
       gameObjectList.add(obj);
     }
     objectWaitList.clear();

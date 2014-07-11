@@ -114,7 +114,7 @@ public class PowerUp extends GameObject
   @Override
   public void update(double deltaTime, double scrollDistance)
   {
-    if (getX() < Library.leftEdgeOfWorld) die();
+    if (getX() < Library.leftEdgeOfWorld) die(false);
     if (isAlive())
     {
       animate();
@@ -152,7 +152,7 @@ public class PowerUp extends GameObject
   }
   
   public void hit(GameObject obj)
-  { die();
+  { die(false);
   }
 
   /**
@@ -302,6 +302,11 @@ public class PowerUp extends GameObject
       // break;
     }
   }
+  
+  public void die(boolean showDeathEffect)
+  { 
+    isAlive = false;
+  }
 
   /**
    * Deactivate the powerUp's effect.
@@ -344,20 +349,8 @@ public class PowerUp extends GameObject
     // If the PowerUp is inactive, it was already picked up, so ignore it.
     if (isAlive())
     {
-      PowerUp old = player.getPowerUp();
-      if (old != null)
-      {
-        old.deactivate();
-      }
-
-      // update player score
-      player.collectPowerUp();
-
-      System.out.println("Player collected powerup " + type);
-      // Library.log("Player collected powerup " + type, world.getRisk());
-
-      player.setPowerUp(this);
-      die();
+      player.addMissile(10);
+      die(true);
     }
 
     // set the size of the laser power up

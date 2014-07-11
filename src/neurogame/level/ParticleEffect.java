@@ -50,7 +50,7 @@ public class ParticleEffect extends GameObject
   @Override
   public void update(double deltaSec, double scrollDistance)
   { alpha -= .01;
-    if (alpha <= 0 || !gmass.isAlive()) die();
+    if (alpha <= 0 || !gmass.isAlive()) die(false);
     this.scrollDistance = scrollDistance;
 
 //    gmass.update(deltaSec, scrollDistance);
@@ -87,4 +87,9 @@ public class ParticleEffect extends GameObject
 
   @Override
   public void hit(GameObject other){}
+  
+  public void die(boolean showDeathEffect)
+  { 
+    isAlive = false;
+  }
 }
