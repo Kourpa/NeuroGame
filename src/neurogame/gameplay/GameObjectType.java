@@ -11,6 +11,7 @@ public enum GameObjectType
     public boolean isEnemy() {return false;}
     public boolean isDynamic() {return true;}  
     public double getMaxSpeed() {return 0.5;}
+    public boolean hasCollider() {return true;}
   },
 
   COIN
@@ -21,6 +22,7 @@ public enum GameObjectType
     public boolean isEnemy() {return false;}
     public boolean isDynamic() {return false;}
     public double getMaxSpeed() {return 0;}
+    public boolean hasCollider() {return true;}
   },
 
   PARTICLE
@@ -31,6 +33,7 @@ public enum GameObjectType
     public boolean isEnemy() {return false;}
     public boolean isDynamic() {return true;}
     public double getMaxSpeed() {return 0.5;}
+    public boolean hasCollider() {return false;}
   },
   
   
@@ -42,6 +45,7 @@ public enum GameObjectType
     public boolean isEnemy() {return false;}
     public boolean isDynamic() {return true;}
     public double getMaxSpeed() {return 1.25;}
+    public boolean hasCollider() {return true;}
     },
 
   ENEMY_STRAIGHT
@@ -52,6 +56,7 @@ public enum GameObjectType
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
     public double getMaxSpeed() {return 0.7;}
+    public boolean hasCollider() {return true;}
   }, 
   
   ENEMY_FOLLOW
@@ -62,6 +67,7 @@ public enum GameObjectType
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
     public double getMaxSpeed() {return 0.5;}
+    public boolean hasCollider() {return true;}
   }, 
   
   ENEMY_SINUSOIDAL
@@ -72,7 +78,20 @@ public enum GameObjectType
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
     public double getMaxSpeed() {return 0.6;}
+    public boolean hasCollider() {return true;}
+  },
+  
+  POWER_UP
+  { public String getName() {return "powerupMissileAmmo";}
+    public double getWidth() {return 0.075;}
+    public double getHeight() {return 0.075;}
+    public int getHitDamage() {return 0;}
+    public boolean isEnemy() {return false;}
+    public boolean isDynamic() {return false;}
+    public double getMaxSpeed() {return 0;}
+    public boolean hasCollider() {return true;}
   };
+  
   
   public abstract String getName();
   public abstract double getWidth();
@@ -81,4 +100,5 @@ public enum GameObjectType
   public abstract boolean isEnemy();
   public abstract boolean isDynamic();
   public abstract double getMaxSpeed();
+  public abstract boolean hasCollider();
 }

@@ -17,7 +17,9 @@ public class Player extends GameObject
 
   private static Image image = Library.getSprites().get(GameObjectType.PLAYER.getName());
   public static final int MAX_MISSILE_COUNT = 20;
+  private static final double MISSILE_COOLDOWN_SECONDS = 0.3;
   private int missileCount;
+  private double missileCurrentCooldown; //seconds
 
   private boolean invulnerable = false;
 
@@ -59,6 +61,8 @@ public class Player extends GameObject
     
     missileCount = 10;
     
+    missileCurrentCooldown = 0;
+    
     skillProbabilitySpawnCoinPerSec = (Coin.MIN_PROBALITY_SPAWN_PER_SEC + Coin.MAX_PROBALITY_SPAWN_PER_SEC)/2.0;
 
     lastVelocityX = 0;
@@ -79,6 +83,7 @@ public class Player extends GameObject
   public void update(double deltaSec, double scrollDistance)
   {
     gameTotalSeconds += deltaSec;
+    if (missileCurrentCooldown > 0) missileCurrentCooldown -= deltaSec;
 
     double inputSpeed = directionVector.getAcceleration();
     double maxSpeed = GameObjectType.PLAYER.getMaxSpeed();
@@ -158,7 +163,7 @@ public class Player extends GameObject
  
   }
   
-  public void addMissile(int count)
+  public void addMissileCount(int count)
   {
     missileCount+=count;
     if (missileCount > MAX_MISSILE_COUNT) missileCount = MAX_MISSILE_COUNT;
@@ -272,7 +277,12 @@ public class Player extends GameObject
   
   public void shootMissile()
   {
-    if (this.missileCount < 1) return;
+    if (missileCurrentCooldown > 0) return;
+    System.out.println("Player.shootMissile()   missileCount=" + missileCount);
+    if (missileCount < 1) return;
+    
+    missileCount--;
+    missileCurrentCooldown = MISSILE_COOLDOWN_SECONDS;
     world.addGameObject(new Missile(getCenterX(), getCenterY(), world));
     
   }

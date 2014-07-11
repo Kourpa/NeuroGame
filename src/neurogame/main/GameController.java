@@ -168,6 +168,7 @@ public class GameController
     // //////////////
     controls.addBinding("sound");
     keyBinds.addBinding(KeyEvent.VK_F1, "sound");
+    //keyBinds.addBinding(KeyEvent.VK_SPACE, "shoot");
 
     // A copy of the inputs map used for logging changes in input states.
     // This must be done before adding the debugging key binds or the
@@ -336,12 +337,14 @@ public class GameController
       GameObject obj1 = gameObjList.get(i);
       GameObjectType type1 = obj1.getType();
       if (obj1.isAlive() == false) continue;
+      if (type1.hasCollider() == false) continue;
 
       for (int k = i+1; k < gameObjList.size(); k++)
       {
         GameObject obj2 = gameObjList.get(k);
         GameObjectType type2 = obj2.getType();
         if (!obj2.isAlive()) continue;
+        if (type2.hasCollider() == false) continue;
 
         if ((!type1.isDynamic()) && (!type2.isDynamic())) continue;
 
@@ -453,10 +456,7 @@ public class GameController
    */
   private void usePowerUp()
   {
-    if (powerUp != null)
-    {
-      powerUp.activate();
-    }
+    player.shootMissile();
   }
 
   /**
