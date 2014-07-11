@@ -1,5 +1,7 @@
 /build/
 /bin
 
+
 /build/
-/logs
+/logs.idea
+/nbproject

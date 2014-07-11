@@ -273,7 +273,7 @@ public class Player extends GameObject
   public void shootMissile()
   {
     if (this.missileCount < 1) return;
-    world.addGameObject(new Missile(getCenterX(), getCenterY(), world));
+//    world.addGameObject(new Missile(getCenterX(), getCenterY(), world));
     
   }
   

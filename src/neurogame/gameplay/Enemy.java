@@ -49,7 +49,7 @@ public class Enemy extends GameObject
   public void die(boolean showDeathEffect)
   { 
     if (showDeathEffect) 
-    { world.addGameObject(new ParticleEffect(getType(), getCenterX(), getCenterY(), world));
+    { world.addGameObject(new ParticleEffect(this, getCenterX(), getCenterY(), world));
     }
     if (isAlive())
     { isAlive = false;
@@ -65,7 +65,7 @@ public class Enemy extends GameObject
   public void update(double deltaSec, double scrollDistance)
   {
     if (getX()+getWidth() < Library.leftEdgeOfWorld) die(false);
-    
+
     else if (checkCollisionWithWall()) die(true);
 
     if (!isAlive()) return;

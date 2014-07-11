@@ -19,7 +19,7 @@ public abstract class GameObject
   private double centerX, centerY;
   private double hitBoxMinX, hitBoxMaxX, hitBoxMinY, hitBoxMaxY;
   protected World world;
-  protected boolean isAlive = true; // determines if the object is active/alive
+  protected boolean isAlive = true; // determines if the object is active/alivezz
 
   protected Player player;
 
@@ -127,10 +127,8 @@ public abstract class GameObject
   public double getCenterY(){return centerY;}
 
   public boolean isAlive()  { return isAlive; }
-  
+
   public abstract void die(boolean showDeathEffect);
-  
-  
   
   public double getHitMinX()
   { return centerX + hitBoxMinX;
@@ -150,6 +148,7 @@ public abstract class GameObject
 
   
   public GameObjectType getType() {return type;}
+  public String getName() {return type.getName();}
   
 
   public void setEmpHit(boolean empHit)
