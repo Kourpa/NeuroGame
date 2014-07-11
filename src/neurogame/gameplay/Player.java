@@ -284,7 +284,6 @@ public class Player extends GameObject
     missileCount--;
     missileCurrentCooldown = MISSILE_COOLDOWN_SECONDS;
     world.addGameObject(new Missile(getCenterX(), getCenterY(), world));
-    
   }
   
 
