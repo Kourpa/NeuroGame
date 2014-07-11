@@ -1,19 +1,24 @@
+
 package neurogame.gameplay;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
 import neurogame.level.World;
 import neurogame.library.Library;
 
-public class Missile extends GameObject
+public class InfoMessage extends GameObject
 {
-  private static Image image = Library.getSprites().get(GameObjectType.MISSILE.getName());
-
-  
-  public Missile(double x, double y, World world)
+  private String msg;
+  private static final Font msgFont = new Font("Verdana", Font.BOLD, 48);
+  private static final Color msgColor = new Color(113, 188, 120);
+ 
+  public InfoMessage(double x, double y, World world, String msg)
   {
-    super(GameObjectType.MISSILE, x, y, world);    
+    super(GameObjectType.INFO, x, y, world);  
+    this.msg = msg;
   }
   
 
@@ -31,14 +36,12 @@ public class Missile extends GameObject
   public void update(double deltaSec, double scrollDistance)
   {
     if (!Library.isOnScreen(getX(), getY())) die(false);
-    
-    else if (checkCollisionWithWall()) die(true);
-
+   
     if (!isAlive()) return;
 
-    double maxDistanceChange = GameObjectType.MISSILE.getMaxSpeed() * deltaSec;
+    double maxDistanceChange = GameObjectType.INFO.getMaxSpeed() * deltaSec;
 
-    move(maxDistanceChange, 0);
+    move(-scrollDistance, -maxDistanceChange);
     //System.out.println("Missile Update: (" + getX() + ", " + getY() + ")" );
     
   }
@@ -54,19 +57,7 @@ public class Missile extends GameObject
     
 
 
-  
- 
 
-  private boolean checkCollisionWithWall()
-  {
-    if (!isAlive()) return false;
-
-    if (wallCollision() != EnumCollisionType.NONE)
-    {
-      return true;
-    }
-    return false;
-  }
   
   
   
@@ -74,7 +65,9 @@ public class Missile extends GameObject
   {
     int xx = Library.worldPosXToScreen(getX());
     int yy = Library.worldPosYToScreen(getY());
-    g.drawImage(image, xx, yy, null);
+    g.setColor(msgColor);
+    g.setFont(msgFont);
+    g.drawString(msg, yy, yy);
   }
 
 }

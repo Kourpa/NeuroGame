@@ -3,6 +3,7 @@ package neurogame.gameplay;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+import neurogame.level.EnumChunkType;
 import neurogame.level.ParticleEffect;
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -73,7 +74,7 @@ public class Player extends GameObject
     skillEnemyFollow = 1;
     skillEnemySinusoidal = 1;
     skillProbabilitySpawnPowerUpPerSec = 0.05;
-    Enemy.initGame();
+    
   }
 
   /**
@@ -321,11 +322,19 @@ public class Player extends GameObject
     gameScore += score;
   }
   
-  public int getMaxEnemy(GameObjectType type)
+  public int getMaxEnemy(GameObjectType enemytype)
   {
-    if (type == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
-    else if (type == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
-    else if (type == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
+    if (enemytype == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
+    else if (enemytype == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
+    else if (enemytype == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
+    return 1;
+  }
+  
+  public int getMaxEnemy(EnumChunkType chunkType)
+  {
+    if (chunkType.getEnemyType() == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
+    else if (chunkType.getEnemyType() == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
+    else if (chunkType.getEnemyType() == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
     return 1;
   }
   

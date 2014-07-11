@@ -42,7 +42,7 @@ public final class Library
   public static final String NEWLINE = System.getProperty("line.separator");
   public static final String SEPARATOR = System.getProperty("file.separator");
 
-  public static final String GAME_TITLE = "NeuroSideScroller Version 2014-07-10";
+  public static final String GAME_TITLE = "Escape from Asteroid Axion v2014-11-10";
 
   public static final int MIN_FRAME_MILLISEC = 10;
   public static final String ARGS_REGEX = "\\-[hdDlLfFwsSgG]+";

@@ -32,6 +32,13 @@ import neurogame.library.Library;
 public class PowerUp extends GameObject
 {
   private static Image image = Library.getSprites().get(GameObjectType.POWER_UP.getName());
+  private static final double MIN_SECONDS_BETWEEN_SPAWNS = 10;
+  private static double spawnCoolDownRemaining;
+  
+  public static void initGame()
+  {
+    spawnCoolDownRemaining = MIN_SECONDS_BETWEEN_SPAWNS;
+  }
 
   public PowerUp(double x, double y, World world)
   {
@@ -56,8 +63,12 @@ public class PowerUp extends GameObject
   }
 
   
-  public static int spawn(Chunk myChunk, World world, List<GameObject> gameObjects, double deltaTime)
+  public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
+    if (spawnCoolDownRemaining > 0) 
+    { spawnCoolDownRemaining -= deltaTime;
+      return 0;
+    }
 
     double r = Library.RANDOM.nextDouble();
     EnumChunkType type = myChunk.getChunkType();
@@ -75,16 +86,17 @@ public class PowerUp extends GameObject
 
     double x = vertex.getX();
    
+    spawnCoolDownRemaining = MIN_SECONDS_BETWEEN_SPAWNS;
 
-    double y = vertex.getTopY() + GameObjectType.POWER_UP.getHeight() / 2;
+    double y = vertex.getTopY() + GameObjectType.POWER_UP.getHeight() / 3;
 
     if (Library.RANDOM.nextBoolean())
     {
-      y = vertex.getBottomY() - 1.5 * GameObjectType.POWER_UP.getHeight();
+      y = vertex.getBottomY() - 1.3 * GameObjectType.POWER_UP.getHeight();
     }
 
     PowerUp ammoBox = new PowerUp(x, y, world);
-    gameObjects.add(ammoBox);
+    world.addGameObject(ammoBox);
     return 1;
 
   }

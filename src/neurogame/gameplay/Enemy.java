@@ -217,7 +217,7 @@ public class Enemy extends GameObject
   }
   
   
-  public static int spawn(Chunk myChunk, World world, List<GameObject> gameObjects, double deltaTime)
+  public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
     GameObjectType type = myChunk.getChunkType().getEnemyType();
     if (type == null) return 0;
@@ -248,7 +248,7 @@ public class Enemy extends GameObject
     
     Enemy myEnemy = new Enemy(type, x, y, type.getWidth(), type.getHeight(), type.getName(), world);
    
-    gameObjects.add(myEnemy);
+    world.addGameObject(myEnemy);
     activeEnemyCount++;
     //System.out.println("   ===> activeEnemyCount=" + activeEnemyCount);
 

@@ -83,13 +83,24 @@ public enum GameObjectType
   
   POWER_UP
   { public String getName() {return "powerupMissileAmmo";}
-    public double getWidth() {return 0.075;}
-    public double getHeight() {return 0.075;}
+    public double getWidth() {return 0.06;}
+    public double getHeight() {return 0.06;}
     public int getHitDamage() {return 0;}
     public boolean isEnemy() {return false;}
     public boolean isDynamic() {return false;}
     public double getMaxSpeed() {return 0;}
     public boolean hasCollider() {return true;}
+  },
+  
+  INFO
+  { public String getName() {return "info";}
+    public double getWidth() {return 0.1;}
+    public double getHeight() {return 0.06;}
+    public int getHitDamage() {return 0;}
+    public boolean isEnemy() {return false;}
+    public boolean isDynamic() {return true;}
+    public double getMaxSpeed() {return 0.25;}
+    public boolean hasCollider() {return false;}
   };
   
   

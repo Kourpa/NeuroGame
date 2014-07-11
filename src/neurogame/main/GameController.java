@@ -23,8 +23,10 @@ import javax.swing.JComponent;
 
 import neurogame.gameplay.Coin;
 import neurogame.gameplay.DirectionVector;
+import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
 import neurogame.gameplay.GameObjectType;
+import neurogame.gameplay.Missile;
 import neurogame.gameplay.Player;
 import neurogame.gameplay.PowerUp;
 import neurogame.io.Logger;
@@ -561,6 +563,8 @@ public class GameController
     scrolling = true;
     player = world.getPlayer();
     health = player.getHealth();
+    PowerUp.initGame();
+    Enemy.initGame();
 
   }
 

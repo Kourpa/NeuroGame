@@ -21,7 +21,9 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
+import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
+import neurogame.gameplay.Missile;
 import neurogame.gameplay.PowerUp;
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -167,10 +169,6 @@ public class NeuroFrame extends JFrame
     return score;
   }
 
-  public PowerUp getPowerUp()
-  {
-    return powerUp;
-  }
   
   /**
  * Sets the user for the session
@@ -311,10 +309,6 @@ public User getUser(){
     drawPanel.render(gameObjList);
   }
 
-  // public void renderBackground()
-  // { drawPanel.renderBackground();
-  // }
-
   /**
    * Enable or disable the debugging overlay.
    */
@@ -322,48 +316,5 @@ public User getUser(){
   {
     this.debug = debug;
   }
-
-  /**
-   * // * Draw the debugging overlay. Draws vertical lines with labels every 0.5
-   * u // * within the world. //
-   */
-  // public void debug()
-  // {
-  // Player player = world.getPlayer();
-  // // U-coordinates.
-  // graphics.setColor(Color.CYAN);
-  // graphics.setFont(new Font("Serif", Font.PLAIN, 14));
-  // double deltaX = world.getDeltaX();
-  //
-  // // xMin and yMin use integer rounding to guarantee that the demarcated
-  // // lines are aligned to u values of 0.5.
-  // double xMin = (int) deltaX - 2;
-  // double xMax = deltaX + Library.HORIZONTAL_MAX;
-  // double yMin = -2;
-  // double yMax = Library.VERTICAL_MAX;
-  // // X-axes.
-  // for (double x = xMin; x < xMax; x += 0.5)
-  // {
-  // int w = (int) ((x - deltaX) * getHeight());
-  // String xString = String.format("x = %.1f u", x);
-  // graphics.drawLine(w, 0, w, windowHeight - 14);
-  // graphics.drawString(xString, w - 14, windowHeight - 5);
-  // }
-  // // Y-axes.
-  // graphics.setColor(Color.PINK);
-  // for (double y = yMin; y < yMax; y += 0.5)
-  // {
-  // int w = (int) ((y) * windowHeight);
-  // String yString = String.format("y = %.1f u", y);
-  // graphics.drawLine(yString.length() * 7, w, windowWidth, w);
-  // graphics.drawString(yString, 5, w + 5);
-  // }
-  // graphics.setColor(Color.WHITE);
-  // graphics.drawString(String.format("deltaX: %.16f u", deltaX), 5, 50);
-  // graphics
-  // .drawString(String.format("playerX: %.16f u", player.getX()), 5, 90);
-  // graphics.drawString(String.format("playerY: %.16f u", player.getY()), 5,
-  // 110);
-  // }
 
 }

@@ -10,6 +10,7 @@ import neurogame.gameplay.Coin;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.EnumCollisionType;
 import neurogame.gameplay.GameObject;
+import neurogame.gameplay.InfoMessage;
 import neurogame.gameplay.Player;
 import neurogame.gameplay.PowerUp;
 import neurogame.library.Library;
@@ -91,7 +92,19 @@ public class World
     // if(chunkScolledDistance >= chunkSize * pathType.getStepSize()){
     if (chunkScolledDistance >= chunkLeft.getWidth())
     {
+      EnumChunkType pathType = chunkRight.getChunkType();
+      int chunkBonusScore = (int)(100*Math.max(0, pathType.getDefaultOpeningHeight() - skillBasedChunkGapHeight)) +
+          player.getMaxEnemy(pathType)*25;
+      
+      player.addScore(chunkBonusScore);
+      InfoMessage scoreInfo = new InfoMessage(player.getCenterX(), player.getCenterY(), this, String.valueOf(chunkBonusScore));
+      addGameObject(scoreInfo);
+      
+      
 
+      
+      
+      
       chunkLeft = chunkRight;
 
       if (player.getCollisionCountInCurrentChunk() == 0)
@@ -112,7 +125,7 @@ public class World
       }
       player.resetCollisionCountInCurrentChunk();
 
-      EnumChunkType pathType = chunkRight.getChunkType();
+      
       //System.out.println("frameCountSinceLastChunkTypeChange="+frameCountSinceLastChunkTypeChange);
       
       if ((frameCountSinceLastChunkTypeChange > 5) && (Library.RANDOM.nextInt(30) < frameCountSinceLastChunkTypeChange))
@@ -149,9 +162,9 @@ public class World
    */
   private void spawner(double deltaTime)
   {
-    Coin.spawn(chunkRight, this, gameObjectList, deltaTime);
-    Enemy.spawn(chunkRight, this, gameObjectList, deltaTime);
-    PowerUp.spawn(chunkRight, this, gameObjectList, deltaTime);
+    Coin.spawn(chunkRight, this, deltaTime);
+    Enemy.spawn(chunkRight, this, deltaTime);
+    PowerUp.spawn(chunkRight, this, deltaTime);
 
   }
   

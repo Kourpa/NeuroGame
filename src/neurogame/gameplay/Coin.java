@@ -115,7 +115,7 @@ public class Coin extends GameObject
                        0, spriteY, spriteWidth, spriteY+spriteHeight, null);
   }
 
-  public static int spawn(Chunk myChunk, World world, List<GameObject> gameObjects, double deltaTime)
+  public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
 
     double r = Library.RANDOM.nextDouble();
@@ -153,7 +153,7 @@ public class Coin extends GameObject
     {
       Coin myCoin = new Coin(x, y, world);
       if (myCoin.wallCollision() != EnumCollisionType.NONE) return numCoinsSpawned;
-      gameObjects.add(myCoin);
+      world.addGameObject(myCoin);
       numCoinsSpawned++;
 
       if (Library.RANDOM.nextDouble() > .75) x += GameObjectType.COIN.getWidth()
