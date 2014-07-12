@@ -14,29 +14,32 @@ public class ParticleEffect extends GameObject
 
   private final Particle[] particles;
   private GravitationalMass gmass;
+  private GameObject obj;
   private double scrollDistance;
   private float alpha;
 
   /**
    * Fancy particle effects
-   * @param type source for particles
+   * @param obj source for particles
    * @param x position
    * @param y position
    * @param world reference to the world
    */
-  public ParticleEffect(GameObjectType type, double x, double y, World world)
+  public ParticleEffect(GameObject obj, double x, double y, World world)
   {
     super(GameObjectType.PARTICLE, x, y, world);
 
-    x = Library.worldUnitToScreen(x);
-    y = Library.worldPosYToScreen(y);
-    double width = Library.worldUnitToScreen(type.getWidth());
-    double height = Library.worldUnitToScreen(type.getHeight());
+    this.obj = obj;
 
-    gmass = new GravitationalMass(type, x + width/2, y + height/2, -.01, -.01);
+    x = Library.worldUnitToScreen(x);
+    y = Library.worldUnitToScreen(y - .025);
+    double width = Library.worldUnitToScreen(obj.getWidth());
+    double height = Library.worldPosYToScreen(obj.getHeight());
+
+    gmass = new GravitationalMass(x + width/2, y + height/2, -.01, -.01);
     alpha = 1;
     scrollDistance = 0;
-    particles = SpriteParticles.getPixels(type.getName());
+    particles = SpriteParticles.getPixels(obj.getName());
     for(int i = 0; i < particles.length; i++){
       particles[i].move(x, y);
     }
@@ -49,11 +52,9 @@ public class ParticleEffect extends GameObject
    */
   @Override
   public void update(double deltaSec, double scrollDistance)
-  { alpha -= .01;
-    if (alpha <= 0 || !gmass.isAlive()) die();
+  { alpha -= .03;
+    if (alpha <= 0 || !gmass.isAlive()) die(false);
     this.scrollDistance = scrollDistance;
-
-//    gmass.update(deltaSec, scrollDistance);
 
     double xpull = gmass.getXpull();
     double ypull = gmass.getYpull();
@@ -61,6 +62,7 @@ public class ParticleEffect extends GameObject
     for(Particle p: particles){
       dx = gmass.getX() - p.getX();
       dy = gmass.getY() - p.getY();
+      mag = 1/Math.sqrt(dx * dx + dy * dy);
 
       p.update(xpull * dx, ypull * dy);
     }
@@ -87,4 +89,9 @@ public class ParticleEffect extends GameObject
 
   @Override
   public void hit(GameObject other){}
+  
+  public void die(boolean showDeathEffect)
+  { 
+    isAlive = false;
+  }
 }

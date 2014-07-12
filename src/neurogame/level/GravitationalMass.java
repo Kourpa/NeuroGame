@@ -11,8 +11,7 @@ public class GravitationalMass {
   private double x, y, xpull, ypull;
   private boolean alive;
 
-  public GravitationalMass(GameObjectType type, double x, double y, double xpull, double ypull){
-    this.type = type;
+  public GravitationalMass(double x, double y, double xpull, double ypull){
     this.x = x;
     this.y = y;
     this.xpull = xpull;
@@ -20,14 +19,11 @@ public class GravitationalMass {
     alive = true;
   }
 
-  public void update(double deltaSec, double scrollDistance){
-    if(x < Library.leftEdgeOfWorld) alive = false;
-    x += scrollDistance - deltaSec * .6 * scrollDistance;
-  }
-
   public boolean isAlive(){return alive;}
   public double getX(){return x;}
   public double getY(){return y;}
+  public void setX(){this.x = x;}
+  public void setY(){this.y = y;}
   public double getXpull(){return xpull;}
   public double getYpull(){return ypull;}
 }

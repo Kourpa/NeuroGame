@@ -116,20 +116,13 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("EnemyFollow", "/images/enemyFollow.png",
         Library.worldUnitToScreen(GameObjectType.ENEMY_FOLLOW.getWidth()),
         Library.worldUnitToScreen(GameObjectType.ENEMY_FOLLOW.getHeight()));
-    add("powerUp", "/images/powerup-container.png", 68, 68);
     add("coin", "/images/coin.png", 64, 2560);
     add("zapper", "/images/zapper.png", 48, 48);
     // Power-up HUD icons.
-    add("powerupBackground", "/images/powerup-background.png", 96, 96);
-    add("powerupBombForeground", "/images/powerup-bomb-foreground.png", 96, 96);
-    add("powerupLaserForeground", "/images/powerup-laser-foreground.png", 96,
-        96);
-    add("powerupSuperForeground", "/images/powerup-super-foreground.png", 96,
-        96);
-    add("powerupBlinkForeground", "/images/powerup-blink-foreground.png", 96,
-        96);
-    add("powerupBoostForeground", "/images/powerup-boost-foreground.png", 96,
-        96);
+    add("powerupMissileAmmo", "/images/powerup-MissileAmmo.png", Library.worldUnitToScreen(GameObjectType.POWER_UP.getWidth()), 
+        Library.worldUnitToScreen(GameObjectType.POWER_UP.getHeight()));
+    add("missile", "/images/missile.png", Library.worldUnitToScreen(GameObjectType.MISSILE.getWidth()), 
+        Library.worldUnitToScreen(GameObjectType.MISSILE.getHeight()));
   }
 
   /**

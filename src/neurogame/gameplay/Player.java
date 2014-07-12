@@ -3,6 +3,8 @@ package neurogame.gameplay;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+import neurogame.level.EnumChunkType;
+import neurogame.level.ParticleEffect;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.QuickSet;
@@ -15,24 +17,24 @@ public class Player extends GameObject
 {
 
   private static Image image = Library.getSprites().get(GameObjectType.PLAYER.getName());
-  private PowerUp powerUp;
+  public static final int MAX_MISSILE_COUNT = 20;
+  private static final double MISSILE_COOLDOWN_SECONDS = 0.3;
+  private int missileCount;
+  private double missileCurrentCooldown; //seconds
 
   private boolean invulnerable = false;
 
   private int wallCollisionCountInCurrentChunk;
  
   private double timeOfLastWallCollision;
-  
-
-  private int gameWallCollisionCount;
   private double gameScore;
-  private int gameCoinsEarned;
   private double gameTotalSeconds;
   
   public double skillProbabilitySpawnCoinPerSec;
   private double skillEnemyStraight;
   private double skillEnemyFollow;
   private double skillEnemySinusoidal;
+  public double skillProbabilitySpawnPowerUpPerSec;
 
   private QuickSet<Spark> sparkList;
 
@@ -55,15 +57,15 @@ public class Player extends GameObject
   {
     health = Library.HEALTH_MAX;
     wallCollisionCountInCurrentChunk = 0;
-    gameWallCollisionCount = 0;
     gameScore = 0;
-    gameCoinsEarned = 0;
     gameTotalSeconds = 0;
     timeOfLastWallCollision = 0;
     
+    missileCount = 10;
+    
+    missileCurrentCooldown = 0;
+    
     skillProbabilitySpawnCoinPerSec = (Coin.MIN_PROBALITY_SPAWN_PER_SEC + Coin.MAX_PROBALITY_SPAWN_PER_SEC)/2.0;
-
-    maxSpeed = 0.5f;
 
     lastVelocityX = 0;
     lastVelocityY = 0;
@@ -71,7 +73,8 @@ public class Player extends GameObject
     skillEnemyStraight = 1;
     skillEnemyFollow = 1;
     skillEnemySinusoidal = 1;
-    Enemy.initGame();
+    skillProbabilitySpawnPowerUpPerSec = 0.05;
+    
   }
 
   /**
@@ -83,9 +86,10 @@ public class Player extends GameObject
   public void update(double deltaSec, double scrollDistance)
   {
     gameTotalSeconds += deltaSec;
-    addScore(deltaSec * Library.SCORE_PER_SEC);
+    if (missileCurrentCooldown > 0) missileCurrentCooldown -= deltaSec;
 
     double inputSpeed = directionVector.getAcceleration();
+    double maxSpeed = GameObjectType.PLAYER.getMaxSpeed();
     if (inputSpeed > maxSpeed) inputSpeed = maxSpeed;
 
     double velocityX = lastVelocityX * 0.75 + directionVector.x * inputSpeed;
@@ -158,14 +162,22 @@ public class Player extends GameObject
     GameObjectType type = obj.getType();
     if (type == GameObjectType.COIN) collectCoin();
     else if (type.isEnemy()) crashedIntoEnemy(obj);
-      
- 
+    else if (type == GameObjectType.POWER_UP)
+    { addMissileCount(10);
+    }
   }
+  
+  public void addMissileCount(int count)
+  {
+    missileCount+=count;
+    if (missileCount > MAX_MISSILE_COUNT) missileCount = MAX_MISSILE_COUNT;
+  }
+  
+  public int getMissileCount() {return missileCount;}
   
 
   public void setDirection(DirectionVector directionVector)
   {
-
     this.directionVector.x = lastVelocityX * 0.25 + directionVector.x;
     this.directionVector.y = lastVelocityY * 0.25 + directionVector.y;
   }
@@ -202,9 +214,6 @@ public class Player extends GameObject
 
   public void collectCoin()
   {
-    gameCoinsEarned++;
-    gameScore += Library.COIN_POINTS;
-
     health += Library.HEALTH_PER_COIN;
     
     skillProbabilitySpawnCoinPerSec -= 0.005;
@@ -219,10 +228,6 @@ public class Player extends GameObject
     
   }
 
-  public void collectPowerUp()
-  {
-    gameScore += Library.POWERUP_POINTS;
-  }
 
   public void defeatedEnemy(GameObjectType type)
   {
@@ -268,15 +273,23 @@ public class Player extends GameObject
   }
   
 
-  public PowerUp getPowerUp()
-  {
-    return powerUp;
-  }
 
-  public void setPowerUp(PowerUp powerUp)
-  {
-    this.powerUp = powerUp;
+  public void die(boolean showDeathEffect)
+  { 
+    isAlive = false;
   }
+  
+  public void shootMissile()
+  {
+    if (missileCurrentCooldown > 0) return;
+    System.out.println("Player.shootMissile()   missileCount=" + missileCount);
+    if (missileCount < 1) return;
+    
+    missileCount--;
+    missileCurrentCooldown = MISSILE_COOLDOWN_SECONDS;
+    world.addGameObject(new Missile(getCenterX(), getCenterY(), world));
+  }
+  
 
   public boolean getInvulnerable()
   {
@@ -288,10 +301,6 @@ public class Player extends GameObject
     this.invulnerable = invulnerable;
   }
 
-  public int getTotalCoinsEarnedThisGame()
-  {
-    return gameCoinsEarned;
-  }
 
   public int getScore()
   {
@@ -313,11 +322,19 @@ public class Player extends GameObject
     gameScore += score;
   }
   
-  public int getMaxEnemy(GameObjectType type)
+  public int getMaxEnemy(GameObjectType enemytype)
   {
-    if (type == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
-    else if (type == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
-    else if (type == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
+    if (enemytype == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
+    else if (enemytype == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
+    else if (enemytype == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
+    return 1;
+  }
+  
+  public int getMaxEnemy(EnumChunkType chunkType)
+  {
+    if (chunkType.getEnemyType() == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
+    else if (chunkType.getEnemyType() == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
+    else if (chunkType.getEnemyType() == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
     return 1;
   }
   

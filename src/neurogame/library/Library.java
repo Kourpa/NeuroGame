@@ -42,7 +42,7 @@ public final class Library
   public static final String NEWLINE = System.getProperty("line.separator");
   public static final String SEPARATOR = System.getProperty("file.separator");
 
-  public static final String GAME_TITLE = "NeuroSideScroller Version 2014-06-12";
+  public static final String GAME_TITLE = "Escape from Asteroid Axion v2014-11-10";
 
   public static final int MIN_FRAME_MILLISEC = 10;
   public static final String ARGS_REGEX = "\\-[hdDlLfFwsSgG]+";
@@ -64,10 +64,7 @@ public final class Library
   public static final double VERTICAL_MAX = 1.0;
   public static final double HORIZONTAL_MIN = 0.0;
 
-  public static final double SCORE_PER_SEC = 0.01;
   public static final int HEALTH_MAX = 100;
-  public static final int COIN_POINTS = 100;
-  public static final int POWERUP_POINTS = 200;
   public static final int ENEMY_POINTS = 150;
 
   public static final int HEALTH_PER_COIN = 1;

@@ -81,7 +81,7 @@ public class Coin extends GameObject
     // System.out.println("coin["+id+"]: ("+getX() + ", " + getY() +
     // ") left world edge="+Library.leftEdgeOfWorld);
 
-    if (getX()+getWidth() < Library.leftEdgeOfWorld) die();
+    if (getX()+getWidth() < Library.leftEdgeOfWorld) die(false);
     
     if (!isAlive()) return;
     
@@ -90,8 +90,13 @@ public class Coin extends GameObject
     frameCounter++;
   }
   
+  public void die(boolean showDeathEffect)
+  { 
+    isAlive = false;
+  }
+  
   public void hit(GameObject obj)
-  { die();
+  { die(true);
   }
 
   public void render(Graphics2D g)
@@ -110,7 +115,7 @@ public class Coin extends GameObject
                        0, spriteY, spriteWidth, spriteY+spriteHeight, null);
   }
 
-  public static int spawn(Chunk myChunk, World world, List<GameObject> gameObjects, double deltaTime)
+  public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
 
     double r = Library.RANDOM.nextDouble();
@@ -148,7 +153,7 @@ public class Coin extends GameObject
     {
       Coin myCoin = new Coin(x, y, world);
       if (myCoin.wallCollision() != EnumCollisionType.NONE) return numCoinsSpawned;
-      gameObjects.add(myCoin);
+      world.addGameObject(myCoin);
       numCoinsSpawned++;
 
       if (Library.RANDOM.nextDouble() > .75) x += GameObjectType.COIN.getWidth()

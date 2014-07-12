@@ -23,8 +23,10 @@ import javax.swing.JComponent;
 
 import neurogame.gameplay.Coin;
 import neurogame.gameplay.DirectionVector;
+import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
 import neurogame.gameplay.GameObjectType;
+import neurogame.gameplay.Missile;
 import neurogame.gameplay.Player;
 import neurogame.gameplay.PowerUp;
 import neurogame.io.Logger;
@@ -168,6 +170,7 @@ public class GameController
     // //////////////
     controls.addBinding("sound");
     keyBinds.addBinding(KeyEvent.VK_F1, "sound");
+    //keyBinds.addBinding(KeyEvent.VK_SPACE, "shoot");
 
     // A copy of the inputs map used for logging changes in input states.
     // This must be done before adding the debugging key binds or the
@@ -304,7 +307,7 @@ public class GameController
     // }
 
     // Set the info for the HUD.
-    frame.setStats(player.getScore(), player.getTotalCoinsEarnedThisGame(),health, powerUp);
+    frame.setStats(player.getScore(), health, powerUp);
   }
 
   /**
@@ -327,13 +330,6 @@ public class GameController
       if (obj.isAlive() == false)
       {
         iterator.remove();
-        if(obj.getType() == GameObjectType.ENEMY_FOLLOW ||
-             obj.getType() == GameObjectType.ENEMY_STRAIGHT ||
-             obj.getType() == GameObjectType.ENEMY_SINUSOIDAL)
-          {
-            iterator.add(new ParticleEffect(obj.getType(), obj.getCenterX(), obj.getCenterY(), world));
-          }
-
       }
     }
 
@@ -343,12 +339,14 @@ public class GameController
       GameObject obj1 = gameObjList.get(i);
       GameObjectType type1 = obj1.getType();
       if (obj1.isAlive() == false) continue;
+      if (type1.hasCollider() == false) continue;
 
       for (int k = i+1; k < gameObjList.size(); k++)
       {
         GameObject obj2 = gameObjList.get(k);
         GameObjectType type2 = obj2.getType();
         if (!obj2.isAlive()) continue;
+        if (type2.hasCollider() == false) continue;
 
         if ((!type1.isDynamic()) && (!type2.isDynamic())) continue;
 
@@ -460,10 +458,7 @@ public class GameController
    */
   private void usePowerUp()
   {
-    if (powerUp != null)
-    {
-      powerUp.activate();
-    }
+    player.shootMissile();
   }
 
   /**
@@ -568,6 +563,8 @@ public class GameController
     scrolling = true;
     player = world.getPlayer();
     health = player.getHealth();
+    PowerUp.initGame();
+    Enemy.initGame();
 
   }
 

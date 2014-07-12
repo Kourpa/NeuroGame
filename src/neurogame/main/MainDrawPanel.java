@@ -111,7 +111,42 @@ private void drawHUD()
 	HUD.updateHUD(canvasObjectLayer, frame);
 }
 
+<<<<<<< HEAD
 public void paintComponent(Graphics g)
+=======
+  /**
+   * Draw the health display.
+   */
+  private void drawHealth()
+  {
+    int health = frame.getHealth();
+    Color outline = Color.GREEN;
+    if (health >= 0.9 * Library.HEALTH_MAX)
+    {
+      canvasObjectLayer.setPaint(healthPaintFull);
+    }
+    else if (health > 0.2 * Library.HEALTH_MAX)
+    {
+      canvasObjectLayer.setPaint(healthPaintDamaged);
+      outline = Color.ORANGE;
+    }
+    else
+    {
+      canvasObjectLayer.setPaint(healthPaintNearDeath);
+      outline = Color.RED;
+    }
+
+    int width = (frame.getHealth() * 300) / Library.HEALTH_MAX;
+    canvasObjectLayer.fillRect(5, 5, width, 32);
+    canvasObjectLayer.setPaint(outline);
+    canvasObjectLayer.drawRect(5, 5, 300, 32);
+
+  }
+
+
+
+  public void paintComponent(Graphics g)
+>>>>>>> 5176bbe7b070fa34dfb8afb2f8b47b34782eeeb7
   {
     try
     {

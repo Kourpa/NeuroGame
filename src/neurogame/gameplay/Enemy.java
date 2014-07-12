@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.util.List;
 
 import neurogame.level.Chunk;
+import neurogame.level.ParticleEffect;
 import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -16,6 +17,8 @@ public class Enemy extends GameObject
   
   private Image image;
   private double lastMovementX, lastMovementY;
+  
+  private double maxSpeed;
   
   public Enemy(GameObjectType type, double x, double y, double width, double height, String name, World world)
   {
@@ -43,13 +46,16 @@ public class Enemy extends GameObject
   }
   
   
-  public void die()
+  public void die(boolean showDeathEffect)
   { 
+    if (showDeathEffect) 
+    { world.addGameObject(new ParticleEffect(this, getCenterX(), getCenterY(), world));
+    }
     if (isAlive())
-    { super.die();
+    { isAlive = false;
       activeEnemyCount--; 
       //System.out.println("   die(): activeEnemyCount=" + activeEnemyCount);
-      player.defeatedEnemy(getType());
+      //player.defeatedEnemy(getType());
     }
   }
   
@@ -58,9 +64,9 @@ public class Enemy extends GameObject
   
   public void update(double deltaSec, double scrollDistance)
   {
-    if (getX()+getWidth() < Library.leftEdgeOfWorld) die();
-    
-    else if (checkCollisionWithWall()) die();
+    if (getX()+getWidth() < Library.leftEdgeOfWorld) die(false);
+
+    else if (checkCollisionWithWall()) die(true);
 
     if (!isAlive()) return;
    
@@ -94,7 +100,7 @@ public class Enemy extends GameObject
   { 
     GameObjectType type = obj.getType();
     if (type == GameObjectType.COIN) return;
-    die();
+    die(true);
   }
     
   public Vector2 strategyStraight(double maxDistanceChange, double scrollDistance)
@@ -195,22 +201,12 @@ public class Enemy extends GameObject
 
     if (wallCollision() != EnumCollisionType.NONE)
     {
-      die();
+      die(true);
       return true;
     }
     return false;
   }
   
-  public void checkCollisionWithOtherGameObject()
-  {
-    List<GameObject> gameObjList = world.getObjectList();
-   
-    //for (GameObject obj : gameObjList)
-    //{
-    //  if (this.collision(obj))
-    //  { if (obj.enemy
-    //}
-  }
   
   
   public void render(Graphics2D g)
@@ -221,7 +217,7 @@ public class Enemy extends GameObject
   }
   
   
-  public static int spawn(Chunk myChunk, World world, List<GameObject> gameObjects, double deltaTime)
+  public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
     GameObjectType type = myChunk.getChunkType().getEnemyType();
     if (type == null) return 0;
@@ -252,7 +248,7 @@ public class Enemy extends GameObject
     
     Enemy myEnemy = new Enemy(type, x, y, type.getWidth(), type.getHeight(), type.getName(), world);
    
-    gameObjects.add(myEnemy);
+    world.addGameObject(myEnemy);
     activeEnemyCount++;
     //System.out.println("   ===> activeEnemyCount=" + activeEnemyCount);
 
