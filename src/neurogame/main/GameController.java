@@ -604,7 +604,6 @@ public class GameController
   private void highscoreUpdate(){
 	  if (gameOver != null)
 	    {
-
 		  if (gameOver.IsStarting)
 	      {
 	        controls.disableAll();

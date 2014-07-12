@@ -71,7 +71,7 @@ import org.xml.sax.SAXException;
 public class TitleScreen {
 	private Image titleBackground, profileBackground, startButtonPlain,
 			startButtonSelected, rewindButtonSelected,backButtonPlain,newUserButtonPlain,
-			newUserButtonSelected;
+			newUserButtonSelected,checkboxSelected,checkboxPlain;
 	
 	private Image exitButtonPlain, exitButtonSelected, rewindButtonPlain,backButtonSelected;
 	private Image configButtonPlain, configButtonSelected;
@@ -80,7 +80,7 @@ public class TitleScreen {
 	public int selectedJoystick;
 	public User selectedUser;
 	private KeyAdapter Keys;
-
+	
 	private int currentButton;
 	private int maxButton = 3;
 	private ArrayList<MenuButtons> MenuButtons = new ArrayList<MenuButtons>();
@@ -113,12 +113,6 @@ public class TitleScreen {
 		IsStarting = false;
 		IsOption = false;
 
-		// masterImage = new BufferedImage(Library.getWindowWidth(),
-		// Library.getWindowHeight(), BufferedImage.TYPE_INT_ARGB);
-		// masterGraphics = masterImage.createGraphics();
-		// image = masterImage;
-		// graphics = image.createGraphics();
-
 		width = frame.getWidth();
 		height = frame.getHeight();
 		sprites = Library.getSprites();
@@ -139,6 +133,9 @@ public class TitleScreen {
 		
 		newUserButtonPlain = sprites.get("newUserButtonPlain");
 		newUserButtonSelected = sprites.get("newUserButtonSelected");
+		
+		checkboxSelected = sprites.get("checkboxSelected");
+		checkboxPlain = sprites.get("checkboxPlain");
 
 		// New UI
 		CreateMainMenu(frame);
@@ -172,8 +169,10 @@ public class TitleScreen {
 		// Start Button
 		startButtonProfile = new MenuButtons(startButtonPlain,
 				startButtonSelected);
-		startButtonProfile.b.setBorder(new LineBorder(Color.WHITE,5));
-		startButtonProfile.b.requestFocus();
+		/*startButtonProfile.b.setBorder(new LineBorder(Color.WHITE,5));
+		startButtonProfile.b.setOpaque(false);
+		startButtonProfile.b.setBackground(new Color(150,150,150,0));
+		startButtonProfile.b.requestFocus();*/
 		
 		startButtonProfile.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -235,11 +234,11 @@ public class TitleScreen {
 
 		// Button Panel
 		final JPanel backArea = new JPanel();
-		backArea.setBackground(Color.BLACK);
+		backArea.setBackground(new Color(100,100,100,0));
+		backArea.setOpaque(false);
+		
 		backArea.setLayout(new BoxLayout(backArea, 1));
-		backArea.setBackground(Color.BLACK);
 		backArea.setBounds((int) (width * 0.255) - 110, (int) (height * 0.81), 220,50);
-		backArea.setOpaque(true);
 		
 		// Back Button
 		backButtonProfile = new MenuButtons(backButtonPlain,backButtonSelected);
@@ -259,11 +258,11 @@ public class TitleScreen {
 		
 		//
 		final JPanel test = new JPanel();
-		test.setBackground(Color.BLACK);
+		test.setBackground(new Color(100,100,100,0));
+		test.setOpaque(false);
+		
 		test.setLayout(new BoxLayout(test, 1));
-		test.setBackground(Color.BLACK);
 		test.setBounds((int) (width * 0.715) - 110, (int) (height * 0.81), 220,50);
-		test.setOpaque(true);
 		test.add("North", startButtonProfile.b);
 
 		// User Panel
@@ -287,17 +286,14 @@ public class TitleScreen {
 		userList.setFont( new Font("Consolas", Font.BOLD, 12));
 		userList.setBackground(Color.BLACK);
 		userList.setForeground(Color.WHITE);
-		userInfo.add(userList);
 
 		JLabel text2 = new JLabel("   New User: ");
 		text2.setForeground(Color.WHITE);
 		text2.setFont(new Font("Consolas", Font.BOLD, 32));
-		userInfo.add(text2);
-		userInfo.add(nameInputField);
 
 		newUserButton = new MenuButtons(newUserButtonPlain,newUserButtonSelected);		
 		newUserButton.b.setPreferredSize(new Dimension(195, 80));
-		userInfo.add(newUserButton.b);
+		//userInfo.add(newUserButton.b);
 
 		newUserButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -307,31 +303,34 @@ public class TitleScreen {
 
 		userPanel2.add(userList);
 		userPanel2.add(newUserButton.b);
-		userPanel2.setBackground(Color.BLACK);
-		userPanel2.setBounds((int) (width * 0.6) - 250, (int) (height * 0.32),
+		userPanel2.setBackground(Color.getColor("TRANSLUCENT"));
+		userPanel2.setOpaque(false);
+		userPanel2.setBounds((int) (width * 0.39), (int) (height * 0.32),
 				500, 150);
 
 		// Controller
 		final JPanel userPanel3 = Options(frame);
-		userPanel3.setBackground(Color.BLACK);
-		userPanel3.setBounds((int) (width * 0.54) - 150, (int) (height * 0.45), 300, 50);
+		userPanel3.setBackground(Color.getColor("TRANSLUCENT"));
+		userPanel3.setOpaque(false);
+		userPanel3.setBounds((int) (width * 0.405), (int) (height * 0.46), 300, 40);
 
 		// Logging
 		final JPanel userPanel4 = new JPanel();
 		userPanel4.setBackground(Color.BLACK);
 		userPanel4.setLayout(new BoxLayout(userPanel4, BoxLayout.Y_AXIS));
-		userPanel4.setBounds((int) (width * 0.58) - 200, (int) (height * 0.58),
+		userPanel4.setBounds((int) (width * 0.4), (int) (height * 0.57),
 				400, 70);
 
 		JCheckBox loggingBox = new JCheckBox();
-		loggingBox.setBackground(Color.BLACK);
+		loggingBox.setBackground(Color.getColor("TRANSLUCENT"));
+		loggingBox.setOpaque(false);
+		loggingBox.setIcon(new ImageIcon(checkboxPlain));
+		loggingBox.setSelectedIcon(new ImageIcon(checkboxSelected));
 		
-		JCheckBox debugBox = new JCheckBox();
-		debugBox.setBackground(Color.BLACK);
-
 		userPanel4.add(loggingBox);
 		userPanel4.add(new JLabel("  "));
-		userPanel4.add(debugBox);
+		userPanel4.setBackground(Color.getColor("TRANSLUCENT"));
+		userPanel4.setOpaque(false);
 
 		// Add everything to Layered Panel
 		lpane.setBounds(0, 0, 600, 400);
@@ -650,7 +649,7 @@ public class TitleScreen {
 		// Options Menu
 		controllerList = new JComboBox<String>(
 				ControllerNames.toArray(new String[0]));
-		controllerList.setPreferredSize(new Dimension(250, 30));
+		controllerList.setPreferredSize(new Dimension(250, 10));
 		controllerList.setFont( new Font("Consolas", Font.BOLD, 12));
 		controllerList.setBackground(Color.BLACK);
 		controllerList.setForeground(Color.WHITE);

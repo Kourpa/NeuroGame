@@ -150,7 +150,8 @@ public class GameOverScreen {
 
 		// Main pane for the UI
 		final JLayeredPane lpane = new JLayeredPane();
-
+		lpane.setBackground(new Color(17,17,17,255));
+		
 		// Background
 		final JLabel background = new JLabel(new ImageIcon(profileBackground));
 		JLabel img = new JLabel("");
@@ -184,13 +185,16 @@ public class GameOverScreen {
 
 		// Personal best highscores JList
 		JList<String> personalJList = new JList<String>(highscoresPersonal);
-		personalJList.setBackground(Color.BLACK);
+		personalJList.setBackground(Color.getColor("TRANSLUCENT"));
+		personalJList.setOpaque(false);
+		
 		personalJList.setForeground(new Color(110, 170, 255));
 		personalJList.setFont(new Font("Karmatic Arcade", Font.PLAIN, 20));
 
 		// Global best highscores JList
 		JList<String> globalJList = new JList<String>(highscoresPersonal);
-		globalJList.setBackground(Color.BLACK);
+		globalJList.setBackground(Color.getColor("TRANSLUCENT"));
+		globalJList.setOpaque(false);
 		globalJList.setForeground(new Color(110, 170, 255));
 		globalJList.setFont(new Font("Karmatic Arcade", Font.PLAIN, 20));
 
@@ -254,25 +258,28 @@ public class GameOverScreen {
 		Buttons.add(restartButton.b);
 		Buttons.add(exitButton.b);
 		
-		Buttons.setBackground(Color.BLACK);
 		Buttons.setBounds(width / 2 - 150, (int) (height * 0.65), 300, 180);
-
-		highscores.setBackground(Color.BLACK);
+		Buttons.setOpaque(false);
+		Buttons.setBackground(Color.getColor("TRANSLUCENT"));
+		
 		highscores.setBounds(width / 2 - 420, (int) (height * 0.45), 300, 150);
+		highscores.setOpaque(false);
+		highscores.setBackground(Color.getColor("TRANSLUCENT"));
 
-		besthighscores.setBackground(Color.BLACK);
 		besthighscores.setBounds((int)(width * 0.52), (int) (height * 0.45), 300, 150);
-
-		background.setBackground(Color.BLACK);
+		besthighscores.setOpaque(false);
+		besthighscores.setBackground(Color.getColor("TRANSLUCENT"));
+		
 		background.setBounds(0, 0, width, height);
+		background.setOpaque(false);
+		background.setBackground(Color.getColor("TRANSLUCENT"));
 
 		lpane.setBounds(0, 0, 600, 400);
 		lpane.add(background, 0, 0);
 		lpane.add(Buttons, 1, 0);
 		lpane.add(highscores, 2, 0);
 		lpane.add(besthighscores, 3, 0);
-		lpane.setBackground(Color.YELLOW);
-
+		
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
 	}

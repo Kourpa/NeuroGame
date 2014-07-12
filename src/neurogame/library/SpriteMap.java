@@ -75,8 +75,8 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("highscoreBackground", "/images/highscore-screen.png",
             Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
     
-    add("startButtonPlain", "/images/start-button.png", 300, 50);
-    add("startButtonSelected", "/images/start-selected.png", 300, 50);
+    add("startButtonPlain", "/images/start-button.png", 320, 53);
+    add("startButtonSelected", "/images/start-selected.png", 320, 53);
     
     add("exitButtonPlain", "/images/exit-button.png", 300, 50);
     add("exitButtonSelected", "/images/exit-selected.png", 300, 50);
@@ -98,6 +98,9 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     
     add("newUserButtonPlain", "/images/newUser-button.png", 200, 40);
     add("newUserButtonSelected", "/images/newUser-selected.png", 200, 40);
+    
+    add("checkboxSelected", "/images/checkbox_selected.png", 32, 32);
+    add("checkboxPlain", "/images/checkbox_deselected.png", 32, 32);
     
     // Game graphics.
     add("player", "/images/playerShip.png", 68, 68);

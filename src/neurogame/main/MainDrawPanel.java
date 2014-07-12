@@ -27,8 +27,7 @@ import neurogame.main.GameController.GameState;
  */
 @SuppressWarnings("serial")
 public class MainDrawPanel extends JPanel
-{
-
+{	
   private TitleScreen title;
   private GameOverScreen gameOver;
   private Graphics2D canvasObjectLayer;
@@ -39,17 +38,11 @@ public class MainDrawPanel extends JPanel
 
   private int windowWidth, windowHeight;
 
-  private SpriteMap sprites;
   private NeuroFrame frame;
   private World world;
-
-  private GradientPaint healthPaintFull = new GradientPaint(0, 0, Color.GREEN,
-      0, 20, Color.BLACK, true);
-  private GradientPaint healthPaintDamaged = new GradientPaint(0, 0,
-      Color.ORANGE, 0, 20, Color.BLACK, true);
-  private GradientPaint healthPaintNearDeath = new GradientPaint(0, 0,
-      Color.RED, 0, 20, Color.BLACK, true);
-
+  private PlayerHud HUD;
+  private SpriteMap sprites;
+  
   /**
    * Instantiates a new NeuroFrame.
    */
@@ -58,7 +51,7 @@ public class MainDrawPanel extends JPanel
 
     System.out.println("MainGameDrawPanel(): Enter");
     this.frame = frame;
-
+    HUD = new PlayerHud(frame);
   }
 
   public void setSprites(SpriteMap sprites)
@@ -113,90 +106,12 @@ public class MainDrawPanel extends JPanel
   /**
    * Draw the heads-up display.
    */
-  private void drawHUD()
-  {
-    canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN, 30));
-    canvasObjectLayer.setColor(Color.WHITE);
-    canvasObjectLayer.drawString("Score: ", (int)(windowWidth*0.5 - 100), (int)(windowHeight*0.05));
-    
-    canvasObjectLayer.setColor(new Color(100,151,255));
-    canvasObjectLayer.drawString(""+frame.getScore(), (int)(windowWidth*0.5 + 100), (int)(windowHeight*0.05));
-    
-    drawHealth();
+private void drawHUD()
+{
+	HUD.updateHUD(canvasObjectLayer, frame);
 }
 
-  /**
-   * Draw the health display.
-   */
-  private void drawHealth()
-  {
-    int health = frame.getHealth();
-    Color outline = Color.GREEN;
-    if (health >= 0.9 * Library.HEALTH_MAX)
-    {
-      canvasObjectLayer.setPaint(healthPaintFull);
-    }
-    else if (health > 0.2 * Library.HEALTH_MAX)
-    {
-      canvasObjectLayer.setPaint(healthPaintDamaged);
-      outline = Color.ORANGE;
-    }
-    else
-    {
-      canvasObjectLayer.setPaint(healthPaintNearDeath);
-      outline = Color.RED;
-    }
-
-    int width = (frame.getHealth() * 300) / Library.HEALTH_MAX;
-    canvasObjectLayer.fillRect(5, 5, width, 32);
-    canvasObjectLayer.setPaint(outline);
-    canvasObjectLayer.drawRect(5, 5, 300, 32);
-
-  }
-
-  /**
-   * Draw PowerUp icon.
-   */
-  private void drawPowerUp()
-  {
-
-    // PowerUp p = player.getPowerUp();
-    // if(p != null){
-    // p.render(graphics);
-    // }
-
-    PowerUp powerUp = frame.getPowerUp();
-
-    canvasObjectLayer.drawImage(sprites.get("powerupBackground"),
-        windowWidth - 101, 5, 96, 96, null);
-    if (powerUp != null)
-    {
-      if (powerUp.isInUse())
-      {
-        // Create an alpha composition using the PowerUp's alpha.
-        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-            powerUp.getAlpha());
-        canvasObjectLayer.setComposite(ac);
-        canvasObjectLayer.drawImage(powerUp.getUIImage(), windowWidth - 101, 5,
-            96, 96, null);
-        // Restore the default alpha composition.
-        canvasObjectLayer.setComposite(AlphaComposite
-            .getInstance(AlphaComposite.SRC_OVER));
-      }
-      else
-      {
-        canvasObjectLayer.drawImage(powerUp.getUIImage(), windowWidth - 101, 5,
-            96, 96, null);
-      }
-      String flavorText = powerUp.getFlavorText();
-      canvasObjectLayer.setColor(Color.WHITE);
-      canvasObjectLayer.setFont(new Font("Serif", Font.PLAIN, 14));
-      canvasObjectLayer.drawString(flavorText,
-          windowWidth - 101 - (flavorText.length() * 7), 55);
-    }
-  }
-
-  public void paintComponent(Graphics g)
+public void paintComponent(Graphics g)
   {
     try
     {

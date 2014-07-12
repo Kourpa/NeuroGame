@@ -214,6 +214,7 @@ public User getUser(){
   
   public GameOverScreen showGameOver(){
 	  System.out.println("NeuroFrame.showTitle() Enter");
+	  
 	  drawPanel.setVisible(false);
 	  gameOver = new GameOverScreen(this,this.CurrentUser);
 	  drawPanel.setGameOver(gameOver);
