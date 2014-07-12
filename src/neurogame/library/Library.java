@@ -175,7 +175,12 @@ public final class Library
 	}
 	
 	public static User getUser(int i){
-		return users.get(i);
+		try{
+			return users.get(i);
+		}
+		catch(Exception e){
+			return null;
+		}
 	}
 
 

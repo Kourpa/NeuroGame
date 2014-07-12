@@ -79,40 +79,40 @@ public class PlayerHud {
 
 	}
 
-	/**
-	 * Draw PowerUp icon.
-	 */
-	private void drawPowerUp(Graphics2D canvasObjectLayer, NeuroFrame frame) {
-
-		// PowerUp p = player.getPowerUp();
-		// if(p != null){
-		// p.render(graphics);
-		// }
-
-		PowerUp powerUp = frame.getPowerUp();
-
-		canvasObjectLayer.drawImage(sprites.get("powerupBackground"),
-				windowWidth - 101, 5, 96, 96, null);
-		if (powerUp != null) {
-			if (powerUp.isInUse()) {
-				// Create an alpha composition using the PowerUp's alpha.
-				AlphaComposite ac = AlphaComposite.getInstance(
-						AlphaComposite.SRC_OVER, powerUp.getAlpha());
-				canvasObjectLayer.setComposite(ac);
-				canvasObjectLayer.drawImage(powerUp.getUIImage(),
-						windowWidth - 101, 5, 96, 96, null);
-				// Restore the default alpha composition.
-				canvasObjectLayer.setComposite(AlphaComposite
-						.getInstance(AlphaComposite.SRC_OVER));
-			} else {
-				canvasObjectLayer.drawImage(powerUp.getUIImage(),
-						windowWidth - 101, 5, 96, 96, null);
-			}
-			String flavorText = powerUp.getFlavorText();
-			canvasObjectLayer.setColor(Color.WHITE);
-			canvasObjectLayer.setFont(new Font("Serif", Font.PLAIN, 14));
-			canvasObjectLayer.drawString(flavorText, windowWidth - 101
-					- (flavorText.length() * 7), 55);
-		}
-	}
+//	/**
+//	 * Draw PowerUp icon.
+//	 */
+//	private void drawPowerUp(Graphics2D canvasObjectLayer, NeuroFrame frame) {
+//
+//		// PowerUp p = player.getPowerUp();
+//		// if(p != null){
+//		// p.render(graphics);
+//		// }
+//
+//		PowerUp powerUp = frame.getPowerUp();
+//
+//		canvasObjectLayer.drawImage(sprites.get("powerupBackground"),
+//				windowWidth - 101, 5, 96, 96, null);
+//		if (powerUp != null) {
+//			if (powerUp.isInUse()) {
+//				// Create an alpha composition using the PowerUp's alpha.
+//				AlphaComposite ac = AlphaComposite.getInstance(
+//						AlphaComposite.SRC_OVER, powerUp.getAlpha());
+//				canvasObjectLayer.setComposite(ac);
+//				canvasObjectLayer.drawImage(powerUp.getUIImage(),
+//						windowWidth - 101, 5, 96, 96, null);
+//				// Restore the default alpha composition.
+//				canvasObjectLayer.setComposite(AlphaComposite
+//						.getInstance(AlphaComposite.SRC_OVER));
+//			} else {
+//				canvasObjectLayer.drawImage(powerUp.getUIImage(),
+//						windowWidth - 101, 5, 96, 96, null);
+//			}
+//			String flavorText = powerUp.getFlavorText();
+//			canvasObjectLayer.setColor(Color.WHITE);
+//			canvasObjectLayer.setFont(new Font("Serif", Font.PLAIN, 14));
+//			canvasObjectLayer.drawString(flavorText, windowWidth - 101
+//					- (flavorText.length() * 7), 55);
+//		}
+//	}
 }
