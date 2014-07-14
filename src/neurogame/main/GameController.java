@@ -20,7 +20,7 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
-import neurogame.gameplay.Coin;
+import neurogame.gameplay.Star;
 import neurogame.gameplay.DirectionVector;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
@@ -539,7 +539,7 @@ public class GameController
 
     
     world = new World();
-    Coin.initGame();
+    Star.initGame();
     // zappers = world.getZappers();
     frame.startGame(world);
     controllable = true;

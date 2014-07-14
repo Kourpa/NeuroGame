@@ -14,7 +14,7 @@ public enum GameObjectType
     public boolean hasCollider() {return true;}
   },
 
-  COIN
+  STAR
   { public String getName() {return "coin";}
     public double getWidth() {return 0.05;}
     public double getHeight() {return 0.05;}

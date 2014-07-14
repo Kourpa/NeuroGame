@@ -6,7 +6,7 @@ package neurogame.level;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import neurogame.gameplay.Coin;
+import neurogame.gameplay.Star;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.EnumCollisionType;
 import neurogame.gameplay.GameObject;
@@ -160,7 +160,7 @@ public class World
    */
   private void spawner(double deltaTime)
   {
-    Coin.spawn(chunkRight, this, deltaTime);
+    Star.spawn(chunkRight, this, deltaTime);
     Enemy.spawn(chunkRight, this, deltaTime);
     PowerUp.spawn(chunkRight, this, deltaTime);
 

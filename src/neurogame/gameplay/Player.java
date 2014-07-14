@@ -40,6 +40,8 @@ public class Player extends GameObject
 
   private DirectionVector directionVector = new DirectionVector();
   private double lastVelocityX, lastVelocityY;
+  
+  private int health;
 
   public Player(double x, double y, World world)
   {
@@ -65,7 +67,7 @@ public class Player extends GameObject
     
     missileCurrentCooldown = 0;
     
-    skillProbabilitySpawnCoinPerSec = (Coin.MIN_PROBALITY_SPAWN_PER_SEC + Coin.MAX_PROBALITY_SPAWN_PER_SEC)/2.0;
+    skillProbabilitySpawnCoinPerSec = (Star.MIN_PROBALITY_SPAWN_PER_SEC + Star.MAX_PROBALITY_SPAWN_PER_SEC)/2.0;
 
     lastVelocityX = 0;
     lastVelocityY = 0;
@@ -160,7 +162,7 @@ public class Player extends GameObject
   public void hit(GameObject obj)
   {
     GameObjectType type = obj.getType();
-    if (type == GameObjectType.COIN) collectCoin();
+    if (type == GameObjectType.STAR) collectCoin();
     else if (type.isEnemy()) crashedIntoEnemy(obj);
     else if (type == GameObjectType.POWER_UP)
     { addMissileCount(10);
@@ -198,8 +200,8 @@ public class Player extends GameObject
     wallCollisionCountInCurrentChunk++;
     
     skillProbabilitySpawnCoinPerSec += 0.05;
-    if (skillProbabilitySpawnCoinPerSec > Coin.MAX_PROBALITY_SPAWN_PER_SEC)
-    { skillProbabilitySpawnCoinPerSec = Coin.MAX_PROBALITY_SPAWN_PER_SEC;
+    if (skillProbabilitySpawnCoinPerSec > Star.MAX_PROBALITY_SPAWN_PER_SEC)
+    { skillProbabilitySpawnCoinPerSec = Star.MAX_PROBALITY_SPAWN_PER_SEC;
     }
     
 
@@ -221,8 +223,8 @@ public class Player extends GameObject
     { health = Library.HEALTH_MAX;
       skillProbabilitySpawnCoinPerSec -= 0.025;
     }
-    if (skillProbabilitySpawnCoinPerSec < Coin.MIN_PROBALITY_SPAWN_PER_SEC)
-    { skillProbabilitySpawnCoinPerSec = Coin.MIN_PROBALITY_SPAWN_PER_SEC;
+    if (skillProbabilitySpawnCoinPerSec < Star.MIN_PROBALITY_SPAWN_PER_SEC)
+    { skillProbabilitySpawnCoinPerSec = Star.MIN_PROBALITY_SPAWN_PER_SEC;
     }
     
     
@@ -351,6 +353,8 @@ public class Player extends GameObject
   }
   
 
+  public int getHealth() {return health;}
+  
   public void render(Graphics2D canvas)
   {
     int xx = Library.worldPosXToScreen(getX());
