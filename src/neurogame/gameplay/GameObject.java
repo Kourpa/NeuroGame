@@ -23,9 +23,13 @@ public abstract class GameObject
   
   
   public static final int STATUS_NORMAL = 0;
-  public static final int STATUS_OFFSCREEN = 1;
-  public static final int STATUS_HIT_PLAYER = 2;
-  public static final int STATUS_HIT_STAR = 2;
+  public static final int STATUS_EXIT_ARENA = -1;
+  public static final int STATUS_HIT_PLAYER = -2;
+  public static final int STATUS_HIT_ENEMY = -3;
+  public static final int STATUS_HIT_WALL = -4;
+  
+  private int status;
+  
   
 
   public GameObject(GameObjectType type, double x, double y, World world)
@@ -53,6 +57,9 @@ public abstract class GameObject
   }
   
   public int getGameObjectId() {  return gameObjectID; }
+  
+  public int getStatus(){return status;}
+  public void setStatus(int status) {this.status = status;}
   
   public void overrideDefaultHitBoxInPixels(int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2)
   {
