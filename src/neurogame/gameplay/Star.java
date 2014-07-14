@@ -26,9 +26,9 @@ import neurogame.library.Library;
  * @team Danny Gomez
  * @team Marcos Lemus
  */
-public class Coin extends GameObject
+public class Star extends GameObject
 {
-  private static final BufferedImage image = Library.getSprites().get(GameObjectType.COIN.getName());
+  private static final BufferedImage image = Library.getSprites().get(GameObjectType.STAR.getName());
   private static final int spriteWidth = 64;
   private static final int spriteHeight = 64;
   private static final int spriteSheetHeight = 2560;
@@ -59,9 +59,9 @@ public class Coin extends GameObject
    * @param world
    *          World in which to place the coin.
    */
-  public Coin(double x, double y, World world)
+  public Star(double x, double y, World world)
   {
-    super(GameObjectType.COIN, x, y, world);
+    super(GameObjectType.STAR, x, y, world);
     starIdx = currentStarCount;
     
     spriteY = 0;
@@ -143,33 +143,33 @@ public class Coin extends GameObject
     if (vertex == null) return 0;
 
     double x = vertex.getX();
-    if (x < lastCoinSpawnX + 4 * GameObjectType.COIN.getWidth()) return 0;
+    if (x < lastCoinSpawnX + 4 * GameObjectType.STAR.getWidth()) return 0;
 
     
 
     int targetSpawnCount = Library.RANDOM.nextInt(5) + 1;
     int numCoinsSpawned = 0;
 
-    double y = vertex.getTopY() + GameObjectType.COIN.getHeight() / 3;
+    double y = vertex.getTopY() + GameObjectType.STAR.getHeight() / 3;
     double direction = 1.0;
 
     if (Library.RANDOM.nextBoolean())
     {
-      y = vertex.getBottomY() - 1.3 * GameObjectType.COIN.getHeight();
+      y = vertex.getBottomY() - 1.3 * GameObjectType.STAR.getHeight();
       direction = -1.0;
     }
 
     for (int i = 0; i < targetSpawnCount; i++)
     {
-      Coin myCoin = new Coin(x, y, world);
+      Star myCoin = new Star(x, y, world);
       if (myCoin.wallCollision() != EnumCollisionType.NONE) return numCoinsSpawned;
       world.addGameObject(myCoin);
       numCoinsSpawned++;
       if (currentStarCount >= MAX_STAR_COUNT) return 0;
 
-      if (Library.RANDOM.nextDouble() > .75) x += GameObjectType.COIN.getWidth()
+      if (Library.RANDOM.nextDouble() > .75) x += GameObjectType.STAR.getWidth()
           * (Library.RANDOM.nextDouble() * 2.0);
-      y += direction * GameObjectType.COIN.getHeight() * (1.0 + Library.RANDOM.nextDouble() / 2);
+      y += direction * GameObjectType.STAR.getHeight() * (1.0 + Library.RANDOM.nextDouble() / 2);
     }
 
     return numCoinsSpawned;

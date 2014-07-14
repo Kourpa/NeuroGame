@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import neurogame.gameplay.Coin;
+import neurogame.gameplay.Star;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
 import neurogame.gameplay.GameObjectType;
@@ -52,7 +52,7 @@ public class Logger
     for (int i=0; i<Enemy.MAX_ENEMY_COUNT; i++)
     { out += "Enemy" + i + "X, Enemy" + i + "Y, ";
     }
-    for (int i=0; i<Coin.MAX_STAR_COUNT; i++)
+    for (int i=0; i<Star.MAX_STAR_COUNT; i++)
     { out += "Star" + i + "X, Star" + i + "Y, ";
     }
     
@@ -82,7 +82,7 @@ public class Logger
     Player player = world.getPlayer();
     GameObject powerUp = null;
     Enemy[] enemyList = new Enemy[Enemy.MAX_ENEMY_COUNT];
-    Coin[] starList = new Coin[Coin.MAX_STAR_COUNT];
+    Star[] starList = new Star[Star.MAX_STAR_COUNT];
     
     ArrayList<GameObject> objectList = world.getObjectList();
     
@@ -94,9 +94,9 @@ public class Logger
         Enemy enemy = (Enemy)obj;
         enemyList[enemy.getEnemyIdx()] = enemy;
       }
-      if (type == GameObjectType.COIN)
+      if (type == GameObjectType.STAR)
       {
-        Coin star =  (Coin)obj;
+        Star star =  (Star)obj;
         starList[star.getStarIdx()] = star;
       }
       
@@ -120,7 +120,7 @@ public class Logger
         out += String.format("," + FLOAT4 + "," + FLOAT4  + ",", enemyList[i].getCenterX(), enemyList[i].getCenterY());
       }
     }
-    for (int i=0; i<Coin.MAX_STAR_COUNT; i++)
+    for (int i=0; i<Star.MAX_STAR_COUNT; i++)
     { if (starList[i] == null) out += "0,0,";
       else out += String.format("," + FLOAT4 + "," + FLOAT4  + ",", starList[i].getCenterX(), starList[i].getCenterY());
     }

@@ -20,6 +20,13 @@ public abstract class GameObject
   private double hitBoxMinX, hitBoxMaxX, hitBoxMinY, hitBoxMaxY;
   protected World world;
   protected boolean isAlive = true; // determines if the object is active/alivezz
+  
+  
+  public static final int STATUS_NORMAL = 0;
+  public static final int STATUS_OFFSCREEN = 1;
+  public static final int STATUS_HIT_PLAYER = 2;
+  public static final int STATUS_HIT_STAR = 2;
+  
 
   public GameObject(GameObjectType type, double x, double y, World world)
   {

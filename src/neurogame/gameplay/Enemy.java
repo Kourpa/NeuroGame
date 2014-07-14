@@ -104,7 +104,7 @@ public class Enemy extends GameObject
   public void hit(GameObject obj)
   { 
     GameObjectType type = obj.getType();
-    if (type == GameObjectType.COIN) return;
+    if (type == GameObjectType.STAR) return;
     die(true);
   }
     
