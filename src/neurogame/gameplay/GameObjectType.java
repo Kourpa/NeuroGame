@@ -94,7 +94,7 @@ public enum GameObjectType
   
   INFO
   { public String getName() {return "info";}
-    public double getWidth() {return 0.1;}
+    public double getWidth() {return 0.06;}
     public double getHeight() {return 0.06;}
     public int getHitDamage() {return 0;}
     public boolean isEnemy() {return false;}

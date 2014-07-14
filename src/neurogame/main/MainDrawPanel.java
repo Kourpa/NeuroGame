@@ -1,9 +1,5 @@
 package neurogame.main;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -12,9 +8,7 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 import neurogame.gameplay.GameObject;
-import neurogame.gameplay.PowerUp;
 import neurogame.level.World;
-import neurogame.library.Library;
 import neurogame.library.SpriteMap;
 import neurogame.main.GameController.GameState;
 
@@ -40,7 +34,7 @@ public class MainDrawPanel extends JPanel
 
   private NeuroFrame frame;
   private World world;
-  private PlayerHud HUD;
+  //private PlayerHud HUD;
   private SpriteMap sprites;
   
   /**
@@ -51,7 +45,7 @@ public class MainDrawPanel extends JPanel
 
     System.out.println("MainGameDrawPanel(): Enter");
     this.frame = frame;
-    HUD = new PlayerHud(frame);
+    //HUD = new PlayerHud(frame);
   }
 
   public void setSprites(SpriteMap sprites)
@@ -108,7 +102,7 @@ public class MainDrawPanel extends JPanel
    */
 private void drawHUD()
 {
-	HUD.updateHUD(canvasObjectLayer, frame);
+	//HUD.updateHUD(canvasObjectLayer, frame);
 }
 public void paintComponent(Graphics g)
 {

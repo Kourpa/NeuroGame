@@ -19,14 +19,12 @@ public class World
 {
   private final Player player;
   private Chunk chunkLeft, chunkRight;
-  // private final Area walls = new Area(); // The wrong way to do walls
   private ArrayList<GameObject> gameObjectList = new ArrayList<GameObject>();
   private ArrayList<GameObject> objectWaitList = new ArrayList<GameObject>();
 
   private double windowWidth;
   private int frameCountSinceLastChunkTypeChange;
 
-  // private double visibleWorldLeft = 0; //total horizontal change
   private double chunkScolledDistance = 0; // used to determine when to generate
                                            // new chunks
 
@@ -55,10 +53,6 @@ public class World
     chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SMOOTH,
         skillBasedChunkGapHeight);
     
-//    skillBasedChunkGapHeight = EnumChunkType.CURVED.getDefaultOpeningHeight();
-//    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.CURVED,
-//        skillBasedChunkGapHeight);
-
 
     crystalWalls = new CrystalGrower(chunkLeft, chunkRight);
   }
@@ -88,67 +82,7 @@ public class World
     /** add the scrollSpeed to the distance* */
     chunkScolledDistance += deltaDistance;
 
-    /** if the leading chunk has left the screen re-randomize it.* */
-    // if(chunkScolledDistance >= chunkSize * pathType.getStepSize()){
-    if (chunkScolledDistance >= chunkLeft.getWidth())
-    {
-      EnumChunkType pathType = chunkRight.getChunkType();
-      int chunkBonusScore = (int)(100*Math.max(0, pathType.getDefaultOpeningHeight() - skillBasedChunkGapHeight)) +
-          player.getMaxEnemy(pathType)*25;
-      
-      player.addScore(chunkBonusScore);
-      InfoMessage scoreInfo = new InfoMessage(player.getCenterX(), player.getCenterY(), this, String.valueOf(chunkBonusScore));
-      addGameObject(scoreInfo);
-      
-      
-
-      
-      
-      
-      chunkLeft = chunkRight;
-
-      if (player.getCollisionCountInCurrentChunk() == 0)
-      {
-        skillBasedChunkGapHeight = skillBasedChunkGapHeight * 0.9;
-        if (skillBasedChunkGapHeight < player.getHeight() * 3.0) skillBasedChunkGapHeight = player
-            .getHeight() * 3.0;
-      }
-      else if (player.getCollisionCountInCurrentChunk() > 3)
-      {
-        skillBasedChunkGapHeight = skillBasedChunkGapHeight * 1.1;
-        if (skillBasedChunkGapHeight > EnumChunkType.FLAT
-            .getDefaultOpeningHeight())
-        {
-          skillBasedChunkGapHeight = EnumChunkType.FLAT
-              .getDefaultOpeningHeight();
-        }
-      }
-      player.resetCollisionCountInCurrentChunk();
-
-      
-      //System.out.println("frameCountSinceLastChunkTypeChange="+frameCountSinceLastChunkTypeChange);
-      
-      if ((frameCountSinceLastChunkTypeChange > 5) && (Library.RANDOM.nextInt(30) < frameCountSinceLastChunkTypeChange))
-      {
-        pathType = EnumChunkType.getRandomType();
-
-        if (pathType != chunkRight.getChunkType())
-        { // reset for new chunkType;
-          skillBasedChunkGapHeight = pathType.getDefaultOpeningHeight();
-          frameCountSinceLastChunkTypeChange = 0;
-        }
-      }
-      
-      if (pathType == chunkRight.getChunkType()) frameCountSinceLastChunkTypeChange++;
-
-      chunkRight = new Chunk(chunkLeft, windowWidth, pathType,
-          skillBasedChunkGapHeight);
-
-      chunkScolledDistance = 0;
-      Library.leftEdgeOfWorld = chunkLeft.getStartX();
-
-      crystalWalls.addChunk(chunkRight);
-    }
+    if (chunkScolledDistance >= chunkLeft.getWidth()) createChunk();
 
     Library.leftEdgeOfWorld = chunkLeft.getStartX() + chunkScolledDistance;
 
@@ -156,6 +90,64 @@ public class World
 
     return Library.leftEdgeOfWorld - visibleWorldLeftBeforeUpdate;
   }
+  
+  private void createChunk()
+  {
+    
+    EnumChunkType pathType = chunkRight.getChunkType();
+    int chunkBonusScore = (int)(100*Math.max(0, pathType.getDefaultOpeningHeight() - skillBasedChunkGapHeight)) +
+        player.getMaxEnemy(pathType)*25;
+    
+    player.addScore(chunkBonusScore);
+    InfoMessage scoreInfo = new InfoMessage(player.getCenterX(), player.getCenterY(), this, String.valueOf(chunkBonusScore));
+    addGameObject(scoreInfo);
+    
+    
+    chunkLeft = chunkRight;
+
+    if (player.getCollisionCountInCurrentChunk() == 0)
+    {
+      skillBasedChunkGapHeight = skillBasedChunkGapHeight * 0.9;
+      if (skillBasedChunkGapHeight < player.getHeight() * 3.0) skillBasedChunkGapHeight = player
+          .getHeight() * 3.0;
+    }
+    else if (player.getCollisionCountInCurrentChunk() > 3)
+    {
+      skillBasedChunkGapHeight = skillBasedChunkGapHeight * 1.1;
+      if (skillBasedChunkGapHeight > EnumChunkType.FLAT
+          .getDefaultOpeningHeight())
+      {
+        skillBasedChunkGapHeight = EnumChunkType.FLAT
+            .getDefaultOpeningHeight();
+      }
+    }
+    player.resetCollisionCountInCurrentChunk();
+
+    
+    //System.out.println("frameCountSinceLastChunkTypeChange="+frameCountSinceLastChunkTypeChange);
+    
+    if ((frameCountSinceLastChunkTypeChange > 5) && (Library.RANDOM.nextInt(30) < frameCountSinceLastChunkTypeChange))
+    {
+      pathType = EnumChunkType.getRandomType();
+
+      if (pathType != chunkRight.getChunkType())
+      { // reset for new chunkType;
+        skillBasedChunkGapHeight = pathType.getDefaultOpeningHeight();
+        frameCountSinceLastChunkTypeChange = 0;
+      }
+    }
+    
+    if (pathType == chunkRight.getChunkType()) frameCountSinceLastChunkTypeChange++;
+
+    chunkRight = new Chunk(chunkLeft, windowWidth, pathType,
+        skillBasedChunkGapHeight);
+
+    chunkScolledDistance = 0;
+    Library.leftEdgeOfWorld = chunkLeft.getStartX();
+
+    crystalWalls.addChunk(chunkRight);
+  }
+  
 
   /**
    * Spawns the variety of GameObjects into the world.

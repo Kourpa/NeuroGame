@@ -229,8 +229,12 @@ public class Player extends GameObject
   }
 
 
-  public void defeatedEnemy(GameObjectType type)
+  public void defeatedEnemy(GameObject obj)
   {
+    GameObjectType type = obj.getType();
+    
+    InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(Library.ENEMY_POINTS));
+    world.addGameObject(scoreInfo);
     gameScore += Library.ENEMY_POINTS;
     
     if (type == GameObjectType.ENEMY_STRAIGHT)
@@ -282,7 +286,7 @@ public class Player extends GameObject
   public void shootMissile()
   {
     if (missileCurrentCooldown > 0) return;
-    System.out.println("Player.shootMissile()   missileCount=" + missileCount);
+    //System.out.println("Player.shootMissile()   missileCount=" + missileCount);
     if (missileCount < 1) return;
     
     missileCount--;

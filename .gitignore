@@ -1,7 +1,5 @@
 /build/
 /bin
-
-
-/build/
-/logs.idea
+/logs/*.txt
+/Users/*.user
 /nbproject

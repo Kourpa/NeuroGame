@@ -35,24 +35,24 @@ public class InfoMessage extends GameObject
   
   public void update(double deltaSec, double scrollDistance)
   {
+    
+    //System.out.println("InfoMessage.update(): ("+getX()+", "+getY()+")  leftEdgeOfWorld="+ Library.leftEdgeOfWorld +
+ //     ", Screen(x)="+ Library.worldPosXToScreen(getX()) +", WindowPixelWidth()="+ Library.getWindowPixelWidth());
     if (!Library.isOnScreen(getX(), getY())) die(false);
+    
    
     if (!isAlive()) return;
 
     double maxDistanceChange = GameObjectType.INFO.getMaxSpeed() * deltaSec;
 
-    move(-scrollDistance, -maxDistanceChange);
-    //System.out.println("Missile Update: (" + getX() + ", " + getY() + ")" );
+    move(0, -maxDistanceChange);
     
   }
   
   
   public void hit(GameObject obj)
   { 
-    GameObjectType type = obj.getType();
-    
-    if (type.isEnemy()) player.defeatedEnemy(type);
-    die(true);
+
   }
     
 
@@ -67,7 +67,7 @@ public class InfoMessage extends GameObject
     int yy = Library.worldPosYToScreen(getY());
     g.setColor(msgColor);
     g.setFont(msgFont);
-    g.drawString(msg, yy, yy);
+    g.drawString(msg, xx, yy);
   }
 
 }
