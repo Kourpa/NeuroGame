@@ -21,9 +21,7 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
-import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
-import neurogame.gameplay.Missile;
 import neurogame.gameplay.PowerUp;
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -50,13 +48,11 @@ public class NeuroFrame extends JFrame
   private MainDrawPanel drawPanel;
   private TitleScreen title;
   private GameOverScreen gameOver;
-  private World world;
   private int windowPixelWidth, windowPixelHeight;
   private GameState mode = GameState.INITIALIZING;
   private int score;
   private int coins;
   private int health;
-  private PowerUp powerUp;
 
   private SpriteMap sprites;
 
@@ -103,8 +99,6 @@ public class NeuroFrame extends JFrame
 
 
 
-    drawPanel.setSprites(sprites);
-
     this.addComponentListener(new ComponentAdapter()
     {
       public void componentResized(ComponentEvent e)
@@ -134,7 +128,6 @@ public class NeuroFrame extends JFrame
    */
   public void startGame(World world)
   {
-    this.world = world;
     // engine = new DrawingEngine(this, world);
     //setContentPane(drawPanel);
     contentPane.add(drawPanel);
@@ -300,9 +293,7 @@ public User getUser(){
   public void setStats(int score, int health, PowerUp powerUp)
   {
     this.score = score;
-    this.coins = coins;
     this.health = health;
-    this.powerUp = powerUp;
   }
 
   public void render(ArrayList<GameObject> gameObjList)

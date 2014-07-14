@@ -4,7 +4,6 @@ package neurogame.gameplay;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Image;
 
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -18,6 +17,11 @@ public class InfoMessage extends GameObject
   public InfoMessage(double x, double y, World world, String msg)
   {
     super(GameObjectType.INFO, x, y, world);  
+    
+    if (x < Library.leftEdgeOfWorld + GameObjectType.INFO.getWidth());
+    move(Library.leftEdgeOfWorld + GameObjectType.INFO.getWidth(),   0);
+    
+    
     this.msg = msg;
   }
   
@@ -31,28 +35,28 @@ public class InfoMessage extends GameObject
   }
   
   
-
+ 
   
   public void update(double deltaSec, double scrollDistance)
   {
+    
+    //System.out.println("InfoMessage.update(): ("+getX()+", "+getY()+")  leftEdgeOfWorld="+ Library.leftEdgeOfWorld +
+ //     ", Screen(x)="+ Library.worldPosXToScreen(getX()) +", WindowPixelWidth()="+ Library.getWindowPixelWidth());
     if (!Library.isOnScreen(getX(), getY())) die(false);
+    
    
     if (!isAlive()) return;
 
     double maxDistanceChange = GameObjectType.INFO.getMaxSpeed() * deltaSec;
 
-    move(-scrollDistance, -maxDistanceChange);
-    //System.out.println("Missile Update: (" + getX() + ", " + getY() + ")" );
+    move(scrollDistance, -maxDistanceChange);
     
   }
   
   
   public void hit(GameObject obj)
   { 
-    GameObjectType type = obj.getType();
-    
-    if (type.isEnemy()) player.defeatedEnemy(type);
-    die(true);
+
   }
     
 
@@ -67,7 +71,7 @@ public class InfoMessage extends GameObject
     int yy = Library.worldPosYToScreen(getY());
     g.setColor(msgColor);
     g.setFont(msgFont);
-    g.drawString(msg, yy, yy);
+    g.drawString(msg, xx, yy);
   }
 
 }

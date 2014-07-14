@@ -1,6 +1,5 @@
 package neurogame.main;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -10,15 +9,12 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 
-import neurogame.gameplay.PowerUp;
 import neurogame.library.Library;
-import neurogame.library.SpriteMap;
 
 public class PlayerHud {
 	private int windowWidth;
 	private int windowHeight;	
 
-	private SpriteMap sprites;
 	private GradientPaint healthPaintFull = new GradientPaint(0, 0,
 			Color.GREEN, 0, 20, Color.BLACK, true);
 	private GradientPaint healthPaintDamaged = new GradientPaint(0, 0,

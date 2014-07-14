@@ -1,7 +1,6 @@
 package neurogame.level;
 
 import neurogame.gameplay.GameObjectType;
-import neurogame.library.Library;
 
 /**
  * Created by kourpa on 7/8/14.
@@ -22,8 +21,8 @@ public class GravitationalMass {
   public boolean isAlive(){return alive;}
   public double getX(){return x;}
   public double getY(){return y;}
-  public void setX(){this.x = x;}
-  public void setY(){this.y = y;}
+  public void setX(double x){this.x = x;}
+  public void setY(double y){this.y = y;}
   public double getXpull(){return xpull;}
   public double getYpull(){return ypull;}
 }

@@ -2,8 +2,6 @@ package neurogame.gameplay;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.util.List;
-
 import neurogame.level.Chunk;
 import neurogame.level.ParticleEffect;
 import neurogame.level.PathVertex;
@@ -19,6 +17,7 @@ public class Enemy extends GameObject
   private double lastMovementX, lastMovementY;
   
   private double maxSpeed;
+  public static final int MAX_ENEMY_COUNT = 6; 
   
   public Enemy(GameObjectType type, double x, double y, double width, double height, String name, World world)
   {
@@ -64,7 +63,10 @@ public class Enemy extends GameObject
   
   public void update(double deltaSec, double scrollDistance)
   {
-    if (getX()+getWidth() < Library.leftEdgeOfWorld) die(false);
+    if (getX()+getWidth() < Library.leftEdgeOfWorld)
+    { player.killedOrAvoidedEnemy(this);
+      die(false);
+    }
 
     else if (checkCollisionWithWall()) die(true);
 

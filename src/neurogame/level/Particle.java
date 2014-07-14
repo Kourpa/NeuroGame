@@ -1,7 +1,5 @@
 package neurogame.level;
 
-import neurogame.library.Library;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 
