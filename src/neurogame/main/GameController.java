@@ -580,8 +580,13 @@ public class GameController
     }
     
     
-    frame.getUser().saveHighscore(player.getScore());
-    Library.saveUser(frame.getUser());
+    try{
+    	frame.getUser().saveHighscore(player.getScore());
+    	Library.saveUser(frame.getUser());
+    }
+    catch(Exception e){
+    }
+    
     showGameOver();
   }
 

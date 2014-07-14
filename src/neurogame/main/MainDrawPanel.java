@@ -33,7 +33,7 @@ public class MainDrawPanel extends JPanel
 
   private NeuroFrame frame;
   private World world;
-  //private PlayerHud HUD;
+  private PlayerHud HUD;
   
   /**
    * Instantiates a new NeuroFrame.
@@ -43,7 +43,7 @@ public class MainDrawPanel extends JPanel
 
     System.out.println("MainGameDrawPanel(): Enter");
     this.frame = frame;
-    //HUD = new PlayerHud(frame);
+    HUD = new PlayerHud(frame);
   }
 
 
@@ -95,8 +95,9 @@ public class MainDrawPanel extends JPanel
    */
 private void drawHUD()
 {
-	//HUD.updateHUD(canvasObjectLayer, frame);
+	HUD.updateHUD(canvasObjectLayer, frame);
 }
+
 public void paintComponent(Graphics g)
 {
     try
