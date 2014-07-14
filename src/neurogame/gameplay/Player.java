@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 
 import neurogame.level.EnumChunkType;
-import neurogame.level.ParticleEffect;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.QuickSet;

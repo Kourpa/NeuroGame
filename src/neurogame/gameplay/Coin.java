@@ -11,9 +11,7 @@
 package neurogame.gameplay;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 import neurogame.level.Chunk;
 import neurogame.level.EnumChunkType;
@@ -44,9 +42,6 @@ public class Coin extends GameObject
 
   private int spriteY;
 
-  private static int totalCount = 0;
-  private int id;
-
   /**
    * Instantiate a new Coin at the specified coordinates.
    * 
@@ -61,8 +56,6 @@ public class Coin extends GameObject
   {
     super(GameObjectType.COIN, x, y, world);
     spriteY = 0;
-    totalCount++;
-    id = totalCount;
     lastCoinSpawnX = x;
   }
   

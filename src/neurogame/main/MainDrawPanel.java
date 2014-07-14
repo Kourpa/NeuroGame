@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 
 import neurogame.gameplay.GameObject;
 import neurogame.level.World;
-import neurogame.library.SpriteMap;
 import neurogame.main.GameController.GameState;
 
 /**
@@ -35,7 +34,6 @@ public class MainDrawPanel extends JPanel
   private NeuroFrame frame;
   private World world;
   //private PlayerHud HUD;
-  private SpriteMap sprites;
   
   /**
    * Instantiates a new NeuroFrame.
@@ -48,10 +46,6 @@ public class MainDrawPanel extends JPanel
     //HUD = new PlayerHud(frame);
   }
 
-  public void setSprites(SpriteMap sprites)
-  {
-    this.sprites = sprites;
-  }
 
   public void setTitle(TitleScreen title)
   {
@@ -85,7 +79,6 @@ public class MainDrawPanel extends JPanel
     // BufferedImage.TYPE_INT_RGB);
     // canvasBackgroundLayer = imageBackgroundLayer.createGraphics();
 
-    GameController.setGraphics(canvasObjectLayer);
 
     render(null);
 

@@ -23,11 +23,9 @@ public class Spark
 
   private int age = 0;
   private int deathAge;
-  private World world;
 
   public Spark(double x, double y, World world)
   {
-    this.world = world;
 
     pixelSize = Library.worldUnitToScreen(0.001);
     pixelDeltaSize = Library

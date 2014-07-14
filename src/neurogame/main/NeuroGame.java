@@ -45,8 +45,6 @@ public class NeuroGame
   private long startTime;
   private long elapsedTime;
   
-  private final int PORT = 0xF050;
-  private Process cTimer;
 
   /**
    * Initializes a new NeuroGame session.

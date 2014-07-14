@@ -10,8 +10,7 @@ import neurogame.library.Library;
 public enum EnumChunkType
 {
   FLAT
-  { public double getSpeed()  { return .3; }
-    public double getMaxChange()  { return 0.1; }
+  { public double getMaxChange()  { return 0.1; }
     public double getStepSize()  { return 0.1; }
     public double getDefaultOpeningHeight()  { return 0.8; }
     public PowerUp getPowerUp() { return null; }

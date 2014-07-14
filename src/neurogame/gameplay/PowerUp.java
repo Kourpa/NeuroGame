@@ -12,8 +12,6 @@ package neurogame.gameplay;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.geom.Path2D;
-import java.util.List;
 
 import neurogame.level.Chunk;
 import neurogame.level.EnumChunkType;

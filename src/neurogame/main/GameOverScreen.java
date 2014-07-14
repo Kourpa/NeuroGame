@@ -16,15 +16,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.image.BufferedImage;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -38,25 +35,12 @@ import javax.swing.JLayeredPane;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import neurogame.library.Library;
 import neurogame.library.User;
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 /**
  * The title screen for NeuroGame.
@@ -340,7 +324,7 @@ public class GameOverScreen {
 	 */
 	public JPanel Options(final NeuroFrame frame) {
 		ArrayList<String> ControllerNames = new ArrayList<String>();
-		final JDialog dialog = new JDialog(frame, "Options");
+		new JDialog(frame, "Options");
 
 		// Joysticks
 		try {

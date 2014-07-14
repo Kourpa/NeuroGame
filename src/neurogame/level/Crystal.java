@@ -56,7 +56,7 @@ public class Crystal
   };
 
   private static final int PALETT_COLORS = PALETT[0].length;
-  private static final int PALETT_COUNT = PALETT.length;
+  //private static final int PALETT_COUNT = PALETT.length;
 
   private int palettIdx;
   private static Random rand = new Random();

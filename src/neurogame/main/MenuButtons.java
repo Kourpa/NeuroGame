@@ -2,8 +2,6 @@ package neurogame.main;
 
 import java.awt.*;
 import javax.swing.*;
-import java.net.URL;
-import javax.imageio.ImageIO;
 
 public class MenuButtons {
 	

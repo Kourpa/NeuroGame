@@ -2,8 +2,6 @@ package neurogame.gameplay;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.util.List;
-
 import neurogame.level.Chunk;
 import neurogame.level.ParticleEffect;
 import neurogame.level.PathVertex;

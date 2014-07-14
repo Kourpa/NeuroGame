@@ -12,7 +12,6 @@ package neurogame.main;
 
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,11 +25,8 @@ import neurogame.gameplay.DirectionVector;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
 import neurogame.gameplay.GameObjectType;
-import neurogame.gameplay.Missile;
 import neurogame.gameplay.Player;
 import neurogame.gameplay.PowerUp;
-import neurogame.io.Logger;
-import neurogame.level.ParticleEffect;
 import neurogame.level.World;
 import neurogame.library.KeyBinds;
 import neurogame.library.Library;
@@ -66,11 +62,11 @@ public class GameController
   private final Map<String, Boolean> previousInputs;
   private NeuroFrame frame;
 
-  private Logger log;
-
-  private static Graphics2D graphics;
 
   private boolean loggingMode;
+  private Logger log;
+  
+  
   private boolean soundEnabled;
   private boolean godMode;
   private boolean suicideEnabled;
@@ -78,10 +74,8 @@ public class GameController
   private boolean debug;
 
   private int health;
-  private int frameCounter;
 
   private boolean controllable;
-  private boolean scrolling;
 
   private GameState gameState;
   private TitleScreen title;
@@ -127,9 +121,7 @@ public class GameController
     debug = false;
     health = Library.HEALTH_MAX;
     powerUp = null;
-    frameCounter = 0;
     controllable = false;
-    scrolling = false;
 
     // Joystick
     try
@@ -212,10 +204,6 @@ public class GameController
     showTitle();
   }
 
-  public static void setGraphics(Graphics2D g)
-  {
-    graphics = g;
-  }
 
   public void mainGameLoop()
   {
@@ -252,8 +240,6 @@ public class GameController
     switch (gameState)
     {
     case PLAYING:
-      frameCounter++;
-      if (loggingMode) log.writeLogRecord();
       playUpdate(deltaSec);
       if (health <= 0)
       {
@@ -535,7 +521,6 @@ public class GameController
   private void killPlayer()
   {
     controllable = false;
-    scrolling = false;
   }
   
   private void newOddBall(){
@@ -548,10 +533,6 @@ public class GameController
   private void newGame()
   {
     System.out.println("GameController.newGame()  loggingMode="+loggingMode );
-    if (loggingMode)
-    {
-      log = new Logger();
-    }
     gameState = GameState.PLAYING;
 
     
@@ -560,12 +541,12 @@ public class GameController
     // zappers = world.getZappers();
     frame.startGame(world);
     controllable = true;
-    scrolling = true;
     player = world.getPlayer();
     health = player.getHealth();
     PowerUp.initGame();
     Enemy.initGame();
 
+    if (loggingMode) log = new Logger();
   }
 
   /**
@@ -591,7 +572,11 @@ public class GameController
    */
   private void gameOver()
   {
-    if (loggingMode) log.closeLog();
+    if (loggingMode) 
+    { log.closeLog();
+      log = null;
+    }
+    
     
     frame.getUser().saveHighscore(player.getScore());
     Library.saveUser(frame.getUser());

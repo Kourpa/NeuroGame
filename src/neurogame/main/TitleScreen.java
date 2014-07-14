@@ -40,7 +40,6 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -400,7 +399,7 @@ public class TitleScreen {
 				BufferedImage img2 = sprites.get("EnemyStraight");
 				BufferedImage img3 = sprites.get("powerupBackground");				
 				
-				Oddball o = new Oddball(frame,img1,img2,img3);
+				new Oddball(frame,img1,img2,img3);
 			}
 		});
 
@@ -625,7 +624,7 @@ public class TitleScreen {
 	 */
 	public JPanel Options(final NeuroFrame frame) {
 		ArrayList<String> ControllerNames = new ArrayList<String>();
-		final JDialog dialog = new JDialog(frame, "Options");
+		new JDialog(frame, "Options");
 
 		// Joysticks
 		try {
