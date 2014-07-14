@@ -9,9 +9,9 @@ import neurogame.level.World;
  */
 public abstract class GameObject
 {
-  private static int globalID; // object id
+  private static int gameObjectID_count; // object id
   
-  private final int id;
+  private final int gameObjectID;
   private GameObjectType type;
 
   private double x; // starting x
@@ -21,20 +21,12 @@ public abstract class GameObject
   protected World world;
   protected boolean isAlive = true; // determines if the object is active/alivezz
 
-  protected Player player;
-
-  // protected Path2D hitBox = new Path2D.Double(); //it's a hit box
-  private boolean empHit = false;
-
-  protected int health = 1;
-
   public GameObject(GameObjectType type, double x, double y, World world)
   {
     this.type = type;
     this.x = x;
     this.y = y;
     this.world = world;
-    this.player = world.getPlayer();
     
     
     hitBoxMinX =  - 0.80 * (type.getWidth() / 2.0);
@@ -44,9 +36,16 @@ public abstract class GameObject
 
     setLocation(x, y);
 
-    id = globalID;
-    globalID++;
+    gameObjectID = gameObjectID_count;
+    gameObjectID_count++;
   }
+  
+  
+  public static void resetGameObjectID() 
+  { gameObjectID_count = 0;
+  }
+  
+  public int getGameObjectId() {  return gameObjectID; }
   
   public void overrideDefaultHitBoxInPixels(int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2)
   {
@@ -101,9 +100,8 @@ public abstract class GameObject
     return true;
   }
 
-  public static int getGlobalID() { return globalID;  }
 
-  public int getId() {  return id; }
+  
 
   public double getX() { return x; }
 
@@ -151,37 +149,7 @@ public abstract class GameObject
   public String getName() {return type.getName();}
   
 
-  public void setEmpHit(boolean empHit)
-  {
-    this.empHit = empHit;
-  }
 
-
-
-
-  public void killedByLaser()
-  {
-    isAlive = false;
-    // Library.log(name + " killed by laser", world.getRisk());
-  }
-
-  public void killedBySuper()
-  {
-    isAlive = false;
-    // Library.log(name + " killed by super", world.getRisk());
-  }
-
-  public void killedByBoost()
-  {
-    isAlive = false;
-    // Library.log(name + " killed by boost", world.getRisk());
-  }
-
-  public void hitByEmp()
-  {
-    empHit = true;
-    // Library.log(name + " hit by emp", world.getRisk());
-  }
 
   public void move(double dx, double dy)
   {
@@ -203,12 +171,9 @@ public abstract class GameObject
     return collision;
   }
 
-  public int getHealth() { return health;}
-
-  public void setHealth(int health) { this.health = health; }
   
   public String toString()
   {
-    return type.getName() + "["+id+"]";
+    return type.getName() + "["+gameObjectID+"]";
   }
 }

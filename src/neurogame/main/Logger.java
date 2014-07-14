@@ -12,6 +12,7 @@ import neurogame.gameplay.Coin;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
 import neurogame.gameplay.GameObjectType;
+import neurogame.gameplay.Player;
 import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -23,13 +24,13 @@ public class Logger
   private static final String PATH = "logs/";
   
   private static final SimpleDateFormat FILE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd.HH-mm-ss.SSS");
+  private static final String FLOAT4 = "%.4f";
 
   private File logFile;
   private BufferedWriter writer;
   
-  private GameObject player, powerUp;
-  private GameObject[] enemyList = new GameObject[Enemy.MAX_ENEMY_COUNT];
-  private GameObject[] starList = new GameObject[Coin.MAX_STAR_COUNT];
+  private Long time0;
+  
 
   /**
    * Instantiate a new Logger with the default file path.
@@ -45,6 +46,8 @@ public class Logger
     logFile = new File(PATH, fileName);
     logFile.getParentFile().mkdir();
     
+    time0 = System.currentTimeMillis();
+    
     String out = "Milliseconds, PlayerX, PlayerY, Health, Collision, WallAbove, WallBelow, ";
     for (int i=0; i<Enemy.MAX_ENEMY_COUNT; i++)
     { out += "Enemy" + i + "X, Enemy" + i + "Y, ";
@@ -52,7 +55,8 @@ public class Logger
     for (int i=0; i<Coin.MAX_STAR_COUNT; i++)
     { out += "Star" + i + "X, Star" + i + "Y, ";
     }
-    out += "PowerUpX, PowerUpY\n"; 
+    
+    out += "PowerUpX, PowerUpY\n" + time0 + "\n"; 
 
     
     try
@@ -74,51 +78,54 @@ public class Logger
   
   public void update(World world)
   {
+    
+    Player player = world.getPlayer();
+    GameObject powerUp = null;
+    Enemy[] enemyList = new Enemy[Enemy.MAX_ENEMY_COUNT];
+    Coin[] starList = new Coin[Coin.MAX_STAR_COUNT];
+    
     ArrayList<GameObject> objectList = world.getObjectList();
-    int enemyCount = 0;
-    int starCount = 0;
-    powerUp = null;
+    
     for (GameObject obj : objectList) 
     {
       GameObjectType type = obj.getType();
-      if (type == GameObjectType.PLAYER) player = obj;
-      else if (type.isEnemy())
+      if (type.isEnemy())
       {
-        enemyList[enemyCount] = obj;
-        enemyCount++;
+        Enemy enemy = (Enemy)obj;
+        enemyList[enemy.getEnemyIdx()] = enemy;
       }
-      else if (type == GameObjectType.COIN)
+      if (type == GameObjectType.COIN)
       {
-        starList[starCount] = obj;
-        starCount++;
+        Coin star =  (Coin)obj;
+        starList[star.getStarIdx()] = star;
       }
+      
       else if (type == GameObjectType.POWER_UP) powerUp = obj;
     }
     
     
-    String out = Long.toString(System.currentTimeMillis()) + "," + 
-        player.getCenterX() + "," + player.getCenterY() + ","+player.getHealth()+",0,";
+    String out = Long.toString(System.currentTimeMillis()-time0) +  
+        String.format("," + FLOAT4 + "," + FLOAT4  + ","+player.getHealth()+",0,",
+        player.getCenterX(), player.getCenterY(), player.getHealth() );
     
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(player.getCenterX());
-    out += vertex.getTopY() + "," + vertex.getBottomY() + ",";
+    
+    out += String.format("," + FLOAT4 + "," + FLOAT4  + ",", vertex.getTopY(), vertex.getBottomY());
     
     for (int i=0; i<Enemy.MAX_ENEMY_COUNT; i++)
     { 
-      if (i < enemyCount)
-      { out += enemyList[i].getCenterX() + "," + enemyList[i].getCenterY() + ",";
+      if (enemyList[i] == null) out += "0,0,";
+      else
+      { 
+        out += String.format("," + FLOAT4 + "," + FLOAT4  + ",", enemyList[i].getCenterX(), enemyList[i].getCenterY());
       }
-      else out += "0,0,";
     }
     for (int i=0; i<Coin.MAX_STAR_COUNT; i++)
-    { if (i < starCount)
-      { out += starList[i].getCenterX() + "," + starList[i].getCenterY() + ",";
-      }
-      else out += "0,0,";
+    { if (starList[i] == null) out += "0,0,";
+      else out += String.format("," + FLOAT4 + "," + FLOAT4  + ",", starList[i].getCenterX(), starList[i].getCenterY());
     }
-    if (powerUp != null) out += powerUp.getCenterX() + "," + powerUp.getCenterY() +"\n";
-    else out += "0,0\n";
-
-    
+    if (powerUp == null) out += "0,0\n";
+    else out += String.format("," + FLOAT4 + "," + FLOAT4  + "\n", powerUp.getCenterX(), powerUp.getCenterY());
     try
     {
       writer.write(out);

@@ -19,10 +19,13 @@ public class Enemy extends GameObject
   private double maxSpeed;
   public static final int MAX_ENEMY_COUNT = 6; 
   
+  private int enemyIdx;
+  
   public Enemy(GameObjectType type, double x, double y, double width, double height, String name, World world)
   {
     super(type, x, y, world);
     
+    enemyIdx = activeEnemyCount;
     lastMovementX = 0.0;
     lastMovementY = 0.0;
 
@@ -64,7 +67,7 @@ public class Enemy extends GameObject
   public void update(double deltaSec, double scrollDistance)
   {
     if (getX()+getWidth() < Library.leftEdgeOfWorld)
-    { player.killedOrAvoidedEnemy(this);
+    { world.getPlayer().killedOrAvoidedEnemy(this);
       die(false);
     }
 
@@ -142,7 +145,7 @@ public class Enemy extends GameObject
   
   public Vector2 strategyFollow(double maxDistanceChange, double scrollDistance)
   {
-    
+    Player player = world.getPlayer();
     double dx = scrollDistance + player.getCenterX() - (getX() + getType().getWidth()/2);
     double dy = player.getCenterY() - (getY() + getType().getHeight()/2);
     
@@ -262,10 +265,11 @@ public class Enemy extends GameObject
   public double getLastMovementY(){return lastMovementY;}
 
   public static void initGame() 
-  { activeEnemyCount = 0;
+  { 
+    activeEnemyCount = 0;
   }
   
-  
+  public int getEnemyIdx(){return enemyIdx;}
   public static int getActiveEnemyCount() {return activeEnemyCount;}
 
 }

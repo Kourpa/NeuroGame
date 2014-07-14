@@ -40,6 +40,8 @@ public class Player extends GameObject
 
   private DirectionVector directionVector = new DirectionVector();
   private double lastVelocityX, lastVelocityY;
+  
+  private int health;
 
   public Player(double x, double y, World world)
   {
@@ -351,6 +353,8 @@ public class Player extends GameObject
   }
   
 
+  public int getHealth() {return health;}
+  
   public void render(Graphics2D canvas)
   {
     int xx = Library.worldPosXToScreen(getX());

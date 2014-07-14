@@ -38,6 +38,10 @@ public class Coin extends GameObject
   
   public static final int MAX_STAR_COUNT = 20;
   private static int currentStarCount;
+  
+  private int starIdx;
+  
+
 
   private static double lastCoinSpawnX;
 
@@ -58,6 +62,8 @@ public class Coin extends GameObject
   public Coin(double x, double y, World world)
   {
     super(GameObjectType.COIN, x, y, world);
+    starIdx = currentStarCount;
+    
     spriteY = 0;
     lastCoinSpawnX = x;
     currentStarCount++;
@@ -113,6 +119,9 @@ public class Coin extends GameObject
     g.drawImage(image, xx, yy, xx+spriteWidth, yy+spriteHeight, 
                        0, spriteY, spriteWidth, spriteY+spriteHeight, null);
   }
+  
+  
+  public int getStarIdx(){return starIdx;}
 
   public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
