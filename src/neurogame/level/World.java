@@ -45,6 +45,7 @@ public class World
     player = new Player(0.1, 1 / 2.0, this);
     gameObjectList.clear();
     gameObjectList.add(player);
+    objectWaitList.clear();
 
     chunkLeft = new Chunk(null, windowWidth, EnumChunkType.FLAT,
         EnumChunkType.FLAT.getDefaultOpeningHeight());
@@ -95,12 +96,12 @@ public class World
   {
     
     EnumChunkType pathType = chunkRight.getChunkType();
-    int chunkBonusScore = (int)(100*Math.max(0, pathType.getDefaultOpeningHeight() - skillBasedChunkGapHeight)) +
-        player.getMaxEnemy(pathType)*25;
+    //int chunkBonusScore = (int)(100*Math.max(0, pathType.getDefaultOpeningHeight() - skillBasedChunkGapHeight)) +
+    //    player.getMaxEnemy(pathType)*25;
     
-    player.addScore(chunkBonusScore);
-    InfoMessage scoreInfo = new InfoMessage(player.getCenterX(), player.getCenterY(), this, String.valueOf(chunkBonusScore));
-    addGameObject(scoreInfo);
+    //player.addScore(chunkBonusScore);
+    //InfoMessage scoreInfo = new InfoMessage(player.getCenterX(), player.getCenterY(), this, String.valueOf(chunkBonusScore));
+    //addGameObject(scoreInfo);
     
     
     chunkLeft = chunkRight;
@@ -148,6 +149,11 @@ public class World
     crystalWalls.addChunk(chunkRight);
   }
   
+  public EnumChunkType getRightChunkType()
+  {
+    return chunkRight.getChunkType();
+  }
+  
 
   /**
    * Spawns the variety of GameObjects into the world.
@@ -193,6 +199,11 @@ public class World
   public double getVisibleWorldRight()
   {
     return Library.leftEdgeOfWorld + windowWidth;
+  }
+  
+  public double getCurrentChunkHeight()
+  {
+    return skillBasedChunkGapHeight;
   }
   
   

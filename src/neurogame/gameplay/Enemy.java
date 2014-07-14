@@ -17,6 +17,7 @@ public class Enemy extends GameObject
   private double lastMovementX, lastMovementY;
   
   private double maxSpeed;
+  public static final int MAX_ENEMY_COUNT = 6; 
   
   public Enemy(GameObjectType type, double x, double y, double width, double height, String name, World world)
   {
@@ -62,7 +63,10 @@ public class Enemy extends GameObject
   
   public void update(double deltaSec, double scrollDistance)
   {
-    if (getX()+getWidth() < Library.leftEdgeOfWorld) die(false);
+    if (getX()+getWidth() < Library.leftEdgeOfWorld)
+    { player.killedOrAvoidedEnemy(this);
+      die(false);
+    }
 
     else if (checkCollisionWithWall()) die(true);
 

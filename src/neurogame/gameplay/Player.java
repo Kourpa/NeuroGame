@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 
 import neurogame.level.EnumChunkType;
+import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.QuickSet;
@@ -228,25 +229,33 @@ public class Player extends GameObject
   }
 
 
-  public void defeatedEnemy(GameObject obj)
+  public void killedOrAvoidedEnemy(GameObject obj)
   {
     GameObjectType type = obj.getType();
     
-    InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(Library.ENEMY_POINTS));
+    EnumChunkType pathType = world.getRightChunkType();
+   
+    
+    double pathHeightBonus = Math.max(1.0, pathType.getDefaultOpeningHeight() - world.getCurrentChunkHeight());
+    System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
+    
+    int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
+    gameScore += score;
+   
+    InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(score));
     world.addGameObject(scoreInfo);
-    gameScore += Library.ENEMY_POINTS;
     
     if (type == GameObjectType.ENEMY_STRAIGHT)
     { skillEnemyStraight += 0.2;
-      if (skillEnemyStraight > 6) skillEnemyStraight = 6;
+      if (skillEnemyStraight > Enemy.MAX_ENEMY_COUNT) skillEnemyStraight = Enemy.MAX_ENEMY_COUNT;
     }
     else if (type == GameObjectType.ENEMY_FOLLOW)
     { skillEnemyFollow += 0.2;
-      if (skillEnemyFollow > 6) skillEnemyFollow = 6;
+      if (skillEnemyFollow > Enemy.MAX_ENEMY_COUNT) skillEnemyFollow = Enemy.MAX_ENEMY_COUNT;
     }
     else if (type == GameObjectType.ENEMY_FOLLOW)
     { skillEnemySinusoidal += 0.2;
-      if (skillEnemySinusoidal > 6) skillEnemySinusoidal = 6;
+      if (skillEnemySinusoidal > Enemy.MAX_ENEMY_COUNT) skillEnemySinusoidal = Enemy.MAX_ENEMY_COUNT;
     }
 
   }

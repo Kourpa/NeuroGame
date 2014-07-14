@@ -294,6 +294,8 @@ public class GameController
 
     // Set the info for the HUD.
     frame.setStats(player.getScore(), health, powerUp);
+    
+    if (loggingMode) log.update(world);
   }
 
   /**

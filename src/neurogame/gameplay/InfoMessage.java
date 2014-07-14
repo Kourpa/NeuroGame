@@ -17,6 +17,11 @@ public class InfoMessage extends GameObject
   public InfoMessage(double x, double y, World world, String msg)
   {
     super(GameObjectType.INFO, x, y, world);  
+    
+    if (x < Library.leftEdgeOfWorld + GameObjectType.INFO.getWidth());
+    move(Library.leftEdgeOfWorld + GameObjectType.INFO.getWidth(),   0);
+    
+    
     this.msg = msg;
   }
   
@@ -30,7 +35,7 @@ public class InfoMessage extends GameObject
   }
   
   
-
+ 
   
   public void update(double deltaSec, double scrollDistance)
   {
@@ -44,7 +49,7 @@ public class InfoMessage extends GameObject
 
     double maxDistanceChange = GameObjectType.INFO.getMaxSpeed() * deltaSec;
 
-    move(0, -maxDistanceChange);
+    move(scrollDistance, -maxDistanceChange);
     
   }
   

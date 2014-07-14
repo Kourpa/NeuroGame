@@ -35,6 +35,9 @@ public class Coin extends GameObject
 
   public static final double MIN_PROBALITY_SPAWN_PER_SEC = 0.2;
   public static final double MAX_PROBALITY_SPAWN_PER_SEC = 0.9;
+  
+  public static final int MAX_STAR_COUNT = 20;
+  private static int currentStarCount;
 
   private static double lastCoinSpawnX;
 
@@ -57,11 +60,13 @@ public class Coin extends GameObject
     super(GameObjectType.COIN, x, y, world);
     spriteY = 0;
     lastCoinSpawnX = x;
+    currentStarCount++;
   }
   
   public static void initGame()
   {
     lastCoinSpawnX = 0;
+    currentStarCount = 0;
   }
 
   /**
@@ -86,6 +91,7 @@ public class Coin extends GameObject
   public void die(boolean showDeathEffect)
   { 
     isAlive = false;
+    currentStarCount--;
   }
   
   public void hit(GameObject obj)
@@ -110,7 +116,9 @@ public class Coin extends GameObject
 
   public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
-
+    if (currentStarCount >= MAX_STAR_COUNT) return 0;
+    
+    
     double r = Library.RANDOM.nextDouble();
     EnumChunkType type = myChunk.getChunkType();
     if (type == EnumChunkType.FLAT) return 0;
@@ -148,6 +156,7 @@ public class Coin extends GameObject
       if (myCoin.wallCollision() != EnumCollisionType.NONE) return numCoinsSpawned;
       world.addGameObject(myCoin);
       numCoinsSpawned++;
+      if (currentStarCount >= MAX_STAR_COUNT) return 0;
 
       if (Library.RANDOM.nextDouble() > .75) x += GameObjectType.COIN.getWidth()
           * (Library.RANDOM.nextDouble() * 2.0);
