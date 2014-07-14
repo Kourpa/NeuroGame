@@ -40,10 +40,9 @@ public class MainDrawPanel extends JPanel
    */
   public MainDrawPanel(final NeuroGame game, NeuroFrame frame)
   {
-
-    System.out.println("MainGameDrawPanel(): Enter");
-    this.frame = frame;
-    HUD = new PlayerHud(frame);
+	  System.out.println("MainGameDrawPanel(): Enter");
+	  this.frame = frame;
+	  HUD = new PlayerHud(frame);
   }
 
 
@@ -95,7 +94,7 @@ public class MainDrawPanel extends JPanel
    */
 private void drawHUD()
 {
-	HUD.updateHUD(canvasObjectLayer, frame);
+	HUD.updateHUD(canvasObjectLayer, frame, world.getPlayer().getMissileCount());
 }
 
 public void paintComponent(Graphics g)
@@ -133,7 +132,7 @@ public void paintComponent(Graphics g)
           obj.render(canvasObjectLayer);
         }
       }
-
+      
       drawHUD();
     }
 

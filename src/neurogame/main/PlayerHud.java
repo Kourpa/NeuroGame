@@ -9,9 +9,12 @@ import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import neurogame.library.Library;
 
@@ -19,6 +22,8 @@ public class PlayerHud {
 	private int windowWidth;
 	private int windowHeight;
 
+	private Map<String, BufferedImage> sprites;
+	
 	private GradientPaint healthPaintFull = new GradientPaint(0, 0,
 			Color.GREEN, 0, 20, Color.BLACK, true);
 	private GradientPaint healthPaintDamaged = new GradientPaint(0, 0,
@@ -39,6 +44,8 @@ public class PlayerHud {
 	Rectangle area;
 
 	public PlayerHud(NeuroFrame frame) {
+		sprites = Library.getSprites();
+		
 		windowWidth = frame.getWidth();
 		windowHeight = frame.getHeight();
 
@@ -56,10 +63,11 @@ public class PlayerHud {
 		}
 	}
 
-	public void updateHUD(Graphics2D canvasObjectLayer, NeuroFrame frame) {
+	public void updateHUD(Graphics2D canvasObjectLayer, NeuroFrame frame, int ammo) {
 
 		if (firstTime) {
 			Dimension dim = frame.getSize();
+			
 			int w = dim.width;
 			int h = dim.height;
 
@@ -82,11 +90,11 @@ public class PlayerHud {
 				(int) (windowHeight * 0.05));
 		
 		// Ammo
-		/*big.drawString("Ammo: ", (int) (windowWidth * 0.5 - 100), (int) (windowHeight * 0.05));
-		big.setColor(new Color(100, 151, 255));
-		big.drawString("" + frame, (int) (windowWidth * 0.5 + 100),(int) (windowHeight * 0.05));*/
-
-
+		canvasObjectLayer.setColor(Color.WHITE);
+		canvasObjectLayer.drawString("Ammo: ", (int) (windowWidth * 0.6 + 250), (int) (windowHeight * 0.05));
+		canvasObjectLayer.setColor(new Color(100, 151, 255));
+		canvasObjectLayer.drawString(""+ammo, (int) (windowWidth * 0.6 + 400),(int) (windowHeight * 0.05));
+				
 		//
 		drawHealth(canvasObjectLayer, frame);
 		//canvasObjectLayer.drawImage(bi, 0, 0, frame);

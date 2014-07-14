@@ -180,10 +180,11 @@ public class TitleScreen {
 				lpane.setVisible(false);
 				frame.getContentPane().remove(background);
 				frame.getContentPane().remove(lpane);
-
 				frame.getContentPane().setLayout(null);
+				
 				selectedJoystick = controllerList.getSelectedIndex();
 				selectedUser = Library.getUser(userList.getSelectedIndex());
+				
 				savePreferences();
 				IsStarting = true;
 			}
