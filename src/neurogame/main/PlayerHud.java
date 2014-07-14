@@ -71,14 +71,14 @@ public class PlayerHud {
 			firstTime = false;
 		}
 
-		big.setFont(new Font("Karmatic Arcade", Font.PLAIN, 30));
+		canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN, 30));
 
-		big.setColor(Color.WHITE);
-		big.drawString("Score: ", (int) (windowWidth * 0.5 - 100),
+		canvasObjectLayer.setColor(Color.WHITE);
+		canvasObjectLayer.drawString("Score: ", (int) (windowWidth * 0.5 - 100),
 				(int) (windowHeight * 0.05));
 
-		big.setColor(new Color(100, 151, 255));
-		big.drawString("" + frame.getScore(), (int) (windowWidth * 0.5 + 100),
+		canvasObjectLayer.setColor(new Color(100, 151, 255));
+		canvasObjectLayer.drawString("" + frame.getScore(), (int) (windowWidth * 0.5 + 100),
 				(int) (windowHeight * 0.05));
 		
 		// Ammo
@@ -89,7 +89,7 @@ public class PlayerHud {
 
 		//
 		drawHealth(canvasObjectLayer, frame);
-		canvasObjectLayer.drawImage(bi, 0, 0, frame);
+		//canvasObjectLayer.drawImage(bi, 0, 0, frame);
 	}
 
 	/**
