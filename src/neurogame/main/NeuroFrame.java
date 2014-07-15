@@ -60,7 +60,6 @@ public class NeuroFrame extends JFrame
 
   private User CurrentUser;
   
-  private boolean debug;
 
   /**
    * Instantiates a new NeuroFrame.
@@ -90,8 +89,6 @@ public class NeuroFrame extends JFrame
     score = 0;
     coins = 0;
     health = 0;
-
-    debug = false;
 
     resizeHelper();
 
@@ -300,13 +297,4 @@ public User getUser(){
   {
     drawPanel.render(gameObjList);
   }
-
-  /**
-   * Enable or disable the debugging overlay.
-   */
-  public void setDebug(boolean debug)
-  {
-    this.debug = debug;
-  }
-
 }

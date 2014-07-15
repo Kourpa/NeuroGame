@@ -541,6 +541,7 @@ public class GameController
     controllable = true;
     player = world.getPlayer();
     health = player.getHealth();
+    GameObject.resetGameObjectCount();
     PowerUp.initGame();
     Enemy.initGame();
 
@@ -764,7 +765,6 @@ public class GameController
   public void setDebug(boolean debug)
   {
     this.debug = debug;
-    frame.setDebug(debug);
   }
 
   /**

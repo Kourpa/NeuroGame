@@ -2,6 +2,8 @@ package neurogame.gameplay;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
+
 import neurogame.level.Chunk;
 import neurogame.level.ParticleEffect;
 import neurogame.level.PathVertex;
@@ -14,20 +16,20 @@ public class Enemy extends GameObject
   private static int activeEnemyCount;
   
   private Image image;
-  private double lastMovementX, lastMovementY;
   
   private double maxSpeed;
   public static final int MAX_ENEMY_COUNT = 6; 
   
   private int enemyIdx;
+  private boolean enemyFollowStoppedFollowing = false;
+  
+  private Vector2 velocity = new Vector2();
   
   public Enemy(GameObjectType type, double x, double y, double width, double height, String name, World world)
   {
     super(type, x, y, world);
     
     enemyIdx = activeEnemyCount;
-    lastMovementX = 0.0;
-    lastMovementY = 0.0;
 
     if (type == GameObjectType.ENEMY_STRAIGHT)
     { 
@@ -79,24 +81,19 @@ public class Enemy extends GameObject
     
     double maxDistanceChange = maxSpeed * deltaSec;
     
-    Vector2 deltaPos;
+
     
     if (getType() == GameObjectType.ENEMY_STRAIGHT)
-    { deltaPos = strategyStraight(maxDistanceChange, scrollDistance);
+    { strategyStraight(maxDistanceChange, scrollDistance);
     }
     else if (getType() == GameObjectType.ENEMY_FOLLOW)
-    { deltaPos = strategyFollow(maxDistanceChange, scrollDistance);
+    { strategyFollow(maxDistanceChange, scrollDistance);
     }
     else if (getType() == GameObjectType.ENEMY_SINUSOIDAL)
-    { deltaPos = strategySinusoidal(maxDistanceChange, scrollDistance);
-    }
-    else
-    { deltaPos = new Vector2();
+    { strategySinusoidal(maxDistanceChange, scrollDistance);
     }
     
-    move(deltaPos.x, deltaPos.y);
-    lastMovementX = deltaPos.x;
-    lastMovementY = deltaPos.y;
+    move(velocity.x, velocity.y);
     
   }
   
@@ -108,92 +105,86 @@ public class Enemy extends GameObject
     die(true);
   }
     
-  public Vector2 strategyStraight(double maxDistanceChange, double scrollDistance)
+  public void strategyStraight(double maxDistanceChange, double scrollDistance)
   {
-    double dx = scrollDistance - maxDistanceChange;
-    double dy = lastMovementY * 0.75;
-    Vector2 deltaPos = new Vector2(dx, dy);
+    velocity.x = scrollDistance - maxDistanceChange;
+    velocity.y = velocity.y * 0.75;
     
-
-    
-    deltaPos.setMaxMagnitude(maxDistanceChange);
+    velocity.setMaxMagnitude(maxDistanceChange);
     
    
-    double xx = getX()+deltaPos.x;
-    double yy = getY()+deltaPos.y;
+    double xx = getX()+velocity.x;
+    double yy = getY()+velocity.y;
     
     boolean changedSpeedToAvoidWall = false;
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(xx);
     if (vertex != null)
     { if (yy - getType().getHeight() < vertex.getTopY())
       { changedSpeedToAvoidWall = true;
-        deltaPos.y = maxDistanceChange/2.0;
+        velocity.y = maxDistanceChange/2.0;
       }
       else if (yy + getType().getHeight()*2.0 > vertex.getBottomY())    
       { changedSpeedToAvoidWall = true;
-        deltaPos.y = -maxDistanceChange/2.0;
+        velocity.y = -maxDistanceChange/2.0;
       }
     
       if (changedSpeedToAvoidWall)
-      { deltaPos.setMaxMagnitude(maxDistanceChange);
+      { velocity.setMaxMagnitude(maxDistanceChange);
       }
     }
-    return deltaPos;
   }
   
   
   
-  public Vector2 strategyFollow(double maxDistanceChange, double scrollDistance)
+  public void strategyFollow(double maxDistanceChange, double scrollDistance)
   {
-    Player player = world.getPlayer();
-    double dx = scrollDistance + player.getCenterX() - (getX() + getType().getWidth()/2);
-    double dy = player.getCenterY() - (getY() + getType().getHeight()/2);
+    if (enemyFollowStoppedFollowing) strategyStraight(maxDistanceChange, scrollDistance);
+    else
+    {
+      Player player = world.getPlayer();
+      velocity.x = scrollDistance + player.getCenterX() - (getX() + getType().getWidth()/2);
+      velocity.y = player.getCenterY() - (getY() + getType().getHeight()/2);
+      
+      velocity.setMaxMagnitude(maxDistanceChange);
     
-    if (getX() < (player.getX() - player.getWidth() * (1.0 + Library.RANDOM.nextDouble()))) 
-    { dx = -maxDistanceChange;
+      if (getX() + getWidth()*(2 + 8*Library.RANDOM.nextDouble()) < player.getX())
+      { enemyFollowStoppedFollowing = true;
+      }
     }
-    
-    Vector2 deltaPos = new Vector2(dx, dy);
-
-    deltaPos.setMaxMagnitude(maxDistanceChange);
-    
-    return deltaPos;
   }
   
   
   
-  public Vector2 strategySinusoidal(double maxDistanceChange, double scrollDistance)
+  public void strategySinusoidal(double maxDistanceChange, double scrollDistance)
   {
-    double dx = -maxDistanceChange/2.0;
-    double dy =  lastMovementY;
+    velocity.x = -maxDistanceChange/2.0;
+    double dy =  velocity.y;
     if (dy == 0.0)
     { dy = maxDistanceChange;
       if (Library.RANDOM.nextBoolean())  dy = - maxDistanceChange;
     }
 
-    double xx = getX() + dx;
+    double xx = getX() + velocity.x;
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(xx);
-    if (vertex == null) return new Vector2(lastMovementX, 0);
-    
-    //double gap = getHeight()/2.0;
-    //double stopTop = vertex.getTopY() + gap;
-    
-    //double stopBot = (vertex.getBottomY() - getHeight()) - gap;
+    if (vertex == null)
+    { velocity.y = 0;
+      return;
+    }
+   
     
 
     if (getY()+getHeight()/2 > vertex.getCenter())
     { 
-      dy = lastMovementY - maxDistanceChange/10;
+      velocity.y = velocity.y - maxDistanceChange/10;
     }
     else
     { 
-      dy = lastMovementY + maxDistanceChange/10;
+      velocity.y = velocity.y + maxDistanceChange/10;
     }
  
-    if (getY() + dy > vertex.getBottomY() - getHeight()) dy = - maxDistanceChange;
-    if (getY() + dy < vertex.getTopY()) dy = maxDistanceChange; 
+    if (getY() + velocity.y > vertex.getBottomY() - getHeight()) velocity.y = - maxDistanceChange;
+    if (getY() + velocity.y < vertex.getTopY()) velocity.y = maxDistanceChange; 
     
-    return new Vector2(dx, dy);
   }
 
 
@@ -218,7 +209,16 @@ public class Enemy extends GameObject
   {
     int xx = Library.worldPosXToScreen(getX());
     int yy = Library.worldPosYToScreen(getY());
-    g.drawImage(image, xx, yy, null);
+    
+    double rotationRequired = Math.atan2(velocity.y, velocity.x);
+    double locationX = image.getWidth(null) / 2;
+    double locationY = image.getHeight(null) / 2;
+    AffineTransform transform = new AffineTransform();
+    transform.translate(xx, yy);
+    transform.rotate(rotationRequired);
+    transform.translate(-locationX, -locationY);
+    g.drawImage(image, transform, null);
+    
   }
   
   
@@ -231,8 +231,6 @@ public class Enemy extends GameObject
     if (activeEnemyCount >= maxEnemy) return 0;
      
     double r = Library.RANDOM.nextDouble();
-    
-    //System.out.println("Enemy Spawn: r=" + r + ", activeEnemyCount=" + activeEnemyCount +", maxEnemy=" + maxEnemy);
     
     if (r > (0.75 * deltaTime)*(maxEnemy-activeEnemyCount)) return 0;
 
@@ -261,8 +259,6 @@ public class Enemy extends GameObject
 
   }
 
-  public double getLastMovementX(){return lastMovementX;}
-  public double getLastMovementY(){return lastMovementY;}
 
   public static void initGame() 
   { 
