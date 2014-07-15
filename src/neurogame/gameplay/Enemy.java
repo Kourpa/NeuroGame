@@ -210,12 +210,12 @@ public class Enemy extends GameObject
     int xx = Library.worldPosXToScreen(getX());
     int yy = Library.worldPosYToScreen(getY());
     
-    double rotationRequired = Math.atan2(velocity.y, velocity.x);
+    double angle = Math.atan2(velocity.y, velocity.x);
     double locationX = image.getWidth(null) / 2;
     double locationY = image.getHeight(null) / 2;
     AffineTransform transform = new AffineTransform();
     transform.translate(xx, yy);
-    transform.rotate(rotationRequired);
+    transform.rotate(angle);
     transform.translate(-locationX, -locationY);
     g.drawImage(image, transform, null);
     

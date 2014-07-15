@@ -51,6 +51,8 @@ public final class Library
   public static final double WORLD_SCROLL_SPEED = 0.20;
 
   public static final java.util.Random RANDOM = new java.util.Random();
+  
+  public static final boolean DEBUG_SHOW_HITBOXES = true;
 
   private static int windowPixelWidth, windowPixelHeight;
 

@@ -61,6 +61,7 @@ public abstract class GameObject
     hitBoxMinY = ((double)y1 * scaleY) - y0;
     hitBoxMaxY = ((double)y2 * scaleY) - y0;
   }
+  
 
   public abstract void update(double deltaSec, double scrollDistance);
 

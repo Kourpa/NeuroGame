@@ -83,8 +83,8 @@ public enum GameObjectType
   
   POWER_UP
   { public String getName() {return "powerupMissileAmmo";}
-    public double getWidth() {return 0.06;}
-    public double getHeight() {return 0.06;}
+    public double getWidth() {return 0.08;}
+    public double getHeight() {return 0.08;}
     public int getHitDamage() {return 0;}
     public boolean isEnemy() {return false;}
     public boolean isDynamic() {return false;}

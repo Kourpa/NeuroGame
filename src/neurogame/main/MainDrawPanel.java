@@ -71,7 +71,7 @@ public class MainDrawPanel extends JPanel
     if (canvasObjectLayer != null) canvasObjectLayer.dispose();
 
     imageObjectLayer = new BufferedImage(windowWidth, windowHeight,
-        BufferedImage.TYPE_INT_RGB);
+        BufferedImage.TYPE_INT_ARGB);
     canvasObjectLayer = imageObjectLayer.createGraphics();
 
     // imageBackgroundLayer = new BufferedImage(windowWidth, windowHeight,
