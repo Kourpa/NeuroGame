@@ -15,7 +15,6 @@ import javax.swing.Timer;
 import neurogame.library.Library;
 
 /**
- * 
  * @author kourpa
  */
 public class Oddball {
