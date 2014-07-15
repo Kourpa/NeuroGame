@@ -69,10 +69,12 @@ import org.xml.sax.SAXException;
  */
 public class TitleScreen {
 	private Image titleBackground, profileBackground, startButtonPlain,
-			startButtonSelected, rewindButtonSelected,backButtonPlain,newUserButtonPlain,
-			newUserButtonSelected,checkboxSelected,checkboxPlain;
-	
-	private Image exitButtonPlain, exitButtonSelected, rewindButtonPlain,backButtonSelected;
+			startButtonSelected, rewindButtonSelected, backButtonPlain,
+			newUserButtonPlain, newUserButtonSelected, checkboxSelected,
+			checkboxPlain;
+
+	private Image exitButtonPlain, exitButtonSelected, rewindButtonPlain,
+			backButtonSelected;
 	private Image configButtonPlain, configButtonSelected;
 
 	public boolean IsExiting, IsStarting, IsOption;
@@ -80,22 +82,23 @@ public class TitleScreen {
 	public User selectedUser;
 	private JCheckBox loggingBox;
 	private KeyAdapter Keys;
-	
+
 	private boolean MovingUp;
 	private boolean MovingDown;
-	
+
 	private int currentButton;
 	private int maxButton = 3;
 	private ArrayList<MenuButtons> MenuButtons = new ArrayList<MenuButtons>();
 
 	private static MenuButtons configButton, exitButton, startButton,
-			startButtonProfile, rewindButton,backButtonProfile,newUserButton;
-	private static ArrayList<String> Users;
+			startButtonProfile, rewindButton, backButtonProfile, newUserButton;
+	// private static ArrayList<String> Users;
 	private static JTextField nameInputField;
-	private JComboBox<String> userList = new JComboBox<String>(Library.getUserNames());
+	private JComboBox<String> userList = new JComboBox<String>(
+			Library.getUserNames());
 
 	private String selected;
-	
+
 	private boolean enableLogging;
 
 	private BufferedImage masterImage;
@@ -135,10 +138,10 @@ public class TitleScreen {
 		rewindButtonSelected = sprites.get("rewindButtonSelected");
 		backButtonPlain = sprites.get("backButtonPlain");
 		backButtonSelected = sprites.get("backButtonSelected");
-		
+
 		newUserButtonPlain = sprites.get("newUserButtonPlain");
 		newUserButtonSelected = sprites.get("newUserButtonSelected");
-		
+
 		checkboxSelected = sprites.get("checkboxSelected");
 		checkboxPlain = sprites.get("checkboxPlain");
 
@@ -156,6 +159,9 @@ public class TitleScreen {
 		selected = "start";
 	}
 
+	/**
+	 * The Customization screen after you selected Start Game
+	 */
 	private void CreateProfileScreen(final NeuroFrame frame) {
 		final JLayeredPane lpane = new JLayeredPane();
 		frame.getContentPane().removeAll();
@@ -166,19 +172,14 @@ public class TitleScreen {
 		background.setBackground(Color.BLACK);
 		background.setBounds(0, 0, width, height);
 		background.setOpaque(true);
+
 		JLabel img = new JLabel("");
 		background.add(img);
 
 		/* Buttons */
-		
-		// Start Button
 		startButtonProfile = new MenuButtons(startButtonPlain,
 				startButtonSelected);
-		/*startButtonProfile.b.setBorder(new LineBorder(Color.WHITE,5));
-		startButtonProfile.b.setOpaque(false);
-		startButtonProfile.b.setBackground(new Color(150,150,150,0));
-		startButtonProfile.b.requestFocus();*/
-		
+		MenuButtons.add(startButtonProfile);
 		startButtonProfile.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.requestFocus();
@@ -187,89 +188,50 @@ public class TitleScreen {
 				frame.getContentPane().remove(background);
 				frame.getContentPane().remove(lpane);
 				frame.getContentPane().setLayout(null);
-				
+
 				selectedJoystick = controllerList.getSelectedIndex();
 				selectedUser = Library.getUser(userList.getSelectedIndex());
-				
+
 				savePreferences();
 				IsStarting = true;
 			}
 		});
-		
-		exitButton.b.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
 
-				switch (e.getKeyCode()) {
-				case KeyEvent.VK_UP:
-					System.out.println("up 4");
-					MoveUp();
-					break;
-				case KeyEvent.VK_DOWN:
-					System.out.println("Down! 4");
-					MoveDown();
-					break;
-				case KeyEvent.VK_ENTER:
-					UseButtons();
-				default:
-					break;
-				}
-			}
-		});
-
-		configButton.b.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-
-				switch (e.getKeyCode()) {
-				case KeyEvent.VK_UP:
-					System.out.println("up 2");
-					MoveUp();
-					break;
-				case KeyEvent.VK_DOWN:
-					System.out.println("Down! 2");
-					MoveDown();
-					break;
-				case KeyEvent.VK_ENTER:
-					UseButtons();
-				default:
-					break;
-				}
-			}
-		});
-
-		// Button Panel
-		final JPanel backArea = new JPanel();
-		backArea.setBackground(new Color(100,100,100,0));
-		backArea.setOpaque(false);
-		
-		backArea.setLayout(new BoxLayout(backArea, 1));
-		backArea.setBounds((int) (width * 0.255) - 110, (int) (height * 0.81), 220,50);
-		
 		// Back Button
-		backButtonProfile = new MenuButtons(backButtonPlain,backButtonSelected);
-		backArea.add("North", backButtonProfile.b);
-		
+		backButtonProfile = new MenuButtons(backButtonPlain, backButtonSelected);
+		MenuButtons.add(backButtonProfile);
 		backButtonProfile.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				background.setVisible(false);
 				frame.getContentPane().setLayout(new GridLayout(1, 1));
 				frame.getContentPane().remove(lpane);
 				frame.removeKeyListener(Keys);
-				
+				MenuButtons.clear();
+
 				CreateMainMenu(frame);
 			}
 		});
 
-		
-		//
-		final JPanel test = new JPanel();
-		test.setBackground(new Color(100,100,100,0));
-		test.setOpaque(false);
-		
-		test.setLayout(new BoxLayout(test, 1));
-		test.setBounds((int) (width * 0.715) - 110, (int) (height * 0.81), 220,50);
-		test.add("North", startButtonProfile.b);
+		// Place the back button
+		final JPanel backArea = new JPanel();
+		backArea.setBackground(new Color(100, 100, 100, 0));
+		backArea.setOpaque(false);
+
+		backArea.setLayout(new BoxLayout(backArea, 1));
+		backArea.setBounds((int) (width * 0.255) - 110, (int) (height * 0.81),
+				220, 50);
+
+		backArea.add("North", backButtonProfile.b);
+
+		// Place the start button
+		final JPanel startArea = new JPanel();
+		startArea.setBackground(new Color(100, 100, 100, 0));
+		startArea.setOpaque(false);
+
+		startArea.setLayout(new BoxLayout(startArea, 1));
+		startArea.setBounds((int) (width * 0.715) - 110, (int) (height * 0.81),
+				220, 50);
+		startArea.add("North", startButtonProfile.b);
 
 		// User Panel
 		final JPanel userPanel2 = new JPanel();
@@ -280,16 +242,8 @@ public class TitleScreen {
 		nameInputField.setPreferredSize(new Dimension(400, 50));
 
 		// User Selection
-		JPanel userInfo = new JPanel(new GridBagLayout());
-		userInfo.setBackground(Color.BLACK);
-
-		JLabel text = new JLabel("Select User: ");
-		text.setFont(new Font("Consolas", Font.BOLD, 32));
-		text.setForeground(Color.WHITE);
-		userInfo.add(text);
-
 		userList.setPreferredSize(new Dimension(250, 40));
-		userList.setFont( new Font("Consolas", Font.BOLD, 12));
+		userList.setFont(new Font("Consolas", Font.BOLD, 12));
 		userList.setBackground(Color.BLACK);
 		userList.setForeground(Color.WHITE);
 
@@ -297,9 +251,9 @@ public class TitleScreen {
 		text2.setForeground(Color.WHITE);
 		text2.setFont(new Font("Consolas", Font.BOLD, 32));
 
-		newUserButton = new MenuButtons(newUserButtonPlain,newUserButtonSelected);		
+		newUserButton = new MenuButtons(newUserButtonPlain,
+				newUserButtonSelected);
 		newUserButton.b.setPreferredSize(new Dimension(195, 80));
-		//userInfo.add(newUserButton.b);
 
 		newUserButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -311,21 +265,22 @@ public class TitleScreen {
 		userPanel2.add(newUserButton.b);
 		userPanel2.setBackground(Color.getColor("TRANSLUCENT"));
 		userPanel2.setOpaque(false);
-		userPanel2.setBounds((int) (width * 0.39), (int) (height * 0.32),
-				500, 150);
+		userPanel2.setBounds((int) (width * 0.39), (int) (height * 0.32), 500,
+				150);
 
 		// Controller
 		final JPanel userPanel3 = Options(frame);
 		userPanel3.setBackground(Color.getColor("TRANSLUCENT"));
 		userPanel3.setOpaque(false);
-		userPanel3.setBounds((int) (width * 0.405), (int) (height * 0.46), 300, 40);
+		userPanel3.setBounds((int) (width * 0.405), (int) (height * 0.46), 300,
+				40);
 
 		// Logging
 		final JPanel userPanel4 = new JPanel();
 		userPanel4.setBackground(Color.BLACK);
 		userPanel4.setLayout(new BoxLayout(userPanel4, BoxLayout.Y_AXIS));
-		userPanel4.setBounds((int) (width * 0.4), (int) (height * 0.57),
-				400, 70);
+		userPanel4.setBounds((int) (width * 0.4), (int) (height * 0.57), 400,
+				70);
 
 		loggingBox = new JCheckBox();
 		loggingBox.setBackground(Color.getColor("TRANSLUCENT"));
@@ -333,14 +288,13 @@ public class TitleScreen {
 		loggingBox.setIcon(new ImageIcon(checkboxPlain));
 		loggingBox.setSelectedIcon(new ImageIcon(checkboxSelected));
 		loggingBox.setSelected(true);
-		
-		//game.controller.setLoggingMode(false);
-		loggingBox.addActionListener(new ActionListener(){
+
+		loggingBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				enableLogging=loggingBox.isSelected();
+				enableLogging = loggingBox.isSelected();
 			}
 		});
-		
+
 		userPanel4.add(loggingBox);
 		userPanel4.add(new JLabel("  "));
 		userPanel4.setBackground(Color.getColor("TRANSLUCENT"));
@@ -349,28 +303,26 @@ public class TitleScreen {
 		// Add everything to Layered Panel
 		lpane.setBounds(0, 0, 600, 400);
 		lpane.add(background, 0, 0);
-		lpane.add(test, 1, 0);
+		lpane.add(startArea, 1, 0);
 		lpane.add(userPanel2, 2, 0);
 		lpane.add(userPanel3, 3, 0);
 		lpane.add(userPanel4, 4, 0);
-		lpane.add(backArea,5,0);
-		lpane.setBackground(Color.YELLOW);
+		lpane.add(backArea, 5, 0);
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
 		restorePreferences();
-
 	}
 
+	/**
+	 * Create the main menu screen
+	 */
 	private void CreateMainMenu(final NeuroFrame frame) {
 		final JLayeredPane lpane = new JLayeredPane();
-
-		// Background
 		frame.getContentPane().setLayout(new BorderLayout());
 
+		// Background
 		final JLabel background = new JLabel(new ImageIcon(titleBackground));
 		background.setBackground(Color.GRAY);
-
-		// To align the buttons...
 		JLabel img = new JLabel("");
 		background.add(img);
 
@@ -380,47 +332,7 @@ public class TitleScreen {
 		test.setLayout(new BoxLayout(test, 1));
 		test.setBackground(Color.WHITE);
 
-		// Buttons
-		startButton = new MenuButtons(startButtonPlain, startButtonSelected);
-		MenuButtons.add(0, startButton);
-		startButton.b.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				background.setVisible(false);
-				frame.getContentPane().setLayout(new GridLayout(1, 1));
-				frame.getContentPane().remove(lpane);
-				frame.removeKeyListener(Keys);
-				//selectedUser = Library.getUser(userList.getSelectedIndex());
-				// IsStarting = true;
-				
-				CreateProfileScreen(frame);
-			}
-		});
-
-		configButton = new MenuButtons(configButtonPlain, configButtonSelected);
-		MenuButtons.add(configButton);
-		configButton.b.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {				
-				background.setVisible(false);
-				frame.getContentPane().setLayout(new GridLayout(1, 1));
-				frame.getContentPane().remove(lpane);
-				frame.removeKeyListener(Keys);
-				
-				IsOption = true;
-				System.out.println("OddBall Test");
-				
-				BufferedImage img1 = sprites.get("TargetOddball");
-				BufferedImage img2 = sprites.get("FalseOddball");
-				BufferedImage img3 = sprites.get("WelcomeOddball");				
-				
-				new Oddball(frame,img1,img2,img3);
-			}
-		});
-
-		rewindButton = new MenuButtons(rewindButtonPlain, rewindButtonSelected);// new
-																				// JButton("");
-		// KeyListener
+		// KeyListener for using keyboard to select
 		Keys = new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -441,6 +353,40 @@ public class TitleScreen {
 			}
 		};
 
+		// Buttons
+		startButton = new MenuButtons(startButtonPlain, startButtonSelected);
+		MenuButtons.add(0, startButton);
+		startButton.b.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				background.setVisible(false);
+				frame.getContentPane().setLayout(new GridLayout(1, 1));
+				frame.getContentPane().remove(lpane);
+				frame.removeKeyListener(Keys);
+				MenuButtons.clear();
+				CreateProfileScreen(frame);
+			}
+		});
+
+		configButton = new MenuButtons(configButtonPlain, configButtonSelected);
+		MenuButtons.add(configButton);
+		configButton.b.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				background.setVisible(false);
+				frame.getContentPane().setLayout(new GridLayout(1, 1));
+				frame.getContentPane().remove(lpane);
+				frame.removeKeyListener(Keys);
+
+				System.out.println("OddBall Test");
+
+				BufferedImage img1 = sprites.get("TargetOddball");
+				BufferedImage img2 = sprites.get("FalseOddball");
+				BufferedImage img3 = sprites.get("WelcomeOddball");
+
+				new Oddball(frame, img1, img2, img3);
+			}
+		});
+
+		rewindButton = new MenuButtons(rewindButtonPlain, rewindButtonSelected);
 		MenuButtons.add(rewindButton);
 		rewindButton.b.addKeyListener(Keys);
 
@@ -478,52 +424,26 @@ public class TitleScreen {
 		lpane.setBackground(Color.YELLOW);
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
-		
+
 		restorePreferences();
 	}
 
 	/**
-	 *  Getters and setters for game options
-	 */	
-	public User GetSelectedUser(){
+	 * Getters and setters for game options
+	 */
+	public User GetSelectedUser() {
 		return this.selectedUser;
 	}
-	public int GetSelectedJoystick(){
+
+	public int GetSelectedJoystick() {
 		return this.selectedJoystick;
 	}
-	public boolean GetLogging(){
+
+	public boolean GetLogging() {
 		return this.enableLogging;
 	}
-	
-	/**
-	 * Called from the TitleUpdate() in gamecontroller
-	 * To select the buttons with the joystick
-	 */
-	public void updateJoystick(Controller joystick, int JOYSTICK_X, int JOYSTICK_Y){
-		float Y;
-		
-		joystick.poll();
-		
-	    //X = joystick.getAxisValue(JOYSTICK_X);
-	    Y = joystick.getAxisValue(JOYSTICK_Y);
-	    
-	    if(Math.abs(Y)>0.15){
-	    	if(Y<0 && MovingDown == false){
-	    		MovingUp=true;
-	    		MoveUp();
-	    	}
-	    	else if(Y>0 && MovingUp == false){
-	    		MovingDown = true;
-	    		MoveDown();
-	    	}
-	    }
-	    else{
-	    	MovingUp = false;
-	    	MovingDown = false;
-	    }
-	}
-	    
-	
+
+
 	/**
 	 * Save user preferences to a file
 	 */
@@ -535,7 +455,7 @@ public class TitleScreen {
 
 		// instance of a DocumentBuilderFactory
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		
+
 		try {
 			// use factory to get an instance of document builder
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -554,7 +474,7 @@ public class TitleScreen {
 			e = dom.createElement("User");
 			e.appendChild(dom.createTextNode("" + userList.getSelectedIndex()));
 			rootEle.appendChild(e);
-			
+
 			e = dom.createElement("Logging");
 			e.appendChild(dom.createTextNode("" + this.enableLogging));
 			rootEle.appendChild(e);
@@ -571,10 +491,11 @@ public class TitleScreen {
 						"{http://xml.apache.org/xslt}indent-amount", "4");
 
 				// send DOM to file
-				FileOutputStream out = new FileOutputStream(path+"pref.xml");
+				FileOutputStream out = new FileOutputStream(path + "pref.xml");
 				out.close();
-				
-				tr.transform(new DOMSource(dom), new StreamResult(new FileOutputStream(path + "pref.xml")));
+
+				tr.transform(new DOMSource(dom), new StreamResult(
+						new FileOutputStream(path + "pref.xml")));
 
 			} catch (TransformerException te) {
 				System.out.println(te.getMessage());
@@ -586,7 +507,7 @@ public class TitleScreen {
 					.println("UsersXML: Error trying to instantiate DocumentBuilder "
 							+ pce);
 		}
-		
+
 		System.out.println("Finished Saving Perfs: ");
 	}
 
@@ -596,7 +517,7 @@ public class TitleScreen {
 	private void restorePreferences() {
 		String path = System.getProperty("user.dir");
 		path += "/Users/";
-		
+
 		ArrayList<String> perfs = new ArrayList<String>();
 		Document dom;
 		// Make an instance of the DocumentBuilderFactory
@@ -606,35 +527,80 @@ public class TitleScreen {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			// parse using the builder to get the DOM mapping of the
 			// XML file
-			dom = db.parse(path+"pref.xml");
+			dom = db.parse(path + "pref.xml");
 
 			Element doc = dom.getDocumentElement();
 
-			perfs.add(doc.getElementsByTagName("Controller").item(0).getFirstChild().getNodeValue());
-			perfs.add(doc.getElementsByTagName("User").item(0).getFirstChild().getNodeValue());
-			perfs.add(doc.getElementsByTagName("Logging").item(0).getFirstChild().getNodeValue());
+			perfs.add(doc.getElementsByTagName("Controller").item(0)
+					.getFirstChild().getNodeValue());
+			perfs.add(doc.getElementsByTagName("User").item(0).getFirstChild()
+					.getNodeValue());
+			perfs.add(doc.getElementsByTagName("Logging").item(0)
+					.getFirstChild().getNodeValue());
 
 		} catch (Exception pce) {
 			System.out.println(pce.getMessage());
 		}
-		
+
 		System.out.println("Finished Loading Perfs: ");
-		try{
+
+		// Joystick perfs
+		try {
+			selectedJoystick = Integer.parseInt(perfs.get(0));
+		} catch (Exception e) {
+			System.out.println("Error with joystick");
+		}
+
+		//
+		try {
+			controllerList.setSelectedIndex(Integer.parseInt(perfs.get(0)));
 			loggingBox.setSelected(Boolean.parseBoolean(perfs.get(2)));
 			userList.setSelectedIndex(Integer.parseInt(perfs.get(1)));
-			controllerList.setSelectedIndex(Integer.parseInt(perfs.get(0)));
+		} catch (Exception e) {
 		}
-		catch(Exception e){
-		}
-		
+
 	}
 
+	
+	/* Menu Button Methods */
+	/**
+	 * Called from the TitleUpdate() in gamecontroller To select the buttons
+	 * with the joystick
+	 */
+	public void updateJoystick(Controller joystick, int JOYSTICK_X,
+			int JOYSTICK_Y) {
+		float Y;
+
+		joystick.poll();
+
+		// X = joystick.getAxisValue(JOYSTICK_X);
+		Y = joystick.getAxisValue(JOYSTICK_Y);
+
+		if (Math.abs(Y) > 0.2) {
+			if (Y < 0 && MovingDown == false) {
+				MovingDown = true;
+				MoveUp();
+			} else if (Y > 0 && MovingUp == false) {
+				MovingUp = true;
+				MoveDown();
+			}
+		} else {
+			MovingUp = false;
+			MovingDown = false;
+		}
+
+		for (int i = 0; i < 5; i++) {
+			if (joystick.isButtonPressed(i)) {
+				UseButtons();
+			}
+		}
+	}
 	/**
 	 * Move to the button bellow with a joystick
 	 */
 	private void MoveDown() {
 		currentButton += 1;
-		if (currentButton > maxButton) {
+		if (currentButton >= MenuButtons.size()) {
 			currentButton = 0;
 		}
 		updateButtons();
@@ -646,8 +612,8 @@ public class TitleScreen {
 	private void MoveUp() {
 		currentButton += -1;
 
-		if (currentButton < 0) {
-			currentButton = maxButton;
+		if (currentButton <= 0) {
+			currentButton = MenuButtons.size();
 		}
 		updateButtons();
 	}
@@ -673,15 +639,15 @@ public class TitleScreen {
 		for (int i = 0; i < MenuButtons.size(); i++) {
 			if (i == currentButton) {
 				MenuButtons.get(i).b.doClick();
+				break;
 			}
 		}
 	}
 
+	
+	
 	/**
 	 * Creates the panel for the controller options
-	 * 
-	 * @param frame
-	 * @return
 	 */
 	public JPanel Options(final NeuroFrame frame) {
 		ArrayList<String> ControllerNames = new ArrayList<String>();
@@ -710,24 +676,22 @@ public class TitleScreen {
 		controllerList = new JComboBox<String>(
 				ControllerNames.toArray(new String[0]));
 		controllerList.setPreferredSize(new Dimension(250, 10));
-		controllerList.setFont( new Font("Consolas", Font.BOLD, 12));
+		controllerList.setFont(new Font("Consolas", Font.BOLD, 12));
 		controllerList.setBackground(Color.BLACK);
 		controllerList.setForeground(Color.WHITE);
 
-		//JPanel mainBox = new JPanel();
-		//mainBox.setLayout(new BoxLayout(mainBox, BoxLayout.Y_AXIS));
+		// JPanel mainBox = new JPanel();
+		// mainBox.setLayout(new BoxLayout(mainBox, BoxLayout.Y_AXIS));
 
 		// Joysticks
 		JPanel message = new JPanel();
-		message.setLayout(new BoxLayout(message,BoxLayout.X_AXIS));
+		message.setLayout(new BoxLayout(message, BoxLayout.X_AXIS));
 		message.add(controllerList);
 		return message;
 	}
 
 	/**
 	 * Gets the name and starts the creation process in Library.java
-	 * 
-	 * @param frame
 	 */
 	public void CreateNewUser(final NeuroFrame frame) {
 		final JDialog dialog = new JDialog(frame, "NewUser");
@@ -773,7 +737,7 @@ public class TitleScreen {
 	private void updateUsers() {
 		String[] names = Library.getUserNames();
 		System.out.println("Update Users: Length " + names.length);
-		
+
 		userList.removeAllItems();
 		for (int i = 0; i < names.length; i++) {
 			System.out.println(names[i]);

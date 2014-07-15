@@ -56,23 +56,16 @@ public class GameOverScreen {
 	private Image exitButtonPlain, exitButtonSelected, restartButtonSelected,
 			restartButtonPlain;
 
-	public boolean IsExiting, IsStarting, IsOption,IsRestarting;
+	public boolean IsExiting, IsStarting, IsOption, IsRestarting;
 	public int selectedJoystick;
 	public User selectedUser;
 	private KeyAdapter Keys;
 
 	private int currentButton;
-	private int maxButton = 3;
+	private boolean MovingDown, MovingUp;
 	private ArrayList<MenuButtons> MenuButtons = new ArrayList<MenuButtons>();
 
 	private static MenuButtons exitButton, restartButton, startButton;
-	private static JTextField nameInputField;
-	private JComboBox<String> userList;
-
-	private String selected;
-
-	private BufferedImage masterImage;
-	private JComboBox<String> controllerList;
 	private Map<String, BufferedImage> sprites;
 
 	private int width;
@@ -91,13 +84,6 @@ public class GameOverScreen {
 		// For Polling
 		IsExiting = false;
 		IsStarting = false;
-		IsOption = false;
-
-		// masterImage = new BufferedImage(Library.getWindowWidth(),
-		// Library.getWindowHeight(), BufferedImage.TYPE_INT_ARGB);
-		// masterGraphics = masterImage.createGraphics();
-		// image = masterImage;
-		// graphics = image.createGraphics();
 
 		width = frame.getWidth();
 		height = frame.getHeight();
@@ -108,10 +94,10 @@ public class GameOverScreen {
 
 		startButtonPlain = sprites.get("mainMenuButtonPlain");
 		startButtonSelected = sprites.get("mainMenuButtonSelected");
-		
+
 		exitButtonPlain = sprites.get("exitButtonPlain");
 		exitButtonSelected = sprites.get("exitButtonSelected");
-		
+
 		restartButtonPlain = sprites.get("restartButtonPlain");
 		restartButtonSelected = sprites.get("restartButtonSelected");
 
@@ -125,8 +111,6 @@ public class GameOverScreen {
 				height = frame.getHeight();
 			}
 		});
-
-		selected = "start";
 	}
 
 	private void CreateMainMenu(final NeuroFrame frame) {
@@ -134,8 +118,8 @@ public class GameOverScreen {
 
 		// Main pane for the UI
 		final JLayeredPane lpane = new JLayeredPane();
-		lpane.setBackground(new Color(17,17,17,255));
-		
+		lpane.setBackground(new Color(17, 17, 17, 255));
+
 		// Background
 		final JLabel background = new JLabel(new ImageIcon(profileBackground));
 		JLabel img = new JLabel("");
@@ -171,7 +155,7 @@ public class GameOverScreen {
 		JList<String> personalJList = new JList<String>(highscoresPersonal);
 		personalJList.setBackground(Color.getColor("TRANSLUCENT"));
 		personalJList.setOpaque(false);
-		
+
 		personalJList.setForeground(new Color(110, 170, 255));
 		personalJList.setFont(new Font("Karmatic Arcade", Font.PLAIN, 20));
 
@@ -196,13 +180,6 @@ public class GameOverScreen {
 
 		// ExitButton
 		exitButton = new MenuButtons(exitButtonPlain, exitButtonSelected);
-		/*MenuButtons.add(exitButton);
-		exitButton.b.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				IsExiting = true;
-			}
-		});*/
 		exitButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				background.setVisible(false);
@@ -238,22 +215,23 @@ public class GameOverScreen {
 		frame.addKeyListener(Keys);
 
 		//
-		//Buttons.add(startButton.b);
+		// Buttons.add(startButton.b);
 		Buttons.add(restartButton.b);
 		Buttons.add(exitButton.b);
-		
+
 		Buttons.setBounds(width / 2 - 150, (int) (height * 0.65), 300, 180);
 		Buttons.setOpaque(false);
 		Buttons.setBackground(Color.getColor("TRANSLUCENT"));
-		
+
 		highscores.setBounds(width / 2 - 420, (int) (height * 0.45), 300, 150);
 		highscores.setOpaque(false);
 		highscores.setBackground(Color.getColor("TRANSLUCENT"));
 
-		besthighscores.setBounds((int)(width * 0.52), (int) (height * 0.45), 300, 150);
+		besthighscores.setBounds((int) (width * 0.52), (int) (height * 0.45),
+				300, 150);
 		besthighscores.setOpaque(false);
 		besthighscores.setBackground(Color.getColor("TRANSLUCENT"));
-		
+
 		background.setBounds(0, 0, width, height);
 		background.setOpaque(false);
 		background.setBackground(Color.getColor("TRANSLUCENT"));
@@ -263,17 +241,51 @@ public class GameOverScreen {
 		lpane.add(Buttons, 1, 0);
 		lpane.add(highscores, 2, 0);
 		lpane.add(besthighscores, 3, 0);
-		
+
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
 	}
 
+	
+	/* Menu Button Methods */
+	/**
+	 * Called from the HighscoreUpdate() in gamecontroller To select the buttons
+	 * with the joystick
+	 */
+	public void updateJoystick(Controller joystick, int JOYSTICK_X,
+			int JOYSTICK_Y) {
+		float Y;
+
+		joystick.poll();
+
+		// X = joystick.getAxisValue(JOYSTICK_X);
+		Y = joystick.getAxisValue(JOYSTICK_Y);
+
+		if (Math.abs(Y) > 0.2) {
+			if (Y < 0 && MovingDown == false) {
+				MovingDown = true;
+				MoveUp();
+			} else if (Y > 0 && MovingUp == false) {
+				MovingUp = true;
+				MoveDown();
+			}
+		} else {
+			MovingUp = false;
+			MovingDown = false;
+		}
+
+		for (int i = 0; i < 5; i++) {
+			if (joystick.isButtonPressed(i)) {
+				UseButtons();
+			}
+		}
+	}
 	/**
 	 * Move to the button bellow with a joystick
 	 */
 	private void MoveDown() {
 		currentButton += 1;
-		if (currentButton > maxButton) {
+		if (currentButton >= MenuButtons.size()) {
 			currentButton = 0;
 		}
 		updateButtons();
@@ -285,8 +297,8 @@ public class GameOverScreen {
 	private void MoveUp() {
 		currentButton += -1;
 
-		if (currentButton < 0) {
-			currentButton = maxButton;
+		if (currentButton <= 0) {
+			currentButton = MenuButtons.size();
 		}
 		updateButtons();
 	}
@@ -312,136 +324,8 @@ public class GameOverScreen {
 		for (int i = 0; i < MenuButtons.size(); i++) {
 			if (i == currentButton) {
 				MenuButtons.get(i).b.doClick();
+				break;
 			}
 		}
 	}
-
-	/**
-	 * Creates the panel for the controller options
-	 * 
-	 * @param frame
-	 * @return
-	 */
-	public JPanel Options(final NeuroFrame frame) {
-		ArrayList<String> ControllerNames = new ArrayList<String>();
-		new JDialog(frame, "Options");
-
-		// Joysticks
-		try {
-			Controllers.create();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
-
-		// add the keyboard as default
-		ControllerNames.add("Keyboard");
-
-		int count = Controllers.getControllerCount();
-
-		for (int i = 0; i < count; i++) {
-			Controller controller = Controllers.getController(i);
-			System.out.println(controller.getName());
-			ControllerNames.add(controller.getName());
-		}
-
-		// Options Menu
-		controllerList = new JComboBox<String>(
-				ControllerNames.toArray(new String[0]));
-		controllerList.setPreferredSize(new Dimension(250, 40));
-
-		JPanel mainBox = new JPanel();
-		mainBox.setLayout(new BoxLayout(mainBox, BoxLayout.Y_AXIS));
-
-		// Joysticks
-		JPanel message = new JPanel();
-		message.setLayout(new BorderLayout());
-		// message.add(new JLabel("Select Controller:"), BorderLayout.WEST);
-		message.setBackground(Color.WHITE);
-		message.add(controllerList, BorderLayout.WEST);
-		return message;
-	}
-
-	/**
-	 * Gets the name and starts the creation process in Library.java
-	 * 
-	 * @param frame
-	 */
-	public void CreateNewUser(final NeuroFrame frame) {
-		final JDialog dialog = new JDialog(frame, "NewUser");
-
-		JPanel mainBox = new JPanel();
-		mainBox.setLayout(new BoxLayout(mainBox, BoxLayout.Y_AXIS));
-
-		JPanel message = new JPanel();
-		message.setLayout(new BorderLayout());
-		message.add(new JLabel("New User Name:  "), BorderLayout.WEST);
-		message.setBackground(Color.WHITE);
-
-		nameInputField = new JTextField(16);
-		nameInputField.setPreferredSize(new Dimension(400, 50));
-
-		JButton newUserButton2 = new JButton("Add");
-		newUserButton2.setPreferredSize(new Dimension(100, 50));
-
-		newUserButton2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Library.addUser(nameInputField.getText());
-				nameInputField.setText("");
-				updateUsers();
-				dialog.dispose();
-			}
-		});
-
-		message.add(nameInputField, BorderLayout.CENTER);
-		message.add(newUserButton2, BorderLayout.EAST);
-
-		mainBox.add(message);
-
-		dialog.setModal(true);
-		dialog.setContentPane(mainBox);
-		dialog.pack();
-		dialog.setLocationRelativeTo(frame);
-		dialog.setVisible(true);
-	}
-
-	/**
-	 * Updates the user list after adding a new user
-	 */
-	private void updateUsers() {
-		String[] names = Library.getUserNames();
-		userList.removeAllItems();
-
-		for (int i = 0; i < names.length; i++) {
-			userList.addItem(names[i]);
-		}
-	}
-
-	/**
-	 * Toggles which button is selected.
-	 */
-	public void switchButton() {
-		selected = (selected == "start" ? "exit" : "start");
-		// draw();
-	}
-
-	/**
-	 * Getter for selected.
-	 * 
-	 * @return selected String representation of selected button.
-	 */
-	public String getSelected() {
-		return selected;
-	}
-
-	/**
-	 * Getter for the buffered image.
-	 * 
-	 * @return BufferedImage of the title screen.
-	 */
-	public BufferedImage getImage() {
-		// System.out.println("TitleScreen.getImage(): image.size = ("+image.getWidth()+", "+image.getHeight()+")");
-		return masterImage;
-	}
-
 }

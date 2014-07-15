@@ -590,6 +590,12 @@ public class GameController
   private void highscoreUpdate(){
 	  if (gameOver != null)
 	    {
+		  SelectJoystick(title.GetSelectedJoystick());
+	    	
+	    	if(joystick!=null){
+	    		title.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
+	    	}
+	    	
 		  if (gameOver.IsStarting)
 	      {
 	        controls.disableAll();
