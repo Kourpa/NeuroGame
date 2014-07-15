@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="NeuroGame"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lwjgl/jar/jinput.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="NeuroGame/lwjgl/native/windows"/>

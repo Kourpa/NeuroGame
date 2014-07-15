@@ -2,4 +2,5 @@
 <pref>
     <Controller>0</Controller>
     <User>0</User>
+    <Logging>false</Logging>
 </pref>
