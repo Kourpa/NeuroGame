@@ -1,5 +1,5 @@
 /**
- * NeuroGame.
+p * NeuroGame.
  * CS 351, Project 3
  * 
  * Team members:

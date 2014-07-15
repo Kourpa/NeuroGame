@@ -87,7 +87,7 @@ public class Player extends GameObject
    */
   public void update(double deltaSec, double scrollDistance)
   {
-    System.out.println("Player.update("+deltaSec+")");
+    //System.out.println("Player.update("+deltaSec+")");
     gameTotalSeconds += deltaSec;
     if (missileCurrentCooldown > 0) missileCurrentCooldown -= deltaSec;
 
@@ -241,14 +241,14 @@ public class Player extends GameObject
    
     
     double pathHeightBonus = 1.0 + 5*Math.max(0, pathType.getDefaultOpeningHeight() - world.getCurrentChunkHeight());
-    System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
+    //System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
     
     int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
     gameScore += score;
    
     InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(score));
     world.addGameObject(scoreInfo);
-    System.out.println("    obj ("+ obj.getCenterX() +", " + obj.getCenterY() +")  worldLeft="+Library.leftEdgeOfWorld);
+    //System.out.println("    obj ("+ obj.getCenterX() +", " + obj.getCenterY() +")  worldLeft="+Library.leftEdgeOfWorld);
     
     
     if (type == GameObjectType.ENEMY_STRAIGHT)
@@ -360,7 +360,7 @@ public class Player extends GameObject
   
   public void render(Graphics2D canvas)
   {
-    System.out.println("Player.render()");
+    //System.out.println("Player.render()");
     int xx = Library.worldPosXToScreen(getX());
     int yy = Library.worldPosYToScreen(getY());
     canvas.drawImage(image, xx, yy, null);

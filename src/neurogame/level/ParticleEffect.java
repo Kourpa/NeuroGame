@@ -58,23 +58,28 @@ public class ParticleEffect extends GameObject
 
     double xpull = gmass.getXpull();
     double ypull = gmass.getYpull();
-    double dx, dy, mag;
+    double dx, dy;
     for(Particle p: particles){
       dx = gmass.getX() - p.getX();
       dy = gmass.getY() - p.getY();
-      mag = 1/Math.sqrt(dx * dx + dy * dy);
+      //double mag = 1/Math.sqrt(dx * dx + dy * dy);
 
       p.update(xpull * dx, ypull * dy);
     }
   }
-
+  
   @Override
   public void render(Graphics2D graphics)
-  {
-    Composite oldAlpha = graphics.getComposite();
-    AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-    graphics.setComposite(alphaComposite);
-
+  { 
+    boolean useAlphaComposite = false;
+    Composite oldAlpha = null;
+    // For some reason I (Joel) have not yet figured out, the AlphaComposite stuff is causing massive flicker.
+    if (useAlphaComposite)
+    { oldAlpha = graphics.getComposite();
+      AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+      graphics.setComposite(alphaComposite);
+    }
+    
     for(int i = 0; i < particles.length; i++)
     {
       graphics.setColor(particles[i].getColor());
@@ -83,8 +88,10 @@ public class ParticleEffect extends GameObject
       graphics.fillRect(xx, yy, 4, 4);
     }
 
-    graphics.setComposite(oldAlpha);
-    graphics.setColor(Color.RED);
+    if (useAlphaComposite)
+    { graphics.setComposite(oldAlpha);
+      graphics.setColor(Color.RED);
+    }
   }
 
   @Override

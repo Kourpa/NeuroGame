@@ -167,9 +167,10 @@ public class CrystalGrower extends Thread
     List<PathVertex> vertexList = chunk.getPathList();
     int palett = Crystal.getPalettIdxOfChunkType(chunk.getChunkType());
     
-    
-    for (PathVertex vertex : vertexList)
+    int first90Percent = (int)(vertexList.size() * 0.8);
+    for (int i=0; i<first90Percent; i++)
     {
+      PathVertex vertex = vertexList.get(i);
       int x = pixelStartOfNewChunk + (int)(Library.U_VALUE*(vertex.getX() - chunk.getStartX()));
 
       int y = (int)(Library.U_VALUE*vertex.getTopY()) - Library.RANDOM.nextInt(10);
@@ -249,21 +250,13 @@ public class CrystalGrower extends Thread
     }
   }
 
-  public void render(Graphics2D mainGameCanvas,
-      double scrolledDistanceWithinChunk)
+  public void render(Graphics2D mainGameCanvas, double scrolledDistanceWithinChunk)
   {
-
-    // int chunkOffsetY = (int)((1.0)*Library.U_VALUE);
-    // System.out.println(chunkOffsetX);
     chunkOffsetX = (int) (scrolledDistanceWithinChunk * Library.U_VALUE);
     synchronized (imageBuffer)
     {
       // System.out.println("chunkOffsetX="+chunkOffsetX);
       mainGameCanvas.drawImage(imageBuffer, -chunkOffsetX, 0, null);
-
-      // mainGameCanvas.setTransform(new AffineTransform ());
-
-      // mainGameCanvas.drawImage(imageBuffer, 0, 0, null);
     }
   }
 
