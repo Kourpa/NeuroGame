@@ -603,12 +603,8 @@ public class TitleScreen {
 			perfs.add(doc.getElementsByTagName("User").item(0).getFirstChild().getNodeValue());
 			perfs.add(doc.getElementsByTagName("Logging").item(0).getFirstChild().getNodeValue());
 
-		} catch (ParserConfigurationException pce) {
+		} catch (Exception pce) {
 			System.out.println(pce.getMessage());
-		} catch (SAXException se) {
-			System.out.println(se.getMessage());
-		} catch (IOException ioe) {
-			System.err.println(ioe.getMessage());
 		}
 		
 		System.out.println("Finished Loading Perfs: ");
