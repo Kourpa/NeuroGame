@@ -123,7 +123,6 @@ public void paintComponent(Graphics g)
       // canvasObjectLayer.setColor(Color.BLUE);
       // canvasObjectLayer.fillRect(0, 0, windowWidth,windowHeight);
       // System.out.println("windowWidth="+windowWidth+", windowHeight="+windowHeight);
-      world.getPlayer().render(canvasObjectLayer);
 
       if (gameObjList != null)
       {
