@@ -193,7 +193,17 @@ public class GameOverScreen {
 		// Start Button
 		startButton = new MenuButtons(startButtonPlain, startButtonSelected);
 		MenuButtons.add(0, startButton);
-		startButton.b.addActionListener(new ActionListener() {
+
+		// ExitButton
+		exitButton = new MenuButtons(exitButtonPlain, exitButtonSelected);
+		/*MenuButtons.add(exitButton);
+		exitButton.b.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				IsExiting = true;
+			}
+		});*/
+		exitButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				background.setVisible(false);
 				lpane.setVisible(false);
@@ -201,16 +211,6 @@ public class GameOverScreen {
 				frame.getContentPane().remove(lpane);
 				frame.removeKeyListener(Keys);
 				IsStarting = true;
-			}
-		});
-
-		// ExitButton
-		exitButton = new MenuButtons(exitButtonPlain, exitButtonSelected);
-		MenuButtons.add(exitButton);
-		exitButton.b.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				IsExiting = true;
 			}
 		});
 
@@ -238,7 +238,7 @@ public class GameOverScreen {
 		frame.addKeyListener(Keys);
 
 		//
-		Buttons.add(startButton.b);
+		//Buttons.add(startButton.b);
 		Buttons.add(restartButton.b);
 		Buttons.add(exitButton.b);
 		

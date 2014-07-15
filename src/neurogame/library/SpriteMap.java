@@ -106,6 +106,11 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("player", "/images/playerShip.png", 68, 68);
     add("pDmg1", "/images/damage1.png", 68, 68);
     add("pDmg2", "/images/damage2.png", 68, 68);
+    
+    // Visual test graphics
+    add("TargetOddball","/images/playerShip.png", 68*3, 68*3);
+    add("FalseOddball","/images/enemyStraight.png", 68*3, 68*3);
+    add("WelcomeOddball","/images/VisualTestWelcome.png", frame.getWidth(),frame.getHeight());
 
     add("EnemyStraight", "/images/enemyStraight.png",
         Library.worldUnitToScreen(GameObjectType.ENEMY_STRAIGHT.getWidth()),

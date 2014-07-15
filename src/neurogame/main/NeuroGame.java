@@ -113,7 +113,7 @@ public class NeuroGame
       time.append("0");
     }
     time.append(mins);
-    time.append(":");
+    time.append(":");	
     // Seconds.
     if (secs < 10)
     {
@@ -246,7 +246,6 @@ public class NeuroGame
     else
     {
       game.controller.setSound(true);
-      //game.controller.setLoggingMode(false);
       game.controller.setGodMode(false);
       game.controller.setSuicideEnabled(false);
       game.controller.setGlobalDebug(false);

@@ -524,10 +524,6 @@ public class GameController
   {
     controllable = false;
   }
-  
-  private void newOddBall(){
-	  //Oddball o = new Oddball(frame);
-  }
 
   /**
    * Start a new game.
@@ -618,13 +614,19 @@ public class GameController
   {
     if (title != null)
     {
+    	SelectJoystick(title.GetSelectedJoystick());
+    	
+    	if(joystick!=null){
+    		title.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
+    	}
 
       if (title.IsStarting)
       {
         controls.disableAll();
         newGame();
-        SelectJoystick(title.selectedJoystick);
-        frame.setUser(title.selectedUser);
+        SelectJoystick(title.GetSelectedJoystick());
+        setLoggingMode(title.GetLogging());
+        frame.setUser(title.GetSelectedUser());
 
       }
       else if (title.IsExiting)
@@ -634,7 +636,6 @@ public class GameController
       }
       else if (title.IsOption)
       {
-    	  //newOddBall();
       }
 
       if (inputs.get("sound"))

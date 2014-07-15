@@ -78,6 +78,7 @@ public class TitleScreen {
 	public boolean IsExiting, IsStarting, IsOption;
 	public int selectedJoystick;
 	public User selectedUser;
+	private JCheckBox loggingBox;
 	private KeyAdapter Keys;
 	
 	private int currentButton;
@@ -91,6 +92,8 @@ public class TitleScreen {
 	private JComboBox<String> userList = new JComboBox<String>(Library.getUserNames());
 
 	private String selected;
+	
+	private boolean enableLogging;
 
 	private BufferedImage masterImage;
 	private JComboBox<String> controllerList;
@@ -321,11 +324,19 @@ public class TitleScreen {
 		userPanel4.setBounds((int) (width * 0.4), (int) (height * 0.57),
 				400, 70);
 
-		JCheckBox loggingBox = new JCheckBox();
+		loggingBox = new JCheckBox();
 		loggingBox.setBackground(Color.getColor("TRANSLUCENT"));
 		loggingBox.setOpaque(false);
 		loggingBox.setIcon(new ImageIcon(checkboxPlain));
 		loggingBox.setSelectedIcon(new ImageIcon(checkboxSelected));
+		loggingBox.setSelected(true);
+		
+		//game.controller.setLoggingMode(false);
+		loggingBox.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				enableLogging=loggingBox.isSelected();
+			}
+		});
 		
 		userPanel4.add(loggingBox);
 		userPanel4.add(new JLabel("  "));
@@ -396,9 +407,9 @@ public class TitleScreen {
 				IsOption = true;
 				System.out.println("OddBall Test");
 				
-				BufferedImage img1 = sprites.get("player");
-				BufferedImage img2 = sprites.get("EnemyStraight");
-				BufferedImage img3 = sprites.get("powerupBackground");				
+				BufferedImage img1 = sprites.get("TargetOddball");
+				BufferedImage img2 = sprites.get("FalseOddball");
+				BufferedImage img3 = sprites.get("WelcomeOddball");				
 				
 				new Oddball(frame,img1,img2,img3);
 			}
@@ -467,6 +478,42 @@ public class TitleScreen {
 	}
 
 	/**
+	 *  Getters and setters for game options
+	 */	
+	public User GetSelectedUser(){
+		return this.selectedUser;
+	}
+	public int GetSelectedJoystick(){
+		return this.selectedJoystick;
+	}
+	public boolean GetLogging(){
+		return this.enableLogging;
+	}
+	
+	/**
+	 * Called from the TitleUpdate() in gamecontroller
+	 * To select the buttons with the joystick
+	 */
+	public void updateJoystick(Controller joystick, int JOYSTICK_X, int JOYSTICK_Y){
+		float X;
+		float Y;
+		joystick.poll();
+		
+	    X = joystick.getAxisValue(JOYSTICK_X);
+	    Y = joystick.getAxisValue(JOYSTICK_Y);
+	    
+	    if(Math.abs(X)>0.2){
+	    	if(X<0){
+	    		MoveDown();
+	    	}
+	    	else{
+	    		MoveUp();
+	    	}
+	    }
+	}
+	    
+	
+	/**
 	 * Save user preferences to a file
 	 */
 	private void savePreferences() {
@@ -495,6 +542,10 @@ public class TitleScreen {
 
 			e = dom.createElement("User");
 			e.appendChild(dom.createTextNode("" + userList.getSelectedIndex()));
+			rootEle.appendChild(e);
+			
+			e = dom.createElement("Logging");
+			e.appendChild(dom.createTextNode("" + this.enableLogging));
 			rootEle.appendChild(e);
 
 			dom.appendChild(rootEle);
@@ -550,6 +601,7 @@ public class TitleScreen {
 
 			perfs.add(doc.getElementsByTagName("Controller").item(0).getFirstChild().getNodeValue());
 			perfs.add(doc.getElementsByTagName("User").item(0).getFirstChild().getNodeValue());
+			perfs.add(doc.getElementsByTagName("Logging").item(0).getFirstChild().getNodeValue());
 
 		} catch (ParserConfigurationException pce) {
 			System.out.println(pce.getMessage());
@@ -561,6 +613,7 @@ public class TitleScreen {
 		
 		System.out.println("Finished Loading Perfs: ");
 		try{
+			loggingBox.setSelected(Boolean.parseBoolean(perfs.get(2)));
 			userList.setSelectedIndex(Integer.parseInt(perfs.get(1)));
 			controllerList.setSelectedIndex(Integer.parseInt(perfs.get(0)));
 		}

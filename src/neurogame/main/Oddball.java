@@ -26,7 +26,7 @@ public class Oddball {
 	private Screen currentScreen;
 	private BufferedImage badImage, goodImage, waitImage;
 
-	private long startTime, screenTime, waitTime;
+	private long startTime, screenTime, waitTime,InstructionTime;
 	private boolean wait, instructions;
 
 	private JLabel background;
@@ -52,8 +52,9 @@ public class Oddball {
 		//
 		wait = instructions = false;
 		startTime = System.currentTimeMillis();
-		screenTime = 400 + Library.RANDOM.nextInt(400);
-		waitTime = 400 + Library.RANDOM.nextInt(400);
+		screenTime = 800 + Library.RANDOM.nextInt(400);
+		waitTime = 800 + Library.RANDOM.nextInt(400);
+		InstructionTime = 2000;
 		time = startTime;
 		options = new ArrayList<>();
 
@@ -70,7 +71,7 @@ public class Oddball {
 		}
 
 		Collections.shuffle(options);
-		instructions = false;
+		instructions = true;
 
 		// Timer
 		Timer timer = new Timer(100, new ActionListener() {
@@ -87,15 +88,22 @@ public class Oddball {
 		time = System.currentTimeMillis();
 
 		if (instructions) { // inital screen to explain the test
-
+			currentScreen = Screen.INSTRUCTIONS;
+			
+			if (time - startTime > InstructionTime) {
+				instructions = false;
+				currentScreen = options.remove(0);
+				startTime = System.currentTimeMillis();
+			}
+			
 		} else if (wait) {
 			if (time - startTime > waitTime) {
 				wait = false;
 				currentScreen = options.remove(0);
 
 				startTime = System.currentTimeMillis();
-				screenTime = 400 + Library.RANDOM.nextInt(400);
-				waitTime = 400 + Library.RANDOM.nextInt(400);
+				screenTime = 800 + Library.RANDOM.nextInt(400);
+				waitTime = 800 + Library.RANDOM.nextInt(400);
 			}
 		} else if (time - startTime > screenTime) {
 			wait = true;
@@ -119,10 +127,13 @@ public class Oddball {
 		case WAIT:
 			background.setIcon(null); //new ImageIcon(waitImage)
 			break;
+		case INSTRUCTIONS:
+			background.setIcon(new ImageIcon(waitImage));
+			break;
 		}
 	}
 
 	private enum Screen {
-		GOOD, BAD, WAIT;
+		GOOD, BAD, WAIT,INSTRUCTIONS;
 	}
 }
