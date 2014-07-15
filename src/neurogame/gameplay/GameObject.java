@@ -9,27 +9,17 @@ import neurogame.level.World;
  */
 public abstract class GameObject
 {
-  private static int gameObjectID_count; // object id
+  private static int gameObjectCount;
   
   private final int gameObjectID;
   private GameObjectType type;
 
-  private double x; // starting x
-  private double y; // starting y
+  private double x; 
+  private double y; 
   private double centerX, centerY;
   private double hitBoxMinX, hitBoxMaxX, hitBoxMinY, hitBoxMaxY;
   protected World world;
   protected boolean isAlive = true; // determines if the object is active/alivezz
-  
-  
-  public static final int STATUS_NORMAL = 0;
-  public static final int STATUS_EXIT_ARENA = -1;
-  public static final int STATUS_HIT_PLAYER = -2;
-  public static final int STATUS_HIT_ENEMY = -3;
-  public static final int STATUS_HIT_WALL = -4;
-  
-  private int status;
-  
   
 
   public GameObject(GameObjectType type, double x, double y, World world)
@@ -40,26 +30,24 @@ public abstract class GameObject
     this.world = world;
     
     
-    hitBoxMinX =  - 0.80 * (type.getWidth() / 2.0);
-    hitBoxMaxX =  + 0.80 * (type.getWidth() / 2.0);
-    hitBoxMinY =  - 0.80 * (type.getHeight() / 2.0);
-    hitBoxMaxY =  + 0.80 * (type.getHeight() / 2.0);
+    hitBoxMinX =  - 0.90 * (type.getWidth() / 2.0);
+    hitBoxMaxX =  + 0.90 * (type.getWidth() / 2.0);
+    hitBoxMinY =  - 0.90 * (type.getHeight() / 2.0);
+    hitBoxMaxY =  + 0.90 * (type.getHeight() / 2.0);
 
     setLocation(x, y);
 
-    gameObjectID = gameObjectID_count;
-    gameObjectID_count++;
+    gameObjectID = gameObjectCount;
+    gameObjectCount++;
   }
   
   
-  public static void resetGameObjectID() 
-  { gameObjectID_count = 0;
+  public static void resetGameObjectCount() 
+  { gameObjectCount = 0;
   }
   
   public int getGameObjectId() {  return gameObjectID; }
   
-  public int getStatus(){return status;}
-  public void setStatus(int status) {this.status = status;}
   
   public void overrideDefaultHitBoxInPixels(int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2)
   {
@@ -133,6 +121,11 @@ public abstract class GameObject
     centerX = x + type.getWidth() / 2.0;
     centerY = y + type.getHeight() / 2.0;
   }
+  
+  public void move(double dx, double dy)
+  {
+    setLocation(x + dx, y + dy);
+  }
 
   public double getCenterX() { return centerX;}
 
@@ -165,10 +158,7 @@ public abstract class GameObject
 
 
 
-  public void move(double dx, double dy)
-  {
-    setLocation(x + dx, y + dy);
-  }
+
 
   protected EnumCollisionType wallCollision()
   {

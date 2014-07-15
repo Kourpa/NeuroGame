@@ -18,8 +18,9 @@ public class InfoMessage extends GameObject
   {
     super(GameObjectType.INFO, x, y, world);  
     
-    if (x < Library.leftEdgeOfWorld + GameObjectType.INFO.getWidth());
-    move(Library.leftEdgeOfWorld + GameObjectType.INFO.getWidth(),   0);
+    if (x < Library.leftEdgeOfWorld + GameObjectType.INFO.getWidth())
+    {  setLocation(Library.leftEdgeOfWorld + GameObjectType.INFO.getWidth(),   getY());
+    }
     
     
     this.msg = msg;

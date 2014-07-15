@@ -87,6 +87,7 @@ public class Player extends GameObject
    */
   public void update(double deltaSec, double scrollDistance)
   {
+    System.out.println("Player.update("+deltaSec+")");
     gameTotalSeconds += deltaSec;
     if (missileCurrentCooldown > 0) missileCurrentCooldown -= deltaSec;
 
@@ -150,10 +151,13 @@ public class Player extends GameObject
     if (sparkList != null)
     {
       for (int i = 0; i < sparkList.size(); i++)
-      {
+      { //System.out.println("Spark move:" + i );
         Spark spark = sparkList.get(i);
-        boolean alive = spark.move();
-        if (!alive) sparkList.remove(i);
+        boolean alive = spark.update();
+        if (!alive) 
+        { sparkList.remove(i);
+          //System.out.println("    Kill spark idx = " + i + ", new size="+sparkList.size());
+        }
       }
     }
   }
@@ -226,8 +230,6 @@ public class Player extends GameObject
     if (skillProbabilitySpawnCoinPerSec < Star.MIN_PROBALITY_SPAWN_PER_SEC)
     { skillProbabilitySpawnCoinPerSec = Star.MIN_PROBALITY_SPAWN_PER_SEC;
     }
-    
-    
   }
 
 
@@ -238,7 +240,7 @@ public class Player extends GameObject
     EnumChunkType pathType = world.getRightChunkType();
    
     
-    double pathHeightBonus = Math.max(1.0, pathType.getDefaultOpeningHeight() - world.getCurrentChunkHeight());
+    double pathHeightBonus = 1.0 + 5*Math.max(0, pathType.getDefaultOpeningHeight() - world.getCurrentChunkHeight());
     System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
     
     int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
@@ -246,6 +248,8 @@ public class Player extends GameObject
    
     InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(score));
     world.addGameObject(scoreInfo);
+    System.out.println("    obj ("+ obj.getCenterX() +", " + obj.getCenterY() +")  worldLeft="+Library.leftEdgeOfWorld);
+    
     
     if (type == GameObjectType.ENEMY_STRAIGHT)
     { skillEnemyStraight += 0.2;
@@ -274,7 +278,6 @@ public class Player extends GameObject
     if (type == GameObjectType.ENEMY_STRAIGHT)
     { skillEnemyStraight -= 1.2;
       if (skillEnemyStraight < 1) skillEnemyStraight = 1;
-      //System.out.println("crashedIntoEnemy(): skillEnemyStraight="+skillEnemyStraight);
     }
     else if (type == GameObjectType.ENEMY_FOLLOW)
     { skillEnemyFollow -= 1.2;
@@ -357,6 +360,7 @@ public class Player extends GameObject
   
   public void render(Graphics2D canvas)
   {
+    System.out.println("Player.render()");
     int xx = Library.worldPosXToScreen(getX());
     int yy = Library.worldPosYToScreen(getY());
     canvas.drawImage(image, xx, yy, null);
@@ -368,7 +372,7 @@ public class Player extends GameObject
    
 
     if (sparkList != null)
-    {
+    {  
       for (int i = 0; i < sparkList.size(); i++)
       {
         Spark spark = sparkList.get(i);
