@@ -502,7 +502,7 @@ public class TitleScreen {
 	    X = joystick.getAxisValue(JOYSTICK_X);
 	    Y = joystick.getAxisValue(JOYSTICK_Y);
 	    
-	    if(Math.abs(X)>0.1){
+	    if(Math.abs(X)>0.2){
 	    	if(X<0){
 	    		MoveDown();
 	    	}
