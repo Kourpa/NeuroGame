@@ -50,8 +50,8 @@ public enum GameObjectType
 
   ENEMY_STRAIGHT
   { public String getName() {return "EnemyStraight";}
-    public double getWidth() {return 0.06;}
-    public double getHeight() {return 0.06;}
+    public double getWidth() {return 0.08;}
+    public double getHeight() {return 0.07;}
     public int getHitDamage() {return 10;}
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
@@ -72,8 +72,8 @@ public enum GameObjectType
   
   ENEMY_SINUSOIDAL
   { public String getName() {return "EnemySinusoidal";}
-    public double getWidth() {return 0.06;}
-    public double getHeight() {return 0.06;}
+    public double getWidth() {return 0.09;}
+    public double getHeight() {return 0.07;}
     public int getHitDamage() {return 10;}
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
