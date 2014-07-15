@@ -81,6 +81,9 @@ public class TitleScreen {
 	private JCheckBox loggingBox;
 	private KeyAdapter Keys;
 	
+	private boolean MovingUp;
+	private boolean MovingDown;
+	
 	private int currentButton;
 	private int maxButton = 3;
 	private ArrayList<MenuButtons> MenuButtons = new ArrayList<MenuButtons>();
@@ -475,6 +478,8 @@ public class TitleScreen {
 		lpane.setBackground(Color.YELLOW);
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
+		
+		restorePreferences();
 	}
 
 	/**
@@ -495,20 +500,26 @@ public class TitleScreen {
 	 * To select the buttons with the joystick
 	 */
 	public void updateJoystick(Controller joystick, int JOYSTICK_X, int JOYSTICK_Y){
-		float X;
 		float Y;
+		
 		joystick.poll();
 		
-	    X = joystick.getAxisValue(JOYSTICK_X);
+	    //X = joystick.getAxisValue(JOYSTICK_X);
 	    Y = joystick.getAxisValue(JOYSTICK_Y);
 	    
-	    if(Math.abs(X)>0.2){
-	    	if(X<0){
-	    		MoveDown();
-	    	}
-	    	else{
+	    if(Math.abs(Y)>0.15){
+	    	if(Y<0 && MovingDown == false){
+	    		MovingUp=true;
 	    		MoveUp();
 	    	}
+	    	else if(Y>0 && MovingUp == false){
+	    		MovingDown = true;
+	    		MoveDown();
+	    	}
+	    }
+	    else{
+	    	MovingUp = false;
+	    	MovingDown = false;
 	    }
 	}
 	    
