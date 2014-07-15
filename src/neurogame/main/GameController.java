@@ -589,11 +589,9 @@ public class GameController
 
   private void highscoreUpdate(){
 	  if (gameOver != null)
-	    {
-		  SelectJoystick(title.GetSelectedJoystick());
-	    	
+	    {	    	
 	    	if(joystick!=null){
-	    		title.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
+	    		gameOver.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
 	    	}
 	    	
 		  if (gameOver.IsStarting)
@@ -620,7 +618,7 @@ public class GameController
   {
     if (title != null)
     {
-    	SelectJoystick(title.GetSelectedJoystick());
+    	SelectJoystick(title.GetSelectedJoystick(), title.GetSelectedJoystickIndex());
     	
     	if(joystick!=null){
     		title.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
@@ -630,7 +628,7 @@ public class GameController
       {
         controls.disableAll();
         newGame();
-        SelectJoystick(title.GetSelectedJoystick());
+        SelectJoystick(title.GetSelectedJoystick(), title.GetSelectedJoystickIndex());
         setLoggingMode(title.GetLogging());
         frame.setUser(title.GetSelectedUser());
 
@@ -655,7 +653,7 @@ public class GameController
    * Selects Joystick based on Options Dialog choice
    * @param selectedIndex
    */
-  private void SelectJoystick(int selectedIndex){
+  private void SelectJoystick(int selectedIndex, int JoyIndex){
       try{
           Controllers.create();
       } catch(Exception e){
@@ -668,8 +666,8 @@ public class GameController
 	        Controller controller = Controllers.getController(selectedIndex-1);
 	        joystick = controller;
 	        joystick.poll();
-	        joystickLastX = joystick.getAxisValue(JOYSTICK_X);
-	        joystickLastY = joystick.getAxisValue(JOYSTICK_Y);
+	        joystickLastX = joystick.getAxisValue(0);//(JoyIndex-1));
+	        joystickLastY = joystick.getAxisValue(1);//(JoyIndex));
       }
   }
 
