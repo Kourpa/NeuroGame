@@ -13,7 +13,8 @@ public class Missile extends GameObject
   
   public Missile(double x, double y, World world)
   {
-    super(GameObjectType.MISSILE, x, y, world);    
+    super(GameObjectType.MISSILE, x, y, world);  
+    //overrideDefaultHitBoxInPixels(34, 11, -34, 0, 34, 11);
   }
   
 
@@ -75,6 +76,10 @@ public class Missile extends GameObject
     int xx = Library.worldPosXToScreen(getX());
     int yy = Library.worldPosYToScreen(getY());
     g.drawImage(image, xx, yy, null);
+    
+    if (Library.DEBUG_SHOW_HITBOXES)
+    { 
+    }
   }
 
 }
