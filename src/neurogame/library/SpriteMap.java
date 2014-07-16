@@ -76,28 +76,28 @@ public class SpriteMap extends HashMap<String, BufferedImage>
             Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
     
     add("startButtonPlain", "/images/start-button.png", 320, 53);
-    add("startButtonSelected", "/images/start-selected.png", 320, 53);
+    add("startButtonSelected", "/images/start-selected.png", 330, 55);
     
     add("exitButtonPlain", "/images/exit-button.png", 300, 50);
-    add("exitButtonSelected", "/images/exit-selected.png", 300, 50);
+    add("exitButtonSelected", "/images/exit-selected.png", 310, 53);
     
     add("configButtonPlain", "/images/option-button.png", 300, 50);
-    add("configButtonSelected", "/images/option-selected.png", 300, 50);
+    add("configButtonSelected", "/images/option-selected.png", 310, 55);
     
     add("rewindButtonPlain", "/images/rewind-button.png", 300, 50);
-    add("rewindButtonSelected", "/images/rewind-selected.png", 300, 50);
+    add("rewindButtonSelected", "/images/rewind-selected.png", 310, 55);
     
     add("backButtonPlain", "/images/back-button.png", 300, 50);
-    add("backButtonSelected", "/images/back-selected.png", 300, 50);
+    add("backButtonSelected", "/images/back-selected.png", 310, 55);
     
     add("mainMenuButtonPlain", "/images/mainMenu-button.png", 300, 50);
-    add("mainMenuButtonSelected", "/images/mainMenu-selected.png", 300, 50);
+    add("mainMenuButtonSelected", "/images/mainMenu-selected.png", 310, 55);
     
     add("restartButtonPlain", "/images/restart-button.png", 300, 50);
-    add("restartButtonSelected", "/images/restart-selected.png", 300, 50);
+    add("restartButtonSelected", "/images/restart-selected.png", 310, 55);
     
     add("newUserButtonPlain", "/images/newUser-button.png", 200, 40);
-    add("newUserButtonSelected", "/images/newUser-selected.png", 200, 40);
+    add("newUserButtonSelected", "/images/newUser-selected.png", 210, 45);
     
     add("checkboxSelected", "/images/checkbox_selected.png", 32, 32);
     add("checkboxPlain", "/images/checkbox_deselected.png", 32, 32);
@@ -109,8 +109,10 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     
     // Visual test graphics
     add("TargetOddball","/images/playerShip.png", 68*3, 68*3);
-    add("FalseOddball","/images/enemyStraight.png", 68*3, 68*3);
+    add("FalseOddball","/images/enemySinusoidal.png", 68*3, 68*3);
     add("WelcomeOddball","/images/VisualTestWelcome.png", frame.getWidth(),frame.getHeight());
+    add("InstructionOddball","/images/VisualTestInstruction.png", frame.getWidth(),frame.getHeight());
+    add("CountOddball","/images/VisualTestFinished.png", frame.getWidth(),frame.getHeight());
 
     add("EnemyStraight", "/images/enemyStraight.png",
         Library.worldUnitToScreen(GameObjectType.ENEMY_STRAIGHT.getWidth()),

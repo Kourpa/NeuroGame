@@ -372,18 +372,21 @@ public class TitleScreen {
 		MenuButtons.add(configButton);
 		configButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				frame.requestFocus();
 				background.setVisible(false);
-				frame.getContentPane().setLayout(new GridLayout(1, 1));
+				lpane.setVisible(false);
+				lpane.removeAll();
+				test.removeAll();
+				MenuButtons.clear();
+				
+				frame.getContentPane().remove(background);
 				frame.getContentPane().remove(lpane);
+				frame.getContentPane().removeAll();
+				test.setVisible(false);
+				
+				frame.getContentPane().setLayout(null);
 				frame.removeKeyListener(Keys);
-
-				System.out.println("OddBall Test");
-
-				BufferedImage img1 = sprites.get("TargetOddball");
-				BufferedImage img2 = sprites.get("FalseOddball");
-				BufferedImage img3 = sprites.get("WelcomeOddball");
-
-				new Oddball(frame, img1, img2, img3);
+				IsOption = true;
 			}
 		});
 
@@ -422,7 +425,6 @@ public class TitleScreen {
 		lpane.setBounds(0, 0, 600, 400);
 		lpane.add(background, 0, 0);
 		lpane.add(test, 1, 0);
-		lpane.setBackground(Color.YELLOW);
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
 
@@ -574,9 +576,11 @@ public class TitleScreen {
 			int JOYSTICK_Y) {
 		float Y;
 		boolean ButtonCheck = false;
-
-		System.out.println("Update Controller");
-		joystick.poll();
+		
+		try{
+			joystick.poll();
+		}
+		catch(Exception e){}
 
 		// X = joystick.getAxisValue(JOYSTICK_X);
 		Y = joystick.getAxisValue(JOYSTICK_Y);

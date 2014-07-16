@@ -1,6 +1,7 @@
 package neurogame.main;
 
 import java.awt.*;
+
 import javax.swing.*;
 
 public class MenuButtons {
