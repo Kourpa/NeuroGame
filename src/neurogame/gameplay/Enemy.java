@@ -215,7 +215,7 @@ public class Enemy extends GameObject
     double locationX = image.getWidth(null) / 2;
     double locationY = image.getHeight(null) / 2;
     AffineTransform transform = new AffineTransform();
-    transform.translate(xx, yy);
+    transform.translate(xx+locationX, yy+locationY);
     transform.rotate(angle);
     transform.translate(-locationX, -locationY);
     canvas.drawImage(image, transform, null);

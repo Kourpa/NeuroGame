@@ -52,7 +52,7 @@ public final class Library
 
   public static final java.util.Random RANDOM = new java.util.Random();
   
-  public static final boolean DEBUG_SHOW_HITBOXES = true;
+  public static final boolean DEBUG_SHOW_HITBOXES = false;
 
   private static int windowPixelWidth, windowPixelHeight;
 
