@@ -29,15 +29,16 @@ public abstract class GameObject
     this.y = y;
     this.world = world;
     
+    setLocation(x, y);
     
-    hitBoxMinX =   - 0.90 * (type.getWidth() / 2.0);
+    hitBoxMinX =   -(0.90 * (type.getWidth() / 2.0));
     hitBoxMaxX =   + 0.90 * (type.getWidth() / 2.0);
-    hitBoxMinY =   - 0.90 * (type.getHeight() / 2.0);
+    hitBoxMinY =   -(0.90 * (type.getHeight() / 2.0));
     hitBoxMaxY =   + 0.90 * (type.getHeight() / 2.0);
     
     System.out.println("hitbox("+type+"): ("+hitBoxMinX+", " + hitBoxMinY+"), ("+hitBoxMaxX+", " + hitBoxMaxY+")");
 
-    setLocation(x, y);
+    
 
     gameObjectID = gameObjectCount;
     gameObjectCount++;
