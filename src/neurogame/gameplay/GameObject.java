@@ -36,7 +36,7 @@ public abstract class GameObject
     hitBoxMinY =   -(0.90 * (type.getHeight() / 2.0));
     hitBoxMaxY =   + 0.90 * (type.getHeight() / 2.0);
     
-    System.out.println("hitbox("+type+"): ("+hitBoxMinX+", " + hitBoxMinY+"), ("+hitBoxMaxX+", " + hitBoxMaxY+")");
+    //System.out.println("hitbox("+type+"): ("+hitBoxMinX+", " + hitBoxMinY+"), ("+hitBoxMaxX+", " + hitBoxMaxY+")");
 
     
 
