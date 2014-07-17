@@ -236,6 +236,7 @@ public class Player extends GameObject
 
   public void killedOrAvoidedEnemy(GameObject obj)
   {
+    if (!isAlive()) return;
     GameObjectType type = obj.getType();
     
     EnumChunkType pathType = world.getRightChunkType();
