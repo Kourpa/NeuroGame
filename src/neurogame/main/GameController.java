@@ -80,7 +80,8 @@ public class GameController
   private int health;
 
   private boolean controllable;
-
+  private boolean useJoystick;
+  
   private GameState gameState;
   private TitleScreen title;
   private GameOverScreen gameOver;
@@ -157,8 +158,10 @@ public class GameController
         System.out.println("Gamepad found at index " + i);
 
         joystick.poll();
-        joystickLastX = joystick.getAxisValue(JOYSTICK_X);
-        joystickLastY = joystick.getAxisValue(JOYSTICK_Y);
+        
+        	joystickLastX = joystick.getAxisValue(JOYSTICK_X);
+        	joystickLastY = joystick.getAxisValue(JOYSTICK_Y);
+        
 
         break;
       }
@@ -389,7 +392,7 @@ private void gameOverUpdate(double deltaTime)
       usePowerUp();
     }
 
-    if (joystick != null)
+    if (joystick != null && useJoystick==true)
     {
       if (joystick.isButtonPressed(0))
       {
@@ -525,7 +528,7 @@ private void gameOverUpdate(double deltaTime)
     boolean w = false;
     boolean e = false;
 
-    if (joystick == null)
+    if (joystick == null || this.useJoystick == false)
     {
       n = inputs.get("up");
       s = inputs.get("down");
@@ -557,6 +560,9 @@ private void gameOverUpdate(double deltaTime)
       joystick.poll();
       double stickX = joystick.getAxisValue(JOYSTICK_X);
       double stickY = joystick.getAxisValue(JOYSTICK_Y);
+      
+      //joystickLastX = joystick.getAxisValue(JOYSTICK_X);
+      //joystickLastY = joystick.getAxisValue(JOYSTICK_Y);
 
       if (!joystickReady)
       {
@@ -711,7 +717,7 @@ private void highscoreUpdate(){
     {
     	SelectJoystick(title.GetSelectedJoystick(), title.GetSelectedJoystickIndex());
     	
-    	if(joystick!=null){
+    	if(joystick!=null && useJoystick==true){
     		title.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
     	}
 
@@ -755,22 +761,28 @@ private void highscoreUpdate(){
       }
 
       joystickReady = false;
+      useJoystick = false;
+      
       if(selectedIndex > 0){
+    	  	useJoystick = true;
+    	  	
 	        Controller controller = Controllers.getController(selectedIndex-1);
 	        joystick = controller;
 	        joystick.poll();
+	        
 	        try{
-	        	joystickLastX = joystick.getAxisValue(0);//(JoyIndex-1));
-	        	joystickLastY = joystick.getAxisValue(1);//(JoyIndex));
-	        }catch(Exception e){}
+	        	joystickLastX = joystick.getAxisValue(0);
+	        	joystickLastY = joystick.getAxisValue(1);
+	        }catch(Exception e){
+	        	useJoystick = false;
+	        }
       }
   }
 
   /**
    * Displays the title screen.
    */
-  private void showTitle()
-  {
+  private void showTitle(){
     gameState = GameState.TITLE;
     title = frame.showTitle();
   }
