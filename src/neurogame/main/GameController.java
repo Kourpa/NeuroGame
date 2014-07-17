@@ -759,8 +759,10 @@ private void highscoreUpdate(){
 	        Controller controller = Controllers.getController(selectedIndex-1);
 	        joystick = controller;
 	        joystick.poll();
-	        joystickLastX = joystick.getAxisValue(0);//(JoyIndex-1));
-	        joystickLastY = joystick.getAxisValue(1);//(JoyIndex));
+	        try{
+	        	joystickLastX = joystick.getAxisValue(0);//(JoyIndex-1));
+	        	joystickLastY = joystick.getAxisValue(1);//(JoyIndex));
+	        }catch(Exception e){}
       }
   }
 
