@@ -52,7 +52,6 @@ import org.lwjgl.input.Controllers;
  */
 public class GameOverScreen {
 	private Image profileBackground, startButtonPlain, startButtonSelected;
-
 	private Image exitButtonPlain, exitButtonSelected, restartButtonSelected,
 			restartButtonPlain;
 
@@ -266,7 +265,11 @@ public class GameOverScreen {
 		catch(Exception e){}
 
 		// X = joystick.getAxisValue(JOYSTICK_X);
-		Y = joystick.getAxisValue(JOYSTICK_Y);
+		Y=0;
+		try{
+			Y = joystick.getAxisValue(JOYSTICK_Y);
+		}catch(Exception e){
+		}
 		
 		System.out.println(Math.abs(Y));
 

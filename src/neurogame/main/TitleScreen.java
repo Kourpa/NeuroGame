@@ -182,19 +182,23 @@ public class TitleScreen {
 		MenuButtons.add(startButtonProfile);
 		startButtonProfile.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.requestFocus();
-				background.setVisible(false);
-				lpane.setVisible(false);
-				frame.getContentPane().remove(background);
-				frame.getContentPane().remove(lpane);
-				frame.getContentPane().setLayout(null);
-
-				selectedJoystick = controllerList.getSelectedIndex();
-				selectedUser = Library.getUser(userList.getSelectedIndex());
-				enableLogging = loggingBox.isSelected();
-
-				savePreferences();
-				IsStarting = true;
+				
+				// User is selected
+				if(Library.getUser(userList.getSelectedIndex()) != null){					
+					frame.requestFocus();
+					background.setVisible(false);
+					lpane.setVisible(false);
+					frame.getContentPane().remove(background);
+					frame.getContentPane().remove(lpane);
+					frame.getContentPane().setLayout(null);
+		
+					selectedJoystick = controllerList.getSelectedIndex();
+					selectedUser = Library.getUser(userList.getSelectedIndex());
+					enableLogging = loggingBox.isSelected();
+		
+					savePreferences();
+					IsStarting = true;
+				}
 			}
 		});
 
@@ -584,7 +588,11 @@ public class TitleScreen {
 		catch(Exception e){}
 
 		// X = joystick.getAxisValue(JOYSTICK_X);
-		Y = joystick.getAxisValue(JOYSTICK_Y);
+		Y=0;
+		try{
+			Y = joystick.getAxisValue(JOYSTICK_Y);
+		}catch(Exception e){
+		}
 		
 		System.out.println(Math.abs(Y));
 
