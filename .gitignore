@@ -1,5 +1,5 @@
 /build/
 /bin
-/logs/*.txt
-/Users/*.user
+/logs
+/Users
 /nbproject
