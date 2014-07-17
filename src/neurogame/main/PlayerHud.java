@@ -24,7 +24,7 @@ public class PlayerHud {
 
 	private Map<String, BufferedImage> sprites;
 	
-	private Color healthPaintFull = Color.GREEN;
+	private Color healthPaintFull = new Color(113, 188, 120);
 	private Color healthPaintDamaged = Color.ORANGE;
 	private Color healthPaintNearDeath = Color.BLACK;
 
@@ -113,22 +113,22 @@ public class PlayerHud {
 	public void drawHealth(Graphics2D canvasObjectLayer, NeuroFrame frame) {
 		int health = frame.getHealth();
 
-		Color outline = Color.GREEN;
+		//Color outline = Color.GREEN;
 		
 		if (health >= 0.9 * Library.HEALTH_MAX) {
 			canvasObjectLayer.setPaint(healthPaintFull);
 		} else if (health > 0.2 * Library.HEALTH_MAX) {
 			canvasObjectLayer.setColor(healthPaintDamaged);
-			outline = Color.ORANGE;
+			//outline = Color.ORANGE;
 		} else {
 			canvasObjectLayer.setColor(healthPaintNearDeath);
-			outline = Color.RED;
+			//outline = Color.RED;
 		}
 
 		int width = (frame.getHealth() * 300) / Library.HEALTH_MAX;
 
 		canvasObjectLayer.fillRect(5, 5, width, 32);
-		canvasObjectLayer.setPaint(outline);
+		//canvasObjectLayer.setPaint(outline);
 		canvasObjectLayer.drawRect(5, 5, 300, 32);
 	}
 }
