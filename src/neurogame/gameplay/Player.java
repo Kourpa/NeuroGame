@@ -1,5 +1,6 @@
 package neurogame.gameplay;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
@@ -47,9 +48,9 @@ public class Player extends GameObject
   {
     super(GameObjectType.PLAYER, x, y, world);
     
-    final int hitPixel_x1 = 13;
+    final int hitPixel_x1 = 8;
     final int hitPixel_x2 = 43;
-    final int hitPixel_y1 = 5;
+    final int hitPixel_y1 = 0;
     final int hitPixel_y2 = 90;
     overrideDefaultHitBoxInPixels(75, 99, hitPixel_x1, hitPixel_y1, hitPixel_x2, hitPixel_y2);
     initGame();
@@ -304,7 +305,7 @@ public class Player extends GameObject
     
     missileCount--;
     missileCurrentCooldown = MISSILE_COOLDOWN_SECONDS;
-    world.addGameObject(new Missile(getCenterX(), getCenterY(), world));
+    world.addGameObject(new Missile(getX()+getWidth(), getCenterY(), world));
   }
   
 
@@ -368,6 +369,15 @@ public class Player extends GameObject
     if (health < Library.HEALTH_MAX/8) canvas.drawImage(Library.getSprites().get("pDmg2"), xx, yy, null);
 
     else if (health < Library.HEALTH_MAX/2) canvas.drawImage(Library.getSprites().get("pDmg1"), xx,  yy, null);
+    
+    if (Library.DEBUG_SHOW_HITBOXES)
+    { int x1 = Library.worldPosXToScreen(getHitMinX());
+      int y1 = Library.worldPosYToScreen(getHitMinY());
+      int x2 = Library.worldPosXToScreen(getHitMaxX());
+      int y2 = Library.worldPosYToScreen(getHitMaxY());
+      canvas.setColor(Color.RED);
+      canvas.drawRect(x1,y1, x2-x1, y2-y1);
+    }
     
    
 

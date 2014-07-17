@@ -30,10 +30,12 @@ public abstract class GameObject
     this.world = world;
     
     
-    hitBoxMinX =  - 0.90 * (type.getWidth() / 2.0);
-    hitBoxMaxX =  + 0.90 * (type.getWidth() / 2.0);
-    hitBoxMinY =  - 0.90 * (type.getHeight() / 2.0);
-    hitBoxMaxY =  + 0.90 * (type.getHeight() / 2.0);
+    hitBoxMinX =   - 0.90 * (type.getWidth() / 2.0);
+    hitBoxMaxX =   + 0.90 * (type.getWidth() / 2.0);
+    hitBoxMinY =   - 0.90 * (type.getHeight() / 2.0);
+    hitBoxMaxY =   + 0.90 * (type.getHeight() / 2.0);
+    
+    System.out.println("hitbox("+type+"): ("+hitBoxMinX+", " + hitBoxMinY+"), ("+hitBoxMaxX+", " + hitBoxMaxY+")");
 
     setLocation(x, y);
 
@@ -154,13 +156,9 @@ public abstract class GameObject
 
   
   public GameObjectType getType() {return type;}
+  
   public String getName() {return type.getName();}
   
-
-
-
-
-
   protected EnumCollisionType wallCollision()
   {
     EnumCollisionType collision = world.collisionWithWall(getHitMinX(), getHitMinY());

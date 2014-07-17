@@ -1,5 +1,6 @@
 package neurogame.gameplay;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
@@ -205,7 +206,7 @@ public class Enemy extends GameObject
   
   
   
-  public void render(Graphics2D g)
+  public void render(Graphics2D canvas)
   {
     int xx = Library.worldPosXToScreen(getX());
     int yy = Library.worldPosYToScreen(getY());
@@ -217,7 +218,16 @@ public class Enemy extends GameObject
     transform.translate(xx, yy);
     transform.rotate(angle);
     transform.translate(-locationX, -locationY);
-    g.drawImage(image, transform, null);
+    canvas.drawImage(image, transform, null);
+    
+    if (Library.DEBUG_SHOW_HITBOXES)
+    { int x1 = Library.worldPosXToScreen(getHitMinX());
+      int y1 = Library.worldPosYToScreen(getHitMinY());
+      int x2 = Library.worldPosXToScreen(getHitMaxX());
+      int y2 = Library.worldPosYToScreen(getHitMaxY());
+      canvas.setColor(Color.RED);
+      canvas.drawRect(x1,y1, x2-x1, y2-y1);
+    }
     
   }
   
