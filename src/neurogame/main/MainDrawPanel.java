@@ -42,7 +42,7 @@ public class MainDrawPanel extends JPanel
   {
 	  System.out.println("MainGameDrawPanel(): Enter");
 	  this.frame = frame;
-	  HUD = new PlayerHud(frame);
+	  
   }
 
 
@@ -59,6 +59,7 @@ public class MainDrawPanel extends JPanel
   public void setWorld(World world)
   {
     this.world = world;
+    HUD = new PlayerHud(frame);
     HUD.drawGameOver(false); // reset the HUD
   }
 

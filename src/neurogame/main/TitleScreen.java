@@ -343,11 +343,9 @@ public class TitleScreen {
 			public void keyReleased(KeyEvent e) {
 				switch (e.getKeyCode()) {
 				case KeyEvent.VK_UP:
-					System.out.println("up ! frame");
 					MoveUp();
 					break;
 				case KeyEvent.VK_DOWN:
-					System.out.println("Down! frame!");
 					MoveDown();
 					break;
 				case KeyEvent.VK_ENTER:
@@ -593,8 +591,6 @@ public class TitleScreen {
 			Y = joystick.getAxisValue(JOYSTICK_Y);
 		}catch(Exception e){
 		}
-		
-		System.out.println(Math.abs(Y));
 
 		if (Math.abs(Y) > 0.5) {
 			System.out.println(""+currentButton);

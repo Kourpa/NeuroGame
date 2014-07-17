@@ -130,6 +130,7 @@ public class SpriteMap extends HashMap<String, BufferedImage>
         Library.worldUnitToScreen(GameObjectType.POWER_UP.getHeight()));
     add("missile", "/images/missile.png", Library.worldUnitToScreen(GameObjectType.MISSILE.getWidth()), 
         Library.worldUnitToScreen(GameObjectType.MISSILE.getHeight()));
+    add("missileIcon", "/images/missileIcon.png", 15 ,33);
   }
 
   /**
