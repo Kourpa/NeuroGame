@@ -36,6 +36,9 @@ public class PlayerHud {
 
 	boolean firstTime = true;
 	boolean isDead = false;
+	
+	private static final Color BLUE = new Color(100, 151, 255);
+	private final Font FONT30, FONT75;
 
 	Rectangle area;
 
@@ -57,48 +60,38 @@ public class PlayerHud {
 		} catch (IOException | FontFormatException e) {
 			System.out.println("Error Loading Font - PlayerHUD.java");
 		}
+		
+		FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 30);
+		FONT75 = new Font("Karmatic Arcade", Font.PLAIN, 75);
+		
 	}
 
 	public void updateHUD(Graphics2D canvasObjectLayer, NeuroFrame frame, int ammo) {
 
-		if (firstTime) {
-			Dimension dim = frame.getSize();
-			
-			int w = dim.width;
-			int h = dim.height;
+		canvasObjectLayer.setFont(FONT30);
 
-			bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-			big = bi.createGraphics();
-
-			rect.setLocation(w / 2 - 50, h / 2 - 25);
-			big.setStroke(new BasicStroke(8.0f));
-			firstTime = false;
-		}
-
-		canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN, 30));
-
-		
 		canvasObjectLayer.setColor(Color.BLACK);
-		canvasObjectLayer.fillRect(0, 0, (int)(frame.getSize().width), 55);
+		//canvasObjectLayer.fillRect(0, 0, (int)(frame.getSize().width), 55);
 		
 		canvasObjectLayer.setColor(Color.WHITE);
 		canvasObjectLayer.drawString("Score: ", (int) (windowWidth * 0.5 - 100),
 				(int) (windowHeight * 0.05));
 
-		canvasObjectLayer.setColor(new Color(100, 151, 255));
+		canvasObjectLayer.setColor(BLUE);
 		canvasObjectLayer.drawString("" + frame.getScore(), (int) (windowWidth * 0.5 + 100),
 				(int) (windowHeight * 0.05));
 		
 		// Ammo		
 		canvasObjectLayer.setColor(Color.WHITE);
 		canvasObjectLayer.drawString("Ammo: ", (int) (windowWidth * 0.6 + 250), (int) (windowHeight * 0.05));
+		
 		canvasObjectLayer.setColor(new Color(100, 151, 255));
 		canvasObjectLayer.drawString(""+ammo, (int) (windowWidth * 0.6 + 400),(int) (windowHeight * 0.05));
 				
 		//
 		drawHealth(canvasObjectLayer, frame);
-		//canvasObjectLayer.drawImage(bi, 0, 0, frame);
-		
+
+		// Show game over
 		if (isDead){
 			canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN, 70));
 			canvasObjectLayer.setColor(new Color(255, 255, 255));
@@ -134,49 +127,8 @@ public class PlayerHud {
 
 		int width = (frame.getHealth() * 300) / Library.HEALTH_MAX;
 
-		//canvasObjectLayer.setColor(Color.GREEN);
 		canvasObjectLayer.fillRect(5, 5, width, 32);
 		canvasObjectLayer.setPaint(outline);
 		canvasObjectLayer.drawRect(5, 5, 300, 32);
-
-		// imageObjectLayer
 	}
-
-	// /**
-	// * Draw PowerUp icon.
-	// */
-	// private void drawPowerUp(Graphics2D canvasObjectLayer, NeuroFrame frame)
-	// {
-	//
-	// // PowerUp p = player.getPowerUp();
-	// // if(p != null){
-	// // p.render(graphics);
-	// // }
-	//
-	// PowerUp powerUp = frame.getPowerUp();
-	//
-	// canvasObjectLayer.drawImage(sprites.get("powerupBackground"),
-	// windowWidth - 101, 5, 96, 96, null);
-	// if (powerUp != null) {
-	// if (powerUp.isInUse()) {
-	// // Create an alpha composition using the PowerUp's alpha.
-	// AlphaComposite ac = AlphaComposite.getInstance(
-	// AlphaComposite.SRC_OVER, powerUp.getAlpha());
-	// canvasObjectLayer.setComposite(ac);
-	// canvasObjectLayer.drawImage(powerUp.getUIImage(),
-	// windowWidth - 101, 5, 96, 96, null);
-	// // Restore the default alpha composition.
-	// canvasObjectLayer.setComposite(AlphaComposite
-	// .getInstance(AlphaComposite.SRC_OVER));
-	// } else {
-	// canvasObjectLayer.drawImage(powerUp.getUIImage(),
-	// windowWidth - 101, 5, 96, 96, null);
-	// }
-	// String flavorText = powerUp.getFlavorText();
-	// canvasObjectLayer.setColor(Color.WHITE);
-	// canvasObjectLayer.setFont(new Font("Serif", Font.PLAIN, 14));
-	// canvasObjectLayer.drawString(flavorText, windowWidth - 101
-	// - (flavorText.length() * 7), 55);
-	// }
-	// }
 }

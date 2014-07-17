@@ -252,21 +252,26 @@ public class GameOverScreen {
 	
 	/* Menu Button Methods */
 	/**
-	 * Called from the HighscoreUpdate() in gamecontroller To select the buttons
+	 * Called from the TitleUpdate() in gamecontroller To select the buttons
 	 * with the joystick
 	 */
 	public void updateJoystick(Controller joystick, int JOYSTICK_X,
 			int JOYSTICK_Y) {
 		float Y;
 		boolean ButtonCheck = false;
-
-		System.out.println("Update Controller");
-		joystick.poll();
+		
+		try{
+			joystick.poll();
+		}
+		catch(Exception e){}
 
 		// X = joystick.getAxisValue(JOYSTICK_X);
 		Y = joystick.getAxisValue(JOYSTICK_Y);
+		
+		System.out.println(Math.abs(Y));
 
-		if (Math.abs(Y) > 0.2) {
+		if (Math.abs(Y) > 0.5) {
+			System.out.println(""+currentButton);
 			if (Y < 0 && MovingDown == false) {
 				MovingDown = true;
 				MoveUp();
@@ -293,7 +298,7 @@ public class GameOverScreen {
 			ButtonPressed = true;
 		}
 	}
-	
+
 	/**
 	 * Move to the button bellow with a joystick
 	 */
@@ -311,8 +316,8 @@ public class GameOverScreen {
 	private void MoveUp() {
 		currentButton += -1;
 
-		if (currentButton <= 0) {
-			currentButton = MenuButtons.size();
+		if (currentButton < 0) {
+			currentButton = MenuButtons.size()-1;
 		}
 		updateButtons();
 	}

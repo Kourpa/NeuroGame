@@ -94,6 +94,7 @@ public class GameController
   private static final int JOYSTICK_Y = 0;
   private static final double JOYSTICK_THRESHOLD = 0.01;
   private double joystickLastX, joystickLastY;
+  private boolean ButtonPressed;
 
   private boolean joystickReady;
 
@@ -256,7 +257,7 @@ public class GameController
       pauseUpdate();
       break;
     case TITLE:
-      titleUpdate();
+    	titleUpdate();
       break;
     case GAMEOVER:
       gameOverUpdate(deltaSec);
@@ -265,7 +266,6 @@ public class GameController
     case HIGHSCORE:
       highscoreUpdate();
       break;
-    	
     case ODDBALL:
       oddballUpdate();
       break;
@@ -325,7 +325,7 @@ private void gameOverUpdate(double deltaTime)
     updateObjectList(world.getObjectList(), deltaTime, scrollDistance);
     
     // Replace this with setting the player invisible and disabling particles
-    this.player.setLocation(1500, 0); // put the player offscreen
+    //this.player.setLocation(1500, 0); // put the player offscreen
   }
 
   /**
@@ -476,38 +476,30 @@ private void gameOverUpdate(double deltaTime)
    */
   private void gameOverKeyHandler()
   {
+	  boolean ButtonCheck = false;
+	  
     if (inputs.get("space"))
     {
     	showHighScores();
     }
 
-    if (joystick != null)
-    {
-      if (joystick.isButtonPressed(0))
-      {
-    	  showHighScores();
-      }
-      else if (joystick.isButtonPressed(1))
-      {
-    	  showHighScores();
-      }
-      else if (joystick.isButtonPressed(2))
-      {
-    	  showHighScores();
-      }
-      else if (joystick.isButtonPressed(3))
-      {
-    	  showHighScores();
-      }
-      else if (joystick.isButtonPressed(4))
-      {
-    	  showHighScores();
-      }
-      else if (joystick.isButtonPressed(5))
-      {
-    	  showHighScores();
-      }
-    }
+    if(joystick!=null){
+		joystick.poll();
+
+		for (int i = 0; i < 5; i++) {
+			if (joystick.isButtonPressed(i)) {
+				ButtonCheck = true;
+			}
+		}
+		
+		if((ButtonCheck == false) && (ButtonPressed == true)){
+			this.showHighScores();
+			ButtonPressed = false;
+		}
+		else if(ButtonCheck == true){
+			ButtonPressed = true;
+		}
+	}
   }
 
   /**
@@ -666,8 +658,12 @@ private void gameOverUpdate(double deltaTime)
     
     showGameOver();
   }
+ 
 
-  private void highscoreUpdate(){
+ /**
+ * Polls the highscore panel and gives joystick inputs 
+ */
+private void highscoreUpdate(){
 	  if (gameOver != null)
 	    {	    	
 	    	if(joystick!=null){
@@ -696,6 +692,13 @@ private void gameOverUpdate(double deltaTime)
 	  if(oddball.isFinished() == true){
 		  showTitle();
 	  }
+	  
+	  if (oddball != null)
+	    {	    	
+	    	if(joystick!=null){
+	    		oddball.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
+	    	}
+	    }
   }
   
   
@@ -773,6 +776,7 @@ private void gameOverUpdate(double deltaTime)
   private void showGameOver(){
 	  gameState = GameState.GAMEOVER;
 	  gameOver = frame.showGameOver();
+	  this.player.die(true);
   }
   
   private void showHighScores(){

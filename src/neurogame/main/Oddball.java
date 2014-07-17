@@ -14,6 +14,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
+import org.lwjgl.input.Controller;
+
 import neurogame.library.Library;
 
 /**
@@ -156,6 +158,21 @@ public class Oddball {
 		}
 		
 		render();
+	}
+	
+	/* Menu Button Methods */
+	/**
+	 * Called from the HighscoreUpdate() in gamecontroller To select the buttons
+	 * with the joystick
+	 */
+	public void updateJoystick(Controller joystick, int JOYSTICK_X, int JOYSTICK_Y) {
+		joystick.poll();
+
+		for (int i = 0; i < 5; i++) {
+			if (joystick.isButtonPressed(i)) {
+				instructions = false;
+			}
+		}
 	}
 	
 	public boolean isFinished(){

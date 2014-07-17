@@ -357,6 +357,7 @@ public class TitleScreen {
 		// Buttons
 		startButton = new MenuButtons(startButtonPlain, startButtonSelected);
 		MenuButtons.add(0, startButton);
+		startButton.setSelected(true);
 		startButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				background.setVisible(false);
@@ -584,8 +585,11 @@ public class TitleScreen {
 
 		// X = joystick.getAxisValue(JOYSTICK_X);
 		Y = joystick.getAxisValue(JOYSTICK_Y);
+		
+		System.out.println(Math.abs(Y));
 
-		if (Math.abs(Y) > 0.2) {
+		if (Math.abs(Y) > 0.5) {
+			System.out.println(""+currentButton);
 			if (Y < 0 && MovingDown == false) {
 				MovingDown = true;
 				MoveUp();
@@ -631,7 +635,7 @@ public class TitleScreen {
 		currentButton += -1;
 
 		if (currentButton < 0) {
-			currentButton = MenuButtons.size();
+			currentButton = MenuButtons.size()-1;
 		}
 		updateButtons();
 	}
