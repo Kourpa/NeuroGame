@@ -54,7 +54,8 @@ public class GameController
     PAUSED,       // Normal game play paused
     DEAD,         // TODO : Player has died, continue showing game moving, no player controls, display "Game Over" overlay.
     GAMEOVER,     // show the high scores 
-    ODDBALL;	  // Oddball visual test 
+    ODDBALL,	  // Oddball visual test 
+    HIGHSCORE;	  // Highscore screen after winning
   }
   
   private final NeuroGame game;
@@ -244,6 +245,7 @@ public class GameController
     {
     case PLAYING:
       playUpdate(deltaSec);
+      
       if (health <= 0)
       {
         killPlayer();
@@ -257,10 +259,16 @@ public class GameController
       titleUpdate();
       break;
     case GAMEOVER:
+      gameOverUpdate(deltaSec);
+      //highscoreUpdate();
+      break;
+    case HIGHSCORE:
       highscoreUpdate();
       break;
+    	
     case ODDBALL:
-    	oddballUpdate();
+      oddballUpdate();
+      break;
     default:
       break;
     }
@@ -301,6 +309,23 @@ public class GameController
     frame.setStats(player.getScore(), health, powerUp);
     
     if (loggingMode) log.update(world);
+  }
+
+
+  /**
+ * Continue scrolling the game when the player dies
+ */
+private void gameOverUpdate(double deltaTime)
+  {
+    // Player input.
+	gameOverKeyHandler();
+    double scrollDistance = world.update(deltaTime);
+
+    // Draw the Zappers.
+    updateObjectList(world.getObjectList(), deltaTime, scrollDistance);
+    
+    // Replace this with setting the player invisible and disabling particles
+    this.player.setLocation(1500, 0); // put the player offscreen
   }
 
   /**
@@ -443,6 +468,45 @@ public class GameController
         gameOver();
       }
 
+    }
+  }
+  
+  /**
+   * Handler for keyboard input when you die
+   */
+  private void gameOverKeyHandler()
+  {
+    if (inputs.get("space"))
+    {
+    	showHighScores();
+    }
+
+    if (joystick != null)
+    {
+      if (joystick.isButtonPressed(0))
+      {
+    	  showHighScores();
+      }
+      else if (joystick.isButtonPressed(1))
+      {
+    	  showHighScores();
+      }
+      else if (joystick.isButtonPressed(2))
+      {
+    	  showHighScores();
+      }
+      else if (joystick.isButtonPressed(3))
+      {
+    	  showHighScores();
+      }
+      else if (joystick.isButtonPressed(4))
+      {
+    	  showHighScores();
+      }
+      else if (joystick.isButtonPressed(5))
+      {
+    	  showHighScores();
+      }
     }
   }
 
@@ -709,6 +773,11 @@ public class GameController
   private void showGameOver(){
 	  gameState = GameState.GAMEOVER;
 	  gameOver = frame.showGameOver();
+  }
+  
+  private void showHighScores(){
+	  gameState = GameState.HIGHSCORE;
+	  frame.showHighScores();
   }
 
   /**

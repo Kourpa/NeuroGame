@@ -200,10 +200,8 @@ public User getUser(){
     return title;
   }
   
-  public GameOverScreen showGameOver(){
-	  System.out.println("NeuroFrame.showTitle() Enter");
-	  
-	  drawPanel.setVisible(false);
+  public GameOverScreen showGameOver(){	  
+	  //drawPanel.setVisible(false);
 	  gameOver = new GameOverScreen(this,this.CurrentUser);
 	  drawPanel.setGameOver(gameOver);
 	  
@@ -211,6 +209,10 @@ public User getUser(){
 	  return gameOver;
   }
 
+  public void showHighScores(){
+	drawPanel.setVisible(false);
+  }
+  
   private void resizeEvent()
   {
     if (mode == GameState.INITIALIZING) return;

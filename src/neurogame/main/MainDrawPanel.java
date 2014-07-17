@@ -53,11 +53,13 @@ public class MainDrawPanel extends JPanel
   
   public void setGameOver(GameOverScreen screen){
 	  this.gameOver = screen;
+	  HUD.drawGameOver(true);
   }
 
   public void setWorld(World world)
   {
     this.world = world;
+    HUD.drawGameOver(false); // reset the HUD
   }
 
   public void resizeHelper(int width, int height)

@@ -29,14 +29,13 @@ public class PlayerHud {
 	private Color healthPaintNearDeath = Color.BLACK;
 
 	Rectangle rect = new Rectangle(0, 0, 100, 50);
-
 	BufferedImage bi = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB);
-
 	Graphics2D big;
 
 	int last_x, last_y;
 
 	boolean firstTime = true;
+	boolean isDead = false;
 
 	Rectangle area;
 
@@ -99,6 +98,20 @@ public class PlayerHud {
 		//
 		drawHealth(canvasObjectLayer, frame);
 		//canvasObjectLayer.drawImage(bi, 0, 0, frame);
+		
+		if (isDead){
+			canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN, 70));
+			canvasObjectLayer.setColor(new Color(255, 255, 255));
+			canvasObjectLayer.drawString("GAME OVER", (int) (windowWidth * 0.5 - 225),(int) (windowHeight * 0.5));
+			
+			canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN, 25));
+			canvasObjectLayer.setColor(new Color(100, 151, 255));
+			canvasObjectLayer.drawString("[ Press any Button ]", (int) (windowWidth * 0.5 - 125),(int) (windowHeight * 0.6));
+		}
+	}
+	
+	public void drawGameOver(boolean dead){
+		isDead = dead;
 	}
 
 	/**

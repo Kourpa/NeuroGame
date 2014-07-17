@@ -102,7 +102,7 @@ public class GameOverScreen {
 		restartButtonSelected = sprites.get("restartButtonSelected");
 
 		// New UI
-		CreateMainMenu(frame);
+		CreateGameOverScreen(frame);
 
 		//
 		frame.getRootPane().addComponentListener(new ComponentAdapter() {
@@ -113,7 +113,7 @@ public class GameOverScreen {
 		});
 	}
 
-	private void CreateMainMenu(final NeuroFrame frame) {
+	private void CreateGameOverScreen(final NeuroFrame frame){
 		frame.getContentPane().setLayout(new BorderLayout());
 
 		// Main pane for the UI
