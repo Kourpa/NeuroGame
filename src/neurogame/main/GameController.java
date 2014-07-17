@@ -10,8 +10,8 @@
  */
 package neurogame.main;
 
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,17 +20,18 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
-import neurogame.gameplay.Star;
 import neurogame.gameplay.DirectionVector;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
 import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Player;
 import neurogame.gameplay.PowerUp;
+import neurogame.gameplay.Star;
 import neurogame.level.World;
 import neurogame.library.KeyBinds;
 import neurogame.library.Library;
 import neurogame.library.PlayerControls;
+import neurogame.library.SpriteMap;
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
@@ -52,7 +53,8 @@ public class GameController
     PLAYING,      // Normal game play
     PAUSED,       // Normal game play paused
     DEAD,         // TODO : Player has died, continue showing game moving, no player controls, display "Game Over" overlay.
-    GAMEOVER;     // show the high scores 
+    GAMEOVER,     // show the high scores 
+    ODDBALL;	  // Oddball visual test 
   }
   
   private final NeuroGame game;
@@ -61,6 +63,7 @@ public class GameController
   private final Map<String, Boolean> inputs;
   private final Map<String, Boolean> previousInputs;
   private NeuroFrame frame;
+  private Oddball oddball;
 
 
   private boolean loggingMode;
@@ -256,6 +259,8 @@ public class GameController
     case GAMEOVER:
       highscoreUpdate();
       break;
+    case ODDBALL:
+    	oddballUpdate();
     default:
       break;
     }
@@ -547,7 +552,18 @@ public class GameController
 
     if (loggingMode) log = new Logger();
   }
-
+  
+  private void showOddBall(){  
+	SpriteMap sprites = Library.getSprites();
+	BufferedImage img1 = sprites.get("TargetOddball");
+	BufferedImage img2 = sprites.get("FalseOddball");
+	BufferedImage img3 = sprites.get("WelcomeOddball");
+	BufferedImage img4 = sprites.get("InstructionOddball");
+	BufferedImage img5 = sprites.get("CountOddball");
+	
+	oddball = new Oddball(frame, img1, img2, img3, img4, img5);
+	gameState = GameState.ODDBALL;
+  }
   /**
    * Pause the game.
    */
@@ -589,11 +605,9 @@ public class GameController
 
   private void highscoreUpdate(){
 	  if (gameOver != null)
-	    {
-		  SelectJoystick(title.GetSelectedJoystick());
-	    	
+	    {	    	
 	    	if(joystick!=null){
-	    		title.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
+	    		gameOver.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
 	    	}
 	    	
 		  if (gameOver.IsStarting)
@@ -613,6 +627,14 @@ public class GameController
 	    }
 
   }
+  
+  private void oddballUpdate(){
+	  if(oddball.isFinished() == true){
+		  showTitle();
+	  }
+  }
+  
+  
   /**
    * A helper method to handle keyboard input on the title screen.
    */
@@ -620,7 +642,7 @@ public class GameController
   {
     if (title != null)
     {
-    	SelectJoystick(title.GetSelectedJoystick());
+    	SelectJoystick(title.GetSelectedJoystick(), title.GetSelectedJoystickIndex());
     	
     	if(joystick!=null){
     		title.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
@@ -629,10 +651,10 @@ public class GameController
       if (title.IsStarting)
       {
         controls.disableAll();
-        newGame();
-        SelectJoystick(title.GetSelectedJoystick());
         setLoggingMode(title.GetLogging());
+        SelectJoystick(title.GetSelectedJoystick(), title.GetSelectedJoystickIndex());
         frame.setUser(title.GetSelectedUser());
+        newGame();
 
       }
       else if (title.IsExiting)
@@ -642,6 +664,8 @@ public class GameController
       }
       else if (title.IsOption)
       {
+			System.out.println("OddBall Test");
+			showOddBall();
       }
 
       if (inputs.get("sound"))
@@ -655,7 +679,7 @@ public class GameController
    * Selects Joystick based on Options Dialog choice
    * @param selectedIndex
    */
-  private void SelectJoystick(int selectedIndex){
+  private void SelectJoystick(int selectedIndex, int JoyIndex){
       try{
           Controllers.create();
       } catch(Exception e){
@@ -668,8 +692,8 @@ public class GameController
 	        Controller controller = Controllers.getController(selectedIndex-1);
 	        joystick = controller;
 	        joystick.poll();
-	        joystickLastX = joystick.getAxisValue(JOYSTICK_X);
-	        joystickLastY = joystick.getAxisValue(JOYSTICK_Y);
+	        joystickLastX = joystick.getAxisValue(0);//(JoyIndex-1));
+	        joystickLastY = joystick.getAxisValue(1);//(JoyIndex));
       }
   }
 

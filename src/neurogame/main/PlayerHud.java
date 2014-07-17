@@ -24,12 +24,9 @@ public class PlayerHud {
 
 	private Map<String, BufferedImage> sprites;
 	
-	private GradientPaint healthPaintFull = new GradientPaint(0, 0,
-			Color.GREEN, 0, 20, Color.BLACK, true);
-	private GradientPaint healthPaintDamaged = new GradientPaint(0, 0,
-			Color.ORANGE, 0, 20, Color.BLACK, true);
-	private GradientPaint healthPaintNearDeath = new GradientPaint(0, 0,
-			Color.RED, 0, 20, Color.BLACK, true);
+	private Color healthPaintFull = Color.GREEN;
+	private Color healthPaintDamaged = Color.ORANGE;
+	private Color healthPaintNearDeath = Color.BLACK;
 
 	Rectangle rect = new Rectangle(0, 0, 100, 50);
 
@@ -81,6 +78,10 @@ public class PlayerHud {
 
 		canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN, 30));
 
+		
+		canvasObjectLayer.setColor(Color.BLACK);
+		canvasObjectLayer.fillRect(0, 0, (int)(frame.getSize().width), 55);
+		
 		canvasObjectLayer.setColor(Color.WHITE);
 		canvasObjectLayer.drawString("Score: ", (int) (windowWidth * 0.5 - 100),
 				(int) (windowHeight * 0.05));
@@ -89,7 +90,7 @@ public class PlayerHud {
 		canvasObjectLayer.drawString("" + frame.getScore(), (int) (windowWidth * 0.5 + 100),
 				(int) (windowHeight * 0.05));
 		
-		// Ammo
+		// Ammo		
 		canvasObjectLayer.setColor(Color.WHITE);
 		canvasObjectLayer.drawString("Ammo: ", (int) (windowWidth * 0.6 + 250), (int) (windowHeight * 0.05));
 		canvasObjectLayer.setColor(new Color(100, 151, 255));
@@ -107,18 +108,20 @@ public class PlayerHud {
 		int health = frame.getHealth();
 
 		Color outline = Color.GREEN;
+		
 		if (health >= 0.9 * Library.HEALTH_MAX) {
 			canvasObjectLayer.setPaint(healthPaintFull);
 		} else if (health > 0.2 * Library.HEALTH_MAX) {
-			canvasObjectLayer.setPaint(healthPaintDamaged);
+			canvasObjectLayer.setColor(healthPaintDamaged);
 			outline = Color.ORANGE;
 		} else {
-			canvasObjectLayer.setPaint(healthPaintNearDeath);
+			canvasObjectLayer.setColor(healthPaintNearDeath);
 			outline = Color.RED;
 		}
 
 		int width = (frame.getHealth() * 300) / Library.HEALTH_MAX;
 
+		//canvasObjectLayer.setColor(Color.GREEN);
 		canvasObjectLayer.fillRect(5, 5, width, 32);
 		canvasObjectLayer.setPaint(outline);
 		canvasObjectLayer.drawRect(5, 5, 300, 32);

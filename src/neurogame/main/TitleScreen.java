@@ -74,28 +74,28 @@ public class TitleScreen {
 			checkboxPlain;
 
 	private Image exitButtonPlain, exitButtonSelected, rewindButtonPlain,
-			backButtonSelected;
-	private Image configButtonPlain, configButtonSelected;
+			backButtonSelected, configButtonPlain, configButtonSelected;
+
+	private static MenuButtons configButton, exitButton, startButton,
+			startButtonProfile, rewindButton, backButtonProfile, newUserButton;
 
 	public boolean IsExiting, IsStarting, IsOption;
 	public int selectedJoystick;
 	public User selectedUser;
-	private JCheckBox loggingBox;
-	private KeyAdapter Keys;
+	public int selectedJoystickIndex;
 
-	private boolean MovingUp;
-	private boolean MovingDown;
-
-	private int currentButton;
-	private int maxButton = 3;
+	// Keys and joystick support
 	private ArrayList<MenuButtons> MenuButtons = new ArrayList<MenuButtons>();
+	private KeyAdapter Keys;
+	private boolean MovingUp, MovingDown;
+	private boolean ButtonPressed = false;
+	private int currentButton;
 
-	private static MenuButtons configButton, exitButton, startButton,
-			startButtonProfile, rewindButton, backButtonProfile, newUserButton;
-	// private static ArrayList<String> Users;
+	private JCheckBox loggingBox;
 	private static JTextField nameInputField;
 	private JComboBox<String> userList = new JComboBox<String>(
 			Library.getUserNames());
+	private JComboBox<Integer> joystickIndexList = new JComboBox<Integer>();
 
 	private String selected;
 
@@ -191,6 +191,7 @@ public class TitleScreen {
 
 				selectedJoystick = controllerList.getSelectedIndex();
 				selectedUser = Library.getUser(userList.getSelectedIndex());
+				enableLogging = loggingBox.isSelected();
 
 				savePreferences();
 				IsStarting = true;
@@ -272,7 +273,7 @@ public class TitleScreen {
 		final JPanel userPanel3 = Options(frame);
 		userPanel3.setBackground(Color.getColor("TRANSLUCENT"));
 		userPanel3.setOpaque(false);
-		userPanel3.setBounds((int) (width * 0.405), (int) (height * 0.46), 300,
+		userPanel3.setBounds((int) (width * 0.405), (int) (height * 0.46), 500,
 				40);
 
 		// Logging
@@ -371,18 +372,21 @@ public class TitleScreen {
 		MenuButtons.add(configButton);
 		configButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				frame.requestFocus();
 				background.setVisible(false);
-				frame.getContentPane().setLayout(new GridLayout(1, 1));
+				lpane.setVisible(false);
+				lpane.removeAll();
+				test.removeAll();
+				MenuButtons.clear();
+				
+				frame.getContentPane().remove(background);
 				frame.getContentPane().remove(lpane);
+				frame.getContentPane().removeAll();
+				test.setVisible(false);
+				
+				frame.getContentPane().setLayout(null);
 				frame.removeKeyListener(Keys);
-
-				System.out.println("OddBall Test");
-
-				BufferedImage img1 = sprites.get("TargetOddball");
-				BufferedImage img2 = sprites.get("FalseOddball");
-				BufferedImage img3 = sprites.get("WelcomeOddball");
-
-				new Oddball(frame, img1, img2, img3);
+				IsOption = true;
 			}
 		});
 
@@ -421,7 +425,6 @@ public class TitleScreen {
 		lpane.setBounds(0, 0, 600, 400);
 		lpane.add(background, 0, 0);
 		lpane.add(test, 1, 0);
-		lpane.setBackground(Color.YELLOW);
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
 
@@ -438,11 +441,14 @@ public class TitleScreen {
 	public int GetSelectedJoystick() {
 		return this.selectedJoystick;
 	}
+	
+	public int GetSelectedJoystickIndex() {
+		return selectedJoystickIndex;
+	}
 
 	public boolean GetLogging() {
 		return this.enableLogging;
 	}
-
 
 	/**
 	 * Save user preferences to a file
@@ -561,7 +567,6 @@ public class TitleScreen {
 
 	}
 
-	
 	/* Menu Button Methods */
 	/**
 	 * Called from the TitleUpdate() in gamecontroller To select the buttons
@@ -570,8 +575,12 @@ public class TitleScreen {
 	public void updateJoystick(Controller joystick, int JOYSTICK_X,
 			int JOYSTICK_Y) {
 		float Y;
-
-		joystick.poll();
+		boolean ButtonCheck = false;
+		
+		try{
+			joystick.poll();
+		}
+		catch(Exception e){}
 
 		// X = joystick.getAxisValue(JOYSTICK_X);
 		Y = joystick.getAxisValue(JOYSTICK_Y);
@@ -591,10 +600,19 @@ public class TitleScreen {
 
 		for (int i = 0; i < 5; i++) {
 			if (joystick.isButtonPressed(i)) {
-				UseButtons();
+				ButtonCheck = true;
 			}
 		}
+		
+		if((ButtonCheck == false) && (ButtonPressed == true)){
+			UseButtons();
+			ButtonPressed = false;
+		}
+		else if(ButtonCheck == true){
+			ButtonPressed = true;
+		}
 	}
+
 	/**
 	 * Move to the button bellow with a joystick
 	 */
@@ -612,7 +630,7 @@ public class TitleScreen {
 	private void MoveUp() {
 		currentButton += -1;
 
-		if (currentButton <= 0) {
+		if (currentButton < 0) {
 			currentButton = MenuButtons.size();
 		}
 		updateButtons();
@@ -644,13 +662,12 @@ public class TitleScreen {
 		}
 	}
 
-	
-	
 	/**
 	 * Creates the panel for the controller options
 	 */
 	public JPanel Options(final NeuroFrame frame) {
 		ArrayList<String> ControllerNames = new ArrayList<String>();
+
 		new JDialog(frame, "Options");
 
 		// Joysticks
@@ -679,14 +696,17 @@ public class TitleScreen {
 		controllerList.setFont(new Font("Consolas", Font.BOLD, 12));
 		controllerList.setBackground(Color.BLACK);
 		controllerList.setForeground(Color.WHITE);
-
-		// JPanel mainBox = new JPanel();
-		// mainBox.setLayout(new BoxLayout(mainBox, BoxLayout.Y_AXIS));
+		
+		// Index
+		Integer[] controlOptions = {1,2,3};
+		joystickIndexList = new JComboBox<Integer>(controlOptions);
 
 		// Joysticks
 		JPanel message = new JPanel();
 		message.setLayout(new BoxLayout(message, BoxLayout.X_AXIS));
 		message.add(controllerList);
+		//message.add(new JLabel(".... Main Joystick: "));
+		//message.add(joystickIndexList);
 		return message;
 	}
 

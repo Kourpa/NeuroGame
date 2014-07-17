@@ -62,7 +62,7 @@ public class GameOverScreen {
 	private KeyAdapter Keys;
 
 	private int currentButton;
-	private boolean MovingDown, MovingUp;
+	private boolean MovingDown, MovingUp, ButtonPressed;
 	private ArrayList<MenuButtons> MenuButtons = new ArrayList<MenuButtons>();
 
 	private static MenuButtons exitButton, restartButton, startButton;
@@ -174,26 +174,13 @@ public class GameOverScreen {
 		Buttons.setBackground(Color.BLACK);
 		Buttons.setLayout(new BoxLayout(Buttons, 1));
 
-		// Start Button
+		// Back to Main menu Button
 		startButton = new MenuButtons(startButtonPlain, startButtonSelected);
-		MenuButtons.add(0, startButton);
-
-		// ExitButton
-		exitButton = new MenuButtons(exitButtonPlain, exitButtonSelected);
-		exitButton.b.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				background.setVisible(false);
-				lpane.setVisible(false);
-				frame.getContentPane().setLayout(new GridLayout(1, 1));
-				frame.getContentPane().remove(lpane);
-				frame.removeKeyListener(Keys);
-				IsStarting = true;
-			}
-		});
-
+		
 		// RestartButton
 		restartButton = new MenuButtons(restartButtonPlain,
 				restartButtonSelected);
+		restartButton.b.requestFocus();
 		MenuButtons.add(restartButton);
 		restartButton.b.addActionListener(new ActionListener() {
 
@@ -204,6 +191,22 @@ public class GameOverScreen {
 				frame.getContentPane().remove(lpane);
 				frame.removeKeyListener(Keys);
 				IsRestarting = true;
+			}
+		});
+
+
+
+		// ExitButton - NOT USED ANYMORE
+		exitButton = new MenuButtons(exitButtonPlain, exitButtonSelected);
+		MenuButtons.add(0, exitButton);
+		exitButton.b.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				background.setVisible(false);
+				lpane.setVisible(false);
+				frame.getContentPane().setLayout(new GridLayout(1, 1));
+				frame.getContentPane().remove(lpane);
+				frame.removeKeyListener(Keys);
+				IsStarting = true;
 			}
 		});
 
@@ -219,7 +222,7 @@ public class GameOverScreen {
 		Buttons.add(restartButton.b);
 		Buttons.add(exitButton.b);
 
-		Buttons.setBounds(width / 2 - 150, (int) (height * 0.65), 300, 180);
+		Buttons.setBounds(width / 2 - 150, (int) (height * 0.7), 300, 180);
 		Buttons.setOpaque(false);
 		Buttons.setBackground(Color.getColor("TRANSLUCENT"));
 
@@ -255,7 +258,9 @@ public class GameOverScreen {
 	public void updateJoystick(Controller joystick, int JOYSTICK_X,
 			int JOYSTICK_Y) {
 		float Y;
+		boolean ButtonCheck = false;
 
+		System.out.println("Update Controller");
 		joystick.poll();
 
 		// X = joystick.getAxisValue(JOYSTICK_X);
@@ -276,10 +281,19 @@ public class GameOverScreen {
 
 		for (int i = 0; i < 5; i++) {
 			if (joystick.isButtonPressed(i)) {
-				UseButtons();
+				ButtonCheck = true;
 			}
 		}
+		
+		if((ButtonCheck == false) && (ButtonPressed == true)){
+			UseButtons();
+			ButtonPressed = false;
+		}
+		else if(ButtonCheck == true){
+			ButtonPressed = true;
+		}
 	}
+	
 	/**
 	 * Move to the button bellow with a joystick
 	 */
