@@ -58,7 +58,7 @@ public class NeuroFrame extends JFrame
 
   private Container contentPane;
 
-  private User CurrentUser;
+  private User currentUser;
   
 
   /**
@@ -164,10 +164,10 @@ public class NeuroFrame extends JFrame
  * Sets the user for the session
  */
 public void setUser(User newUser){
-	  this.CurrentUser = newUser;
+	  this.currentUser = newUser;
   }
 public User getUser(){
-	return this.CurrentUser;
+	return this.currentUser;
 }
   /**
    * Changes the display for when the game is paused.
@@ -202,7 +202,7 @@ public User getUser(){
   
   public GameOverScreen showGameOver(){	  
 	  //drawPanel.setVisible(false);
-	  gameOver = new GameOverScreen(this,this.CurrentUser);
+	  gameOver = new GameOverScreen(this,this.currentUser);
 	  drawPanel.setGameOver(gameOver);
 	  
 	  mode = GameState.GAMEOVER;

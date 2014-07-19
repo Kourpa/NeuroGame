@@ -288,8 +288,8 @@ public class GameController
     * Don't draw to the screen every millisec.
     */
     timepassed += deltaSec;
-    if(timepassed > 2.0/60.0){
-        timepassed = 0;
+    if(timepassed > 1.5/60.0){
+        timepassed = 0.0;
         frame.render(gameObjectList);
     }
   }
@@ -666,13 +666,9 @@ private void gameOverUpdate(double deltaTime)
     }
     
     
-    try{
-    	frame.getUser().saveHighscore(player.getScore());
-    	Library.saveUser(frame.getUser());
-    }
-    catch(Exception e){
-    }
-    
+  	frame.getUser().saveHighscore(player.getScore());
+   	Library.saveUser(frame.getUser());
+
     showGameOver();
   }
  
@@ -737,6 +733,7 @@ private void highscoreUpdate(){
         controls.disableAll();
         setLoggingMode(title.GetLogging());
         SelectJoystick(title.GetSelectedJoystick(), title.GetSelectedJoystickIndex());
+
         frame.setUser(title.GetSelectedUser());
         newGame();
 

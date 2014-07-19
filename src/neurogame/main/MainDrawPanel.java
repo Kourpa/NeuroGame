@@ -102,13 +102,7 @@ private void drawHUD()
 
 public void paintComponent(Graphics g)
 {
-    try
-    {
       g.drawImage(imageObjectLayer, 0, 0, null);
-    }
-    catch (Exception e)
-    {
-    }
 }
 
   public void render(ArrayList<GameObject> gameObjList)

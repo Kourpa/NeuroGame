@@ -24,6 +24,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -133,15 +134,24 @@ public final class Library
 		path += "/Users/";
 		File dir = new File(path);
 
-        if(!dir.exists()){
-            dir.mkdir();
-        }
+    if(!dir.exists()){
+      dir.mkdir();
+      addUser("Guest");
+    }
 
-		for (File file : dir.listFiles()) {
+    boolean guestexists = false;
+    for (File file : dir.listFiles()) {
 			if (file.getName().endsWith((".user"))) {
 				parseUser(file);
 			}
+      if(file.getName().startsWith("Guest")){
+        guestexists = true;
+      }
 		}
+
+    if(!guestexists){
+      addUser("Guest");
+    }
 	}
 
 	/**
