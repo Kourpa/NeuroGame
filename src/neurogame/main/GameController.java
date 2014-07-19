@@ -284,6 +284,9 @@ public class GameController
     { gameObjectList = world.getObjectList();
     }
 
+    /**
+    * Don't draw to the screen every millisec.
+    */
     timepassed += deltaSec;
     if(timepassed > 2.0/60.0){
         timepassed = 0;
