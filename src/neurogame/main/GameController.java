@@ -99,6 +99,8 @@ public class GameController
 
   private boolean joystickReady;
 
+  private double timepassed;
+
   /**
    * Instantiates a new GameController.
    *
@@ -128,6 +130,7 @@ public class GameController
     health = Library.HEALTH_MAX;
     powerUp = null;
     controllable = false;
+    timepassed = 0.0;
 
     // Joystick
     try
@@ -280,7 +283,12 @@ public class GameController
     if (world != null)
     { gameObjectList = world.getObjectList();
     }
-    frame.render(gameObjectList);
+
+    timepassed += deltaSec;
+    if(timepassed > 2.0/60.0){
+        timepassed = 0;
+        frame.render(gameObjectList);
+    }
   }
 
   private void playUpdate(double deltaTime)
