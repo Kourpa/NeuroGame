@@ -6,7 +6,9 @@ import gnu.io.PortInUseException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
+
 /**
+ * Used http://www.coderanch.com/t/617885/java/java/rxtx-Parallel-Port-writing-Java as a reference.
  *
  * Created by Marcos on 7/19/2014.
  */
@@ -15,13 +17,23 @@ public class CommPort{
   private boolean foundPort = false;
   private byte[] buffer;
 
+  /**
+   * looks for the ports. If the parallel port is found its output stream i referenced.
+   */
   public CommPort(){
     buffer = new byte[1];
 
     ParallelPort port;
-    Enumeration portIdentidiers = CommPortIdentifier.getPortIdentifiers();
-    while(portIdentidiers.hasMoreElements()){
-      CommPortIdentifier id = (CommPortIdentifier)portIdentidiers.nextElement();
+    Enumeration portIdentifiers = CommPortIdentifier.getPortIdentifiers();
+
+    /**
+     * Go through any ports and find the parallel port.
+     */
+    while(portIdentifiers.hasMoreElements()){
+
+      CommPortIdentifier id = (CommPortIdentifier)portIdentifiers.nextElement();
+
+      // No idea what LPT1 is.
       if(id.getName().equals("LPT1")){
         try {
           port = (ParallelPort) id.open("Comm", 50);
@@ -34,6 +46,10 @@ public class CommPort{
     }
   }
 
+  /**
+   * writes the given byte to the output stream.
+   * @param b
+   */
   public void write(byte b){
     buffer[0] = b;
     if(foundPort){
@@ -46,6 +62,9 @@ public class CommPort{
     }
   }
 
+  /**
+   * closes the output stream.
+   */
   public void close(){
     if(foundPort) {
       try {
