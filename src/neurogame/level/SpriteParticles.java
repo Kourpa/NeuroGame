@@ -12,16 +12,20 @@ import java.util.Map;
  */
 public class SpriteParticles
 {
-  private static final Map<String, ArrayList<Particle>> nameSpriteMap = new HashMap<>();
+  private static final HashMap<String, ArrayList<Particle>> nameSpriteMap = new HashMap<>();
+  private static final HashMap<String, Integer> nameWidthMap = new HashMap<>();
 
   public static void setSprite(String name, BufferedImage image){
     ArrayList<Particle> pixels = new ArrayList<>();
     
     int c;
-    for(int x = 0; x < image.getWidth(); x++){
-      for(int y = 0; y < image.getHeight(); y++){
+    int width = image.getWidth();
+    int height = image.getHeight();
+    nameWidthMap.put(name, width);
+    for(int x = 0; x < width; x++){
+      for(int y = 0; y < height; y++){
         c = image.getRGB(x, y);
-        if(c != 0){// && x % 2 == 0 && y % 2 == 0){
+        if(c != 0){
           pixels.add(new Particle(x, y, new Color(c)));
         }
       }
@@ -38,11 +42,12 @@ public class SpriteParticles
   public static Particle[] getPixels(String name)
   {
     ArrayList<Particle> pixels = nameSpriteMap.get(name);
-    Particle[] newList = new Particle[pixels.size()];
-    for(int i = 0; i < newList.length; i++){
+    Particle[] newArray = new Particle[pixels.size()];
+    int width = nameWidthMap.get(name);
+    for(int i = 0; i < newArray.length; i++){
       Particle pp = pixels.get(i);
-      newList[i] = new Particle(pp.getX(), pp.getY(), pp.getColor());
+      newArray[i] = new Particle(width - pp.getX(), pp.getY(), pp.getColor());
     }
-    return newList;
+    return newArray;
   }
 }
