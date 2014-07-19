@@ -133,6 +133,10 @@ public final class Library
 		path += "/Users/";
 		File dir = new File(path);
 
+        if(!dir.exists()){
+            dir.mkdir();
+        }
+
 		for (File file : dir.listFiles()) {
 			if (file.getName().endsWith((".user"))) {
 				parseUser(file);
