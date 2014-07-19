@@ -36,7 +36,7 @@ public class ParticleEffect extends GameObject
     double width = Library.worldUnitToScreen(obj.getWidth());
     double height = Library.worldPosYToScreen(obj.getHeight());
 
-    gmass = new GravitationalMass(x + width/2, y + height/2, -.01, -.01);
+    gmass = new GravitationalMass(x + width/2, y + height/2, -.2, -.2);
     alpha = 1;
     scrollDistance = 0;
     particles = SpriteParticles.getPixels(obj.getName());
@@ -52,7 +52,7 @@ public class ParticleEffect extends GameObject
    */
   @Override
   public void update(double deltaSec, double scrollDistance)
-  { alpha -= .03;
+  { alpha -= .02;
     if (alpha <= 0 || !gmass.isAlive()) die(false);
     this.scrollDistance = scrollDistance;
 
@@ -62,9 +62,9 @@ public class ParticleEffect extends GameObject
     for(Particle p: particles){
       dx = gmass.getX() - p.getX();
       dy = gmass.getY() - p.getY();
-      //double mag = 1/Math.sqrt(dx * dx + dy * dy);
+      double mag = 1/Math.sqrt(dx * dx + dy * dy);
 
-      p.update(xpull * dx, ypull * dy);
+      p.update(xpull * dx * mag * Library.RANDOM.nextDouble(), ypull * dy * mag * Library.RANDOM.nextDouble());
     }
   }
   
@@ -79,18 +79,18 @@ public class ParticleEffect extends GameObject
       AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
       graphics.setComposite(alphaComposite);
     }
-    
+
     for(int i = 0; i < particles.length; i++)
     {
       graphics.setColor(particles[i].getColor());
       int xx = (int)particles[i].getX() + Library.worldPosXToScreen(scrollDistance);
       int yy = (int)particles[i].getY();
-      graphics.fillRect(xx, yy, 4, 4);
+      graphics.fillRect(xx, yy, 2, 2);
     }
 
     if (useAlphaComposite)
     { graphics.setComposite(oldAlpha);
-      graphics.setColor(Color.RED);
+//      graphics.setColor(Color.RED);
     }
   }
 
