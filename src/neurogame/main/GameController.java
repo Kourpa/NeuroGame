@@ -627,14 +627,7 @@ private void gameOverUpdate(double deltaTime)
   }
   
   private void showOddBall(){  
-	SpriteMap sprites = Library.getSprites();
-	BufferedImage img1 = sprites.get("TargetOddball");
-	BufferedImage img2 = sprites.get("FalseOddball");
-	BufferedImage img3 = sprites.get("WelcomeOddball");
-	BufferedImage img4 = sprites.get("InstructionOddball");
-	BufferedImage img5 = sprites.get("CountOddball");
-	
-	oddball = new Oddball(frame, img1, img2, img3, img4, img5);
+	oddball = new Oddball(frame);
 	gameState = GameState.ODDBALL;
   }
   /**

@@ -17,6 +17,7 @@ import javax.swing.Timer;
 import org.lwjgl.input.Controller;
 
 import neurogame.library.Library;
+import neurogame.library.SpriteMap;
 
 /**
  * @author kourpa
@@ -30,7 +31,8 @@ public class Oddball {
 	private boolean showCount;
 	private final ArrayList<Screen> options;
 	private Screen currentScreen;
-	private BufferedImage badImage, goodImage, welcomeImage, instructionImage,finishedImage;
+	private BufferedImage badImage, goodImage, waitImage, welcomeImage,
+			instructionImage, finishedImage;
 
 	private long startTime, screenTime, waitTime, InstructionTime;
 	private boolean wait, instructions;
@@ -39,12 +41,21 @@ public class Oddball {
 	private JLabel background;
 	private NeuroFrame frame;
 
-	public Oddball(final NeuroFrame frame, BufferedImage badImage,
-			BufferedImage goodImage, BufferedImage instructionImage, BufferedImage welcomeImage, BufferedImage countImage) {
+	public Oddball(final NeuroFrame frame) {
 
 		this.frame = frame;
 		int width = frame.getWidth();
 		int height = frame.getHeight();
+		
+		// Images
+		SpriteMap sprites = Library.getSprites();
+
+		this.badImage = sprites.get("FalseOddball");
+		this.goodImage  = sprites.get("TargetOddball");
+		this.welcomeImage = sprites.get("WelcomeOddball");
+		this.instructionImage =sprites.get("InstructionOddball"); 
+		this.finishedImage = sprites.get("CountOddball");
+		this.waitImage = sprites.get("WaitOddball");
 
 		// Frame
 		frame.getContentPane().removeAll();
@@ -82,11 +93,7 @@ public class Oddball {
 		time = startTime;
 		options = new ArrayList<>();
 
-		this.badImage = badImage;
-		this.goodImage = goodImage;
-		this.welcomeImage = welcomeImage;
-		this.instructionImage = instructionImage;
-		this.finishedImage = countImage;
+		
 
 		for (int i = 0; i < numberOfGoodScreens; i++) {
 			options.add(Screen.GOOD);
@@ -122,18 +129,17 @@ public class Oddball {
 			currentScreen = Screen.INSTRUCTIONS;
 			if (time - startTime > InstructionTime) {
 				currentScreen = Screen.WELCOME;
-			}
-			else if(time - startTime > InstructionTime*2){
+			} else if (time - startTime > InstructionTime * 2) {
 				currentScreen = Screen.INSTRUCTIONS;
 			}
-		} else if(showCount){
+		} else if (showCount) {
 			currentScreen = Screen.FINISHED;
 		} else if (wait) {
 			if (time - startTime > waitTime) {
 
 				probabilityOfTarget = currentImageNum / 5.0; // Max of 6
 
-				// Target or False screen 
+				// Target or False screen
 				randomFloat = Library.RANDOM.nextFloat();
 				if (randomFloat < probabilityOfTarget) {
 					currentImageNum = 0;
@@ -146,9 +152,9 @@ public class Oddball {
 
 				wait = false;
 				startTime = System.currentTimeMillis();
-				
+
 				// Finished the test
-				if(currentNumber > numberOfGoodScreens){
+				if (currentNumber > numberOfGoodScreens) {
 					showCount = true;
 				}
 			}
@@ -156,16 +162,17 @@ public class Oddball {
 			wait = true;
 			currentScreen = Screen.WAIT;
 		}
-		
+
 		render();
 	}
-	
+
 	/* Menu Button Methods */
 	/**
 	 * Called from the HighscoreUpdate() in gamecontroller To select the buttons
 	 * with the joystick
 	 */
-	public void updateJoystick(Controller joystick, int JOYSTICK_X, int JOYSTICK_Y) {
+	public void updateJoystick(Controller joystick, int JOYSTICK_X,
+			int JOYSTICK_Y) {
 		joystick.poll();
 
 		for (int i = 0; i < 5; i++) {
@@ -174,8 +181,8 @@ public class Oddball {
 			}
 		}
 	}
-	
-	public boolean isFinished(){
+
+	public boolean isFinished() {
 		return testFinished;
 	}
 
@@ -192,7 +199,7 @@ public class Oddball {
 			background.setIcon(new ImageIcon(badImage));
 			break;
 		case WAIT:
-			background.setIcon(null); // new ImageIcon(waitImage)
+			background.setIcon(new ImageIcon(waitImage));
 			break;
 		case WELCOME:
 			background.setIcon(new ImageIcon(welcomeImage));
@@ -207,6 +214,6 @@ public class Oddball {
 	}
 
 	private enum Screen {
-		GOOD, BAD, WAIT, WELCOME, INSTRUCTIONS,FINISHED;
+		GOOD, BAD, WAIT, WELCOME, INSTRUCTIONS, FINISHED;
 	}
 }

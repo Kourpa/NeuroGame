@@ -110,6 +110,7 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     // Visual test graphics
     add("TargetOddball","/images/playerShip.png", 68*3, 68*3);
     add("FalseOddball","/images/enemySinusoidal.png", 68*3, 68*3);
+    add("WaitOddball","/images/cross.png", 68*3, 68*3);
     add("WelcomeOddball","/images/VisualTestWelcome.png", frame.getWidth(),frame.getHeight());
     add("InstructionOddball","/images/VisualTestInstruction.png", frame.getWidth(),frame.getHeight());
     add("CountOddball","/images/VisualTestFinished.png", frame.getWidth(),frame.getHeight());
