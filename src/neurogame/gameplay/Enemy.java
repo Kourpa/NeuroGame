@@ -103,6 +103,7 @@ public class Enemy extends GameObject
   { 
     GameObjectType type = obj.getType();
     if (type == GameObjectType.STAR) return;
+    if (type == GameObjectType.POWER_UP) return;
     die(true);
   }
     
