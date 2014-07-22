@@ -32,7 +32,7 @@ public class Oddball // implements KeyListener
   private static final byte TRIGGER_DONE     = 0x1;
   
   private CommPort parallelPort;
-  private static final boolean SEND_TRIGGERS = false;
+  private static final boolean SEND_TRIGGERS = true;
   
   
   private long time;
@@ -56,7 +56,10 @@ public class Oddball // implements KeyListener
   public Oddball(final NeuroFrame frame)
   {
     
-    if (SEND_TRIGGERS) parallelPort = new CommPort();
+    if (SEND_TRIGGERS) {
+    	System.out.println("Opening Parallel Port");
+    	parallelPort = new CommPort();
+    }
 
     int width = frame.getWidth();
     int height = frame.getHeight();
@@ -147,6 +150,7 @@ public class Oddball // implements KeyListener
     if (instructions)
     {
       currentScreen = Screen.INSTRUCTIONS;
+     // if (time > 2) currentScreen = Screen.GOOD;
 
     }
     else if (showCount)
@@ -161,7 +165,10 @@ public class Oddball // implements KeyListener
         probabilityOfTarget = currentImageNum / 5.0; // Max of 6
 
         // Target or False screen
-        if (currentScreen == Screen.INSTRUCTIONS) parallelPort.write(TRIGGER_START);
+        if (currentScreen == Screen.INSTRUCTIONS)
+        	{ System.out.println("Parallel Port: Sending Start trigger");
+        	parallelPort.write(TRIGGER_START);
+        	}
         randomFloat = Library.RANDOM.nextFloat();
         if (randomFloat < probabilityOfTarget)
         {
@@ -229,18 +236,19 @@ public class Oddball // implements KeyListener
     switch (currentScreen)
     {
     case GOOD:
-      if (SEND_TRIGGERS) parallelPort.write(TRIGGER_NORMAL);
-      background.setIcon(new ImageIcon(goodImage));
+      if (SEND_TRIGGERS) {System.out.println("Parallel Port: Send TRIGGER_NORMAL="+TRIGGER_NORMAL); parallelPort.write(TRIGGER_NORMAL);
+      }background.setIcon(new ImageIcon(goodImage));
       
       break;
     case BAD:
-      if (SEND_TRIGGERS) parallelPort.write(TRIGGER_ODDBALL);
+      if (SEND_TRIGGERS) {System.out.println("Parallel Port: Send TRIGGER_ODDBALL="+TRIGGER_ODDBALL); parallelPort.write(TRIGGER_ODDBALL); 
+      }
       background.setIcon(new ImageIcon(badImage));
       oddballCount++;
       break;
     case WAIT:
-      if (SEND_TRIGGERS) parallelPort.write(TRIGGER_WAIT);
-      background.setIcon(new ImageIcon(waitImage));
+      if (SEND_TRIGGERS) {System.out.println("Parallel Port: Send TRIGGER_WAIT"+TRIGGER_WAIT); parallelPort.write(TRIGGER_WAIT);
+      }background.setIcon(new ImageIcon(waitImage));
       break;
     case INSTRUCTIONS:
       background.setIcon(new ImageIcon(instructionImage));
