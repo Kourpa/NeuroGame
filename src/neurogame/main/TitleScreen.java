@@ -593,7 +593,7 @@ public class TitleScreen {
 		}
 
 		if (Math.abs(Y) > 0.5) {
-			System.out.println(""+currentButton);
+			//System.out.println(""+currentButton);
 			if (Y < 0 && MovingDown == false) {
 				MovingDown = true;
 				MoveUp();

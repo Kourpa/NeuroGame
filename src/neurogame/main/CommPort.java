@@ -3,6 +3,8 @@ package neurogame.main;
 import gnu.io.CommPortIdentifier;
 import gnu.io.ParallelPort;
 import gnu.io.PortInUseException;
+import gnu.io.RXTXPort;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
@@ -24,6 +26,7 @@ public class CommPort{
     buffer = new byte[1];
 
     ParallelPort port;
+    
     Enumeration portIdentifiers = CommPortIdentifier.getPortIdentifiers();
 
     /**
@@ -32,14 +35,24 @@ public class CommPort{
     while(portIdentifiers.hasMoreElements()){
 
       CommPortIdentifier id = (CommPortIdentifier)portIdentifiers.nextElement();
-
-      // No idea what LPT1 is.
-      if(id.getName().equals("LPT1")){
+      String typeStr = "";
+      if ( id.getPortType() == CommPortIdentifier.PORT_PARALLEL) typeStr = "PORT_PARALLEL";
+      
+      System.out.println("====>Found CommPortIdentifier: " + id.getName() + ", Type="+id.getPortType()+"("+typeStr+")" );
+      
+      if(id.getName().equals("LPT3")){
         try {
-          port = (ParallelPort) id.open("Comm", 50);
+          port = (ParallelPort) id.open("Comm", 0xC050);
+        	//port = (ParallelPort) id.open("Comm", 0xC050);
+          System.out.println(port.isPaperOut() + ": Paper Out");  
+          System.out.println(port.isPrinterBusy()+ ": Parallel Port Busy");  
+          System.out.println(port.isPrinterError()+ ": Parallel Port Error");  
+          System.out.println(port.isPrinterSelected()+ ": Parallel Port Selected");  
+          System.out.println(port.isPrinterTimedOut()+ ": Timed Out");  
+        	//port = new ParallelPort();
           outputSteam = port.getOutputStream();
           foundPort = true;
-        } catch (IOException | PortInUseException | NullPointerException e) {
+        } catch (Exception e) {
           System.out.println("Opening Parallel port failed.");
         }
       }
@@ -57,9 +70,10 @@ public class CommPort{
         outputSteam.write(buffer);
         outputSteam.flush();
       } catch (IOException e) {
-        System.out.println("failed to write to port.");
+        System.out.println("failed to write to port: "+ e.getMessage());
       }
     }
+    System.out.println("CommPort.write() Exit.");
   }
 
   /**
@@ -81,8 +95,13 @@ public class CommPort{
      * @param args the command line arguments
      */
   public static void main(String[] args) {
-    CommPort port = new CommPort();
+    
+	  System.out.println("Opening Parallel port");
+	  CommPort port = new CommPort();
+    
+	  System.out.println("Parallel port Send: 0x12");
     port.write((byte) 0x12);
+    System.out.println("Parallel port: close");
     port.close();
   }
 }
