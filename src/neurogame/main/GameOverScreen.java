@@ -140,11 +140,11 @@ public class GameOverScreen {
 		// Parse the highscore bits: YYMMDD + Highscore
 		for (int i = 0; i < data.length; i++) {
 			highscoresPersonal[i] = " "
-					+ data[i].toString().substring(0, 2)
-					+ "-"
 					+ data[i].toString().substring(2, 4)
 					+ "-"
 					+ data[i].toString().substring(4, 6)
+					+ "-"
+					+ data[i].toString().substring(0, 2)
 					+ ":       "
 					+ data[i].toString().substring(6,
 							data[i].toString().length());
@@ -164,11 +164,11 @@ public class GameOverScreen {
 		// Parse the highscore bits: YYMMDD + Highscore
 		for (int i = 0; i < data2.length; i++) {
 			highscoresGlobal[i] = " "
-					+ data2[i].toString().substring(0, 2)
-					+ "-"
 					+ data2[i].toString().substring(2, 4)
 					+ "-"
 					+ data2[i].toString().substring(4, 6)
+					+ "-"
+					+ data2[i].toString().substring(0, 2)
 					+ ":       "
 					+ data2[i].toString().substring(6,
 							data2[i].toString().length());
@@ -246,7 +246,7 @@ public class GameOverScreen {
 		highscores.setBackground(Color.getColor("TRANSLUCENT"));
 
 		besthighscores.setBounds((int) (width * 0.52), (int) (height * 0.45),
-				300, 150);
+				300, 155);
 		besthighscores.setOpaque(false);
 		besthighscores.setBackground(Color.getColor("TRANSLUCENT"));
 
