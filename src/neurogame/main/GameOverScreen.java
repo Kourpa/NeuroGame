@@ -149,7 +149,7 @@ public class GameOverScreen {
 					+ data[i].toString().substring(6,
 							data[i].toString().length());
 		}
-
+		
 		// Personal best highscores JList
 		JList<String> personalJList = new JList<String>(highscoresPersonal);
 		personalJList.setBackground(Color.getColor("TRANSLUCENT"));
@@ -158,8 +158,24 @@ public class GameOverScreen {
 		personalJList.setForeground(new Color(110, 170, 255));
 		personalJList.setFont(new Font("Karmatic Arcade", Font.PLAIN, 20));
 
+		Object[] data2 = Library.getBestHighScores(5);
+		String[] highscoresGlobal = new String[data2.length];
+
+		// Parse the highscore bits: YYMMDD + Highscore
+		for (int i = 0; i < data2.length; i++) {
+			highscoresGlobal[i] = " "
+					+ data2[i].toString().substring(0, 2)
+					+ "-"
+					+ data2[i].toString().substring(2, 4)
+					+ "-"
+					+ data2[i].toString().substring(4, 6)
+					+ ":       "
+					+ data2[i].toString().substring(6,
+							data2[i].toString().length());
+		}
+		
 		// Global best highscores JList
-		JList<String> globalJList = new JList<String>(highscoresPersonal);
+		JList<String> globalJList = new JList<String>(highscoresGlobal);
 		globalJList.setBackground(Color.getColor("TRANSLUCENT"));
 		globalJList.setOpaque(false);
 		globalJList.setForeground(new Color(110, 170, 255));
