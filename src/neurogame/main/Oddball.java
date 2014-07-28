@@ -32,7 +32,7 @@ public class Oddball // implements KeyListener
   private static final byte TRIGGER_DONE     = 0x1;
   
   private CommPort parallelPort;
-  private static final boolean SEND_TRIGGERS = true;
+  private static final boolean SEND_TRIGGERS = false;
   
   
   private long time;

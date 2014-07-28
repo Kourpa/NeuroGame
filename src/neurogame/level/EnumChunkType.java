@@ -34,7 +34,7 @@ public enum EnumChunkType
   },
 
   CURVED
-  { public double getMaxChange() { return 0.1; }
+  { public double getMaxChange() { return 0.05; }
     public double getStepSize() { return 0.1; }
     public double getDefaultOpeningHeight() { return 0.4; }
     public PowerUp getPowerUp() { return null; }

@@ -51,7 +51,7 @@ public class World
         EnumChunkType.FLAT.getDefaultOpeningHeight());
 
     skillBasedChunkGapHeight = EnumChunkType.SMOOTH.getDefaultOpeningHeight();
-    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.CURVED,
+    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SMOOTH,
         skillBasedChunkGapHeight);
     
 
