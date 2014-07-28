@@ -24,6 +24,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -199,6 +200,27 @@ public final class Library
 		}
 	}
 
+	/**
+	 * Get the best highscores from any user
+	 */
+	public static Long[] getBestHighScores(int amount){
+		ArrayList<Long> scores = new ArrayList<Long>();
+		Long[] userScores;
+		
+		if (users.size() > 0) {
+			for (int i = 0; i < users.size(); i++) {
+				userScores = users.get(i).getHighScores(5);
+				
+				for (int k = 0; k < userScores.length; k++) {
+					scores.add(userScores[k]);
+				}
+			}
+		}
+		
+		Collections.sort(scores);
+		Collections.reverse(scores);
+		return scores.toArray(new Long[0]);
+	}
 
 
   public static int getWindowPixelWidth()
