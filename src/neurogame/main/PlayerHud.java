@@ -68,37 +68,27 @@ public class PlayerHud {
 			int ammo) {
 
 		canvasObjectLayer.setFont(FONT30);
-
 		canvasObjectLayer.setColor(Color.BLACK);
-		// canvasObjectLayer.fillRect(0, 0, (int)(frame.getSize().width), 55);
 
 		canvasObjectLayer.setColor(Color.WHITE);
 		canvasObjectLayer.drawString("Score: ",
-				(int) (windowWidth * 0.5 - 100), (int) (windowHeight * 0.05));
+				(int) (windowWidth * 0.5 - 100), (int) (windowHeight * 0.04));
 
 		canvasObjectLayer.setColor(BLUE);
 		canvasObjectLayer.drawString("" + frame.getScore(),
-				(int) (windowWidth * 0.5 + 100), (int) (windowHeight * 0.05));
+				(int) (windowWidth * 0.5 + 100), (int) (windowHeight * 0.04));
 
 		// Ammo
-		// canvasObjectLayer.setColor(Color.WHITE);
-		// canvasObjectLayer.drawString("Ammo: ", (int) (windowWidth * 0.6 +
-		// 250), (int) (windowHeight * 0.05));
-
-		// canvasObjectLayer.setColor(new Color(100, 151, 255));
-		// canvasObjectLayer.drawString(""+ammo, (int) (windowWidth * 0.6 +
-		// 400),(int) (windowHeight * 0.05));
-
 		for (int i = 0; i < ammo; i++) {
 			if(i<10){
 			canvasObjectLayer.drawImage(MissleIcon, null,
 					(int) (windowWidth * 0.8 + MissleIcon.getWidth()
-									* (i%10) * 1.1), (int) (windowHeight * 0.02));
+									* (i%10) * 1.1), (int) (windowHeight * 0.015));
 			}
 			else{
 				canvasObjectLayer.drawImage(MissleIcon, null,
 						(int) (windowWidth * 0.8 + MissleIcon.getWidth()
-										* (i%10) * 1.1), (int) (windowHeight * 0.06));
+										* (i%10) * 1.1), (int) (windowHeight * 0.055));
 			}
 		}
 

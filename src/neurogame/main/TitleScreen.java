@@ -145,6 +145,31 @@ public class TitleScreen {
 		checkboxSelected = sprites.get("checkboxSelected");
 		checkboxPlain = sprites.get("checkboxPlain");
 
+		// KeyListener for using keyboard to select
+		Keys = new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_UP:
+					MoveUp();
+					break;
+				case KeyEvent.VK_DOWN:
+					MoveDown();
+					break;
+				case KeyEvent.VK_LEFT:
+					MoveDown();
+					break;
+				case KeyEvent.VK_RIGHT:
+					MoveUp();
+					break;
+				case KeyEvent.VK_ENTER:
+					UseButtons();
+				default:
+					break;
+				}
+			}
+		};
+		
 		// New UI
 		CreateMainMenu(frame);
 
@@ -191,6 +216,7 @@ public class TitleScreen {
 					frame.getContentPane().remove(background);
 					frame.getContentPane().remove(lpane);
 					frame.getContentPane().setLayout(null);
+					frame.removeKeyListener(Keys);
 		
 					selectedJoystick = controllerList.getSelectedIndex();
 					selectedUser = Library.getUser(userList.getSelectedIndex());
@@ -210,9 +236,7 @@ public class TitleScreen {
 				background.setVisible(false);
 				frame.getContentPane().setLayout(new GridLayout(1, 1));
 				frame.getContentPane().remove(lpane);
-				frame.removeKeyListener(Keys);
 				MenuButtons.clear();
-
 				CreateMainMenu(frame);
 			}
 		});
@@ -235,8 +259,16 @@ public class TitleScreen {
 
 		startArea.setLayout(new BoxLayout(startArea, 1));
 		startArea.setBounds((int) (width * 0.715) - 110, (int) (height * 0.81),
-				220, 50);
+				230, 50);
 		startArea.add("North", startButtonProfile.b);
+		
+		// Keyboard
+		startButtonProfile.b.addKeyListener(Keys);
+		backButtonProfile.b.addKeyListener(Keys);
+		
+		// Default button
+		frame.requestFocus();
+		startButtonProfile.setSelected(true);
 
 		// User Panel
 		final JPanel userPanel2 = new JPanel();
@@ -337,26 +369,7 @@ public class TitleScreen {
 		test.setLayout(new BoxLayout(test, 1));
 		test.setBackground(Color.WHITE);
 
-		// KeyListener for using keyboard to select
-		Keys = new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				switch (e.getKeyCode()) {
-				case KeyEvent.VK_UP:
-					MoveUp();
-					break;
-				case KeyEvent.VK_DOWN:
-					MoveDown();
-					break;
-				case KeyEvent.VK_ENTER:
-					UseButtons();
-				default:
-					break;
-				}
-			}
-		};
-
-		// Buttons
+		// Start Button
 		startButton = new MenuButtons(startButtonPlain, startButtonSelected);
 		MenuButtons.add(0, startButton);
 		startButton.setSelected(true);
@@ -365,12 +378,12 @@ public class TitleScreen {
 				background.setVisible(false);
 				frame.getContentPane().setLayout(new GridLayout(1, 1));
 				frame.getContentPane().remove(lpane);
-				frame.removeKeyListener(Keys);
 				MenuButtons.clear();
 				CreateProfileScreen(frame);
 			}
 		});
 
+		// Oddball button
 		configButton = new MenuButtons(configButtonPlain, configButtonSelected);
 		MenuButtons.add(configButton);
 		configButton.b.addActionListener(new ActionListener() {
@@ -393,25 +406,28 @@ public class TitleScreen {
 			}
 		});
 
+		// Rewind button
 		rewindButton = new MenuButtons(rewindButtonPlain, rewindButtonSelected);
 		MenuButtons.add(rewindButton);
-		rewindButton.b.addKeyListener(Keys);
 
+		// Exit button
 		exitButton = new MenuButtons(exitButtonPlain, exitButtonSelected);
 		MenuButtons.add(exitButton);
 		exitButton.b.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
 				IsExiting = true;
 			}
 		});
 
+		// Keyboard
 		startButton.b.addKeyListener(Keys);
-		exitButton.b.addKeyListener(Keys);
 		configButton.b.addKeyListener(Keys);
+		rewindButton.b.addKeyListener(Keys);
+		exitButton.b.addKeyListener(Keys);
 		frame.addKeyListener(Keys);
+		frame.requestFocus();
 
-		//
+		// Panels
 		test.add("North", startButton.b);
 		test.add("Center", configButton.b);
 		test.add(rewindButton.b);

@@ -52,7 +52,7 @@ public class MainDrawPanel extends JPanel
   }
   
   public void setGameOver(GameOverScreen screen){
-	  this.gameOver = screen;
+	  //this.gameOver = screen;
 	  HUD.drawGameOver(true);
   }
 

@@ -28,20 +28,3 @@ public class MenuButtons {
     	}
     }
 }
-//
-//    public static void main(String[] args) throws Exception {
-//        URL url1 = new URL("http://pscode.org/media/citymorn1.jpg");
-//        URL url2 = new URL("http://pscode.org/media/citymorn2.jpg");
-//        
-//        final Image img1 = ImageIO.read(url1);
-//        final Image img2 = ImageIO.read(url2);
-//        
-//        //Create the frame on the event dispatching thread
-//        SwingUtilities.invokeLater(new Runnable(){
-//            @Override
-//            public void run() {
-//                new MenuButtons(img1, img2);
-//            }
-//        });
-//    }
-//}

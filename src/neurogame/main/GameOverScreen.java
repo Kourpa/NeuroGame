@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class GameOverScreen {
 	public boolean IsExiting, IsStarting, IsOption, IsRestarting;
 	public int selectedJoystick;
 	public User selectedUser;
-	private KeyAdapter Keys;
+	private KeyAdapter Keys2;
 
 	private int currentButton;
 	private boolean MovingDown, MovingUp, ButtonPressed;
@@ -77,13 +78,13 @@ public class GameOverScreen {
 	 *            NeuroFrame to contain this TitleScreen.
 	 */
 	public GameOverScreen(final NeuroFrame frame, User newUser) {
-
 		this.selectedUser = newUser;
 
 		// For Polling
 		IsExiting = false;
 		IsStarting = false;
 
+		//
 		width = frame.getWidth();
 		height = frame.getHeight();
 		sprites = Library.getSprites();
@@ -100,6 +101,26 @@ public class GameOverScreen {
 		restartButtonPlain = sprites.get("restartButtonPlain");
 		restartButtonSelected = sprites.get("restartButtonSelected");
 
+		// KeyListener for using keyboard to select
+		Keys2 = new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_UP:
+					MoveUp();
+					break;
+				case KeyEvent.VK_DOWN:
+					MoveDown();
+					break;
+				case KeyEvent.VK_ENTER:
+					UseButtons();
+				default:
+					break;
+				}
+			}
+		};
+
+		
 		// New UI
 		CreateGameOverScreen(frame);
 
@@ -112,7 +133,7 @@ public class GameOverScreen {
 		});
 	}
 
-	private void CreateGameOverScreen(final NeuroFrame frame){
+	private void CreateGameOverScreen(final NeuroFrame frame) {
 		frame.getContentPane().setLayout(new BorderLayout());
 
 		// Main pane for the UI
@@ -149,7 +170,7 @@ public class GameOverScreen {
 					+ data[i].toString().substring(6,
 							data[i].toString().length());
 		}
-		
+
 		// Personal best highscores JList
 		JList<String> personalJList = new JList<String>(highscoresPersonal);
 		personalJList.setBackground(Color.getColor("TRANSLUCENT"));
@@ -173,7 +194,7 @@ public class GameOverScreen {
 					+ data2[i].toString().substring(6,
 							data2[i].toString().length());
 		}
-		
+
 		// Global best highscores JList
 		JList<String> globalJList = new JList<String>(highscoresGlobal);
 		globalJList.setBackground(Color.getColor("TRANSLUCENT"));
@@ -191,11 +212,9 @@ public class GameOverScreen {
 
 		// Back to Main menu Button
 		startButton = new MenuButtons(startButtonPlain, startButtonSelected);
-		
+
 		// RestartButton
-		restartButton = new MenuButtons(restartButtonPlain,
-				restartButtonSelected);
-		restartButton.b.requestFocus();
+		restartButton = new MenuButtons(restartButtonPlain,restartButtonSelected);
 		MenuButtons.add(restartButton);
 		restartButton.b.addActionListener(new ActionListener() {
 
@@ -204,12 +223,10 @@ public class GameOverScreen {
 				lpane.setVisible(false);
 				frame.getContentPane().setLayout(new GridLayout(1, 1));
 				frame.getContentPane().remove(lpane);
-				frame.removeKeyListener(Keys);
+				frame.removeKeyListener(Keys2);
 				IsRestarting = true;
 			}
 		});
-
-
 
 		// ExitButton - NOT USED ANYMORE
 		exitButton = new MenuButtons(exitButtonPlain, exitButtonSelected);
@@ -220,22 +237,22 @@ public class GameOverScreen {
 				lpane.setVisible(false);
 				frame.getContentPane().setLayout(new GridLayout(1, 1));
 				frame.getContentPane().remove(lpane);
-				frame.removeKeyListener(Keys);
 				IsStarting = true;
 			}
 		});
 
 		// Keyboard/Joystick support
-		startButton.b.addKeyListener(Keys);
-		restartButton.b.addKeyListener(Keys);
-		exitButton.b.addKeyListener(Keys);
-		startButton.b.requestFocus();
-		frame.addKeyListener(Keys);
+		startButton.b.addKeyListener(Keys2);
+		restartButton.b.addKeyListener(Keys2);
+		exitButton.b.addKeyListener(Keys2);
+		frame.addKeyListener(Keys2);
 
 		//
-		// Buttons.add(startButton.b);
 		Buttons.add(restartButton.b);
 		Buttons.add(exitButton.b);
+		
+		frame.requestFocus();
+		exitButton.setSelected(true);
 
 		Buttons.setBounds(width / 2 - 150, (int) (height * 0.7), 300, 180);
 		Buttons.setOpaque(false);
@@ -264,7 +281,6 @@ public class GameOverScreen {
 		frame.setVisible(true);
 	}
 
-	
 	/* Menu Button Methods */
 	/**
 	 * Called from the TitleUpdate() in gamecontroller To select the buttons
@@ -274,23 +290,23 @@ public class GameOverScreen {
 			int JOYSTICK_Y) {
 		float Y;
 		boolean ButtonCheck = false;
-		
-		try{
+
+		try {
 			joystick.poll();
+		} catch (Exception e) {
 		}
-		catch(Exception e){}
 
 		// X = joystick.getAxisValue(JOYSTICK_X);
-		Y=0;
-		try{
+		Y = 0;
+		try {
 			Y = joystick.getAxisValue(JOYSTICK_Y);
-		}catch(Exception e){
+		} catch (Exception e) {
 		}
-		
+
 		System.out.println(Math.abs(Y));
 
 		if (Math.abs(Y) > 0.5) {
-			System.out.println(""+currentButton);
+			System.out.println("" + currentButton);
 			if (Y < 0 && MovingDown == false) {
 				MovingDown = true;
 				MoveUp();
@@ -308,12 +324,11 @@ public class GameOverScreen {
 				ButtonCheck = true;
 			}
 		}
-		
-		if((ButtonCheck == false) && (ButtonPressed == true)){
+
+		if ((ButtonCheck == false) && (ButtonPressed == true)) {
 			UseButtons();
 			ButtonPressed = false;
-		}
-		else if(ButtonCheck == true){
+		} else if (ButtonCheck == true) {
 			ButtonPressed = true;
 		}
 	}
@@ -336,7 +351,7 @@ public class GameOverScreen {
 		currentButton += -1;
 
 		if (currentButton < 0) {
-			currentButton = MenuButtons.size()-1;
+			currentButton = MenuButtons.size() - 1;
 		}
 		updateButtons();
 	}

@@ -337,9 +337,6 @@ private void gameOverUpdate(double deltaTime)
 
     // Draw the Zappers.
     updateObjectList(world.getObjectList(), deltaTime, scrollDistance);
-    
-    // Replace this with setting the player invisible and disabling particles
-    //this.player.setLocation(1500, 0); // put the player offscreen
   }
 
   /**
@@ -507,8 +504,8 @@ private void gameOverUpdate(double deltaTime)
 		}
 		
 		if((ButtonCheck == false) && (ButtonPressed == true)){
-			this.showHighScores();
 			ButtonPressed = false;
+			this.showHighScores();
 		}
 		else if(ButtonCheck == true){
 			ButtonPressed = true;
@@ -790,13 +787,13 @@ private void highscoreUpdate(){
   
   private void showGameOver(){
 	  gameState = GameState.GAMEOVER;
-	  gameOver = frame.showGameOver();
+	  frame.showGameOver();
 	  this.player.die(true);
   }
   
   private void showHighScores(){
 	  gameState = GameState.HIGHSCORE;
-	  frame.showHighScores();
+	  gameOver = frame.showHighScores();
   }
 
   /**

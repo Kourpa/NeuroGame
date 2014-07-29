@@ -200,17 +200,17 @@ public User getUser(){
     return title;
   }
   
-  public GameOverScreen showGameOver(){	  
+  public void showGameOver(){	  
 	  //drawPanel.setVisible(false);
-	  gameOver = new GameOverScreen(this,this.currentUser);
-	  drawPanel.setGameOver(gameOver);
-	  
+	  drawPanel.setGameOver(null);
 	  mode = GameState.GAMEOVER;
-	  return gameOver;
   }
 
-  public void showHighScores(){
-	drawPanel.setVisible(false);
+  public GameOverScreen showHighScores(){
+	  gameOver = new GameOverScreen(this,this.currentUser);
+	  drawPanel.setGameOver(gameOver);
+	  drawPanel.setVisible(false);
+	  return gameOver;
   }
   
   private void resizeEvent()
