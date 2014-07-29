@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 
 import neurogame.level.EnumChunkType;
-import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.QuickSet;
@@ -25,7 +24,7 @@ public class Player extends GameObject
 
   private boolean invulnerable = false;
 
-  private int wallCollisionCountInCurrentChunk;
+  private int collisionCountInCurrentChunk;
  
   private double timeOfLastWallCollision;
   private double gameScore;
@@ -59,7 +58,7 @@ public class Player extends GameObject
   public void initGame()
   {
     health = Library.HEALTH_MAX;
-    wallCollisionCountInCurrentChunk = 0;
+    collisionCountInCurrentChunk = 0;
     gameScore = 0;
     gameTotalSeconds = 0;
     timeOfLastWallCollision = 0;
@@ -131,7 +130,11 @@ public class Player extends GameObject
       lastVelocityX = 0;
       lastVelocityY = -lastVelocityY;
       
-      loseHealth(getX(), getY(), Library.DAMAGE_PER_WALL_HIT);
+      if (gameTotalSeconds - timeOfLastWallCollision > 0.25)
+      {
+        loseHealth(getX(), getY(), Library.DAMAGE_PER_WALL_HIT);
+        timeOfLastWallCollision = gameTotalSeconds;
+      }
       
       double stepSize = getHeight()/10.0;
       if (collisionLocation == EnumCollisionType.WALL_BOTTOM) stepSize = -stepSize;
@@ -195,14 +198,11 @@ public class Player extends GameObject
   public void loseHealth(double hitX, double hitY, int damage)
   {
     if (invulnerable) return;
-    if (gameTotalSeconds - timeOfLastWallCollision < 0.25) return;
-    
-    timeOfLastWallCollision = gameTotalSeconds;
     
     health -= damage;
     if (health < 0) health = 0;
 
-    wallCollisionCountInCurrentChunk++;
+    collisionCountInCurrentChunk++;
     
     skillProbabilitySpawnCoinPerSec += 0.05;
     if (skillProbabilitySpawnCoinPerSec > Star.MAX_PROBALITY_SPAWN_PER_SEC)
@@ -242,7 +242,7 @@ public class Player extends GameObject
     EnumChunkType pathType = world.getRightChunkType();
    
     
-    double pathHeightBonus = 1.0 + 5*Math.max(0, pathType.getDefaultOpeningHeight() - world.getCurrentChunkHeight());
+    double pathHeightBonus = 1.0 + 5*Math.max(0, pathType.getDefaultOpeningHeight() - world.getSkillBasedChunkGapHeight());
     //System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
     
     int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
@@ -328,12 +328,12 @@ public class Player extends GameObject
 
   public void resetCollisionCountInCurrentChunk()
   {
-    wallCollisionCountInCurrentChunk = 0;
+    collisionCountInCurrentChunk = 0;
   }
 
   public int getCollisionCountInCurrentChunk()
   {
-    return wallCollisionCountInCurrentChunk;
+    return collisionCountInCurrentChunk;
   }
 
   public void addScore(double score)

@@ -12,7 +12,6 @@ public class User implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String Name;
 	private ArrayList<Long> HighScores = new ArrayList<Long>();
-	private String path;
 	
 	public User(String initName){
 		Name = initName;

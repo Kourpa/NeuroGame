@@ -15,7 +15,6 @@ import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Player;
 import neurogame.level.PathVertex;
 import neurogame.level.World;
-import neurogame.library.Library;
 public class Logger
 {
  

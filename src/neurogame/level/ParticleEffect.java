@@ -14,7 +14,6 @@ public class ParticleEffect extends GameObject
 
   private final Particle[] particles;
   private GravitationalMass gmass;
-  private GameObject obj;
   private double scrollDistance;
   private float alpha;
 
@@ -29,7 +28,6 @@ public class ParticleEffect extends GameObject
   {
     super(GameObjectType.PARTICLE, x, y, world);
 
-    this.obj = obj;
 
     x = Library.worldUnitToScreen(x);
     y = Library.worldUnitToScreen(y - .025);

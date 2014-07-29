@@ -15,7 +15,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -57,7 +56,6 @@ import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 /**
  * The title screen for NeuroGame.
@@ -95,7 +93,7 @@ public class TitleScreen {
 	private static JTextField nameInputField;
 	private JComboBox<String> userList = new JComboBox<String>(
 			Library.getUserNames());
-	private JComboBox<Integer> joystickIndexList = new JComboBox<Integer>();
+	//private JComboBox<Integer> joystickIndexList = new JComboBox<Integer>();
 
 	private String selected;
 
@@ -706,8 +704,7 @@ public class TitleScreen {
 		controllerList.setForeground(Color.WHITE);
 		
 		// Index
-		Integer[] controlOptions = {1,2,3};
-		joystickIndexList = new JComboBox<Integer>(controlOptions);
+		//Integer[] controlOptions = {1,2,3};
 
 		// Joysticks
 		JPanel message = new JPanel();
