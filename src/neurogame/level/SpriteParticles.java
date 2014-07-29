@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Creates a List of pixel objects to avoid going through the image multiple times.

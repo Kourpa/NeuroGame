@@ -12,7 +12,6 @@ package neurogame.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -28,20 +27,15 @@ import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import neurogame.library.Library;
 import neurogame.library.User;
 
 import org.lwjgl.input.Controller;
-import org.lwjgl.input.Controllers;
 
 /**
  * The title screen for NeuroGame.

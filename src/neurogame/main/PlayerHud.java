@@ -6,7 +6,6 @@ import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +34,7 @@ public class PlayerHud {
 	boolean isDead = false;
 
 	private static final Color BLUE = new Color(100, 151, 255);
-	private final Font FONT30, FONT75;
+	private final Font FONT30;
 
 	Rectangle area;
 
@@ -59,7 +58,6 @@ public class PlayerHud {
 		}
 
 		FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 30);
-		FONT75 = new Font("Karmatic Arcade", Font.PLAIN, 75);
 
 		MissleIcon = sprites.get("missileIcon");
 	}

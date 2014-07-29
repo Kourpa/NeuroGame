@@ -23,6 +23,7 @@ public class Enemy extends GameObject
   
   private int enemyIdx;
   private boolean enemyFollowStoppedFollowing = false;
+  private static double playerHeightAtLastSpawn = -77;
   
   private Vector2 velocity = new Vector2();
   
@@ -236,11 +237,19 @@ public class Enemy extends GameObject
   public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
     GameObjectType type = myChunk.getChunkType().getEnemyType();
+    Player player =  world.getPlayer();
     if (type == null) return 0;
-    int maxEnemy = world.getPlayer().getMaxEnemy(type);
+    int maxEnemy = player.getMaxEnemy(type);
     
     if (activeEnemyCount >= maxEnemy) return 0;
-     
+    
+    if (type == GameObjectType.ENEMY_STRAIGHT) 
+    { if ((activeEnemyCount > 1) && (Math.abs(player.getY() - playerHeightAtLastSpawn) < player.getHeight())) 
+      { return 0;
+      } 
+    }
+    
+    
     double r = Library.RANDOM.nextDouble();
     
     if (r > (0.75 * deltaTime)*(maxEnemy-activeEnemyCount)) return 0;
@@ -256,13 +265,14 @@ public class Enemy extends GameObject
     double rangeY = (vertex.getBottomY() - vertex.getTopY()) - type.getHeight();
     if (rangeY < 0.01) return 0;
     
-    double y = world.getPlayer().getY() + type.getHeight()*(Library.RANDOM.nextDouble() - Library.RANDOM.nextDouble());
+    double y = player.getY() + type.getHeight()*(Library.RANDOM.nextDouble() - Library.RANDOM.nextDouble());
     if ((y <= vertex.getTopY()) || y > vertex.getBottomY() - type.getHeight()) y = vertex.getCenter()-type.getHeight()/2;
 
     
     Enemy myEnemy = new Enemy(type, x, y, type.getWidth(), type.getHeight(), type.getName(), world);
    
     world.addGameObject(myEnemy);
+    playerHeightAtLastSpawn = player.getY();
     activeEnemyCount++;
     //System.out.println("   ===> activeEnemyCount=" + activeEnemyCount);
 

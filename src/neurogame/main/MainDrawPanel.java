@@ -22,7 +22,6 @@ import neurogame.main.GameController.GameState;
 public class MainDrawPanel extends JPanel
 {	
   private TitleScreen title;
-  private GameOverScreen gameOver;
   private Graphics2D canvasObjectLayer;
   private BufferedImage imageObjectLayer;
 

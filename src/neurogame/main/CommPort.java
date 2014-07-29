@@ -2,8 +2,6 @@ package neurogame.main;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.ParallelPort;
-import gnu.io.PortInUseException;
-import gnu.io.RXTXPort;
 
 import java.io.IOException;
 import java.io.OutputStream;

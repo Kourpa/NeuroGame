@@ -25,7 +25,6 @@ import neurogame.gameplay.GameObject;
 import neurogame.gameplay.PowerUp;
 import neurogame.level.World;
 import neurogame.library.Library;
-import neurogame.library.SpriteMap;
 import neurogame.library.User;
 import neurogame.main.GameController.GameState;
 
@@ -53,8 +52,6 @@ public class NeuroFrame extends JFrame
   private int score;
   private int coins;
   private int health;
-
-  private SpriteMap sprites;
 
   private Container contentPane;
 
@@ -92,7 +89,6 @@ public class NeuroFrame extends JFrame
 
     resizeHelper();
 
-    sprites = Library.getSprites();
 
 
 

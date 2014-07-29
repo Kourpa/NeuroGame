@@ -25,7 +25,6 @@ import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -44,7 +43,7 @@ public final class Library
   public static final String NEWLINE = System.getProperty("line.separator");
   public static final String SEPARATOR = System.getProperty("file.separator");
 
-  public static final String GAME_TITLE = "Escape from Asteroid Axion v2014-11-10";
+  public static final String GAME_TITLE = "Escape from Asteroid Axion v2014-07-28";
 
   public static final int MIN_FRAME_MILLISEC = 10;
   public static final String ARGS_REGEX = "\\-[hdDlLfFwsSgG]+";

@@ -11,7 +11,6 @@
 package neurogame.main;
 
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +30,6 @@ import neurogame.level.World;
 import neurogame.library.KeyBinds;
 import neurogame.library.Library;
 import neurogame.library.PlayerControls;
-import neurogame.library.SpriteMap;
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
@@ -670,7 +668,7 @@ private void highscoreUpdate(){
 	  if (gameOver != null)
 	    {	    	
 	    	if(joystick!=null){
-	    		gameOver.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
+	    		gameOver.updateJoystick(joystick, JOYSTICK_X, JOYSTICK_Y);
 	    	}
 	    	
 		  if (gameOver.IsStarting)
@@ -699,7 +697,7 @@ private void highscoreUpdate(){
 	  if (oddball != null)
 	    {	    	
 	    	if(joystick!=null){
-	    		oddball.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
+	    		oddball.updateJoystick(joystick, JOYSTICK_X, JOYSTICK_Y);
 	    	}
 	    }
   }
@@ -715,7 +713,7 @@ private void highscoreUpdate(){
     	SelectJoystick(title.GetSelectedJoystick(), title.GetSelectedJoystickIndex());
     	
     	if(joystick!=null && useJoystick==true){
-    		title.updateJoystick(joystick, this.JOYSTICK_X, this.JOYSTICK_Y);
+    		title.updateJoystick(joystick, JOYSTICK_X, JOYSTICK_Y);
     	}
 
       if (title.IsStarting)

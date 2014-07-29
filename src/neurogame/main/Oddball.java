@@ -32,7 +32,7 @@ public class Oddball // implements KeyListener
   private static final byte TRIGGER_DONE     = 0x1;
   
   private CommPort parallelPort;
-  private static final boolean SEND_TRIGGERS = true;
+  private static final boolean SEND_TRIGGERS = false;
   
   
   private long time;
@@ -43,9 +43,9 @@ public class Oddball // implements KeyListener
   private boolean showCount;
   private final ArrayList<Screen> options;
   private Screen currentScreen;
-  private BufferedImage badImage, goodImage, waitImage, welcomeImage, instructionImage, finishedImage;
+  private BufferedImage badImage, goodImage, waitImage, instructionImage, finishedImage;
 
-  private long startTime, screenTime, waitTime, InstructionTime;
+  private long startTime, screenTime, waitTime;
   private boolean wait, instructions;
   private int currentImageNum = 0;
   
@@ -108,7 +108,6 @@ public class Oddball // implements KeyListener
     startTime = System.currentTimeMillis();
     screenTime = 800 + Library.RANDOM.nextInt(400);
     waitTime = 1600 + Library.RANDOM.nextInt(400);
-    InstructionTime = 2000;
     time = startTime;
     options = new ArrayList<>();
 

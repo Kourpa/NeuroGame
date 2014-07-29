@@ -10,7 +10,6 @@ import neurogame.gameplay.Star;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.EnumCollisionType;
 import neurogame.gameplay.GameObject;
-import neurogame.gameplay.InfoMessage;
 import neurogame.gameplay.Player;
 import neurogame.gameplay.PowerUp;
 import neurogame.library.Library;
@@ -28,7 +27,7 @@ public class World
   private double chunkScolledDistance = 0; // used to determine when to generate
                                            // new chunks
 
-  private double skillBasedChunkGapHeight;
+  private double[] skillBasedChunkGapHeight;
 
   private CrystalGrower crystalWalls; // fractals!
 
@@ -43,16 +42,26 @@ public class World
     frameCountSinceLastChunkTypeChange = 0;
 
     player = new Player(0.1, 1 / 2.0, this);
+    
     gameObjectList.clear();
     gameObjectList.add(player);
     objectWaitList.clear();
+    
+    
+    skillBasedChunkGapHeight = new double[EnumChunkType.SIZE];
+    
 
-    chunkLeft = new Chunk(null, windowWidth, EnumChunkType.FLAT,
-        EnumChunkType.FLAT.getDefaultOpeningHeight());
 
-    skillBasedChunkGapHeight = EnumChunkType.SMOOTH.getDefaultOpeningHeight();
-    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.CURVED,
-        skillBasedChunkGapHeight);
+    for (EnumChunkType type : EnumChunkType.values())
+    {
+      skillBasedChunkGapHeight[type.ordinal()] = type.getDefaultOpeningHeight();
+    }
+    
+
+    chunkLeft = new Chunk(null, windowWidth, EnumChunkType.FLAT, EnumChunkType.FLAT.getDefaultOpeningHeight());
+
+    double gapHeight = skillBasedChunkGapHeight[EnumChunkType.SMOOTH.ordinal()];
+    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SMOOTH, gapHeight);
     
 
     crystalWalls = new CrystalGrower(chunkLeft, chunkRight);
@@ -96,52 +105,39 @@ public class World
   {
     
     EnumChunkType pathType = chunkRight.getChunkType();
-    //int chunkBonusScore = (int)(100*Math.max(0, pathType.getDefaultOpeningHeight() - skillBasedChunkGapHeight)) +
-    //    player.getMaxEnemy(pathType)*25;
-    
-    //player.addScore(chunkBonusScore);
-    //InfoMessage scoreInfo = new InfoMessage(player.getCenterX(), player.getCenterY(), this, String.valueOf(chunkBonusScore));
-    //addGameObject(scoreInfo);
-    
     
     chunkLeft = chunkRight;
-
-    if (player.getCollisionCountInCurrentChunk() == 0)
-    {
-      skillBasedChunkGapHeight = skillBasedChunkGapHeight * 0.9;
-      if (skillBasedChunkGapHeight < player.getHeight() * 3.0) skillBasedChunkGapHeight = player
-          .getHeight() * 3.0;
-    }
-    else if (player.getCollisionCountInCurrentChunk() > 3)
-    {
-      skillBasedChunkGapHeight = skillBasedChunkGapHeight * 1.1;
-      if (skillBasedChunkGapHeight > EnumChunkType.FLAT
-          .getDefaultOpeningHeight())
-      {
-        skillBasedChunkGapHeight = EnumChunkType.FLAT
-            .getDefaultOpeningHeight();
-      }
-    }
-    player.resetCollisionCountInCurrentChunk();
-
-    
-    //System.out.println("frameCountSinceLastChunkTypeChange="+frameCountSinceLastChunkTypeChange);
-    
+   
     if ((frameCountSinceLastChunkTypeChange > 5) && (Library.RANDOM.nextInt(30) < frameCountSinceLastChunkTypeChange))
     {
       pathType = EnumChunkType.getRandomType();
 
       if (pathType != chunkRight.getChunkType())
-      { // reset for new chunkType;
-        skillBasedChunkGapHeight = pathType.getDefaultOpeningHeight();
+      { 
         frameCountSinceLastChunkTypeChange = 0;
       }
     }
     
+    double gapHeight = skillBasedChunkGapHeight[pathType.ordinal()];
+
+    if (player.getCollisionCountInCurrentChunk() == 0)
+    {
+      gapHeight = gapHeight * 0.9;
+      if (gapHeight < pathType.getMinimumOpeningHeight()) gapHeight = pathType.getMinimumOpeningHeight();
+    }
+    else if (player.getCollisionCountInCurrentChunk() >= 2)
+    {
+      gapHeight = gapHeight * 1.1;
+      if (gapHeight > pathType.getDefaultOpeningHeight()) gapHeight = pathType.getDefaultOpeningHeight();
+    }
+    
+    skillBasedChunkGapHeight[pathType.ordinal()] = gapHeight;
+    player.resetCollisionCountInCurrentChunk();
+    
+    
     if (pathType == chunkRight.getChunkType()) frameCountSinceLastChunkTypeChange++;
 
-    chunkRight = new Chunk(chunkLeft, windowWidth, pathType,
-        skillBasedChunkGapHeight);
+    chunkRight = new Chunk(chunkLeft, windowWidth, pathType, gapHeight);
 
     chunkScolledDistance = 0;
     Library.leftEdgeOfWorld = chunkLeft.getStartX();
@@ -201,9 +197,10 @@ public class World
     return Library.leftEdgeOfWorld + windowWidth;
   }
   
-  public double getCurrentChunkHeight()
+  public double getSkillBasedChunkGapHeight()
   {
-    return skillBasedChunkGapHeight;
+    EnumChunkType pathType = chunkRight.getChunkType();
+    return skillBasedChunkGapHeight[pathType.ordinal()];
   }
   
   

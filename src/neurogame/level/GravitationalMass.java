@@ -1,12 +1,10 @@
 package neurogame.level;
 
-import neurogame.gameplay.GameObjectType;
 
 /**
  * Created by kourpa on 7/8/14.
  */
 public class GravitationalMass {
-  private GameObjectType type;
   private double x, y, xpull, ypull;
   private boolean alive;
 
