@@ -22,6 +22,8 @@ public class PlayerHud {
 	private Color healthPaintFull = new Color(113, 188, 120);
 	private Color healthPaintDamaged = Color.ORANGE;
 	private Color healthPaintNearDeath = Color.RED;
+	
+	private Long Highscore;
 
 	private BufferedImage MissleIcon;
 	Rectangle rect = new Rectangle(0, 0, 100, 50);
@@ -33,8 +35,9 @@ public class PlayerHud {
 	boolean firstTime = true;
 	boolean isDead = false;
 
-	private static final Color BLUE = new Color(100, 151, 255);
-	private final Font FONT30;
+	private static final Color BLUE = new Color(100, 191, 255);
+	private Font FONT30;
+	private Font FONT70;
 
 	Rectangle area;
 
@@ -43,7 +46,13 @@ public class PlayerHud {
 
 		windowWidth = frame.getWidth();
 		windowHeight = frame.getHeight();
-
+		
+		loadFont();
+		loadBestScore();
+		MissleIcon = sprites.get("missileIcon");
+	}
+	
+	private void loadFont(){
 		String path = System.getProperty("user.dir");
 		path += "/resources/fonts/";
 
@@ -57,56 +66,75 @@ public class PlayerHud {
 			System.out.println("Error Loading Font - PlayerHUD.java");
 		}
 
-		FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 30);
-
-		MissleIcon = sprites.get("missileIcon");
+		FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 23);
+		FONT70 = new Font("Karmatic Arcade", Font.PLAIN, 70);
 	}
 
-	public void updateHUD(Graphics2D canvasObjectLayer, NeuroFrame frame,
-			int ammo) {
-
-		canvasObjectLayer.setFont(FONT30);
-		canvasObjectLayer.setColor(Color.BLACK);
-
-		canvasObjectLayer.setColor(Color.WHITE);
-		canvasObjectLayer.drawString("Score: ",
-				(int) (windowWidth * 0.5 - 100), (int) (windowHeight * 0.04));
-
-		canvasObjectLayer.setColor(BLUE);
-		canvasObjectLayer.drawString("" + frame.getScore(),
-				(int) (windowWidth * 0.5 + 100), (int) (windowHeight * 0.04));
-
-		// Ammo
-		for (int i = 0; i < ammo; i++) {
-			if(i<10){
-			canvasObjectLayer.drawImage(MissleIcon, null,
-					(int) (windowWidth * 0.8 + MissleIcon.getWidth()
-									* (i%10) * 1.1), (int) (windowHeight * 0.015));
-			}
-			else{
+	private void loadBestScore(){
+		long score;
+		Highscore = Library.getBestHighScores(1)[0];
+		score = Long.parseLong(Highscore.toString().substring(6, Highscore.toString().length()));
+		Highscore = score;
+	}
+	
+	public void updateHUD(Graphics2D canvasObjectLayer, NeuroFrame frame, int ammo) {
+		String highscoreMessage = "Highscore:  "+Highscore; 
+		String scoreMessage = "Score: "+frame.getScore();
+		
+		if (!isDead) {
+			
+			// Score
+			canvasObjectLayer.setFont(FONT30);
+			canvasObjectLayer.setColor(Color.WHITE);
+			canvasObjectLayer.drawString("Score: ",
+					(int) (windowWidth * 0.5 - 75 - scoreMessage.length()/2), 
+					(int) (windowHeight * 0.08));
+	
+			canvasObjectLayer.setColor(BLUE);
+			canvasObjectLayer.drawString("" + frame.getScore(),
+					(int) (windowWidth * 0.5 + 100 - scoreMessage.length()/2), 
+					(int) (windowHeight * 0.08));
+			
+			canvasObjectLayer.setFont(FONT30);
+			canvasObjectLayer.setColor(Color.WHITE);
+			canvasObjectLayer.drawString("Highscore: ",
+					(int) (windowWidth * 0.5 - 100 - highscoreMessage.length()/2), 
+					(int) (windowHeight * 0.04));
+	
+			canvasObjectLayer.setColor(BLUE);
+			canvasObjectLayer.drawString("" + Highscore,
+					(int) (windowWidth * 0.5 + 100 - highscoreMessage.length()/2), 
+					(int) (windowHeight * 0.04));
+	
+			// Ammo
+			for (int i = 0; i < ammo; i++) {
+				if(i<10){
 				canvasObjectLayer.drawImage(MissleIcon, null,
-						(int) (windowWidth * 0.8 + MissleIcon.getWidth()
-										* (i%10) * 1.1), (int) (windowHeight * 0.055));
+						(int) (windowWidth * 0.8 + MissleIcon.getWidth() * (i%10) * 1.1), 
+						(int) (windowHeight * 0.015));
+				}
+				else{
+					canvasObjectLayer.drawImage(MissleIcon, null,
+							(int) (windowWidth * 0.8 + MissleIcon.getWidth() * (i%10) * 1.1), 
+							(int) (windowHeight * 0.055));
+				}
 			}
+			
+			// Health bar 
+			drawHealth(canvasObjectLayer, frame);
 		}
-
-		//
-		drawHealth(canvasObjectLayer, frame);
 
 		// Show game over
 		if (isDead) {
-			canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN,
-					70));
-			canvasObjectLayer.setColor(new Color(255, 255, 255));
-			canvasObjectLayer
-					.drawString("GAME OVER", (int) (windowWidth * 0.5 - 225),
-							(int) (windowHeight * 0.5));
+			canvasObjectLayer.setFont(FONT70);
+			canvasObjectLayer.setColor(Color.white);
+			canvasObjectLayer.drawString("GAME OVER", 
+						(int) (windowWidth * 0.5 - 225),
+						(int) (windowHeight * 0.5));
 
-			canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN,
-					25));
-			canvasObjectLayer.setColor(new Color(100, 151, 255));
-			canvasObjectLayer
-					.drawString("[ Press any Button ]",
+			canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN,25));
+			canvasObjectLayer.setColor(BLUE);
+			canvasObjectLayer.drawString("[ Press any Button ]",
 							(int) (windowWidth * 0.5 - 125),
 							(int) (windowHeight * 0.6));
 		}
@@ -121,7 +149,6 @@ public class PlayerHud {
 	 */
 	public void drawHealth(Graphics2D canvasObjectLayer, NeuroFrame frame) {
 		int health = frame.getHealth();
-
 		// Color outline = Color.GREEN;
 
 		if (health >= 0.9 * Library.HEALTH_MAX) {

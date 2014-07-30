@@ -204,14 +204,10 @@ public class GameOverScreen {
 		Buttons.setBackground(Color.BLACK);
 		Buttons.setLayout(new BoxLayout(Buttons, 1));
 
-		// Back to Main menu Button
-		startButton = new MenuButtons(startButtonPlain, startButtonSelected);
-
 		// RestartButton
-		restartButton = new MenuButtons(restartButtonPlain,restartButtonSelected);
+		restartButton = new MenuButtons(" Restart Game",27);//restartButtonPlain,restartButtonSelected);
 		MenuButtons.add(restartButton);
 		restartButton.b.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
 				background.setVisible(false);
 				lpane.setVisible(false);
@@ -222,8 +218,8 @@ public class GameOverScreen {
 			}
 		});
 
-		// ExitButton - NOT USED ANYMORE
-		exitButton = new MenuButtons(exitButtonPlain, exitButtonSelected);
+		// MainMenu
+		exitButton = new MenuButtons("Main Menu",27);
 		MenuButtons.add(0, exitButton);
 		exitButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -236,7 +232,6 @@ public class GameOverScreen {
 		});
 
 		// Keyboard/Joystick support
-		startButton.b.addKeyListener(Keys2);
 		restartButton.b.addKeyListener(Keys2);
 		exitButton.b.addKeyListener(Keys2);
 		frame.addKeyListener(Keys2);
@@ -248,7 +243,7 @@ public class GameOverScreen {
 		frame.requestFocus();
 		exitButton.setSelected(true);
 
-		Buttons.setBounds(width / 2 - 150, (int) (height * 0.7), 300, 180);
+		Buttons.setBounds(width / 2 - 150, (int) (height * 0.7), 600, 180);
 		Buttons.setOpaque(false);
 		Buttons.setBackground(Color.getColor("TRANSLUCENT"));
 

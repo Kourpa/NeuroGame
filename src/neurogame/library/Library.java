@@ -208,7 +208,7 @@ public final class Library
 		
 		if (users.size() > 0) {
 			for (int i = 0; i < users.size(); i++) {
-				userScores = users.get(i).getHighScores(5);
+				userScores = users.get(i).getHighScores(amount);
 				
 				for (int k = 0; k < userScores.length; k++) {
 					scores.add(userScores[k]);
@@ -218,7 +218,7 @@ public final class Library
 		
 		Collections.sort(scores);
 		Collections.reverse(scores);
-		return scores.toArray(new Long[0]);
+		return scores.subList(0, amount).toArray(new Long[0]);
 	}
 
 

@@ -200,8 +200,7 @@ public class TitleScreen {
 		background.add(img);
 
 		/* Buttons */
-		startButtonProfile = new MenuButtons(startButtonPlain,
-				startButtonSelected);
+		startButtonProfile = new MenuButtons("Start Game",23);//startButtonPlain,startButtonSelected);
 		MenuButtons.add(startButtonProfile);
 		startButtonProfile.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -227,7 +226,7 @@ public class TitleScreen {
 		});
 
 		// Back Button
-		backButtonProfile = new MenuButtons(backButtonPlain, backButtonSelected);
+		backButtonProfile = new MenuButtons("Back",23);//backButtonPlain, backButtonSelected);
 		MenuButtons.add(backButtonProfile);
 		backButtonProfile.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -245,7 +244,7 @@ public class TitleScreen {
 		backArea.setOpaque(false);
 
 		backArea.setLayout(new BoxLayout(backArea, 1));
-		backArea.setBounds((int) (width * 0.255) - 110, (int) (height * 0.81),
+		backArea.setBounds((int) (width * 0.255) - 110, (int) (height * 0.82),
 				220, 50);
 
 		backArea.add("North", backButtonProfile.b);
@@ -256,7 +255,7 @@ public class TitleScreen {
 		startArea.setOpaque(false);
 
 		startArea.setLayout(new BoxLayout(startArea, 1));
-		startArea.setBounds((int) (width * 0.715) - 110, (int) (height * 0.81),
+		startArea.setBounds((int) (width * 0.715) - 110, (int) (height * 0.82),
 				230, 50);
 		startArea.add("North", startButtonProfile.b);
 		
@@ -286,10 +285,8 @@ public class TitleScreen {
 		text2.setForeground(Color.WHITE);
 		text2.setFont(new Font("Consolas", Font.BOLD, 32));
 
-		newUserButton = new MenuButtons(newUserButtonPlain,
-				newUserButtonSelected);
+		newUserButton = new MenuButtons("New User",20);//newUserButtonPlain,newUserButtonSelected);
 		newUserButton.b.setPreferredSize(new Dimension(195, 80));
-
 		newUserButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CreateNewUser(frame);
@@ -368,7 +365,7 @@ public class TitleScreen {
 		test.setBackground(Color.WHITE);
 
 		// Start Button
-		startButton = new MenuButtons(startButtonPlain, startButtonSelected);
+		startButton = new MenuButtons("Start Game");//startButtonPlain, startButtonSelected);
 		MenuButtons.add(0, startButton);
 		startButton.setSelected(true);
 		startButton.b.addActionListener(new ActionListener() {
@@ -382,7 +379,7 @@ public class TitleScreen {
 		});
 
 		// Oddball button
-		configButton = new MenuButtons(configButtonPlain, configButtonSelected);
+		configButton = new MenuButtons("Visual Test");//configButtonPlain, configButtonSelected);
 		MenuButtons.add(configButton);
 		configButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -405,11 +402,11 @@ public class TitleScreen {
 		});
 
 		// Rewind button
-		rewindButton = new MenuButtons(rewindButtonPlain, rewindButtonSelected);
+		rewindButton = new MenuButtons("Rewind");//rewindButtonPlain, rewindButtonSelected);
 		MenuButtons.add(rewindButton);
 
 		// Exit button
-		exitButton = new MenuButtons(exitButtonPlain, exitButtonSelected);
+		exitButton = new MenuButtons("Exit");//exitButtonPlain, exitButtonSelected);
 		MenuButtons.add(exitButton);
 		exitButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -432,7 +429,7 @@ public class TitleScreen {
 		test.add("South", exitButton.b);
 
 		test.setBackground(Color.BLACK);
-		test.setBounds(width / 2 - 150, height / 2, 300, 200);
+		test.setBounds(width / 2 - 150, height / 2, 300, 300);
 		test.setOpaque(true);
 
 		background.setBackground(Color.BLACK);
