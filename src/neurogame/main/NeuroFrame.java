@@ -66,7 +66,7 @@ public class NeuroFrame extends JFrame
     System.out.println("NeuroFrame(): Enter");
 
 
-    this.setResizable(false);
+    this.setResizable(true);
     this.setTitle(Library.GAME_TITLE);
 
     Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
