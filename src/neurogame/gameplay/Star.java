@@ -89,9 +89,6 @@ public class Star extends GameObject
     
     if (!isAlive()) return;
     
-
-    // Animation.
-    frameCounter++;
   }
   
   public void die(boolean showDeathEffect)
@@ -106,10 +103,12 @@ public class Star extends GameObject
 
   public void render(Graphics2D g)
   {
+
+    // Animation.
+    frameCounter++;
     if (frameCounter % 2 == 0)
     { spriteY = (spriteY + spriteHeight) % spriteSheetHeight;
     }
-    
 
     int xx = Library.worldPosXToScreen(getX());
     int yy = Library.worldPosYToScreen(getY());
