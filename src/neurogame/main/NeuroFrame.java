@@ -87,7 +87,7 @@ public class NeuroFrame extends JFrame
     coins = 0;
     health = 0;
 
-    resizeHelper();
+    resizeEvent();
 
 
 
@@ -211,18 +211,6 @@ public User getUser(){
   
   private void resizeEvent()
   {
-    if (mode == GameState.INITIALIZING) return;
-    resizeHelper();
-  }
-
-  /**
-   * A helper method that gets called when the window is resized, which releases
-   * the old buffered image and generates a new one with the new window
-   * dimensions.
-   */
-  private void resizeHelper()
-  {
-
     boolean sizeIsOkay = true;
     int outsideFrameWidth = this.getWidth();
     int outsideFrameHeight = this.getHeight();
@@ -264,6 +252,7 @@ public User getUser(){
       Library.U_VALUE = windowPixelHeight;
 
       drawPanel.resizeHelper(windowPixelWidth, windowPixelHeight);
+      
     }
     else
     {
