@@ -11,11 +11,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import neurogame.level.World;
 import neurogame.library.Library;
 
 public class PlayerHud {
 	private int windowWidth;
 	private int windowHeight;
+	
+	private World world;
 
 	private Map<String, BufferedImage> sprites;
 
@@ -41,7 +44,8 @@ public class PlayerHud {
 
 	Rectangle area;
 
-	public PlayerHud(NeuroFrame frame) {
+	public PlayerHud(NeuroFrame frame, World world) {
+		this.world = world;
 		sprites = Library.getSprites();
 
 		windowWidth = frame.getWidth();
@@ -79,7 +83,7 @@ public class PlayerHud {
 	
 	public void updateHUD(Graphics2D canvasObjectLayer, NeuroFrame frame, int ammo) {
 		String highscoreMessage = "Highscore:  "+Highscore;
-		String scoreMessage = "Score: "+frame.getScore();
+		String scoreMessage = "Score: "+world.getPlayer().getScore();
 		
 		// Score
 		canvasObjectLayer.setFont(FONT30);
@@ -89,7 +93,7 @@ public class PlayerHud {
 				(int) (windowHeight * 0.08));
 
 		canvasObjectLayer.setColor(BLUE);
-		canvasObjectLayer.drawString("" + frame.getScore(),
+		canvasObjectLayer.drawString("" + world.getPlayer().getScore(),
 				(int) (windowWidth * 0.5 + 100 - scoreMessage.length()/2), 
 				(int) (windowHeight * 0.08));
 		
@@ -149,7 +153,7 @@ public class PlayerHud {
 	 * Draw the health display.
 	 */
 	public void drawHealth(Graphics2D canvasObjectLayer, NeuroFrame frame) {
-		int health = frame.getHealth();
+		int health = world.getPlayer().getHealth();
 		// Color outline = Color.GREEN;
 
 		if (health >= 0.9 * Library.HEALTH_MAX) {
@@ -162,7 +166,7 @@ public class PlayerHud {
 			// outline = Color.RED;
 		}
 
-		int width = (frame.getHealth() * 300) / Library.HEALTH_MAX;
+		int width = (world.getPlayer().getHealth() * 300) / Library.HEALTH_MAX;
 
 		canvasObjectLayer.fillRect(5, 5, width, 32);
 		// canvasObjectLayer.setPaint(outline);

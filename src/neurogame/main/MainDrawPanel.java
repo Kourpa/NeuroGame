@@ -9,7 +9,8 @@ import javax.swing.JPanel;
 
 import neurogame.gameplay.GameObject;
 import neurogame.level.World;
-import neurogame.main.GameController.GameState;
+import neurogame.main.NeuroGame.GameState;
+
 
 /**
  * The main game frame for NeuroGame.
@@ -32,6 +33,7 @@ public class MainDrawPanel extends JPanel
 
   private NeuroFrame frame;
   private World world;
+  private NeuroGame game;
   private PlayerHud HUD;
   
   /**
@@ -41,7 +43,7 @@ public class MainDrawPanel extends JPanel
   {
 	  System.out.println("MainGameDrawPanel(): Enter");
 	  this.frame = frame;
-	  
+	  this.game = game;
   }
 
 
@@ -58,7 +60,7 @@ public class MainDrawPanel extends JPanel
   public void setWorld(World world)
   {
     this.world = world;
-    HUD = new PlayerHud(frame);
+    HUD = new PlayerHud(frame, world);
     HUD.drawGameOver(false); // reset the HUD
   }
 
@@ -106,19 +108,12 @@ public void paintComponent(Graphics g)
 
   public void render(ArrayList<GameObject> gameObjList)
   {
-    if (frame.getGameMode() == GameState.INITIALIZING) return;
+    if (game.getGameState() == GameState.INITIALIZING) return;
 
     // System.out.println("NeuroFrame.render(): graphics=" + graphics);
-    if (frame.getGameMode() == GameState.TITLE)
-    {
-      canvasObjectLayer.drawImage(title.getImage(), 0, 0, null);
-    }
-    else
+    if((game.getGameState() == GameState.PLAYING) || (game.getGameState() == GameState.GAMEOVER))
     {
       world.render(canvasObjectLayer);
-      // canvasObjectLayer.setColor(Color.BLUE);
-      // canvasObjectLayer.fillRect(0, 0, windowWidth,windowHeight);
-      // System.out.println("windowWidth="+windowWidth+", windowHeight="+windowHeight);
 
       if (gameObjList != null)
       {
