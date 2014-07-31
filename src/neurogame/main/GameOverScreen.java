@@ -58,9 +58,9 @@ public class GameOverScreen {
 
 	private int currentButton;
 	private boolean MovingDown, MovingUp, ButtonPressed;
-	private ArrayList<MenuButtons> MenuButtons = new ArrayList<MenuButtons>();
+	private ArrayList<MenuButton> MenuButtons = new ArrayList<MenuButton>();
 
-	private static MenuButtons exitButton, restartButton, startButton;
+	private static MenuButton exitButton, restartButton, startButton;
 	private Map<String, BufferedImage> sprites;
 
 	private int width;
@@ -224,7 +224,7 @@ public class GameOverScreen {
 		besthighscores.add(globalJList);
 
 		// RestartButton
-		restartButton = new MenuButtons(" Restart", 22);// restartButtonPlain,restartButtonSelected);
+		restartButton = new MenuButton(" Restart", 22);// restartButtonPlain,restartButtonSelected);
 		MenuButtons.add(restartButton);
 		restartButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -238,7 +238,7 @@ public class GameOverScreen {
 		});
 
 		// MainMenu
-		exitButton = new MenuButtons("Main Menu", 22);
+		exitButton = new MenuButton("Main Menu", 22);
 		MenuButtons.add(0, exitButton);
 		exitButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
