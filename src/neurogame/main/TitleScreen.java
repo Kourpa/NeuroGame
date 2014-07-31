@@ -195,182 +195,6 @@ public class TitleScreen implements ActionListener, KeyListener {
 	}
 
 	/**
-	 * The Customization screen after you selected Start Game
-	 */
-	// private void CreateProfileScreen() {
-	// lpane = new JLayeredPane();
-	// frame.getContentPane().removeAll();
-	// frame.getContentPane().setLayout(new BorderLayout());
-	//
-	// // Background
-	// final JLabel background = new JLabel(new ImageIcon(profileBackground));
-	// background.setBackground(Color.BLACK);
-	// background.setBounds(0, 0, width, height);
-	// background.setOpaque(true);
-	//
-	// JLabel img = new JLabel("");
-	// background.add(img);
-	//
-	// /* Buttons */
-	// startButtonProfile = new MenuButton("Start Game", 23);//
-	// startButtonPlain,startButtonSelected);
-	// buttonList.add(startButtonProfile);
-	// startButtonProfile.b.addActionListener(new ActionListener() {
-	// public void actionPerformed(ActionEvent e) {
-	//
-	// // User is selected
-	// if (Library.getUser(userList.getSelectedIndex()) != null) {
-	// frame.requestFocus();
-	// background.setVisible(false);
-	// lpane.setVisible(false);
-	// frame.getContentPane().remove(background);
-	// frame.getContentPane().remove(lpane);
-	// frame.getContentPane().setLayout(null);
-	// frame.removeKeyListener(Keys);
-	//
-	// selectedJoystick = controllerList.getSelectedIndex();
-	// selectedUser = Library.getUser(userList.getSelectedIndex());
-	// enableLogging = loggingBox.isSelected();
-	//
-	// savePreferences();
-	// IsStarting = true;
-	// }
-	// }
-	// });
-	//
-	// // Back Button
-	// backButtonProfile = new MenuButton("Back", 23);// backButtonPlain,
-	// // backButtonSelected);
-	// buttonList.add(backButtonProfile);
-	// backButtonProfile.b.addActionListener(new ActionListener() {
-	// public void actionPerformed(ActionEvent e) {
-	// background.setVisible(false);
-	// frame.getContentPane().setLayout(new GridLayout(1, 1));
-	// frame.getContentPane().remove(lpane);
-	// buttonList.clear();
-	// CreateMainMenu();
-	// }
-	// });
-	//
-	// // Place the back button
-	// final JPanel backArea = new JPanel();
-	// backArea.setBackground(new Color(100, 100, 100, 0));
-	// backArea.setOpaque(false);
-	//
-	// backArea.setLayout(new BoxLayout(backArea, 1));
-	// backArea.setBounds((int) (width * 0.255) - 110, (int) (height * 0.82),
-	// 220, 50);
-	//
-	// backArea.add("North", backButtonProfile.b);
-	//
-	// // Place the start button
-	// final JPanel startArea = new JPanel();
-	// startArea.setBackground(new Color(100, 100, 100, 0));
-	// startArea.setOpaque(false);
-	//
-	// startArea.setLayout(new BoxLayout(startArea, 1));
-	// startArea.setBounds((int) (width * 0.715) - 110, (int) (height * 0.82),
-	// 230, 50);
-	// startArea.add("North", startButtonProfile.b);
-	//
-	// // Keyboard
-	// startButtonProfile.b.addKeyListener(Keys);
-	// backButtonProfile.b.addKeyListener(Keys);
-	//
-	// // Default button
-	// frame.requestFocus();
-	// startButtonProfile.setSelected(true);
-	//
-	// // User Panel
-	// final JPanel userPanel2 = new JPanel();
-	// userPanel2.setBackground(Color.BLACK);
-	// userPanel2.setLayout(new FlowLayout());
-	//
-	// // nameInputField = new JTextField(16);
-	// // nameInputField.setPreferredSize(new Dimension(400, 50));
-	//
-	// // User Selection
-	// userList.setPreferredSize(new Dimension(250, 40));
-	// userList.setFont(new Font("KarmaticArcade", Font.BOLD, 12));
-	// userList.setBackground(Color.BLACK);
-	// userList.setForeground(Color.WHITE);
-	//
-	// // JLabel text2 = new JLabel("   New User: ");
-	// // text2.setForeground(Color.WHITE);
-	// // text2.setFont(new Font("Consolas", Font.BOLD, 32));
-	//
-	// newUserButton = new MenuButton("New User", 20);//
-	// newUserButtonPlain,newUserButtonSelected);
-	// newUserButton.b.setPreferredSize(new Dimension(195, 80));
-	// newUserButton.b.addActionListener(new ActionListener() {
-	// public void actionPerformed(ActionEvent e) {
-	// CreateNewUser(frame);
-	// }
-	// });
-	//
-	// JLabel text1 = new JLabel("User: ");
-	// Font FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 23);
-	// text1.setFont(FONT30);
-	// text1.setForeground(Color.WHITE);
-	// userPanel2.add(text1);
-	// userPanel2.add(userList);
-	// userPanel2.add(newUserButton.b);
-	// userPanel2.setBackground(Color.getColor("TRANSLUCENT"));
-	// userPanel2.setOpaque(false);
-	// userPanel2.setBounds((int) (width * 0.25), (int) (height * 0.32), 750,
-	// 150);
-	//
-	// // Controller
-	// final JPanel userPanel3 = null;//Options();
-	// userPanel3.setBackground(Color.getColor("TRANSLUCENT"));
-	// userPanel3.setOpaque(false);
-	// userPanel3.setBounds((int) (width * 0.32), (int) (height * 0.46), 400,
-	// 40);
-	//
-	// // Logging
-	// final JPanel userPanel4 = new JPanel();
-	// userPanel4.setBackground(Color.BLACK);
-	// userPanel4.setLayout(new BoxLayout(userPanel4, BoxLayout.X_AXIS));
-	// userPanel4.setBounds((int) (width * 0.32), (int) (height * 0.55), 700,
-	// 70);
-	//
-	// loggingBox = new JCheckBox();
-	// loggingBox.setBackground(Color.getColor("TRANSLUCENT"));
-	// loggingBox.setOpaque(false);
-	// loggingBox.setIcon(new ImageIcon(checkboxPlain));
-	// loggingBox.setSelectedIcon(new ImageIcon(checkboxSelected));
-	// loggingBox.setSelected(true);
-	//
-	// loggingBox.addActionListener(new ActionListener() {
-	// public void actionPerformed(ActionEvent arg0) {
-	// enableLogging = loggingBox.isSelected();
-	// }
-	// });
-	//
-	// JLabel text2 = new JLabel("Logging: ");
-	// text2.setFont(FONT30);
-	// text2.setForeground(Color.white);
-	// userPanel4.add(text2);
-	// userPanel4.add(loggingBox);
-	// userPanel4.add(new JLabel("  "));
-	// userPanel4.setBackground(Color.getColor("TRANSLUCENT"));
-	// userPanel4.setOpaque(false);
-	//
-	// // Add everything to Layered Panel
-	// lpane.setBounds(0, 0, 600, 400);
-	// lpane.add(background, 0, 0);
-	// lpane.add(startArea, 1, 0);
-	// lpane.add(userPanel2, 2, 0);
-	// lpane.add(userPanel3, 3, 0);
-	// lpane.add(userPanel4, 4, 0);
-	// lpane.add(backArea, 5, 0);
-	//
-	// //frame.getContentPane().add(lpane);
-	// frame.setVisible(true);
-	// restorePreferences();
-	// }
-
-	/**
 	 * Create the main menu screen
 	 */
 	private void CreateMainMenu() {
@@ -410,18 +234,15 @@ public class TitleScreen implements ActionListener, KeyListener {
 		userList.setForeground(Color.WHITE);
 		updateUsers();
 
-		// Add a new user profile
-		/*
-		 * newUserButton = new MenuButton("New User", 20, this);
-		 * newUserButton.b.addActionListener(new ActionListener() { public void
-		 * actionPerformed(ActionEvent e) { CreateNewUser(frame); } });
-		 */
+		userList.addActionListener(new ActionListener() {
 
-		/*
-		 * userList.addActionListener(new ActionListener(){
-		 * 
-		 * });
-		 */
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (userList.getSelectedIndex() == 0) {
+					CreateNewUser(frame);
+				}
+			}
+		});
 
 		JPanel userPanel = new JPanel();
 		userPanel.setBackground(new Color(20, 20, 20));
@@ -949,15 +770,12 @@ public class TitleScreen implements ActionListener, KeyListener {
 	private void onOddballButtonPress() {
 		frame.requestFocus();
 		lpane.setVisible(false);
-		lpane.removeAll();
-		buttonList.clear();
 
-		frame.getContentPane().remove(background);
-		frame.getContentPane().remove(lpane);
-		frame.getContentPane().removeAll();
-		
-		frame.getContentPane().setLayout(null);
-		frame.removeKeyListener(Keys);
+		selectedJoystick = controllerList.getSelectedIndex();
+		selectedUser = Library.getUser(userList.getSelectedIndex());
+		enableLogging = loggingBox.isSelected();
+
+		savePreferences();
 		IsOption = true;
 	}
 
@@ -972,6 +790,10 @@ public class TitleScreen implements ActionListener, KeyListener {
 
 		else if (src == exitButton.b) {
 			onExitButtonPress();
+		}
+
+		else if (src == oddballButton.b) {
+			onOddballButtonPress();
 		}
 	}
 

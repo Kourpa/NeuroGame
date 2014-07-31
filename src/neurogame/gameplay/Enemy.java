@@ -265,7 +265,7 @@ public class Enemy extends GameObject
     double rangeY = (vertex.getBottomY() - vertex.getTopY()) - type.getHeight();
     if (rangeY < 0.01) return 0;
     
-    double y = player.getY() + type.getHeight()*(Library.RANDOM.nextDouble() - Library.RANDOM.nextDouble());
+    double y = player.getY() + type.getHeight()*(Library.RANDOM.nextDouble() - Library.RANDOM.nextDouble())*3;
     if ((y <= vertex.getTopY()) || y > vertex.getBottomY() - type.getHeight()) y = vertex.getCenter()-type.getHeight()/2;
 
     

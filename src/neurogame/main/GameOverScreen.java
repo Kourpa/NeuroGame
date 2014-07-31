@@ -21,6 +21,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Map;
@@ -45,7 +46,7 @@ import org.lwjgl.input.Controller;
  * @team Marcos Lemus
  * @team Martin Lidy
  */
-public class GameOverScreen {
+public class GameOverScreen implements ActionListener, KeyListener {
 	private Image profileBackground;
 
 	public boolean IsExiting, IsStarting, IsOption, IsRestarting;
@@ -126,12 +127,11 @@ public class GameOverScreen {
 
 		// Main pane for the UI
 		final JLayeredPane lpane = new JLayeredPane();
+		lpane.setLayout(null);
 		lpane.setBackground(new Color(17, 17, 17, 255));
 
 		// Background
 		final JLabel background = new JLabel(new ImageIcon(profileBackground));
-		JLabel img = new JLabel("");
-		background.add(img);
 
 		// Grab the highscore arrays
 		Object[] data = frame.getUser().getHighScores(5);
@@ -309,8 +309,12 @@ public class GameOverScreen {
 		lpane.add(restartButtonArea, 4, 0);
 		lpane.add(backButtonArea, 5, 0);
 
+		//
+		frame.requestFocus();
+		frame.addKeyListener(this);
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
+		frame.repaint();
 	}
 
 	/* Menu Button Methods */
@@ -411,4 +415,24 @@ public class GameOverScreen {
 			}
 		}
 	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		
+	}
 }
+
