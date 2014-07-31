@@ -12,7 +12,6 @@ package neurogame.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -47,9 +46,7 @@ import org.lwjgl.input.Controller;
  * @team Martin Lidy
  */
 public class GameOverScreen {
-	private Image profileBackground, startButtonPlain, startButtonSelected;
-	private Image exitButtonPlain, exitButtonSelected, restartButtonSelected,
-			restartButtonPlain;
+	private Image profileBackground;
 
 	public boolean IsExiting, IsStarting, IsOption, IsRestarting;
 	public int selectedJoystick;
@@ -86,15 +83,6 @@ public class GameOverScreen {
 
 		// Get the images.
 		profileBackground = sprites.get("profileBackground");
-
-		startButtonPlain = sprites.get("mainMenuButtonPlain");
-		startButtonSelected = sprites.get("mainMenuButtonSelected");
-
-		exitButtonPlain = sprites.get("exitButtonPlain");
-		exitButtonSelected = sprites.get("exitButtonSelected");
-
-		restartButtonPlain = sprites.get("restartButtonPlain");
-		restartButtonSelected = sprites.get("restartButtonSelected");
 
 		// KeyListener for using keyboard to select
 		Keys2 = new KeyAdapter() {
@@ -348,7 +336,7 @@ public class GameOverScreen {
 		}
 
 		if (Math.abs(Y) > 0.5) {
-			System.out.println("" + currentButton);
+			//System.out.println("" + currentButton);
 			if (Y < 0 && MovingDown == false) {
 				MovingDown = true;
 				MoveUp();
