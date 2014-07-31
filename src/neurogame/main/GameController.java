@@ -710,6 +710,7 @@ private void highscoreUpdate(){
   {
     if (title != null)
     {
+    	title.ScrollCredits();
     	SelectJoystick(title.GetSelectedJoystick(), title.GetSelectedJoystickIndex());
     	
     	if(joystick!=null && useJoystick==true){

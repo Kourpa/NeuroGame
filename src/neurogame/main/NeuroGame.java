@@ -68,6 +68,7 @@ public class NeuroGame
 
     frame = new NeuroFrame(game);
     Library.initSprites(frame);
+    Library.loadFont();
     frame.setTitleScreen();
 
     controller = new GameController(this, frame);

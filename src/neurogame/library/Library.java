@@ -12,6 +12,9 @@
 package neurogame.library;
 
 import java.awt.Container;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.awt.MediaTracker;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -199,6 +202,24 @@ public final class Library
 		}
 	}
 
+	/**
+	 * Load the local fonts
+	 */
+	public static void loadFont(){
+		String path = System.getProperty("user.dir");
+		path += "/resources/fonts/";
+
+		try {
+			GraphicsEnvironment ge = GraphicsEnvironment
+					.getLocalGraphicsEnvironment();
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(path
+					+ "KarmaticArcade.ttf")));
+			System.out.println("Registered Font");
+		} catch (IOException | FontFormatException e) {
+			System.out.println("Error Loading Font - MenuButtons.java");
+		}
+	}
+	
 	/**
 	 * Get the best highscores from any user
 	 */
