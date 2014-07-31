@@ -2,12 +2,8 @@ package neurogame.main;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.io.File;
-import java.io.IOException;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
@@ -16,25 +12,36 @@ public class MenuButton {
 	public JButton b;
 	private Color SelectedColor,DeselectedColor;
 	private int MaxSize = 12;
+	private int DEFAULT_BUTTON_SIZE = 30;
 	private Font FONT30;
 	private Font FONT40;
 	
 	MenuButton(String text) {
-		BuildButton(text, 30);
+		BuildButton(text, DEFAULT_BUTTON_SIZE, null);
 	}
 	
     MenuButton(String text,int textSize) {
-    	BuildButton(text,textSize);
+    	BuildButton(text,textSize, null);
     }
     
-    private void BuildButton(String text, int textSize){
+    MenuButton(String text, int textSize, ActionListener arg){
+    	BuildButton(text, textSize, arg);
+    }
+    
+    MenuButton(String text, ActionListener arg){
+    	BuildButton(text, 30, arg);
+    }
+    
+    private void BuildButton(String text, int textSize, ActionListener arg){
     	
     	// Center Text
     	String newText = "";
+    	/*
     	for(int i=0; i < 6 - (int)(text.length()/2); i++){
     		newText += "   ";
     	}
-    	newText += text;
+    	newText += text;*/
+    	newText = text;
         b = new JButton(newText);
         
         // Defaults
@@ -44,12 +51,17 @@ public class MenuButton {
         b.setBorder(null);
         b.setMargin(new Insets(5,5,5,5));
         
+        if(arg != null){
+        	b.addActionListener(arg);
+        }        
+        
         FONT30 = new Font("Karmatic Arcade", Font.PLAIN, textSize);
 		FONT40 = new Font("Karmatic Arcade", Font.PLAIN, 25);
 		
         b.setFont(FONT30);
         SelectedColor = new Color(100, 191, 255);
         DeselectedColor = new Color(180,180,180);
+        b.setForeground(DeselectedColor);
         
         /*
         b.addMouseListener(new MouseAdapter() {
