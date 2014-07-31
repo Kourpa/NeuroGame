@@ -26,7 +26,7 @@ import neurogame.gameplay.PowerUp;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.User;
-import neurogame.main.GameController.GameState;
+import neurogame.main.NeuroGame.GameState;
 
 /**
  * The main game frame for NeuroGame.
@@ -45,18 +45,14 @@ public class NeuroFrame extends JFrame
   // private DrawingEngine engine;
 
   private MainDrawPanel drawPanel;
-  private TitleScreen title;
-  private GameOverScreen gameOver;
+  private NeuroGame game;
   private int windowPixelWidth, windowPixelHeight;
-  private GameState mode = GameState.INITIALIZING;
-  private int score;
-  private int coins;
-  private int health;
+  //private GameState mode = GameState.INITIALIZING;
 
   private Container contentPane;
 
   private User currentUser;
-  
+  private GameController controller;
 
   /**
    * Instantiates a new NeuroFrame.
@@ -83,17 +79,14 @@ public class NeuroFrame extends JFrame
     drawPanel.setVisible(false);
     //contentPane.setBackground(Color.black);
 
-    score = 0;
-    coins = 0;
-    health = 0;
 
-    resizeEvent();
+    resizeHelper();
 
     this.addComponentListener(new ComponentAdapter()
     {
       public void componentResized(ComponentEvent e)
       {
-        resizeEvent();
+        resizeHelper();
       }
     });
 
@@ -109,8 +102,8 @@ public class NeuroFrame extends JFrame
 
   }
   
-  public void setTitleScreen(){
-	  this.title = new TitleScreen(this);
+  public void setGameController(GameController cont){
+	  this.controller = cont;
   }
 
   /**
@@ -127,35 +120,20 @@ public class NeuroFrame extends JFrame
     contentPane.add(drawPanel);
     drawPanel.setVisible(true);
     drawPanel.setWorld(world);
-    mode = GameState.PLAYING;
+    //mode = GameState.PLAYING;
     // title = null;
   }
 
-  public void setGameMode(GameState mode)
-  {
-    this.mode = mode;
-  }
-
-  public GameState getGameMode()
-  {
-    return mode;
+  public MainDrawPanel getDrawPanel(){
+	  return drawPanel;
   }
   
-  public int getHealth()
+  public GameState getGameMode()
   {
-    return health;
+	  System.out.println("NeuroFrame:  cont: "+controller);
+    return game.getGameState();
   }
-
-  public int getCoins()
-  {
-    return coins;
-  }
-
-  public int getScore()
-  {
-    return score;
-  }
-
+ 
   
   /**
  * Sets the user for the session
@@ -166,51 +144,22 @@ public void setUser(User newUser){
 public User getUser(){
 	return this.currentUser;
 }
-  /**
-   * Changes the display for when the game is paused.
-   */
-  public void pause()
-  {
-    mode = GameState.PAUSED;
-  }
-
-  /**
-   * Changes the display back from being paused.
-   */
-  public void unpause()
-  {
-    mode = GameState.PLAYING;
-  }
-
-  /**
-   * Create and show the title screen.
-   * 
-   * @return Newly created title screen.
-   */
-  public TitleScreen showTitle()
-  {
-    System.out.println("NeuroFrame.showTitle() Enter");
-    drawPanel.setVisible(false);
-    drawPanel.setTitle(title);
-    mode = GameState.TITLE;
-    return title;
-  }
   
-  public void showGameOver(){	  
-	  //drawPanel.setVisible(false);
-	  drawPanel.setGameOver(null);
-	  mode = GameState.GAMEOVER;
+  /**
+ * Returns the current user 
+ */
+public User getCurrentUser(){
+	  return this.currentUser;
   }
 
-  public GameOverScreen showHighScores(){
-	  gameOver = new GameOverScreen(this,this.currentUser);
-	  drawPanel.setGameOver(gameOver);
-	  drawPanel.setVisible(false);
-	  return gameOver;
-  }
-  
-  private void resizeEvent()
+  /**
+   * A helper method that gets called when the window is resized, which releases
+   * the old buffered image and generates a new one with the new window
+   * dimensions.
+   */
+  private void resizeHelper()
   {
+
     boolean sizeIsOkay = true;
     int outsideFrameWidth = this.getWidth();
     int outsideFrameHeight = this.getHeight();
@@ -259,25 +208,6 @@ public User getUser(){
       this.setSize(outsideFrameWidth, outsideFrameHeight);
     }
 
-  }
-
-  /**
-   * Setter for the HUD statistics. Called by the GameController when the HUD
-   * data needs to be updated.
-   * 
-   * @param score
-   *          Number of points (long).
-   * @param coins
-   *          Number of coins (int).
-   * @param health
-   *          Player health (int).
-   * @param powerUp
-   *          PowerUp whose icon should be displayed on the hud.
-   */
-  public void setStats(int score, int health, PowerUp powerUp)
-  {
-    this.score = score;
-    this.health = health;
   }
 
   public void render(ArrayList<GameObject> gameObjList)
