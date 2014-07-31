@@ -25,6 +25,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -68,7 +69,7 @@ import org.w3c.dom.Element;
  * @team Marcos Lemus
  * @team Martin Lidy
  */
-public class TitleScreen {
+public class TitleScreen implements ActionListener, KeyListener {
 	private Image titleBackground, profileBackground, startButtonPlain,
 			startButtonSelected, rewindButtonSelected, backButtonPlain,
 			newUserButtonPlain, newUserButtonSelected, checkboxSelected,
@@ -77,7 +78,7 @@ public class TitleScreen {
 	private Image exitButtonPlain, exitButtonSelected, rewindButtonPlain,
 			backButtonSelected, configButtonPlain, configButtonSelected;
 
-	private static MenuButtons configButton, exitButton, startButton,
+	private static MenuButton oddballButton, exitButton, startButton,
 			startButtonProfile, rewindButton, backButtonProfile, newUserButton;
 
 	public boolean IsExiting, IsStarting, IsOption;
@@ -85,8 +86,12 @@ public class TitleScreen {
 	public User selectedUser;
 	public int selectedJoystickIndex;
 
+	//
+	private NeuroFrame frame;
+	private JLayeredPane lpane;
+
 	// Keys and joystick support
-	private ArrayList<MenuButtons> MenuButtons = new ArrayList<MenuButtons>();
+	private ArrayList<MenuButton> buttonList = new ArrayList<MenuButton>();
 	private KeyAdapter Keys;
 	private boolean MovingUp, MovingDown;
 	private boolean ButtonPressed = false;
@@ -96,7 +101,7 @@ public class TitleScreen {
 	private static JTextField nameInputField;
 	private JComboBox<String> userList = new JComboBox<String>(
 			Library.getUserNames());
-	//private JComboBox<Integer> joystickIndexList = new JComboBox<Integer>();
+	// private JComboBox<Integer> joystickIndexList = new JComboBox<Integer>();
 
 	private String selected;
 
@@ -108,6 +113,8 @@ public class TitleScreen {
 
 	private int width;
 	private int height;
+	
+	private int buttonPanelWidth,buttonPanelHeight;
 
 	/**
 	 * Instantiate a new TitleScreen.
@@ -116,14 +123,15 @@ public class TitleScreen {
 	 *            NeuroFrame to contain this TitleScreen.
 	 */
 	public TitleScreen(final NeuroFrame frame) {
+		this.frame = frame;
 
 		// For Polling
 		IsExiting = false;
 		IsStarting = false;
 		IsOption = false;
 
-		width = frame.getWidth();
-		height = frame.getHeight();
+		width = Library.getWindowPixelWidth();
+		height = Library.getWindowPixelHeight();
 		sprites = Library.getSprites();
 
 		// Get the images.
@@ -145,6 +153,10 @@ public class TitleScreen {
 
 		checkboxSelected = sprites.get("checkboxSelected");
 		checkboxPlain = sprites.get("checkboxPlain");
+		
+		//
+		buttonPanelWidth = 400;
+		buttonPanelHeight = 400;
 
 		// KeyListener for using keyboard to select
 		Keys = new KeyAdapter() {
@@ -170,9 +182,9 @@ public class TitleScreen {
 				}
 			}
 		};
-		
+
 		// New UI
-		CreateMainMenu(frame);
+		CreateMainMenu();
 
 		//
 		frame.getRootPane().addComponentListener(new ComponentAdapter() {
@@ -188,8 +200,8 @@ public class TitleScreen {
 	/**
 	 * The Customization screen after you selected Start Game
 	 */
-	private void CreateProfileScreen(final NeuroFrame frame) {
-		final JLayeredPane lpane = new JLayeredPane();
+	private void CreateProfileScreen() {
+		lpane = new JLayeredPane();
 		frame.getContentPane().removeAll();
 		frame.getContentPane().setLayout(new BorderLayout());
 
@@ -203,13 +215,13 @@ public class TitleScreen {
 		background.add(img);
 
 		/* Buttons */
-		startButtonProfile = new MenuButtons("Start Game",23);//startButtonPlain,startButtonSelected);
-		MenuButtons.add(startButtonProfile);
+		startButtonProfile = new MenuButton("Start Game", 23);// startButtonPlain,startButtonSelected);
+		buttonList.add(startButtonProfile);
 		startButtonProfile.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				// User is selected
-				if(Library.getUser(userList.getSelectedIndex()) != null){					
+				if (Library.getUser(userList.getSelectedIndex()) != null) {
 					frame.requestFocus();
 					background.setVisible(false);
 					lpane.setVisible(false);
@@ -217,11 +229,11 @@ public class TitleScreen {
 					frame.getContentPane().remove(lpane);
 					frame.getContentPane().setLayout(null);
 					frame.removeKeyListener(Keys);
-		
+
 					selectedJoystick = controllerList.getSelectedIndex();
 					selectedUser = Library.getUser(userList.getSelectedIndex());
 					enableLogging = loggingBox.isSelected();
-		
+
 					savePreferences();
 					IsStarting = true;
 				}
@@ -229,15 +241,16 @@ public class TitleScreen {
 		});
 
 		// Back Button
-		backButtonProfile = new MenuButtons("Back",23);//backButtonPlain, backButtonSelected);
-		MenuButtons.add(backButtonProfile);
+		backButtonProfile = new MenuButton("Back", 23);// backButtonPlain,
+														// backButtonSelected);
+		buttonList.add(backButtonProfile);
 		backButtonProfile.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				background.setVisible(false);
 				frame.getContentPane().setLayout(new GridLayout(1, 1));
 				frame.getContentPane().remove(lpane);
-				MenuButtons.clear();
-				CreateMainMenu(frame);
+				buttonList.clear();
+				CreateMainMenu();
 			}
 		});
 
@@ -261,11 +274,11 @@ public class TitleScreen {
 		startArea.setBounds((int) (width * 0.715) - 110, (int) (height * 0.82),
 				230, 50);
 		startArea.add("North", startButtonProfile.b);
-		
+
 		// Keyboard
 		startButtonProfile.b.addKeyListener(Keys);
 		backButtonProfile.b.addKeyListener(Keys);
-		
+
 		// Default button
 		frame.requestFocus();
 		startButtonProfile.setSelected(true);
@@ -275,8 +288,8 @@ public class TitleScreen {
 		userPanel2.setBackground(Color.BLACK);
 		userPanel2.setLayout(new FlowLayout());
 
-		//nameInputField = new JTextField(16);
-		//nameInputField.setPreferredSize(new Dimension(400, 50));
+		// nameInputField = new JTextField(16);
+		// nameInputField.setPreferredSize(new Dimension(400, 50));
 
 		// User Selection
 		userList.setPreferredSize(new Dimension(250, 40));
@@ -284,11 +297,11 @@ public class TitleScreen {
 		userList.setBackground(Color.BLACK);
 		userList.setForeground(Color.WHITE);
 
-		//JLabel text2 = new JLabel("   New User: ");
-		//text2.setForeground(Color.WHITE);
-		//text2.setFont(new Font("Consolas", Font.BOLD, 32));
+		// JLabel text2 = new JLabel("   New User: ");
+		// text2.setForeground(Color.WHITE);
+		// text2.setFont(new Font("Consolas", Font.BOLD, 32));
 
-		newUserButton = new MenuButtons("New User",20);//newUserButtonPlain,newUserButtonSelected);
+		newUserButton = new MenuButton("New User", 20);// newUserButtonPlain,newUserButtonSelected);
 		newUserButton.b.setPreferredSize(new Dimension(195, 80));
 		newUserButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -352,6 +365,7 @@ public class TitleScreen {
 		lpane.add(userPanel3, 3, 0);
 		lpane.add(userPanel4, 4, 0);
 		lpane.add(backArea, 5, 0);
+
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
 		restorePreferences();
@@ -360,108 +374,81 @@ public class TitleScreen {
 	/**
 	 * Create the main menu screen
 	 */
-	private void CreateMainMenu(final NeuroFrame frame) {
-		final JLayeredPane lpane = new JLayeredPane();
-		frame.getContentPane().setLayout(new BorderLayout());
+	private void CreateMainMenu() {
+		lpane = new JLayeredPane();
+		lpane.setLayout(null);
+		// frame.getContentPane().setLayout(new BorderLayout());
 		loadFont();
 
 		// Background
 		final JLabel background = new JLabel(new ImageIcon(titleBackground));
 		background.setBackground(Color.GRAY);
-		JLabel img = new JLabel("");
-		background.add(img);
 
 		// Panels
-		final JPanel test = new JPanel();
-		test.setBackground(Color.BLACK);
-		test.setLayout(new BoxLayout(test, 1));
-		test.setBackground(Color.WHITE);
+		final JPanel buttonPanel = new JPanel();
+		buttonPanel.setBackground(Color.BLACK);
+		//buttonPanel.setLayout(new BoxLayout(buttonPanel, 1));
+		buttonPanel.setLayout(null);
 
 		// Start Button
-		startButton = new MenuButtons("Start Game");//startButtonPlain, startButtonSelected);
-		MenuButtons.add(0, startButton);
+		startButton = new MenuButton("Start Game");
+		buttonList.add(startButton);
 		startButton.setSelected(true);
-		startButton.b.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				background.setVisible(false);
-				frame.getContentPane().setLayout(new GridLayout(1, 1));
-				frame.getContentPane().remove(lpane);
-				MenuButtons.clear();
-				CreateProfileScreen(frame);
-			}
-		});
+		startButton.b.addActionListener(this);
 
 		// Oddball button
-		configButton = new MenuButtons("Visual Test");//configButtonPlain, configButtonSelected);
-		MenuButtons.add(configButton);
-		configButton.b.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				frame.requestFocus();
-				background.setVisible(false);
-				lpane.setVisible(false);
-				lpane.removeAll();
-				test.removeAll();
-				MenuButtons.clear();
-				
-				frame.getContentPane().remove(background);
-				frame.getContentPane().remove(lpane);
-				frame.getContentPane().removeAll();
-				test.setVisible(false);
-				
-				frame.getContentPane().setLayout(null);
-				frame.removeKeyListener(Keys);
-				IsOption = true;
-			}
-		});
+		oddballButton = new MenuButton("Visual Test");
+		buttonList.add(oddballButton);
+		oddballButton.b.addActionListener(this);
 
 		// Rewind button
-		rewindButton = new MenuButtons("Rewind");//rewindButtonPlain, rewindButtonSelected);
-		MenuButtons.add(rewindButton);
+		rewindButton = new MenuButton("Rewind");
+		rewindButton.b.addActionListener(this);
+		buttonList.add(rewindButton);
 
 		// Exit button
-		exitButton = new MenuButtons("Exit");//exitButtonPlain, exitButtonSelected);
-		MenuButtons.add(exitButton);
-		exitButton.b.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				IsExiting = true;
-			}
-		});
+		exitButton = new MenuButton("Exit");
+		buttonList.add(exitButton);
+		exitButton.b.addActionListener(this);
 
-		// Keyboard
-		startButton.b.addKeyListener(Keys);
-		configButton.b.addKeyListener(Keys);
-		rewindButton.b.addKeyListener(Keys);
-		exitButton.b.addKeyListener(Keys);
-		frame.addKeyListener(Keys);
+		//
 		frame.requestFocus();
+		frame.addKeyListener(Keys);
 
 		// Panels
-		test.add("North", startButton.b);
-		test.add("Center", configButton.b);
-		test.add(rewindButton.b);
-		test.add("South", exitButton.b);
+		buttonPanel.add(startButton.b);
+		buttonPanel.add(oddballButton.b);
+		buttonPanel.add(rewindButton.b);
+		buttonPanel.add(exitButton.b);
+		
+		startButton.b.setBounds(0,0,buttonPanelWidth,50);
+		oddballButton.b.setBounds(0,50,buttonPanelWidth,50);
+		rewindButton.b.setBounds(0,100,buttonPanelWidth,50);
+		exitButton.b.setBounds(0,150,buttonPanelWidth,50);
 
-		test.setBackground(Color.BLACK);
-		test.setBounds(width / 2 - 150, height / 2, 300, 300);
-		test.setOpaque(true);
+		buttonPanel.setBounds(width / 2 - 150, height / 2, buttonPanelWidth, buttonPanelHeight);
+		buttonPanel.setOpaque(false);
+		buttonPanel.setBackground(Color.CYAN);
 
 		background.setBackground(Color.BLACK);
 		background.setBounds(0, 0, width, height);
 		background.setOpaque(true);
 
-		lpane.setBounds(0, 0, 600, 400);
+		lpane.setBounds(0, 0, width, height);
 		lpane.add(background, 0, 0);
-		lpane.add(test, 1, 0);
+		lpane.add(buttonPanel, 1, 0);
+
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
+		frame.repaint();
 
 		restorePreferences();
 	}
 
-    /**
-     * Load the local fonts
-     */
-    private void loadFont(){
+	/**
+	 * Load the local fonts
+	 */
+	private void loadFont() {
 		String path = System.getProperty("user.dir");
 		path += "/resources/fonts/";
 
@@ -475,7 +462,7 @@ public class TitleScreen {
 			System.out.println("Error Loading Font - MenuButtons.java");
 		}
 	}
-    
+
 	/**
 	 * Getters and setters for game options
 	 */
@@ -486,7 +473,7 @@ public class TitleScreen {
 	public int GetSelectedJoystick() {
 		return this.selectedJoystick;
 	}
-	
+
 	public int GetSelectedJoystickIndex() {
 		return selectedJoystickIndex;
 	}
@@ -621,21 +608,21 @@ public class TitleScreen {
 			int JOYSTICK_Y) {
 		float Y;
 		boolean ButtonCheck = false;
-		
-		try{
+
+		try {
 			joystick.poll();
+		} catch (Exception e) {
 		}
-		catch(Exception e){}
 
 		// X = joystick.getAxisValue(JOYSTICK_X);
-		Y=0;
-		try{
+		Y = 0;
+		try {
 			Y = joystick.getAxisValue(JOYSTICK_Y);
-		}catch(Exception e){
+		} catch (Exception e) {
 		}
 
 		if (Math.abs(Y) > 0.5) {
-			//System.out.println(""+currentButton);
+			// System.out.println(""+currentButton);
 			if (Y < 0 && MovingDown == false) {
 				MovingDown = true;
 				MoveUp();
@@ -653,12 +640,11 @@ public class TitleScreen {
 				ButtonCheck = true;
 			}
 		}
-		
-		if((ButtonCheck == false) && (ButtonPressed == true)){
+
+		if ((ButtonCheck == false) && (ButtonPressed == true)) {
 			UseButtons();
 			ButtonPressed = false;
-		}
-		else if(ButtonCheck == true){
+		} else if (ButtonCheck == true) {
 			ButtonPressed = true;
 		}
 	}
@@ -668,7 +654,7 @@ public class TitleScreen {
 	 */
 	private void MoveDown() {
 		currentButton += 1;
-		if (currentButton >= MenuButtons.size()) {
+		if (currentButton >= buttonList.size()) {
 			currentButton = 0;
 		}
 		updateButtons();
@@ -681,7 +667,7 @@ public class TitleScreen {
 		currentButton += -1;
 
 		if (currentButton < 0) {
-			currentButton = MenuButtons.size()-1;
+			currentButton = buttonList.size() - 1;
 		}
 		updateButtons();
 	}
@@ -690,12 +676,11 @@ public class TitleScreen {
 	 * Update the button focus when moving up/down with joystick
 	 */
 	private void updateButtons() {
-		for (int i = 0; i < MenuButtons.size(); i++) {
+		for (int i = 0; i < buttonList.size(); i++) {
 			if (i == currentButton) {
-				MenuButtons.get(i).setSelected(true);
-				MenuButtons.get(i).b.requestFocus();
+				buttonList.get(i).setSelected(true);
 			} else {
-				MenuButtons.get(i).setSelected(false);
+				buttonList.get(i).setSelected(false);
 			}
 		}
 	}
@@ -704,9 +689,9 @@ public class TitleScreen {
 	 * Click a button using the joystick
 	 */
 	private void UseButtons() {
-		for (int i = 0; i < MenuButtons.size(); i++) {
+		for (int i = 0; i < buttonList.size(); i++) {
 			if (i == currentButton) {
-				MenuButtons.get(i).b.doClick();
+				buttonList.get(i).b.doClick();
 				break;
 			}
 		}
@@ -732,7 +717,7 @@ public class TitleScreen {
 		JLabel text1 = new JLabel("Input:  ");
 		text1.setFont(FONT30);
 		text1.setForeground(Color.WHITE);
-		
+
 		// add the keyboard as default
 		ControllerNames.add("Keyboard");
 
@@ -751,17 +736,17 @@ public class TitleScreen {
 		controllerList.setFont(new Font("Consolas", Font.BOLD, 12));
 		controllerList.setBackground(Color.BLACK);
 		controllerList.setForeground(Color.WHITE);
-		
+
 		// Index
-		//Integer[] controlOptions = {1,2,3};
+		// Integer[] controlOptions = {1,2,3};
 
 		// Joysticks
 		JPanel message = new JPanel();
 		message.setLayout(new BoxLayout(message, BoxLayout.X_AXIS));
 		message.add(text1);
 		message.add(controllerList);
-		//message.add(new JLabel(".... Main Joystick: "));
-		//message.add(joystickIndexList);
+		// message.add(new JLabel(".... Main Joystick: "));
+		// message.add(joystickIndexList);
 		return message;
 	}
 
@@ -846,5 +831,95 @@ public class TitleScreen {
 		// System.out.println("TitleScreen.getImage(): image.size = ("+image.getWidth()+", "+image.getHeight()+")");
 		return masterImage;
 	}
+
+	// Start button has been pressed
+	private void onStartButtonPress() {
+		/*
+		 * background.setVisible(false); frame.getContentPane().remove(lpane);
+		 * buttonList.clear(); CreateProfileScreen(frame);
+		 */
+
+		// User is selected
+		if (Library.getUser(userList.getSelectedIndex()) != null) {
+			frame.requestFocus();
+			// background.setVisible(false);
+			lpane.setVisible(false);
+			// frame.getContentPane().remove(background);
+			// frame.getContentPane().remove(lpane);
+			// frame.getContentPane().setLayout(null);
+			frame.removeKeyListener(Keys);
+
+			selectedJoystick = controllerList.getSelectedIndex();
+			selectedUser = Library.getUser(userList.getSelectedIndex());
+			enableLogging = loggingBox.isSelected();
+
+			savePreferences();
+			IsStarting = true;
+		}
+	}
+
+	private void onExitButtonPress() {
+		IsExiting = true;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		Object src = arg0.getSource();
+
+		// Start
+		if (src == startButton.b) {
+			onStartButtonPress();
+		}
+
+		else if (src == exitButton.b) {
+			onExitButtonPress();
+		}
+	}
+
+	// Oddball
+	/*
+	 * frame.requestFocus(); background.setVisible(false);
+	 * lpane.setVisible(false); lpane.removeAll(); buttonPanel.removeAll();
+	 * buttonList.clear();
+	 * 
+	 * frame.getContentPane().remove(background);
+	 * frame.getContentPane().remove(lpane); frame.getContentPane().removeAll();
+	 * buttonPanel.setVisible(false);
+	 * 
+	 * frame.getContentPane().setLayout(null); frame.removeKeyListener(Keys);
+	 * IsOption = true;
+	 */
+	// Rewind
+
+	// Exit
+	// public void actionPerformed(ActionEvent e) {
+	// IsExiting = true;
+	// }
+
+	public void keyPressed(KeyEvent arg0) {}
+
+	public void keyReleased(KeyEvent e) {
+		System.out.println("Key Pressed ");
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_UP:
+			MoveUp();
+			break;
+		case KeyEvent.VK_DOWN:
+			MoveDown();
+			break;
+		case KeyEvent.VK_LEFT:
+			MoveDown();
+			break;
+		case KeyEvent.VK_RIGHT:
+			MoveUp();
+			break;
+		case KeyEvent.VK_ENTER:
+			UseButtons();
+		default:
+			break;
+		}
+	}
+
+	public void keyTyped(KeyEvent arg0) {}
 
 }

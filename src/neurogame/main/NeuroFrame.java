@@ -89,9 +89,6 @@ public class NeuroFrame extends JFrame
 
     resizeEvent();
 
-
-
-
     this.addComponentListener(new ComponentAdapter()
     {
       public void componentResized(ComponentEvent e)
@@ -110,6 +107,10 @@ public class NeuroFrame extends JFrame
       }
     });
 
+  }
+  
+  public void setTitleScreen(){
+	  this.title = new TitleScreen(this);
   }
 
   /**
@@ -190,7 +191,6 @@ public User getUser(){
   {
     System.out.println("NeuroFrame.showTitle() Enter");
     drawPanel.setVisible(false);
-    title = new TitleScreen(this);
     drawPanel.setTitle(title);
     mode = GameState.TITLE;
     return title;

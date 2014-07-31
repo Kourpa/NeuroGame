@@ -12,6 +12,7 @@ package neurogame.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -57,9 +58,9 @@ public class GameOverScreen {
 
 	private int currentButton;
 	private boolean MovingDown, MovingUp, ButtonPressed;
-	private ArrayList<MenuButtons> MenuButtons = new ArrayList<MenuButtons>();
+	private ArrayList<MenuButton> MenuButtons = new ArrayList<MenuButton>();
 
-	private static MenuButtons exitButton, restartButton, startButton;
+	private static MenuButton exitButton, restartButton, startButton;
 	private Map<String, BufferedImage> sprites;
 
 	private int width;
@@ -84,7 +85,7 @@ public class GameOverScreen {
 		sprites = Library.getSprites();
 
 		// Get the images.
-		profileBackground = sprites.get("highscoreBackground");
+		profileBackground = sprites.get("profileBackground");
 
 		startButtonPlain = sprites.get("mainMenuButtonPlain");
 		startButtonSelected = sprites.get("mainMenuButtonSelected");
@@ -106,6 +107,12 @@ public class GameOverScreen {
 				case KeyEvent.VK_DOWN:
 					MoveDown();
 					break;
+				case KeyEvent.VK_LEFT:
+					MoveDown();
+					break;
+				case KeyEvent.VK_RIGHT:
+					MoveUp();
+					break;
 				case KeyEvent.VK_ENTER:
 					UseButtons();
 				default:
@@ -114,7 +121,6 @@ public class GameOverScreen {
 			}
 		};
 
-		
 		// New UI
 		CreateGameOverScreen(frame);
 
@@ -138,15 +144,6 @@ public class GameOverScreen {
 		final JLabel background = new JLabel(new ImageIcon(profileBackground));
 		JLabel img = new JLabel("");
 		background.add(img);
-
-		// High Score Panels
-		final JPanel highscores = new JPanel();
-		highscores.setBackground(Color.BLACK);
-		highscores.setLayout(new BoxLayout(highscores, 1));
-
-		final JPanel besthighscores = new JPanel();
-		besthighscores.setBackground(Color.BLACK);
-		besthighscores.setLayout(new BoxLayout(besthighscores, 1));
 
 		// Grab the highscore arrays
 		Object[] data = frame.getUser().getHighScores(5);
@@ -195,17 +192,39 @@ public class GameOverScreen {
 		globalJList.setOpaque(false);
 		globalJList.setForeground(new Color(110, 170, 255));
 		globalJList.setFont(new Font("Karmatic Arcade", Font.PLAIN, 20));
+		
+		// Create the fonts
+		Font FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 20);
+		Font FONT_LARGE = new Font("Karmatic Arcade", Font.PLAIN, 40);
 
+		// High Score Panels
+		final JPanel highscores = new JPanel();
+		highscores.setBackground(Color.BLACK);
+		highscores.setLayout(new BoxLayout(highscores, BoxLayout.Y_AXIS));
+
+		final JPanel besthighscores = new JPanel();
+		besthighscores.setBackground(Color.BLACK);
+		besthighscores
+				.setLayout(new BoxLayout(besthighscores, BoxLayout.Y_AXIS));
+		
+		// Personal best scores message
+		JLabel personalMessage = new JLabel("Personal Best: ");
+		personalMessage.setFont(FONT30);
+		personalMessage.setForeground(Color.white);
+		
+		highscores.add(personalMessage);
 		highscores.add(personalJList);
+
+		// All time best scores message
+		JLabel bestMessage = new JLabel("All Time Best: ");
+		bestMessage.setFont(FONT30);
+		bestMessage.setForeground(Color.white);
+		
+		besthighscores.add(bestMessage);
 		besthighscores.add(globalJList);
 
-		// Menu Buttons
-		final JPanel Buttons = new JPanel();
-		Buttons.setBackground(Color.BLACK);
-		Buttons.setLayout(new BoxLayout(Buttons, 1));
-
 		// RestartButton
-		restartButton = new MenuButtons(" Restart Game",27);//restartButtonPlain,restartButtonSelected);
+		restartButton = new MenuButton(" Restart", 22);// restartButtonPlain,restartButtonSelected);
 		MenuButtons.add(restartButton);
 		restartButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -219,7 +238,7 @@ public class GameOverScreen {
 		});
 
 		// MainMenu
-		exitButton = new MenuButtons("Main Menu",27);
+		exitButton = new MenuButton("Main Menu", 22);
 		MenuButtons.add(0, exitButton);
 		exitButton.b.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -235,24 +254,57 @@ public class GameOverScreen {
 		restartButton.b.addKeyListener(Keys2);
 		exitButton.b.addKeyListener(Keys2);
 		frame.addKeyListener(Keys2);
-
-		//
-		Buttons.add(restartButton.b);
-		Buttons.add(exitButton.b);
-		
 		frame.requestFocus();
 		exitButton.setSelected(true);
 
-		Buttons.setBounds(width / 2 - 150, (int) (height * 0.7), 600, 180);
-		Buttons.setOpaque(false);
-		Buttons.setBackground(Color.getColor("TRANSLUCENT"));
+		// Highscore update message
+		JPanel Message = new JPanel();
+		Message.setBackground(Color.BLACK);
+		Message.setLayout(new BoxLayout(Message, BoxLayout.Y_AXIS));
 
-		highscores.setBounds(width / 2 - 420, (int) (height * 0.45), 300, 150);
+		JLabel highscoreMessage = new JLabel("Highscores:");
+		highscoreMessage.setFont(FONT_LARGE);
+		highscoreMessage.setForeground(Color.WHITE);
+
+		JLabel newHighscoreMessage = new JLabel(" You got a highscore! ");
+		newHighscoreMessage.setFont(FONT30);
+		newHighscoreMessage.setForeground(Color.WHITE);
+
+		Message.add(highscoreMessage);
+		Message.add(newHighscoreMessage);
+		Message.setBounds(width / 2 - 150, (int) (height * 0.3), 600, 180);
+		Message.setOpaque(false);
+		Message.setBackground(Color.getColor("TRANSLUCENT"));
+
+		// Place the back button
+		final JPanel backButtonArea = new JPanel();
+		backButtonArea.setBackground(new Color(100, 100, 100, 0));
+		backButtonArea.setOpaque(false);
+
+		backButtonArea.setLayout(new BoxLayout(backButtonArea, 1));
+		backButtonArea.setBounds((int) (width * 0.255) - 110, (int) (height * 0.82),
+				220, 50);
+
+		backButtonArea.add("North", exitButton.b);
+
+		// Place the restart button
+		final JPanel restartButtonArea = new JPanel();
+		restartButtonArea.setBackground(new Color(100, 100, 100, 0));
+		restartButtonArea.setOpaque(false);
+
+		restartButtonArea.setLayout(new BoxLayout(restartButtonArea, 1));
+		restartButtonArea.setBounds((int) (width * 0.715) - 110, (int) (height * 0.82),
+				230, 50);
+		restartButtonArea.add("North", restartButton.b);
+
+		
+		// Bounds for all the layered panels //
+		highscores.setBounds(width / 2 - 420, (int) (height * 0.45), 400, 150);
 		highscores.setOpaque(false);
 		highscores.setBackground(Color.getColor("TRANSLUCENT"));
 
 		besthighscores.setBounds((int) (width * 0.52), (int) (height * 0.45),
-				300, 155);
+				400, 155);
 		besthighscores.setOpaque(false);
 		besthighscores.setBackground(Color.getColor("TRANSLUCENT"));
 
@@ -260,11 +312,14 @@ public class GameOverScreen {
 		background.setOpaque(false);
 		background.setBackground(Color.getColor("TRANSLUCENT"));
 
+		// Add everything to the main panel
 		lpane.setBounds(0, 0, 600, 400);
 		lpane.add(background, 0, 0);
-		lpane.add(Buttons, 1, 0);
-		lpane.add(highscores, 2, 0);
-		lpane.add(besthighscores, 3, 0);
+		lpane.add(highscores, 1, 0);
+		lpane.add(besthighscores, 2, 0);
+		lpane.add(Message, 3, 0);
+		lpane.add(restartButtonArea, 4, 0);
+		lpane.add(backButtonArea, 5, 0);
 
 		frame.getContentPane().add(lpane);
 		frame.setVisible(true);
