@@ -72,32 +72,14 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("profileBackground", "/images/profile-screen.png",
             Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
     
-    add("highscoreBackground", "/images/highscore-screen.png",
-            Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
     
-    add("startButtonPlain", "/images/start-button.png", 320, 53);
-    add("startButtonSelected", "/images/start-selected.png", 330, 55);
     
-    add("exitButtonPlain", "/images/exit-button.png", 300, 50);
-    add("exitButtonSelected", "/images/exit-selected.png", 310, 53);
-    
-    add("configButtonPlain", "/images/option-button.png", 300, 50);
-    add("configButtonSelected", "/images/option-selected.png", 310, 55);
-    
-    add("rewindButtonPlain", "/images/rewind-button.png", 300, 50);
-    add("rewindButtonSelected", "/images/rewind-selected.png", 310, 55);
     
     add("backButtonPlain", "/images/back-button.png", 300, 50);
     add("backButtonSelected", "/images/back-selected.png", 310, 55);
     
     add("mainMenuButtonPlain", "/images/mainMenu-button.png", 300, 50);
     add("mainMenuButtonSelected", "/images/mainMenu-selected.png", 310, 55);
-    
-    add("restartButtonPlain", "/images/restart-button.png", 300, 50);
-    add("restartButtonSelected", "/images/restart-selected.png", 310, 55);
-    
-    add("newUserButtonPlain", "/images/newUser-button.png", 200, 40);
-    add("newUserButtonSelected", "/images/newUser-selected.png", 210, 45);
     
     add("checkboxSelected", "/images/checkbox_selected.png", 32, 32);
     add("checkboxPlain", "/images/checkbox_deselected.png", 32, 32);
