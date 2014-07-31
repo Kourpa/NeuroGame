@@ -78,34 +78,35 @@ public class PlayerHud {
 	}
 	
 	public void updateHUD(Graphics2D canvasObjectLayer, NeuroFrame frame, int ammo) {
-		String highscoreMessage = "Highscore:  "+Highscore; 
+		String highscoreMessage = "Highscore:  "+Highscore;
 		String scoreMessage = "Score: "+frame.getScore();
 		
+		// Score
+		canvasObjectLayer.setFont(FONT30);
+		canvasObjectLayer.setColor(Color.WHITE);
+		canvasObjectLayer.drawString("Score: ",
+				(int) (windowWidth * 0.5 - 75 - scoreMessage.length()/2), 
+				(int) (windowHeight * 0.08));
+
+		canvasObjectLayer.setColor(BLUE);
+		canvasObjectLayer.drawString("" + frame.getScore(),
+				(int) (windowWidth * 0.5 + 100 - scoreMessage.length()/2), 
+				(int) (windowHeight * 0.08));
+		
+		canvasObjectLayer.setFont(FONT30);
+		canvasObjectLayer.setColor(Color.WHITE);
+		canvasObjectLayer.drawString("Highscore: ",
+				(int) (windowWidth * 0.5 - 100 - highscoreMessage.length()/2), 
+				(int) (windowHeight * 0.04));
+
+		canvasObjectLayer.setColor(BLUE);
+		canvasObjectLayer.drawString("" + Highscore,
+				(int) (windowWidth * 0.5 + 100 - highscoreMessage.length()/2), 
+				(int) (windowHeight * 0.04));
+
+		// Only display this 
 		if (!isDead) {
 			
-			// Score
-			canvasObjectLayer.setFont(FONT30);
-			canvasObjectLayer.setColor(Color.WHITE);
-			canvasObjectLayer.drawString("Score: ",
-					(int) (windowWidth * 0.5 - 75 - scoreMessage.length()/2), 
-					(int) (windowHeight * 0.08));
-	
-			canvasObjectLayer.setColor(BLUE);
-			canvasObjectLayer.drawString("" + frame.getScore(),
-					(int) (windowWidth * 0.5 + 100 - scoreMessage.length()/2), 
-					(int) (windowHeight * 0.08));
-			
-			canvasObjectLayer.setFont(FONT30);
-			canvasObjectLayer.setColor(Color.WHITE);
-			canvasObjectLayer.drawString("Highscore: ",
-					(int) (windowWidth * 0.5 - 100 - highscoreMessage.length()/2), 
-					(int) (windowHeight * 0.04));
-	
-			canvasObjectLayer.setColor(BLUE);
-			canvasObjectLayer.drawString("" + Highscore,
-					(int) (windowWidth * 0.5 + 100 - highscoreMessage.length()/2), 
-					(int) (windowHeight * 0.04));
-	
 			// Ammo
 			for (int i = 0; i < ammo; i++) {
 				if(i<10){
@@ -134,7 +135,7 @@ public class PlayerHud {
 
 			canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN,25));
 			canvasObjectLayer.setColor(BLUE);
-			canvasObjectLayer.drawString("[ Press any Button ]",
+			canvasObjectLayer.drawString("[ Press Spacebar ]",
 							(int) (windowWidth * 0.5 - 125),
 							(int) (windowHeight * 0.6));
 		}

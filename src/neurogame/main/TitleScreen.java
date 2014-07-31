@@ -15,6 +15,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -24,6 +26,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -272,18 +275,18 @@ public class TitleScreen {
 		userPanel2.setBackground(Color.BLACK);
 		userPanel2.setLayout(new FlowLayout());
 
-		nameInputField = new JTextField(16);
-		nameInputField.setPreferredSize(new Dimension(400, 50));
+		//nameInputField = new JTextField(16);
+		//nameInputField.setPreferredSize(new Dimension(400, 50));
 
 		// User Selection
 		userList.setPreferredSize(new Dimension(250, 40));
-		userList.setFont(new Font("Consolas", Font.BOLD, 12));
+		userList.setFont(new Font("KarmaticArcade", Font.BOLD, 12));
 		userList.setBackground(Color.BLACK);
 		userList.setForeground(Color.WHITE);
 
-		JLabel text2 = new JLabel("   New User: ");
-		text2.setForeground(Color.WHITE);
-		text2.setFont(new Font("Consolas", Font.BOLD, 32));
+		//JLabel text2 = new JLabel("   New User: ");
+		//text2.setForeground(Color.WHITE);
+		//text2.setFont(new Font("Consolas", Font.BOLD, 32));
 
 		newUserButton = new MenuButtons("New User",20);//newUserButtonPlain,newUserButtonSelected);
 		newUserButton.b.setPreferredSize(new Dimension(195, 80));
@@ -293,25 +296,30 @@ public class TitleScreen {
 			}
 		});
 
+		JLabel text1 = new JLabel("User: ");
+		Font FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 23);
+		text1.setFont(FONT30);
+		text1.setForeground(Color.WHITE);
+		userPanel2.add(text1);
 		userPanel2.add(userList);
 		userPanel2.add(newUserButton.b);
 		userPanel2.setBackground(Color.getColor("TRANSLUCENT"));
 		userPanel2.setOpaque(false);
-		userPanel2.setBounds((int) (width * 0.39), (int) (height * 0.32), 500,
+		userPanel2.setBounds((int) (width * 0.25), (int) (height * 0.32), 750,
 				150);
 
 		// Controller
 		final JPanel userPanel3 = Options(frame);
 		userPanel3.setBackground(Color.getColor("TRANSLUCENT"));
 		userPanel3.setOpaque(false);
-		userPanel3.setBounds((int) (width * 0.405), (int) (height * 0.46), 500,
+		userPanel3.setBounds((int) (width * 0.32), (int) (height * 0.46), 400,
 				40);
 
 		// Logging
 		final JPanel userPanel4 = new JPanel();
 		userPanel4.setBackground(Color.BLACK);
-		userPanel4.setLayout(new BoxLayout(userPanel4, BoxLayout.Y_AXIS));
-		userPanel4.setBounds((int) (width * 0.4), (int) (height * 0.57), 400,
+		userPanel4.setLayout(new BoxLayout(userPanel4, BoxLayout.X_AXIS));
+		userPanel4.setBounds((int) (width * 0.32), (int) (height * 0.55), 700,
 				70);
 
 		loggingBox = new JCheckBox();
@@ -327,6 +335,10 @@ public class TitleScreen {
 			}
 		});
 
+		JLabel text2 = new JLabel("Logging: ");
+		text2.setFont(FONT30);
+		text2.setForeground(Color.white);
+		userPanel4.add(text2);
 		userPanel4.add(loggingBox);
 		userPanel4.add(new JLabel("  "));
 		userPanel4.setBackground(Color.getColor("TRANSLUCENT"));
@@ -351,6 +363,7 @@ public class TitleScreen {
 	private void CreateMainMenu(final NeuroFrame frame) {
 		final JLayeredPane lpane = new JLayeredPane();
 		frame.getContentPane().setLayout(new BorderLayout());
+		loadFont();
 
 		// Background
 		final JLabel background = new JLabel(new ImageIcon(titleBackground));
@@ -445,6 +458,24 @@ public class TitleScreen {
 		restorePreferences();
 	}
 
+    /**
+     * Load the local fonts
+     */
+    private void loadFont(){
+		String path = System.getProperty("user.dir");
+		path += "/resources/fonts/";
+
+		try {
+			GraphicsEnvironment ge = GraphicsEnvironment
+					.getLocalGraphicsEnvironment();
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(path
+					+ "KarmaticArcade.ttf")));
+			System.out.println("Registered Font");
+		} catch (IOException | FontFormatException e) {
+			System.out.println("Error Loading Font - MenuButtons.java");
+		}
+	}
+    
 	/**
 	 * Getters and setters for game options
 	 */
@@ -697,6 +728,11 @@ public class TitleScreen {
 			System.exit(0);
 		}
 
+		Font FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 23);
+		JLabel text1 = new JLabel("Input:  ");
+		text1.setFont(FONT30);
+		text1.setForeground(Color.WHITE);
+		
 		// add the keyboard as default
 		ControllerNames.add("Keyboard");
 
@@ -722,6 +758,7 @@ public class TitleScreen {
 		// Joysticks
 		JPanel message = new JPanel();
 		message.setLayout(new BoxLayout(message, BoxLayout.X_AXIS));
+		message.add(text1);
 		message.add(controllerList);
 		//message.add(new JLabel(".... Main Joystick: "));
 		//message.add(joystickIndexList);
