@@ -347,8 +347,6 @@ public class GameOverScreen {
 		} catch (Exception e) {
 		}
 
-		System.out.println(Math.abs(Y));
-
 		if (Math.abs(Y) > 0.5) {
 			System.out.println("" + currentButton);
 			if (Y < 0 && MovingDown == false) {
