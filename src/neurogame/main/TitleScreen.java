@@ -13,9 +13,7 @@ package neurogame.main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +26,8 @@ import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
@@ -82,8 +82,8 @@ public class TitleScreen implements ActionListener, KeyListener {
 	public int selectedJoystick;
 	public User selectedUser;
 	public int selectedJoystickIndex;
-	public Color TextColor; 
-	
+	public Color TextColor;
+
 	//
 	private NeuroFrame frame;
 	private JLayeredPane lpane;
@@ -96,8 +96,15 @@ public class TitleScreen implements ActionListener, KeyListener {
 	private int currentButton;
 
 	private Font FONT_SMALL;
+
+	// Credits
 	private JLabel creditNames;
-	
+	private String creditNameString;
+	private int creditIndex, creditCheck;
+
+	private String[] Names = { "Joel Castellanos", "Martin Lidy",
+			"Marcus Lemus", "Danny Gomez", "Ramon A. Lovato" };
+
 	private JCheckBox loggingBox;
 	private static JTextField nameInputField;
 	private JComboBox<String> userList = new JComboBox<String>(
@@ -105,7 +112,6 @@ public class TitleScreen implements ActionListener, KeyListener {
 	// private JComboBox<Integer> joystickIndexList = new JComboBox<Integer>();
 
 	private String selected;
-	private int creditIndex;
 
 	private boolean enableLogging;
 
@@ -115,8 +121,8 @@ public class TitleScreen implements ActionListener, KeyListener {
 
 	private int width;
 	private int height;
-	
-	private int buttonPanelWidth,buttonPanelHeight;
+
+	private int buttonPanelWidth, buttonPanelHeight;
 
 	/**
 	 * Instantiate a new TitleScreen.
@@ -153,13 +159,25 @@ public class TitleScreen implements ActionListener, KeyListener {
 		newUserButtonSelected = sprites.get("newUserButtonSelected");
 		checkboxSelected = sprites.get("checkboxSelected");
 		checkboxPlain = sprites.get("checkboxPlain");
-		
+
 		// Fonts
 		FONT_SMALL = new Font("Karmatic Arcade", Font.PLAIN, 23);
-		
+
 		// Colors
-		TextColor = new Color(200,200,200);
-		
+		TextColor = new Color(200, 200, 200);
+
+		// Credits
+		ArrayList<String> nameSorted = new ArrayList<String>();
+		nameSorted.addAll(Arrays.asList(Names));
+		Collections.shuffle(nameSorted);
+
+		creditNameString = "";
+		for (int i = 0; i < nameSorted.size(); i++) {
+			creditNameString += "    " + nameSorted.get(i) + "    ";
+		}
+
+		System.out.println("Credit Names: " + creditNameString);
+
 		// Panel Size
 		buttonPanelWidth = 400;
 		buttonPanelHeight = 400;
@@ -179,176 +197,178 @@ public class TitleScreen implements ActionListener, KeyListener {
 	/**
 	 * The Customization screen after you selected Start Game
 	 */
-//	private void CreateProfileScreen() {
-//		lpane = new JLayeredPane();
-//		frame.getContentPane().removeAll();
-//		frame.getContentPane().setLayout(new BorderLayout());
-//
-//		// Background
-//		final JLabel background = new JLabel(new ImageIcon(profileBackground));
-//		background.setBackground(Color.BLACK);
-//		background.setBounds(0, 0, width, height);
-//		background.setOpaque(true);
-//
-//		JLabel img = new JLabel("");
-//		background.add(img);
-//
-//		/* Buttons */
-//		startButtonProfile = new MenuButton("Start Game", 23);// startButtonPlain,startButtonSelected);
-//		buttonList.add(startButtonProfile);
-//		startButtonProfile.b.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//
-//				// User is selected
-//				if (Library.getUser(userList.getSelectedIndex()) != null) {
-//					frame.requestFocus();
-//					background.setVisible(false);
-//					lpane.setVisible(false);
-//					frame.getContentPane().remove(background);
-//					frame.getContentPane().remove(lpane);
-//					frame.getContentPane().setLayout(null);
-//					frame.removeKeyListener(Keys);
-//
-//					selectedJoystick = controllerList.getSelectedIndex();
-//					selectedUser = Library.getUser(userList.getSelectedIndex());
-//					enableLogging = loggingBox.isSelected();
-//
-//					savePreferences();
-//					IsStarting = true;
-//				}
-//			}
-//		});
-//
-//		// Back Button
-//		backButtonProfile = new MenuButton("Back", 23);// backButtonPlain,
-//														// backButtonSelected);
-//		buttonList.add(backButtonProfile);
-//		backButtonProfile.b.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				background.setVisible(false);
-//				frame.getContentPane().setLayout(new GridLayout(1, 1));
-//				frame.getContentPane().remove(lpane);
-//				buttonList.clear();
-//				CreateMainMenu();
-//			}
-//		});
-//
-//		// Place the back button
-//		final JPanel backArea = new JPanel();
-//		backArea.setBackground(new Color(100, 100, 100, 0));
-//		backArea.setOpaque(false);
-//
-//		backArea.setLayout(new BoxLayout(backArea, 1));
-//		backArea.setBounds((int) (width * 0.255) - 110, (int) (height * 0.82),
-//				220, 50);
-//
-//		backArea.add("North", backButtonProfile.b);
-//
-//		// Place the start button
-//		final JPanel startArea = new JPanel();
-//		startArea.setBackground(new Color(100, 100, 100, 0));
-//		startArea.setOpaque(false);
-//
-//		startArea.setLayout(new BoxLayout(startArea, 1));
-//		startArea.setBounds((int) (width * 0.715) - 110, (int) (height * 0.82),
-//				230, 50);
-//		startArea.add("North", startButtonProfile.b);
-//
-//		// Keyboard
-//		startButtonProfile.b.addKeyListener(Keys);
-//		backButtonProfile.b.addKeyListener(Keys);
-//
-//		// Default button
-//		frame.requestFocus();
-//		startButtonProfile.setSelected(true);
-//
-//		// User Panel
-//		final JPanel userPanel2 = new JPanel();
-//		userPanel2.setBackground(Color.BLACK);
-//		userPanel2.setLayout(new FlowLayout());
-//
-//		// nameInputField = new JTextField(16);
-//		// nameInputField.setPreferredSize(new Dimension(400, 50));
-//
-//		// User Selection
-//		userList.setPreferredSize(new Dimension(250, 40));
-//		userList.setFont(new Font("KarmaticArcade", Font.BOLD, 12));
-//		userList.setBackground(Color.BLACK);
-//		userList.setForeground(Color.WHITE);
-//
-//		// JLabel text2 = new JLabel("   New User: ");
-//		// text2.setForeground(Color.WHITE);
-//		// text2.setFont(new Font("Consolas", Font.BOLD, 32));
-//
-//		newUserButton = new MenuButton("New User", 20);// newUserButtonPlain,newUserButtonSelected);
-//		newUserButton.b.setPreferredSize(new Dimension(195, 80));
-//		newUserButton.b.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				CreateNewUser(frame);
-//			}
-//		});
-//
-//		JLabel text1 = new JLabel("User: ");
-//		Font FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 23);
-//		text1.setFont(FONT30);
-//		text1.setForeground(Color.WHITE);
-//		userPanel2.add(text1);
-//		userPanel2.add(userList);
-//		userPanel2.add(newUserButton.b);
-//		userPanel2.setBackground(Color.getColor("TRANSLUCENT"));
-//		userPanel2.setOpaque(false);
-//		userPanel2.setBounds((int) (width * 0.25), (int) (height * 0.32), 750,
-//				150);
-//
-//		// Controller
-//		final JPanel userPanel3 = null;//Options();
-//		userPanel3.setBackground(Color.getColor("TRANSLUCENT"));
-//		userPanel3.setOpaque(false);
-//		userPanel3.setBounds((int) (width * 0.32), (int) (height * 0.46), 400,
-//				40);
-//
-//		// Logging
-//		final JPanel userPanel4 = new JPanel();
-//		userPanel4.setBackground(Color.BLACK);
-//		userPanel4.setLayout(new BoxLayout(userPanel4, BoxLayout.X_AXIS));
-//		userPanel4.setBounds((int) (width * 0.32), (int) (height * 0.55), 700,
-//				70);
-//
-//		loggingBox = new JCheckBox();
-//		loggingBox.setBackground(Color.getColor("TRANSLUCENT"));
-//		loggingBox.setOpaque(false);
-//		loggingBox.setIcon(new ImageIcon(checkboxPlain));
-//		loggingBox.setSelectedIcon(new ImageIcon(checkboxSelected));
-//		loggingBox.setSelected(true);
-//
-//		loggingBox.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent arg0) {
-//				enableLogging = loggingBox.isSelected();
-//			}
-//		});
-//
-//		JLabel text2 = new JLabel("Logging: ");
-//		text2.setFont(FONT30);
-//		text2.setForeground(Color.white);
-//		userPanel4.add(text2);
-//		userPanel4.add(loggingBox);
-//		userPanel4.add(new JLabel("  "));
-//		userPanel4.setBackground(Color.getColor("TRANSLUCENT"));
-//		userPanel4.setOpaque(false);
-//
-//		// Add everything to Layered Panel
-//		lpane.setBounds(0, 0, 600, 400);
-//		lpane.add(background, 0,   0);
-//		lpane.add(startArea,  1,   0);
-//		lpane.add(userPanel2, 2,   0);
-//		lpane.add(userPanel3, 3,   0);
-//		lpane.add(userPanel4, 4,   0);
-//		lpane.add(backArea,   5,   0);
-//
-//		//frame.getContentPane().add(lpane);
-//		frame.setVisible(true);
-//		restorePreferences();
-//	}
+	// private void CreateProfileScreen() {
+	// lpane = new JLayeredPane();
+	// frame.getContentPane().removeAll();
+	// frame.getContentPane().setLayout(new BorderLayout());
+	//
+	// // Background
+	// final JLabel background = new JLabel(new ImageIcon(profileBackground));
+	// background.setBackground(Color.BLACK);
+	// background.setBounds(0, 0, width, height);
+	// background.setOpaque(true);
+	//
+	// JLabel img = new JLabel("");
+	// background.add(img);
+	//
+	// /* Buttons */
+	// startButtonProfile = new MenuButton("Start Game", 23);//
+	// startButtonPlain,startButtonSelected);
+	// buttonList.add(startButtonProfile);
+	// startButtonProfile.b.addActionListener(new ActionListener() {
+	// public void actionPerformed(ActionEvent e) {
+	//
+	// // User is selected
+	// if (Library.getUser(userList.getSelectedIndex()) != null) {
+	// frame.requestFocus();
+	// background.setVisible(false);
+	// lpane.setVisible(false);
+	// frame.getContentPane().remove(background);
+	// frame.getContentPane().remove(lpane);
+	// frame.getContentPane().setLayout(null);
+	// frame.removeKeyListener(Keys);
+	//
+	// selectedJoystick = controllerList.getSelectedIndex();
+	// selectedUser = Library.getUser(userList.getSelectedIndex());
+	// enableLogging = loggingBox.isSelected();
+	//
+	// savePreferences();
+	// IsStarting = true;
+	// }
+	// }
+	// });
+	//
+	// // Back Button
+	// backButtonProfile = new MenuButton("Back", 23);// backButtonPlain,
+	// // backButtonSelected);
+	// buttonList.add(backButtonProfile);
+	// backButtonProfile.b.addActionListener(new ActionListener() {
+	// public void actionPerformed(ActionEvent e) {
+	// background.setVisible(false);
+	// frame.getContentPane().setLayout(new GridLayout(1, 1));
+	// frame.getContentPane().remove(lpane);
+	// buttonList.clear();
+	// CreateMainMenu();
+	// }
+	// });
+	//
+	// // Place the back button
+	// final JPanel backArea = new JPanel();
+	// backArea.setBackground(new Color(100, 100, 100, 0));
+	// backArea.setOpaque(false);
+	//
+	// backArea.setLayout(new BoxLayout(backArea, 1));
+	// backArea.setBounds((int) (width * 0.255) - 110, (int) (height * 0.82),
+	// 220, 50);
+	//
+	// backArea.add("North", backButtonProfile.b);
+	//
+	// // Place the start button
+	// final JPanel startArea = new JPanel();
+	// startArea.setBackground(new Color(100, 100, 100, 0));
+	// startArea.setOpaque(false);
+	//
+	// startArea.setLayout(new BoxLayout(startArea, 1));
+	// startArea.setBounds((int) (width * 0.715) - 110, (int) (height * 0.82),
+	// 230, 50);
+	// startArea.add("North", startButtonProfile.b);
+	//
+	// // Keyboard
+	// startButtonProfile.b.addKeyListener(Keys);
+	// backButtonProfile.b.addKeyListener(Keys);
+	//
+	// // Default button
+	// frame.requestFocus();
+	// startButtonProfile.setSelected(true);
+	//
+	// // User Panel
+	// final JPanel userPanel2 = new JPanel();
+	// userPanel2.setBackground(Color.BLACK);
+	// userPanel2.setLayout(new FlowLayout());
+	//
+	// // nameInputField = new JTextField(16);
+	// // nameInputField.setPreferredSize(new Dimension(400, 50));
+	//
+	// // User Selection
+	// userList.setPreferredSize(new Dimension(250, 40));
+	// userList.setFont(new Font("KarmaticArcade", Font.BOLD, 12));
+	// userList.setBackground(Color.BLACK);
+	// userList.setForeground(Color.WHITE);
+	//
+	// // JLabel text2 = new JLabel("   New User: ");
+	// // text2.setForeground(Color.WHITE);
+	// // text2.setFont(new Font("Consolas", Font.BOLD, 32));
+	//
+	// newUserButton = new MenuButton("New User", 20);//
+	// newUserButtonPlain,newUserButtonSelected);
+	// newUserButton.b.setPreferredSize(new Dimension(195, 80));
+	// newUserButton.b.addActionListener(new ActionListener() {
+	// public void actionPerformed(ActionEvent e) {
+	// CreateNewUser(frame);
+	// }
+	// });
+	//
+	// JLabel text1 = new JLabel("User: ");
+	// Font FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 23);
+	// text1.setFont(FONT30);
+	// text1.setForeground(Color.WHITE);
+	// userPanel2.add(text1);
+	// userPanel2.add(userList);
+	// userPanel2.add(newUserButton.b);
+	// userPanel2.setBackground(Color.getColor("TRANSLUCENT"));
+	// userPanel2.setOpaque(false);
+	// userPanel2.setBounds((int) (width * 0.25), (int) (height * 0.32), 750,
+	// 150);
+	//
+	// // Controller
+	// final JPanel userPanel3 = null;//Options();
+	// userPanel3.setBackground(Color.getColor("TRANSLUCENT"));
+	// userPanel3.setOpaque(false);
+	// userPanel3.setBounds((int) (width * 0.32), (int) (height * 0.46), 400,
+	// 40);
+	//
+	// // Logging
+	// final JPanel userPanel4 = new JPanel();
+	// userPanel4.setBackground(Color.BLACK);
+	// userPanel4.setLayout(new BoxLayout(userPanel4, BoxLayout.X_AXIS));
+	// userPanel4.setBounds((int) (width * 0.32), (int) (height * 0.55), 700,
+	// 70);
+	//
+	// loggingBox = new JCheckBox();
+	// loggingBox.setBackground(Color.getColor("TRANSLUCENT"));
+	// loggingBox.setOpaque(false);
+	// loggingBox.setIcon(new ImageIcon(checkboxPlain));
+	// loggingBox.setSelectedIcon(new ImageIcon(checkboxSelected));
+	// loggingBox.setSelected(true);
+	//
+	// loggingBox.addActionListener(new ActionListener() {
+	// public void actionPerformed(ActionEvent arg0) {
+	// enableLogging = loggingBox.isSelected();
+	// }
+	// });
+	//
+	// JLabel text2 = new JLabel("Logging: ");
+	// text2.setFont(FONT30);
+	// text2.setForeground(Color.white);
+	// userPanel4.add(text2);
+	// userPanel4.add(loggingBox);
+	// userPanel4.add(new JLabel("  "));
+	// userPanel4.setBackground(Color.getColor("TRANSLUCENT"));
+	// userPanel4.setOpaque(false);
+	//
+	// // Add everything to Layered Panel
+	// lpane.setBounds(0, 0, 600, 400);
+	// lpane.add(background, 0, 0);
+	// lpane.add(startArea, 1, 0);
+	// lpane.add(userPanel2, 2, 0);
+	// lpane.add(userPanel3, 3, 0);
+	// lpane.add(userPanel4, 4, 0);
+	// lpane.add(backArea, 5, 0);
+	//
+	// //frame.getContentPane().add(lpane);
+	// frame.setVisible(true);
+	// restorePreferences();
+	// }
 
 	/**
 	 * Create the main menu screen
@@ -356,7 +376,7 @@ public class TitleScreen implements ActionListener, KeyListener {
 	private void CreateMainMenu() {
 		lpane = new JLayeredPane();
 		lpane.setLayout(null);
-		
+
 		// Background
 		final JLabel background = new JLabel(new ImageIcon(titleBackground));
 		background.setBackground(Color.GRAY);
@@ -382,7 +402,7 @@ public class TitleScreen implements ActionListener, KeyListener {
 		// Exit button
 		exitButton = new MenuButton("Exit", this);
 		buttonList.add(exitButton);
-		
+
 		// List of users to select
 		userList.setPreferredSize(new Dimension(375, 40));
 		userList.setFont(new Font("KarmaticArcade", Font.BOLD, 12));
@@ -391,28 +411,29 @@ public class TitleScreen implements ActionListener, KeyListener {
 		updateUsers();
 
 		// Add a new user profile
-		/*newUserButton = new MenuButton("New User", 20, this);
-		newUserButton.b.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				CreateNewUser(frame);
-			}
-		});*/
-		
-		/*userList.addActionListener(new ActionListener(){
-			
-		});*/
-		
+		/*
+		 * newUserButton = new MenuButton("New User", 20, this);
+		 * newUserButton.b.addActionListener(new ActionListener() { public void
+		 * actionPerformed(ActionEvent e) { CreateNewUser(frame); } });
+		 */
+
+		/*
+		 * userList.addActionListener(new ActionListener(){
+		 * 
+		 * });
+		 */
+
 		JPanel userPanel = new JPanel();
-		userPanel.setBackground(new Color(20,20,20));
-		
+		userPanel.setBackground(new Color(20, 20, 20));
+
 		// Controller list
 		JComboBox<String> joysticks = Options();
 		joysticks.setPreferredSize(new Dimension(375, 40));
-		
+
 		JLabel inputMessage = new JLabel("Input: ");
 		inputMessage.setFont(FONT_SMALL);
 		inputMessage.setForeground(TextColor);
-		
+
 		JLabel userMessage = new JLabel("User:  ");
 		userMessage.setFont(FONT_SMALL);
 		userMessage.setForeground(TextColor);
@@ -436,10 +457,13 @@ public class TitleScreen implements ActionListener, KeyListener {
 		loggingMessage.setForeground(TextColor);
 
 		// Scrolling Credits
+		JPanel creditPanel = new JPanel();
 		creditNames = new JLabel("Here are the credits");
 		creditNames.setFont(FONT_SMALL);
 		creditNames.setForeground(TextColor);
-		
+
+		creditPanel.add(creditNames);
+
 		//
 		userPanel.add(userMessage);
 		userPanel.add(userList);
@@ -447,23 +471,31 @@ public class TitleScreen implements ActionListener, KeyListener {
 		userPanel.add(joysticks);
 		userPanel.add(loggingMessage);
 		userPanel.add(loggingBox);
-	
+
 		// Panels
 		buttonPanel.add(startButton.b);
 		buttonPanel.add(oddballButton.b);
 		buttonPanel.add(rewindButton.b);
 		buttonPanel.add(exitButton.b);
-		buttonPanel.add(creditNames);		
-		startButton.b.setBounds(0,0,buttonPanelWidth,50);
-		oddballButton.b.setBounds(0,50,buttonPanelWidth,50);
-		rewindButton.b.setBounds(0,100,buttonPanelWidth,50);
-		exitButton.b.setBounds(0,150,buttonPanelWidth,50);
-		creditNames.setBounds(0,250,buttonPanelWidth,50);
 
-		buttonPanel.setBounds(width / 2 - buttonPanelWidth/2, (int) (height * 0.57), buttonPanelWidth, buttonPanelHeight);
+		startButton.b.setBounds(0, 0, buttonPanelWidth, 50);
+		oddballButton.b.setBounds(0, 50, buttonPanelWidth, 50);
+		rewindButton.b.setBounds(0, 100, buttonPanelWidth, 50);
+		exitButton.b.setBounds(0, 150, buttonPanelWidth, 50);
+
+		buttonPanel.setBounds(width / 2 - buttonPanelWidth / 2,
+				(int) (height * 0.57), buttonPanelWidth, buttonPanelHeight);
 		buttonPanel.setOpaque(false);
-		
-		userPanel.setBounds((int)(width * 0.5) - 250, (int) (height * 0.37), 500, 140);
+
+		userPanel.setBounds((int) (width * 0.5) - 250, (int) (height * 0.37),
+				500, 140);
+
+		//
+		creditNames.setBounds(0, 0, (int) (width * 0.8), 30);
+		creditNames.setPreferredSize(new Dimension((int) (width * 0.6), 30));
+		creditPanel.setBounds((int) (width * 0.5) - (int) (width * 0.4),
+				(int) (height * 0.9), (int) (width * 0.8), 30);
+		creditPanel.setOpaque(false);
 
 		background.setBackground(Color.BLACK);
 		background.setBounds(0, 0, width, height);
@@ -473,6 +505,7 @@ public class TitleScreen implements ActionListener, KeyListener {
 		lpane.add(background, 0, 0);
 		lpane.add(buttonPanel, 1, 0);
 		lpane.add(userPanel, 2, 0);
+		lpane.add(creditPanel, 3, 0);
 
 		//
 		frame.requestFocus();
@@ -483,23 +516,23 @@ public class TitleScreen implements ActionListener, KeyListener {
 
 		restorePreferences();
 	}
-	
-	public void showTitleScreen(boolean bShow){
-		
+
+	public void showTitleScreen(boolean bShow) {
+
 		// Reset everything and display screen
-		if(bShow){
+		if (bShow) {
 			this.IsExiting = false;
 			this.IsOption = false;
 			this.IsStarting = false;
 			lpane.setVisible(true);
-		
-			frame.getContentPane().setLayout(null); // dont need this.  fix in Gameover screen
+
+			frame.getContentPane().setLayout(null); // dont need this. fix in
+													// Gameover screen
 			frame.getContentPane().add(lpane);
 			lpane.repaint();
 			frame.requestFocus();
-			
-		}
-		else{
+
+		} else {
 			frame.getContentPane().remove(lpane);
 		}
 	}
@@ -640,21 +673,27 @@ public class TitleScreen implements ActionListener, KeyListener {
 
 	}
 
-	public void ScrollCredits(){
-		String Names = "Martin Joel Blah Blah Blah Blah Blah Blah Blah";
-		
-		if(creditIndex > Names.length()){
-			creditIndex = 0;
+	public void ScrollCredits(float deltaTime) {
+		creditCheck++;
+
+		if (creditCheck % 25 == 0) {
+
+			if (creditIndex > creditNameString.length()) {
+				creditIndex = 0;
+			} else if (creditIndex + 40 > creditNameString.length()) {
+				creditNames.setText(creditNameString.substring(creditIndex,
+						creditNameString.length())
+						+ creditNameString.substring(0,
+								creditNameString.length() - creditIndex));
+			} else {
+				creditNames.setText(creditNameString.substring(creditIndex,
+						creditIndex + 40));
+			}
+
+			creditIndex++;
 		}
-		else if(creditIndex+10 > Names.length()){
-			creditNames.setText(Names.substring(creditIndex, Names.length()) + Names.substring(1,creditIndex));
-		}
-		else{
-			creditNames.setText(Names.substring(1, 5));
-		}
-		creditIndex++;
 	}
-	
+
 	/* Menu Button Methods */
 	/**
 	 * Called from the TitleUpdate() in gamecontroller To select the buttons
@@ -854,7 +893,7 @@ public class TitleScreen implements ActionListener, KeyListener {
 		userList.removeAllItems();
 		userList.addItem("NEW USER");
 		for (int i = 0; i < names.length; i++) {
-			System.out.println("TitleScreen - UserName: "+names[i]);
+			System.out.println("TitleScreen - UserName: " + names[i]);
 			userList.addItem(names[i]);
 		}
 	}
@@ -893,8 +932,6 @@ public class TitleScreen implements ActionListener, KeyListener {
 		if (Library.getUser(userList.getSelectedIndex()) != null) {
 			frame.requestFocus();
 			lpane.setVisible(false);
-			
-			//frame.getContentPane().remove(lpane);
 
 			selectedJoystick = controllerList.getSelectedIndex();
 			selectedUser = Library.getUser(userList.getSelectedIndex());
@@ -907,6 +944,21 @@ public class TitleScreen implements ActionListener, KeyListener {
 
 	private void onExitButtonPress() {
 		IsExiting = true;
+	}
+
+	private void onOddballButtonPress() {
+		frame.requestFocus();
+		lpane.setVisible(false);
+		lpane.removeAll();
+		buttonList.clear();
+
+		frame.getContentPane().remove(background);
+		frame.getContentPane().remove(lpane);
+		frame.getContentPane().removeAll();
+		
+		frame.getContentPane().setLayout(null);
+		frame.removeKeyListener(Keys);
+		IsOption = true;
 	}
 
 	@Override
@@ -923,27 +975,8 @@ public class TitleScreen implements ActionListener, KeyListener {
 		}
 	}
 
-	// Oddball
-	/*
-	 * frame.requestFocus(); background.setVisible(false);
-	 * lpane.setVisible(false); lpane.removeAll(); buttonPanel.removeAll();
-	 * buttonList.clear();
-	 * 
-	 * frame.getContentPane().remove(background);
-	 * frame.getContentPane().remove(lpane); frame.getContentPane().removeAll();
-	 * buttonPanel.setVisible(false);
-	 * 
-	 * frame.getContentPane().setLayout(null); frame.removeKeyListener(Keys);
-	 * IsOption = true;
-	 */
-	// Rewind
-
-	// Exit
-	// public void actionPerformed(ActionEvent e) {
-	// IsExiting = true;
-	// }
-
-	public void keyPressed(KeyEvent arg0) {}
+	public void keyPressed(KeyEvent arg0) {
+	}
 
 	public void keyReleased(KeyEvent e) {
 		switch (e.getKeyCode()) {
@@ -966,6 +999,7 @@ public class TitleScreen implements ActionListener, KeyListener {
 		}
 	}
 
-	public void keyTyped(KeyEvent arg0) {}
+	public void keyTyped(KeyEvent arg0) {
+	}
 
 }

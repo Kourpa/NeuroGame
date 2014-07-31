@@ -225,7 +225,7 @@ public class GameController{
    {
      if (game.getTitleScreen() != null)
      {
-     	game.getTitleScreen().ScrollCredits();
+     	game.getTitleScreen().ScrollCredits(0.1f);
      	SelectJoystick(game.getTitleScreen().GetSelectedJoystick(), game.getTitleScreen().GetSelectedJoystickIndex());
      	
      	if(joystick!=null && useJoystick==true){
