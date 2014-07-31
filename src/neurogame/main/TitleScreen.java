@@ -352,7 +352,8 @@ public class TitleScreen {
 		lpane.add(userPanel3, 3, 0);
 		lpane.add(userPanel4, 4, 0);
 		lpane.add(backArea, 5, 0);
-		frame.getContentPane().add(lpane);
+		
+		//frame.getContentPane().add(lpane);		
 		frame.setVisible(true);
 		restorePreferences();
 	}
