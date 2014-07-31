@@ -10,6 +10,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
+import neurogame.main.GameController;
+
 /**
  * Key bindings module library.
  * 
@@ -17,7 +19,7 @@ import javax.swing.*;
  */
 public class KeyBinds
 {
-  private PlayerControls playerControls;
+  private GameController controller;
   private InputMap iMap;
   private ActionMap aMap;
 
@@ -27,9 +29,9 @@ public class KeyBinds
    * @param pane
    *          JComponent to which to attach the key bindings.
    */
-  public KeyBinds(JComponent pane, PlayerControls playerControls)
+  public KeyBinds(JComponent pane, GameController controller)
   {
-    this.playerControls = playerControls;
+    this.controller = controller;
     iMap = pane.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);
     aMap = pane.getActionMap();
     KeyStroke key;
@@ -154,9 +156,9 @@ public class KeyBinds
     public void actionPerformed(ActionEvent e)
     {
       // Test to make sure the main game has been linked.
-      if (playerControls != null)
+      if (controller != null)
       {
-        playerControls.updateInput(action.toLowerCase());
+        controller.updateInput(action.toLowerCase());
       }
     }
   }

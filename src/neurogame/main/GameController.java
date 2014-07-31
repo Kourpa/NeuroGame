@@ -18,7 +18,6 @@ import javax.swing.JComponent;
 
 import neurogame.gameplay.DirectionVector;
 import neurogame.library.KeyBinds;
-import neurogame.library.PlayerControls;
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
@@ -31,7 +30,7 @@ import org.lwjgl.input.Controllers;
  * @team Marcos Lemus
  */
 public class GameController{
-  private final PlayerControls controls;
+  //private final PlayerControls controls;
   private final KeyBinds keyBinds;
   private final Map<String, Boolean> inputs;
   private final Map<String, Boolean> previousInputs;
@@ -50,6 +49,7 @@ public class GameController{
   private boolean ButtonPressed;
 
   private boolean joystickReady;
+  
 
   /**
    * Instantiates a new GameController.
@@ -67,9 +67,22 @@ public class GameController{
     this.game = game;
     this.frame = frame;
 
-    controls = new PlayerControls();
-    keyBinds = new KeyBinds((JComponent) frame.getContentPane(), controls);
-    inputs = controls.getInputs();
+    //controls = new PlayerControls();
+    
+    inputs = new HashMap<String, Boolean>();
+    inputs.put("up", false);
+    inputs.put("down", false);
+    inputs.put("left", false);
+    inputs.put("right", false);
+    inputs.put("space", false);
+    inputs.put("escape", false);
+    inputs.put("enter", false);
+    inputs.put("pause", false);
+    
+    
+    
+    keyBinds = new KeyBinds((JComponent) frame.getContentPane(), this);
+    
 
     controllable = false;
 
@@ -111,7 +124,7 @@ public class GameController{
     }
 
     // //////////////
-    controls.addBinding("sound");
+    addBinding("sound");
     keyBinds.addBinding(KeyEvent.VK_F1, "sound");
     //keyBinds.addBinding(KeyEvent.VK_SPACE, "shoot");
 
@@ -126,30 +139,30 @@ public class GameController{
 
     // Special key bindings for sound, suicide (God-mode-only), and zoom
     // (debug only). Must be created before showing the title.
-    controls.addBinding("suicide");
+    addBinding("suicide");
     keyBinds.addBinding(KeyEvent.VK_BACK_SPACE, "suicide");
-    controls.addBinding("zoom_in");
+    addBinding("zoom_in");
     keyBinds.addBinding(KeyEvent.VK_EQUALS, "zoom_in");
-    controls.addBinding("zoom_out");
+    addBinding("zoom_out");
     keyBinds.addBinding(KeyEvent.VK_MINUS, "zoom_out");
-    controls.addBinding("zoom_reset");
+    addBinding("zoom_reset");
     keyBinds.addBinding(KeyEvent.VK_BACK_SLASH, "zoom_reset");
-    controls.addBinding("toggle_centered");
+    addBinding("toggle_centered");
     keyBinds.addBinding(KeyEvent.VK_QUOTE, "toggle_centered");
-    controls.addBinding("debug");
+    addBinding("debug");
     keyBinds.addBinding(KeyEvent.VK_BACK_QUOTE, "debug");
     // Enemy spawners.
-    controls.addBinding("enemy_a");
+    addBinding("enemy_a");
     keyBinds.addBinding(KeyEvent.VK_1, "enemy_a");
-    controls.addBinding("enemy_b");
+    addBinding("enemy_b");
     keyBinds.addBinding(KeyEvent.VK_2, "enemy_b");
-    controls.addBinding("enemy_c");
+    addBinding("enemy_c");
     keyBinds.addBinding(KeyEvent.VK_3, "enemy_c");
     // Coin spawner.
-    controls.addBinding("coin");
+    addBinding("coin");
     keyBinds.addBinding(KeyEvent.VK_C, "coin");
     // Zapper spawner.
-    controls.addBinding("zapper");
+    addBinding("zapper");
     keyBinds.addBinding(KeyEvent.VK_Z, "zapper");
 
     game.showTitle();
@@ -177,16 +190,16 @@ public class GameController{
  	    	
  		  if (game.getGameOverScreen().IsStarting)
  	      {
- 	        controls.disableAll();
+ 	        disableAll();
  	        game.showTitle();
  	      }
  	      else if (game.getGameOverScreen().IsExiting)
  	      {
- 	        controls.disableAll();
+ 	        disableAll();
  	        game.quit();
  	      }
  	      else if(game.getGameOverScreen().IsRestarting){
- 	    	  controls.disableAll();
+ 	    	  disableAll();
  	          game.newGame();
  	      }
  	    }
@@ -234,7 +247,7 @@ public class GameController{
 
        if (game.getTitleScreen().IsStarting)
        {
-         controls.disableAll();
+         disableAll();
          game.setLoggingMode(game.getTitleScreen().GetLogging());
          SelectJoystick(game.getTitleScreen().GetSelectedJoystick(), game.getTitleScreen().GetSelectedJoystickIndex());
 
@@ -244,7 +257,7 @@ public class GameController{
        }
        else if (game.getTitleScreen().IsExiting)
        {
-         controls.disableAll();
+         disableAll();
          game.quit();
        }
        else if (game.getTitleScreen().IsOption)
@@ -299,7 +312,7 @@ public class GameController{
     // Pause/unpause.
     if (inputs.get("pause") || inputs.get("escape"))
     {
-      controls.disableAll();
+      disableAll();
       game.togglePause();
     }
     
@@ -448,4 +461,81 @@ public class GameController{
 	        }
       }
   }
+  
+  
+  /**
+   * Updates the input map based on the provided input. Called by KeyBinds.
+   * 
+   * @param str
+   *          String representation of the key state change.
+   */
+  public void updateInput(String str)
+  {
+    Boolean state = (str.startsWith("released") ? false : true);
+    String key = (state ? str : str.substring(9));
+    inputs.put(key, state);
+    // If one of the directions was pressed, automatically release the
+    // opposite direction.
+    if (state)
+    {
+      switch (str)
+      {
+      case "up":
+        inputs.put("down", false);
+        break;
+      case "down":
+        inputs.put("up", false);
+        break;
+      case "left":
+        inputs.put("right", false);
+        break;
+      case "right":
+        inputs.put("left", false);
+        break;
+      default:
+        // Fall through.
+      }
+    }
+    assert (inputs.get(key) == state);
+  }
+
+
+
+
+  /**
+   * Add a key binding option to the map.
+   * 
+   * @param key
+   *          String name for the binding to be added.
+   */
+  public void addBinding(String key)
+  {
+    inputs.put(key.toLowerCase(), false);
+
+  }
+  
+  
+  /**
+   * Disable the input for the passed key String.
+   * 
+   * @param key
+   *          Key String for the input to disable.
+   */
+  public void disable(String key)
+  {
+    inputs.put(key, false);
+  }
+
+  /**
+   * Disable all input states.
+   */
+  public void disableAll()
+  {
+    for (Map.Entry<String, Boolean> entry : inputs.entrySet())
+    {
+      inputs.put(entry.getKey(), false);
+    }
+  }
+  
+  
 }
