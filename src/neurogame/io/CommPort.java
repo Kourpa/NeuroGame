@@ -1,4 +1,4 @@
-package neurogame.main;
+package neurogame.io;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.ParallelPort;
@@ -15,13 +15,12 @@ import java.util.Enumeration;
 public class CommPort{
   private OutputStream outputSteam;
   private boolean foundPort = false;
-  private byte[] buffer;
+  
 
   /**
    * looks for the ports. If the parallel port is found its output stream i referenced.
    */
   public CommPort(){
-    buffer = new byte[1];
 
     ParallelPort port;
     
@@ -61,8 +60,9 @@ public class CommPort{
    * writes the given byte to the output stream.
    * @param b
    */
-  public void write(byte b){
-    buffer[0] = b;
+  public void sendByte(byte b){
+    byte[] buffer = {b};
+  
     if(foundPort){
       try {
         outputSteam.write(buffer);
@@ -98,7 +98,7 @@ public class CommPort{
 	  CommPort port = new CommPort();
     
 	  System.out.println("Parallel port Send: 0x12");
-    port.write((byte) 0x12);
+    port.sendByte((byte) 0x12);
     System.out.println("Parallel port: close");
     port.close();
   }

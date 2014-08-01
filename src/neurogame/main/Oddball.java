@@ -16,6 +16,8 @@ import javax.swing.Timer;
 
 import org.lwjgl.input.Controller;
 
+import neurogame.io.CommPort;
+import neurogame.io.SocketToParallelPort;
 import neurogame.library.Library;
 import neurogame.library.SpriteMap;
 
@@ -32,7 +34,12 @@ public class Oddball // implements KeyListener
   private static final byte TRIGGER_DONE     = 0x1;
   
   private CommPort parallelPort;
-  private static final boolean SEND_TRIGGERS = false;
+  private SocketToParallelPort socket;
+  private static final String HOST = "sycorax.cs.unm.edu";
+  private static final int PORT = 52;
+  
+  private static final boolean SEND_TRIGGERS_VIA_PARALLEL_PORT = false;
+  private static final boolean SEND_TRIGGERS_VIA_SOCKET = true;
   
   
   private long time;
@@ -56,11 +63,15 @@ public class Oddball // implements KeyListener
   public Oddball(final NeuroFrame frame)
   {
     
-    if (SEND_TRIGGERS) {
+    if (SEND_TRIGGERS_VIA_PARALLEL_PORT) {
     	System.out.println("Opening Parallel Port");
     	parallelPort = new CommPort();
     }
-
+    
+    if (SEND_TRIGGERS_VIA_SOCKET)
+    {
+      socket = new SocketToParallelPort(HOST, PORT);
+    }
     int width = frame.getWidth();
     int height = frame.getHeight();
 
@@ -113,11 +124,11 @@ public class Oddball // implements KeyListener
 
     for (int i = 0; i < numberOfGoodScreens; i++)
     {
-      options.add(Screen.GOOD);
+      options.add(Screen.NORMAL);
     }
     for (int i = 0; i < numberOfBadScreens; i++)
     {
-      options.add(Screen.BAD);
+      options.add(Screen.ODDBALL);
     }
 
     Collections.shuffle(options);
@@ -166,17 +177,17 @@ public class Oddball // implements KeyListener
         // Target or False screen
         if (currentScreen == Screen.INSTRUCTIONS)
         	{ System.out.println("Parallel Port: Sending Start trigger");
-        	parallelPort.write(TRIGGER_START);
+        	parallelPort.sendByte(TRIGGER_START);
         	}
         randomFloat = Library.RANDOM.nextFloat();
         if (randomFloat < probabilityOfTarget)
         {
           currentImageNum = 0;
-          currentScreen = Screen.BAD;
+          currentScreen = Screen.ODDBALL;
         }
         else
         {
-          currentScreen = Screen.GOOD;
+          currentScreen = Screen.NORMAL;
           currentImageNum += 1;
           currentNumber++;
         }
@@ -187,10 +198,15 @@ public class Oddball // implements KeyListener
         // Finished the test
         if (currentNumber > numberOfGoodScreens)
         {
-          if (SEND_TRIGGERS)
-          { parallelPort.write(TRIGGER_DONE);
+          if (parallelPort != null)
+          { parallelPort.sendByte(TRIGGER_DONE);
             parallelPort.close();
           }
+          if (socket != null)
+          { socket.sendByte(TRIGGER_DONE);
+            socket.close();
+          }
+          
           System.out.println("Oddball Test Done. Total oddball count = " + oddballCount);
           showCount = true;
         }
@@ -234,24 +250,45 @@ public class Oddball // implements KeyListener
 
     switch (currentScreen)
     {
-    case GOOD:
-      if (SEND_TRIGGERS) {System.out.println("Parallel Port: Send TRIGGER_NORMAL="+TRIGGER_NORMAL); parallelPort.write(TRIGGER_NORMAL);
-      }background.setIcon(new ImageIcon(goodImage));
-      
+    case NORMAL:
+      if (parallelPort != null) 
+      { System.out.println("Parallel Port: Send TRIGGER_NORMAL="+TRIGGER_NORMAL); 
+        parallelPort.sendByte(TRIGGER_NORMAL);
+      }
+      if (socket != null)
+      { socket.sendByte(TRIGGER_NORMAL);
+      }
+      background.setIcon(new ImageIcon(goodImage));
       break;
-    case BAD:
-      if (SEND_TRIGGERS) {System.out.println("Parallel Port: Send TRIGGER_ODDBALL="+TRIGGER_ODDBALL); parallelPort.write(TRIGGER_ODDBALL); 
+      
+      
+    case ODDBALL:
+      if (parallelPort != null) 
+      { System.out.println("Parallel Port: Send TRIGGER_ODDBALL="+TRIGGER_ODDBALL); 
+        parallelPort.sendByte(TRIGGER_ODDBALL); 
+      }
+      if (socket != null)
+      { socket.sendByte(TRIGGER_ODDBALL);
       }
       background.setIcon(new ImageIcon(badImage));
       oddballCount++;
       break;
+      
     case WAIT:
-      if (SEND_TRIGGERS) {System.out.println("Parallel Port: Send TRIGGER_WAIT"+TRIGGER_WAIT); parallelPort.write(TRIGGER_WAIT);
-      }background.setIcon(new ImageIcon(waitImage));
+      if (parallelPort != null) 
+      { System.out.println("Parallel Port: Send TRIGGER_WAIT"+TRIGGER_WAIT); 
+        parallelPort.sendByte(TRIGGER_WAIT);
+      }
+      if (socket != null)
+      { socket.sendByte(TRIGGER_WAIT);
+      }
+      background.setIcon(new ImageIcon(waitImage));
       break;
+      
     case INSTRUCTIONS:
       background.setIcon(new ImageIcon(instructionImage));
       break;
+      
     case FINISHED:
       background.setIcon(new ImageIcon(finishedImage));
       break;
@@ -264,7 +301,7 @@ public class Oddball // implements KeyListener
   
   private enum Screen
   {
-    INSTRUCTIONS, GOOD, BAD, WAIT, FINISHED;
+    INSTRUCTIONS, NORMAL, ODDBALL, WAIT, FINISHED;
   }
 
 

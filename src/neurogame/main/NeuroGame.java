@@ -39,6 +39,7 @@ import neurogame.gameplay.PowerUp;
 import neurogame.gameplay.Star;
 import neurogame.level.World;
 import neurogame.library.Library;
+import neurogame.io.Logger;
 
 /**
  * NeuroGame's main class.
