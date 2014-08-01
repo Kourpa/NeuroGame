@@ -172,7 +172,7 @@ public class GameController{
   public Map<String, Boolean> getInputs(){
 	  return inputs;
   }
-  
+
   public void setControllable(boolean controllable){
 	  this.controllable = controllable;
   }

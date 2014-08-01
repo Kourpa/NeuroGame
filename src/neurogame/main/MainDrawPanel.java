@@ -106,7 +106,7 @@ public void paintComponent(Graphics g)
       g.drawImage(imageObjectLayer, 0, 0, null);
 }
 
-  public void render(ArrayList<GameObject> gameObjList)
+public void render(ArrayList<GameObject> gameObjList)
   {
     if (game.getGameState() == GameState.INITIALIZING) return;
 

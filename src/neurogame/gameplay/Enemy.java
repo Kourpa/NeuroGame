@@ -1,16 +1,14 @@
 package neurogame.gameplay;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.geom.AffineTransform;
-
 import neurogame.level.Chunk;
 import neurogame.level.ParticleEffect;
 import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.Vector2;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 public class Enemy extends GameObject
 {
@@ -141,7 +139,7 @@ public class Enemy extends GameObject
   
   public void strategyFollow(double maxDistanceChange, double scrollDistance)
   {
-    if (enemyFollowStoppedFollowing) strategyStraight(maxDistanceChange, scrollDistance);
+    if (enemyFollowStoppedFollowing) strategyStraight(maxDistanceChange*2, scrollDistance);
     else
     {
       Player player = world.getPlayer();
@@ -221,7 +219,7 @@ public class Enemy extends GameObject
     transform.rotate(angle);
     transform.translate(-locationX, -locationY);
     canvas.drawImage(image, transform, null);
-    
+
     if (Library.DEBUG_SHOW_HITBOXES)
     { int x1 = Library.worldPosXToScreen(getHitMinX());
       int y1 = Library.worldPosYToScreen(getHitMinY());

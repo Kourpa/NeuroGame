@@ -3,16 +3,11 @@
  * @author Marcos
  */
 package neurogame.level;
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-
-import neurogame.gameplay.Star;
-import neurogame.gameplay.Enemy;
-import neurogame.gameplay.EnumCollisionType;
-import neurogame.gameplay.GameObject;
-import neurogame.gameplay.Player;
-import neurogame.gameplay.PowerUp;
+import neurogame.gameplay.*;
 import neurogame.library.Library;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 public class World
 {
@@ -70,7 +65,6 @@ public class World
   /**
    * updates the chunks regenerating if the width is reached
    * 
-   * @param graphics
    * @param deltaTime
    * @return
    */

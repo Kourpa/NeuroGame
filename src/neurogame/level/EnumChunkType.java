@@ -22,7 +22,7 @@ public enum EnumChunkType
   { public double getMaxChange() { return 0.01; }
     public double getStepSize()  { return 0.01; }
     public double getDefaultOpeningHeight()  { return 0.6; }
-    public double getMinimumOpeningHeight()  { return 0.224; }
+    public double getMinimumOpeningHeight()  { return 0.3; }
     public PowerUp getPowerUp()  { return null; }
     public GameObjectType getEnemyType()  { return GameObjectType.ENEMY_STRAIGHT; }
   },

@@ -188,14 +188,7 @@ public class NeuroGame
     { gameObjectList = world.getObjectList();
     }
 
-    /**
-    * Don't draw to the screen every millisec.
-    */
-    timepassed += deltaSec;
-    if(timepassed > 1.5/60.0){
-        timepassed = 0.0;
-        frame.render(gameObjectList);
-    }
+    frame.render(gameObjectList);
   }
 
   public World getWorld(){

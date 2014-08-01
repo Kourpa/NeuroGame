@@ -1,7 +1,8 @@
 package neurogame.gameplay;
 
-import java.awt.Graphics2D;
 import neurogame.level.World;
+
+import java.awt.*;
 
 /**
  *
@@ -37,8 +38,6 @@ public abstract class GameObject
     hitBoxMaxY =   + 0.90 * (type.getHeight() / 2.0);
     
     //System.out.println("hitbox("+type+"): ("+hitBoxMinX+", " + hitBoxMinY+"), ("+hitBoxMaxX+", " + hitBoxMaxY+")");
-
-    
 
     gameObjectID = gameObjectCount;
     gameObjectCount++;

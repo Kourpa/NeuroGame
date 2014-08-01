@@ -1,10 +1,10 @@
 package neurogame.level;
 
-import java.awt.*;
-
 import neurogame.gameplay.GameObject;
 import neurogame.gameplay.GameObjectType;
 import neurogame.library.Library;
+
+import java.awt.*;
 
 /**
  * Creates particle effects for destroyed objects using the SpriteParticles static class.
