@@ -67,16 +67,12 @@ import org.w3c.dom.Element;
  * @team Martin Lidy
  */
 public class TitleScreen implements ActionListener, KeyListener {
-	private Image titleBackground, profileBackground, startButtonPlain,
-			startButtonSelected, rewindButtonSelected, backButtonPlain,
-			newUserButtonPlain, newUserButtonSelected, checkboxSelected,
+	private Image titleBackground, checkboxSelected,
 			checkboxPlain;
 
-	private Image exitButtonPlain, exitButtonSelected, rewindButtonPlain,
-			backButtonSelected, configButtonPlain, configButtonSelected;
 
 	private static MenuButton oddballButton, exitButton, startButton,
-			startButtonProfile, rewindButton, backButtonProfile, newUserButton;
+			rewindButton;
 
 	public boolean IsExiting, IsStarting, IsOption;
 	public int selectedJoystick;
@@ -144,19 +140,6 @@ public class TitleScreen implements ActionListener, KeyListener {
 
 		// Get the images.
 		titleBackground = sprites.get("titleBackground");
-		profileBackground = sprites.get("profileBackground");
-		startButtonPlain = sprites.get("startButtonPlain");
-		startButtonSelected = sprites.get("startButtonSelected");
-		exitButtonPlain = sprites.get("exitButtonPlain");
-		exitButtonSelected = sprites.get("exitButtonSelected");
-		configButtonPlain = sprites.get("configButtonPlain");
-		configButtonSelected = sprites.get("configButtonSelected");
-		rewindButtonPlain = sprites.get("rewindButtonPlain");
-		rewindButtonSelected = sprites.get("rewindButtonSelected");
-		backButtonPlain = sprites.get("backButtonPlain");
-		backButtonSelected = sprites.get("backButtonSelected");
-		newUserButtonPlain = sprites.get("newUserButtonPlain");
-		newUserButtonSelected = sprites.get("newUserButtonSelected");
 		checkboxSelected = sprites.get("checkboxSelected");
 		checkboxPlain = sprites.get("checkboxPlain");
 
@@ -171,12 +154,12 @@ public class TitleScreen implements ActionListener, KeyListener {
 		nameSorted.addAll(Arrays.asList(Names));
 		Collections.shuffle(nameSorted);
 
-		creditNameString = "";
+		creditNameString = "Created By... ";
 		for (int i = 0; i < nameSorted.size(); i++) {
 			creditNameString += "    " + nameSorted.get(i) + "    ";
 		}
 
-		System.out.println("Credit Names: " + creditNameString);
+		System.out.println("    Credit Names: " + creditNameString);
 
 		// Panel Size
 		buttonPanelWidth = 400;

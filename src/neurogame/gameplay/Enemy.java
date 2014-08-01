@@ -71,7 +71,7 @@ public class Enemy extends GameObject
   public void update(double deltaSec, double scrollDistance)
   {
     if (getX()+getWidth() < Library.leftEdgeOfWorld)
-    { world.getPlayer().killedOrAvoidedEnemy(this);
+    { world.getPlayer().killedOrAvoidedEnemy(this, false);
       die(false);
     }
 
