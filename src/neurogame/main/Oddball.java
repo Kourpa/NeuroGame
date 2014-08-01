@@ -35,8 +35,8 @@ public class Oddball // implements KeyListener
   
   private CommPort parallelPort;
   private SocketToParallelPort socket;
-  private static final String HOST = "sycorax.cs.unm.edu";
-  private static final int PORT = 52;
+  private static final String HOST = "127.0.0.1";
+  private static final int PORT = 55555;
   
   private static final boolean SEND_TRIGGERS_VIA_PARALLEL_PORT = false;
   private static final boolean SEND_TRIGGERS_VIA_SOCKET = true;
