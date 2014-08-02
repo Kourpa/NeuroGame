@@ -224,6 +224,10 @@ public class TitleScreen implements ActionListener, KeyListener {
 				if (userList.getSelectedIndex() == 0) {
 					CreateNewUser(frame);
 				}
+				else{
+					frame.requestFocus();
+					savePreferences();
+				}
 			}
 		});
 
@@ -253,6 +257,8 @@ public class TitleScreen implements ActionListener, KeyListener {
 		loggingBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				enableLogging = loggingBox.isSelected();
+				frame.requestFocus();
+				savePreferences();
 			}
 		});
 
@@ -478,21 +484,38 @@ public class TitleScreen implements ActionListener, KeyListener {
 	}
 
 	public void ScrollCredits(float deltaTime) {
+		int marqueeSize = 40;
+		int updateSpeed = 10; // Higher is slower
 		creditCheck++;
 
-		if (creditCheck % 25 == 0) {
+		// Update slower than the tick speed
+		if (creditCheck % updateSpeed == 0) {
 
+			// reset the index if it passes
 			if (creditIndex > creditNameString.length()) {
 				creditIndex = 0;
-			} else if (creditIndex + 40 > creditNameString.length()) {
-				creditNames.setText(creditNameString.substring(creditIndex,
-						creditNameString.length())
-						+ creditNameString.substring(0,
-								creditNameString.length() - creditIndex));
-			} else {
-				creditNames.setText(creditNameString.substring(creditIndex,
-						creditIndex + 40));
 			}
+			
+			else if (creditIndex + marqueeSize > creditNameString.length()){
+				creditNames.setText(creditNameString.substring(creditIndex, creditNameString.length())
+								+ creditNameString.substring(0, marqueeSize - (creditIndex - creditNameString.length())));
+			}
+			else{
+				creditNames.setText(creditNameString.substring(creditIndex, creditIndex + marqueeSize));
+			}
+			
+			/*
+			else if (creditIndex + marqueeSize > creditNameString.length()) {
+				creditNames.setText(
+						
+						  creditNameString.substring(creditIndex, creditNameString.length())
+						+ creditNameString.substring(0, creditNameString.length() - creditIndex));
+			} 
+			
+			else {
+				creditNames.setText(creditNameString.substring(creditIndex,
+						creditIndex + marqueeSize));
+			}*/
 
 			creditIndex++;
 		}
@@ -632,6 +655,13 @@ public class TitleScreen implements ActionListener, KeyListener {
 		controllerList.setFont(new Font("Consolas", Font.BOLD, 12));
 		controllerList.setBackground(Color.BLACK);
 		controllerList.setForeground(Color.WHITE);
+		
+		controllerList.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				frame.requestFocus();
+				savePreferences();
+			}
+		});
 
 		// Index
 		// Integer[] controlOptions = {1,2,3};
@@ -668,10 +698,13 @@ public class TitleScreen implements ActionListener, KeyListener {
 
 		newUserButton2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Library.addUser(nameInputField.getText());
+				String usrName = nameInputField.getText();
+				Library.addUser(usrName);
 				nameInputField.setText("");
-				updateUsers();
+				updateUsers(usrName);
 				dialog.dispose();
+				frame.requestFocus();
+				savePreferences();
 			}
 		});
 
@@ -691,14 +724,22 @@ public class TitleScreen implements ActionListener, KeyListener {
 	 * Updates the user list after adding a new user
 	 */
 	private void updateUsers() {
+		updateUsers(null);
+	}
+	
+	private void updateUsers(String usrName){
 		String[] names = Library.getUserNames();
 		System.out.println("Update Users: Length " + names.length);
 
 		userList.removeAllItems();
 		userList.addItem("NEW USER");
 		for (int i = 0; i < names.length; i++) {
-			System.out.println("TitleScreen - UserName: " + names[i]);
+			//System.out.println("TitleScreen - UserName: " + names[i]);
 			userList.addItem(names[i]);
+			
+			if((usrName != null) && (names[i].compareTo(usrName))==0){
+				userList.setSelectedIndex(i+1);
+			}
 		}
 	}
 

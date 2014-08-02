@@ -82,7 +82,7 @@ public class PlayerHud {
 	}
 	
 	public void updateHUD(Graphics2D canvasObjectLayer, NeuroFrame frame, int ammo) {
-		String highscoreMessage = "Highscore:  "+Highscore;
+		String highscoreMessage = "Best:  "+Highscore;
 		String scoreMessage = "Score: "+world.getPlayer().getScore();
 		
 		// Score
@@ -99,7 +99,7 @@ public class PlayerHud {
 		
 		canvasObjectLayer.setFont(FONT30);
 		canvasObjectLayer.setColor(Color.WHITE);
-		canvasObjectLayer.drawString("Highscore: ",
+		canvasObjectLayer.drawString("Best: ",
 				(int) (windowWidth * 0.5 - 100 - highscoreMessage.length()/2), 
 				(int) (windowHeight * 0.04));
 

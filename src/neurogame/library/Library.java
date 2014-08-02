@@ -201,6 +201,15 @@ public final class Library
 			return null;
 		}
 	}
+	
+	public static User getUser(String name){
+		for (int i = 0; i < users.size(); i++) {
+			if(name.compareTo(users.get(i).getName()) == 0){
+				return users.get(i); 
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Load the local fonts
