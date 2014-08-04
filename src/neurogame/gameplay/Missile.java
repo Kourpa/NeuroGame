@@ -50,7 +50,7 @@ public class Missile extends GameObject
   { 
     GameObjectType type = obj.getType();
     
-    if (type.isEnemy()) world.getPlayer().killedOrAvoidedEnemy(obj);
+    if (type.isEnemy()) world.getPlayer().killedOrAvoidedEnemy(obj, true);
     die(true);
   }
     

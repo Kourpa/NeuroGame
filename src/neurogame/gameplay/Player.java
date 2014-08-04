@@ -234,7 +234,7 @@ public class Player extends GameObject
   }
 
 
-  public void killedOrAvoidedEnemy(GameObject obj)
+  public void killedOrAvoidedEnemy(GameObject obj, boolean shotWithMissle)
   {
     if (!isAlive()) return;
     GameObjectType type = obj.getType();
@@ -246,7 +246,10 @@ public class Player extends GameObject
     //System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
     
     int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
+    if (!shotWithMissle) score = score/3;
+    
     gameScore += score;
+    
    
     InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(score));
     world.addGameObject(scoreInfo);
