@@ -36,14 +36,12 @@ public class SocketToParallelPort
     catch (UnknownHostException e)
     {
       System.err.println("SocketToParallelPort: ***Error***: Unknown Host " + host);
-      e.printStackTrace();
       return false;
     }
     catch (IOException e)
     {
       System.err.println("SocketToParallelPort: ***Error***: Could not open connection to " + host
           + " on port " + portNumber);
-      e.printStackTrace();
       return false;
     }
 
