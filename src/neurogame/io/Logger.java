@@ -57,7 +57,7 @@ public class Logger
     { out += "Star" + i + "X, Star" + i + "Y, ";
     }
     
-    out += "PowerUpX, PowerUpY\n" + time0 + "\n"; 
+    out += "AmmoBoxX, AmmoBoxY\n" + time0 + "\n"; 
 
     
     try
@@ -85,11 +85,11 @@ public class Logger
     Star[] starList = Star.getStarList();
     Ammo ammo = Ammo.getCurrentAmmoBox();
     
-    
+    int collisionBits = player.getCollisionLogBitsThisUpdate();
     
     String out = Long.toString(System.currentTimeMillis()-time0) +  
-        String.format("," + FLOAT4 + "," + FLOAT4  + ","+ FLOAT4 +",0,",
-        player.getCenterX(), player.getCenterY(), (double)(player.getHealth())/Library.HEALTH_MAX );
+        String.format("," + FLOAT4 + "," + FLOAT4  + ","+ FLOAT4 +",%d,",
+        player.getCenterX(), player.getCenterY(), (double)(player.getHealth())/Library.HEALTH_MAX, collisionBits );
     
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(player.getX()+player.getWidth());
     
@@ -97,6 +97,10 @@ public class Logger
     
     double proximityTop = Math.min(1.0,  (1.0 - (player.getY() - vertex.getTop())));
     double proximityBot = Math.min(1.0,  (1.0 - (vertex.getBottom() - (player.getY() + player.getHeight()))));
+    
+    if ((collisionBits & Player.COLLISION_BITS_WALL_ABOVE) > 0) proximityTop = 1.0;
+    if ((collisionBits & Player.COLLISION_BITS_WALL_BELOW) > 0) proximityBot = 1.0;
+    
 
     
     out += String.format(FLOAT4 + "," + FLOAT4  + ",", proximityTop, proximityBot);
