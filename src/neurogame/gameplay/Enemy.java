@@ -120,11 +120,11 @@ public class Enemy extends GameObject
     boolean changedSpeedToAvoidWall = false;
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(xx);
     if (vertex != null)
-    { if (yy - getType().getHeight() < vertex.getTopY())
+    { if (yy - getType().getHeight() < vertex.getTop())
       { changedSpeedToAvoidWall = true;
         velocity.y = maxDistanceChange/2.0;
       }
-      else if (yy + getType().getHeight()*2.0 > vertex.getBottomY())    
+      else if (yy + getType().getHeight()*2.0 > vertex.getBottom())    
       { changedSpeedToAvoidWall = true;
         velocity.y = -maxDistanceChange/2.0;
       }
@@ -159,11 +159,11 @@ public class Enemy extends GameObject
     
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(xx);
     if (vertex != null)
-    { if (yy - getType().getHeight() < vertex.getTopY())
+    { if (yy - getType().getHeight() < vertex.getTop())
       { changedSpeedToAvoidWall = true;
         velocity.y = maxDistanceChange/2.0;
       }
-      else if (yy + getType().getHeight()*2.0 > vertex.getBottomY())    
+      else if (yy + getType().getHeight()*2.0 > vertex.getBottom())    
       { changedSpeedToAvoidWall = true;
         velocity.y = -maxDistanceChange/2.0;
       }
@@ -204,8 +204,8 @@ public class Enemy extends GameObject
       velocity.y = velocity.y + maxDistanceChange/10;
     }
  
-    if (getY() + velocity.y > vertex.getBottomY() - getHeight()) velocity.y = - maxDistanceChange;
-    if (getY() + velocity.y < vertex.getTopY()) velocity.y = maxDistanceChange; 
+    if (getY() + velocity.y > vertex.getBottom() - getHeight()) velocity.y = - maxDistanceChange;
+    if (getY() + velocity.y < vertex.getTop()) velocity.y = maxDistanceChange; 
     
   }
 
@@ -281,11 +281,11 @@ public class Enemy extends GameObject
     if (vertex == null) return 0;
 
     double x = vertex.getX(); 
-    double rangeY = (vertex.getBottomY() - vertex.getTopY()) - type.getHeight();
+    double rangeY = (vertex.getBottom() - vertex.getTop()) - type.getHeight();
     if (rangeY < 0.01) return 0;
     
     double y = player.getY() + type.getHeight()*(Library.RANDOM.nextDouble() - Library.RANDOM.nextDouble())*3;
-    if ((y <= vertex.getTopY()) || y > vertex.getBottomY() - type.getHeight()) y = vertex.getCenter()-type.getHeight()/2;
+    if ((y <= vertex.getTop()) || y > vertex.getBottom() - type.getHeight()) y = vertex.getCenter()-type.getHeight()/2;
 
     int enemyIdx = getFreeEnemyIndex();
     

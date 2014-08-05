@@ -89,11 +89,11 @@ public class Ammo extends GameObject
    
     spawnCoolDownRemaining = MIN_SECONDS_BETWEEN_SPAWNS;
 
-    double y = vertex.getTopY() + GameObjectType.POWER_UP.getHeight() / 3;
+    double y = vertex.getTop() + GameObjectType.POWER_UP.getHeight() / 3;
 
     if (Library.RANDOM.nextBoolean())
     {
-      y = vertex.getBottomY() - 1.3 * GameObjectType.POWER_UP.getHeight();
+      y = vertex.getBottom() - 1.3 * GameObjectType.POWER_UP.getHeight();
     }
 
     currentAmmoBox = new Ammo(x, y, world);

@@ -143,12 +143,12 @@ public class Star extends GameObject
     int targetSpawnCount = Library.RANDOM.nextInt(5) + 1;
     int numCoinsSpawned = 0;
 
-    double y = vertex.getTopY() + GameObjectType.STAR.getHeight() / 3;
+    double y = vertex.getTop() + GameObjectType.STAR.getHeight() / 3;
     double direction = 1.0;
 
     if (Library.RANDOM.nextBoolean())
     {
-      y = vertex.getBottomY() - 1.3 * GameObjectType.STAR.getHeight();
+      y = vertex.getBottom() - 1.3 * GameObjectType.STAR.getHeight();
       direction = -1.0;
     }
 

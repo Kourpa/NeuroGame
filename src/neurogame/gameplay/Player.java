@@ -18,13 +18,21 @@ public class Player extends GameObject
 
   private static Image image = Library.getSprites().get(GameObjectType.PLAYER.getName());
   public static final int MAX_MISSILE_COUNT = 20;
-  private static final double MISSILE_COOLDOWN_SECONDS = 0.3;
+  //private static final double MISSILE_COOLDOWN_SECONDS = 0.3;
   private int missileCount;
-  private double missileCurrentCooldown; //seconds
+  //private double missileCurrentCooldown; //seconds
 
   private boolean invulnerable = false;
 
   private int collisionCountInCurrentChunk;
+  
+  private int collisionLogBitsThisUpdate;
+  private static final int COLLISION_BITS_WALL_ABOVE = 1;
+  private static final int COLLISION_BITS_WALL_BELOW = 2;
+  private static final int COLLISION_BITS_ENEMY = 4;
+  private static final int COLLISION_BITS_STAR = 8;
+  private static final int COLLISION_BITS_AMMO = 16;
+  private static final int COLLISION_FLAG_MISSILE_HIT_ENEMY = 32;
  
   private double timeOfLastWallCollision;
   private double gameScore;
@@ -65,7 +73,7 @@ public class Player extends GameObject
     
     missileCount = 10;
     
-    missileCurrentCooldown = 0;
+    //missileCurrentCooldown = 0;
     
     //skillProbabilitySpawnCoinPerSec = (Star.MIN_PROBALITY_SPAWN_PER_SEC + Star.MAX_PROBALITY_SPAWN_PER_SEC)/2.0;
 
@@ -89,7 +97,9 @@ public class Player extends GameObject
   {
     //System.out.println("Player.update("+deltaSec+")");
     gameTotalSeconds += deltaSec;
-    if (missileCurrentCooldown > 0) missileCurrentCooldown -= deltaSec;
+    //if (missileCurrentCooldown > 0) missileCurrentCooldown -= deltaSec;
+    
+    collisionLogBitsThisUpdate = 0;
 
     double inputSpeed = directionVector.getAcceleration();
     double maxSpeed = GameObjectType.PLAYER.getMaxSpeed();
@@ -126,6 +136,9 @@ public class Player extends GameObject
     EnumCollisionType collisionLocation = wallCollision();
     if (collisionLocation != EnumCollisionType.NONE)
     {
+      if (collisionLocation == EnumCollisionType.WALL_TOP) collisionLogBitsThisUpdate |= COLLISION_BITS_WALL_ABOVE;
+      if (collisionLocation == EnumCollisionType.WALL_BOTTOM) collisionLogBitsThisUpdate |= COLLISION_BITS_WALL_BELOW;
+      
       
       lastVelocityX = 0;
       lastVelocityY = -lastVelocityY;
@@ -173,12 +186,18 @@ public class Player extends GameObject
     if (type == GameObjectType.STAR) collectCoin(obj);
     else if (type.isEnemy()) crashedIntoEnemy(obj);
     else if (type == GameObjectType.POWER_UP)
-    { addMissileCount(10);
+    { addMissileCount(obj, 10);
     }
   }
   
-  public void addMissileCount(int count)
+  public void addMissileCount(GameObject ammoBox, int count)
   {
+    collisionLogBitsThisUpdate |= COLLISION_BITS_AMMO;
+    
+    gameScore += Library.SCORE_AMMOBOX;
+    InfoMessage scoreInfo = new InfoMessage(ammoBox.getCenterX(), ammoBox.getCenterY(), world, String.valueOf(Library.SCORE_AMMOBOX));
+    world.addGameObject(scoreInfo);
+    
     missileCount+=count;
     if (missileCount > MAX_MISSILE_COUNT) missileCount = MAX_MISSILE_COUNT;
   }
@@ -221,9 +240,11 @@ public class Player extends GameObject
 
   public void collectCoin(GameObject star)
   {
+    collisionLogBitsThisUpdate |= COLLISION_BITS_STAR;
+    
     health += Library.HEALTH_PER_COIN;
-    gameScore += Library.SCORE_PER_COIN;
-    InfoMessage scoreInfo = new InfoMessage(star.getCenterX(), star.getCenterY(), world, String.valueOf(Library.SCORE_PER_COIN));
+    gameScore += Library.SCORE_COIN;
+    InfoMessage scoreInfo = new InfoMessage(star.getCenterX(), star.getCenterY(), world, String.valueOf(Library.SCORE_COIN));
     world.addGameObject(scoreInfo);
     
     
@@ -250,7 +271,7 @@ public class Player extends GameObject
     //System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
     
     int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
-    if (!shotWithMissle) score = score/4;
+    if (!shotWithMissle) score = score/10;
     
     gameScore += score;
     
@@ -278,6 +299,8 @@ public class Player extends GameObject
   
   public void crashedIntoEnemy(GameObject obj)
   {
+    collisionLogBitsThisUpdate |= COLLISION_BITS_ENEMY;
+    
     double hitX = (getCenterX() + obj.getCenterX()) / 2.0;
     double hitY = (getCenterY() + obj.getCenterY()) / 2.0;
 
@@ -307,12 +330,12 @@ public class Player extends GameObject
   
   public void shootMissile()
   {
-    if (missileCurrentCooldown > 0) return;
+    //if (missileCurrentCooldown > 0) return;
     //System.out.println("Player.shootMissile()   missileCount=" + missileCount);
     if (missileCount < 1) return;
     
     missileCount--;
-    missileCurrentCooldown = MISSILE_COOLDOWN_SECONDS;
+    //missileCurrentCooldown = MISSILE_COOLDOWN_SECONDS;
     world.addGameObject(new Missile(getX()+getWidth(), getCenterY(), world));
   }
   

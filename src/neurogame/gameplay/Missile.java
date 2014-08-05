@@ -10,6 +10,7 @@ import neurogame.library.Library;
 public class Missile extends GameObject
 {
   private static Image image = Library.getSprites().get(GameObjectType.MISSILE.getName());
+  //private static Missile 
 
   
   public Missile(double x, double y, World world)
