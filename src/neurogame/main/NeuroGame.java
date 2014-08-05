@@ -108,7 +108,7 @@ public class NeuroGame
     Library.initSprites(frame);
     Library.loadFont();
     
-  	title = new TitleScreen(frame);
+  	title = new TitleScreen(frame, this);
     controller = new GameController(this, frame);
     
     frame.setGameController(controller);
@@ -272,6 +272,10 @@ public class NeuroGame
   {
     this.loggingMode = loggingMode;
   }
+  
+  public boolean getLoggingMode(){
+	  return loggingMode;
+  }
 
   /**
    * Setter for enabling/disabling the sound.
@@ -328,7 +332,7 @@ public class NeuroGame
   }
   
   public void showOddBall(){  
-	oddball = new Oddball(frame);
+	oddball = new Oddball(frame, this);
 	gameState = GameState.ODDBALL;
   }
   /**
