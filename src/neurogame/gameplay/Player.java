@@ -27,12 +27,12 @@ public class Player extends GameObject
   private int collisionCountInCurrentChunk;
   
   private int collisionLogBitsThisUpdate;
-  private static final int COLLISION_BITS_WALL_ABOVE = 1;
-  private static final int COLLISION_BITS_WALL_BELOW = 2;
-  private static final int COLLISION_BITS_ENEMY = 4;
-  private static final int COLLISION_BITS_STAR = 8;
-  private static final int COLLISION_BITS_AMMO = 16;
-  private static final int COLLISION_FLAG_MISSILE_HIT_ENEMY = 32;
+  public static final int COLLISION_BITS_WALL_ABOVE = 1;
+  public static final int COLLISION_BITS_WALL_BELOW = 2;
+  public static final int COLLISION_BITS_ENEMY = 4;
+  public static final int COLLISION_BITS_STAR = 8;
+  public static final int COLLISION_BITS_AMMO = 16;
+  public static final int COLLISION_FLAG_MISSILE_HIT_ENEMY = 32;
  
   private double timeOfLastWallCollision;
   private double gameScore;
@@ -400,6 +400,8 @@ public class Player extends GameObject
   
 
   public int getHealth() {return (int)(health);}
+  
+  public int getCollisionLogBitsThisUpdate() {return collisionLogBitsThisUpdate;}
   
   public void render(Graphics2D canvas)
   {
