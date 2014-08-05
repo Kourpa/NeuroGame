@@ -81,6 +81,17 @@ public enum GameObjectType
     public boolean hasCollider() {return true;}
   },
   
+  ZAPPER
+  { public String getName() {return "Zapper";}
+    public double getWidth() {return 0.09;}
+    public double getHeight() {return 0.07;}
+    public int getHitDamage() {return 10;}
+    public boolean isEnemy() {return true;}
+    public boolean isDynamic() {return false;}
+    public double getMaxSpeed() {return 0.0;}
+    public boolean hasCollider() {return true;}
+  },
+  
   POWER_UP
   { public String getName() {return "powerupMissileAmmo";}
     public double getWidth() {return 0.08;}

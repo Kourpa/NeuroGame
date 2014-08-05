@@ -5,6 +5,7 @@ package neurogame.level;
 
 import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.PowerUp;
+import neurogame.gameplay.Zapper;
 import neurogame.library.Library;
 
 public enum EnumChunkType
@@ -51,7 +52,7 @@ public enum EnumChunkType
     public double getDefaultOpeningHeight() { return 0.6; }
     public double getMinimumOpeningHeight()  { return 0.224; }
     public PowerUp getPowerUp() { return null; }
-    public GameObjectType getEnemyType() { return GameObjectType.ENEMY_STRAIGHT; }
+    public GameObjectType getEnemyType() { return GameObjectType.ZAPPER; }//{ return GameObjectType.ENEMY_STRAIGHT; }
   };
 
   public static EnumChunkType getRandomType()
@@ -59,6 +60,7 @@ public enum EnumChunkType
     //Never return FLAT
     int r = Library.RANDOM.nextInt(values().length - 2)+1;
     return values()[r];
+    //return values()[values().length];
   }
   
   public static final int SIZE = values().length;

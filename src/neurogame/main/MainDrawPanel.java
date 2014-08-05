@@ -60,7 +60,7 @@ public class MainDrawPanel extends JPanel
   public void setWorld(World world)
   {
     this.world = world;
-    HUD = new PlayerHud(frame, world);
+    HUD = new PlayerHud(frame, world,frame.getUser());
     HUD.drawGameOver(false); // reset the HUD
   }
 

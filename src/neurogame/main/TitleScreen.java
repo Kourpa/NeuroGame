@@ -156,7 +156,7 @@ public class TitleScreen implements ActionListener, KeyListener {
 
 		creditNameString = "Created By... ";
 		for (int i = 0; i < nameSorted.size(); i++) {
-			creditNameString += "    " + nameSorted.get(i) + "    ";
+			creditNameString += "   " + nameSorted.get(i) + "   ";
 		}
 
 		System.out.println("    Credit Names: " + creditNameString);
@@ -232,7 +232,7 @@ public class TitleScreen implements ActionListener, KeyListener {
 		});
 
 		JPanel userPanel = new JPanel();
-		userPanel.setBackground(new Color(20, 20, 20));
+		userPanel.setBackground(Color.black);
 
 		// Controller list
 		JComboBox<String> joysticks = Options();
@@ -303,7 +303,7 @@ public class TitleScreen implements ActionListener, KeyListener {
 		//
 		creditNames.setBounds(0, 0, (int) (width * 0.8), 30);
 		creditNames.setPreferredSize(new Dimension((int) (width * 0.6), 30));
-		creditPanel.setBounds((int) (width * 0.5) - (int) (width * 0.4),
+		creditPanel.setBounds((int) (width * 0.5)-400,
 				(int) (height * 0.9), (int) (width * 0.8), 30);
 		creditPanel.setOpaque(false);
 
@@ -498,7 +498,7 @@ public class TitleScreen implements ActionListener, KeyListener {
 			
 			else if (creditIndex + marqueeSize > creditNameString.length()){
 				creditNames.setText(creditNameString.substring(creditIndex, creditNameString.length())
-								+ creditNameString.substring(0, marqueeSize - (creditIndex - creditNameString.length())));
+								+ creditNameString.substring(0, marqueeSize - (creditNameString.length() - creditIndex)));
 			}
 			else{
 				creditNames.setText(creditNameString.substring(creditIndex, creditIndex + marqueeSize));
@@ -779,7 +779,8 @@ public class TitleScreen implements ActionListener, KeyListener {
 			lpane.setVisible(false);
 
 			selectedJoystick = controllerList.getSelectedIndex();
-			selectedUser = Library.getUser(userList.getSelectedIndex());
+			selectedUser = Library.getUser(userList.getSelectedIndex() - 1);
+			System.out.println("Titlescreen - User is "+selectedUser.getName());
 			enableLogging = loggingBox.isSelected();
 
 			savePreferences();

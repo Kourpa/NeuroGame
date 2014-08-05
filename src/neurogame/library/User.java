@@ -28,7 +28,7 @@ public class User implements Serializable{
 		Collections.sort(HighScores);
 		Collections.reverse(HighScores);
 		
-		if(amount > HighScores.size()){
+		if((HighScores != null) && (amount > HighScores.size())){
 			best = HighScores.subList(0,HighScores.size()).toArray(new Long[0]);
 		}
 		else{
@@ -36,6 +36,16 @@ public class User implements Serializable{
 		}
 		
 		return best;
+	}
+	
+	public Long getBestScore(){
+		if((HighScores != null) && (HighScores.size() != 0)){
+			Collections.sort(HighScores);
+			Collections.reverse(HighScores);
+			return HighScores.get(0);
+		}else{
+			return 0l;
+		}
 	}
 	
 	public void saveHighscore(long score){

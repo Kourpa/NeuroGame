@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 
 import javax.swing.JButton;
 
@@ -36,11 +37,6 @@ public class MenuButton {
     	
     	// Center Text
     	String newText = "";
-    	/*
-    	for(int i=0; i < 6 - (int)(text.length()/2); i++){
-    		newText += "   ";
-    	}
-    	newText += text;*/
     	newText = text;
         b = new JButton(newText);
         
@@ -63,7 +59,7 @@ public class MenuButton {
         DeselectedColor = new Color(180,180,180);
         b.setForeground(DeselectedColor);
         
-        /*
+        
         b.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -74,7 +70,7 @@ public class MenuButton {
             public void mouseExited(java.awt.event.MouseEvent evt) {
             	setSelected(false);
             }
-        });*/
+        });
     }
     
     public void setSelected(boolean choice){

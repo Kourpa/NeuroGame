@@ -86,7 +86,7 @@ public class GameOverScreen implements ActionListener, KeyListener {
 		profileBackground = sprites.get("profileBackground");
 
 		// KeyListener for using keyboard to select
-		Keys2 = new KeyAdapter() {
+		/*Keys2 = new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				switch (e.getKeyCode()) {
@@ -108,7 +108,7 @@ public class GameOverScreen implements ActionListener, KeyListener {
 					break;
 				}
 			}
-		};
+		};*/
 
 		// New UI
 		CreateGameOverScreen(frame);
@@ -287,7 +287,7 @@ public class GameOverScreen implements ActionListener, KeyListener {
 
 		
 		// Bounds for all the layered panels //
-		highscores.setBounds(width / 2 - 420, (int) (height * 0.45), 400, 150);
+		highscores.setBounds(width / 2 - 420, (int) (height * 0.45), 400, 155);
 		highscores.setOpaque(false);
 		highscores.setBackground(Color.getColor("TRANSLUCENT"));
 
