@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import neurogame.gameplay.Ammo;
 import neurogame.gameplay.Star;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
@@ -15,11 +16,12 @@ import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Player;
 import neurogame.level.PathVertex;
 import neurogame.level.World;
+import neurogame.library.Library;
 public class Logger
 {
  
   private static final String LOG_PREFIX = "NGLog_";
-  private static final String LOG_EXTENSION = ".txt";
+  private static final String LOG_EXTENSION = ".csv";
   private static final String PATH = "logs/";
   
   private static final SimpleDateFormat FILE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd.HH-mm-ss.SSS");
@@ -79,52 +81,46 @@ public class Logger
   {
     
     Player player = world.getPlayer();
-    GameObject powerUp = null;
-    Enemy[] enemyList = new Enemy[Enemy.MAX_ENEMY_COUNT];
-    Star[] starList = new Star[Star.MAX_STAR_COUNT];
+    Enemy[] enemyList = Enemy.getEnemyList();
+    Star[] starList = Star.getStarList();
+    Ammo ammo = Ammo.getCurrentAmmoBox();
     
-    ArrayList<GameObject> objectList = world.getObjectList();
-    
-    for (GameObject obj : objectList) 
-    {
-      GameObjectType type = obj.getType();
-      if (type.isEnemy())
-      {
-        Enemy enemy = (Enemy)obj;
-        enemyList[enemy.getEnemyIdx()] = enemy;
-      }
-      if (type == GameObjectType.STAR)
-      {
-        Star star =  (Star)obj;
-        starList[star.getStarIdx()] = star;
-      }
-      
-      else if (type == GameObjectType.POWER_UP) powerUp = obj;
-    }
     
     
     String out = Long.toString(System.currentTimeMillis()-time0) +  
-        String.format("," + FLOAT4 + "," + FLOAT4  + ","+player.getHealth()+",0,",
-        player.getCenterX(), player.getCenterY(), player.getHealth() );
+        String.format("," + FLOAT4 + "," + FLOAT4  + ","+ FLOAT4 +",0,",
+        player.getCenterX(), player.getCenterY(), (double)(player.getHealth())/Library.HEALTH_MAX );
     
-    PathVertex vertex = world.getInterpolatedWallTopAndBottom(player.getCenterX());
+    PathVertex vertex = world.getInterpolatedWallTopAndBottom(player.getX()+player.getWidth());
     
-    out += String.format("," + FLOAT4 + "," + FLOAT4  + ",", vertex.getTopY(), vertex.getBottomY());
+    //System.out.println("Logger(): vertex.getTop()="+vertex.getTop()+", vertex.getBottom()="+ vertex.getBottom());
+    
+    double proximityTop = Math.min(1.0,  (1.0 - (player.getY() - vertex.getTop())));
+    double proximityBot = Math.min(1.0,  (1.0 - (vertex.getBottom() - (player.getY() + player.getHeight()))));
+
+    
+    out += String.format(FLOAT4 + "," + FLOAT4  + ",", proximityTop, proximityBot);
     
     for (int i=0; i<Enemy.MAX_ENEMY_COUNT; i++)
     { 
-      if (enemyList[i] == null) out += "0,0,";
-      else
+      if ((enemyList[i] != null) && (enemyList[i].isAlive()))
       { 
         out += String.format("," + FLOAT4 + "," + FLOAT4  + ",", enemyList[i].getCenterX(), enemyList[i].getCenterY());
       }
+      else out += "0,0,";
     }
     for (int i=0; i<Star.MAX_STAR_COUNT; i++)
-    { if (starList[i] == null) out += "0,0,";
-      else out += String.format("," + FLOAT4 + "," + FLOAT4  + ",", starList[i].getCenterX(), starList[i].getCenterY());
+    { if ((starList[i] != null) && (starList[i].isAlive())) 
+      {
+        out += String.format("," + FLOAT4 + "," + FLOAT4  + ",", starList[i].getCenterX(), starList[i].getCenterY());
+      }
+      else out += "0,0,";
     }
-    if (powerUp == null) out += "0,0\n";
-    else out += String.format("," + FLOAT4 + "," + FLOAT4  + "\n", powerUp.getCenterX(), powerUp.getCenterY());
+    if ((ammo != null) && (ammo.isAlive())) 
+    { out += String.format("," + FLOAT4 + "," + FLOAT4  + "\n", ammo.getCenterX(), ammo.getCenterY());
+    }
+    else out += "0,0\n";
+    
     try
     {
       writer.write(out);

@@ -16,32 +16,27 @@ import javax.swing.Timer;
 
 import org.lwjgl.input.Controller;
 
-import neurogame.io.CommPort;
 import neurogame.io.SocketToParallelPort;
 import neurogame.library.Library;
 import neurogame.library.SpriteMap;
-
 
 /**
  * @author kourpa
  */
 public class Oddball // implements KeyListener
 {
-  private static final byte TRIGGER_START    = 0x15;
-  private static final byte TRIGGER_WAIT     = 0x2;
-  private static final byte TRIGGER_NORMAL   = 0x4;
-  private static final byte TRIGGER_ODDBALL  = 0x8;
-  private static final byte TRIGGER_DONE     = 0x1;
-  
-  private CommPort parallelPort;
+  private static final byte TRIGGER_START = 0x15;
+  private static final byte TRIGGER_WAIT = 0x2;
+  private static final byte TRIGGER_NORMAL = 0x4;
+  private static final byte TRIGGER_ODDBALL = 0x8;
+  private static final byte TRIGGER_DONE = 0x1;
+
   private SocketToParallelPort socket;
   private static final String HOST = "127.0.0.1";
   private static final int PORT = 55555;
-  
-  private static final boolean SEND_TRIGGERS_VIA_PARALLEL_PORT = false;
+
   private static final boolean SEND_TRIGGERS_VIA_SOCKET = true;
-  
-  
+
   private long time;
   private final int numberOfGoodScreens = 50;
   private final int numberOfBadScreens = 200;
@@ -55,19 +50,14 @@ public class Oddball // implements KeyListener
   private long startTime, screenTime, waitTime;
   private boolean wait, instructions;
   private int currentImageNum = 0;
-  
+
   private int oddballCount = 0;
 
   private JLabel background;
 
   public Oddball(final NeuroFrame frame)
   {
-    
-    if (SEND_TRIGGERS_VIA_PARALLEL_PORT) {
-    	System.out.println("Opening Parallel Port");
-    	parallelPort = new CommPort();
-    }
-    
+
     if (SEND_TRIGGERS_VIA_SOCKET)
     {
       socket = new SocketToParallelPort(HOST, PORT);
@@ -114,7 +104,6 @@ public class Oddball // implements KeyListener
 
     frame.getContentPane().add(background);
 
-    
     wait = instructions = false;
     startTime = System.currentTimeMillis();
     screenTime = 800 + Library.RANDOM.nextInt(400);
@@ -160,7 +149,7 @@ public class Oddball // implements KeyListener
     if (instructions)
     {
       currentScreen = Screen.INSTRUCTIONS;
-     // if (time > 2) currentScreen = Screen.GOOD;
+      // if (time > 2) currentScreen = Screen.GOOD;
 
     }
     else if (showCount)
@@ -176,9 +165,14 @@ public class Oddball // implements KeyListener
 
         // Target or False screen
         if (currentScreen == Screen.INSTRUCTIONS)
-        	{ System.out.println("Parallel Port: Sending Start trigger");
-        	parallelPort.sendByte(TRIGGER_START);
-        	}
+        {
+          System.out.println("Parallel Port: Sending Start trigger");
+          if (socket != null)
+          {
+            socket.sendByte(TRIGGER_START);
+            socket.close();
+          }
+        }
         randomFloat = Library.RANDOM.nextFloat();
         if (randomFloat < probabilityOfTarget)
         {
@@ -198,15 +192,12 @@ public class Oddball // implements KeyListener
         // Finished the test
         if (currentNumber > numberOfGoodScreens)
         {
-          if (parallelPort != null)
-          { parallelPort.sendByte(TRIGGER_DONE);
-            parallelPort.close();
-          }
           if (socket != null)
-          { socket.sendByte(TRIGGER_DONE);
+          {
+            socket.sendByte(TRIGGER_DONE);
             socket.close();
           }
-          
+
           System.out.println("Oddball Test Done. Total oddball count = " + oddballCount);
           showCount = true;
         }
@@ -251,82 +242,67 @@ public class Oddball // implements KeyListener
     switch (currentScreen)
     {
     case NORMAL:
-      if (parallelPort != null) 
-      { System.out.println("Parallel Port: Send TRIGGER_NORMAL="+TRIGGER_NORMAL); 
-        parallelPort.sendByte(TRIGGER_NORMAL);
-      }
       if (socket != null)
-      { socket.sendByte(TRIGGER_NORMAL);
+      {
+        System.out.println("Oddball: Socket Send TRIGGER_NORMAL=" + TRIGGER_NORMAL);
+        socket.sendByte(TRIGGER_NORMAL);
       }
       background.setIcon(new ImageIcon(goodImage));
       break;
-      
-      
+
     case ODDBALL:
-      if (parallelPort != null) 
-      { System.out.println("Parallel Port: Send TRIGGER_ODDBALL="+TRIGGER_ODDBALL); 
-        parallelPort.sendByte(TRIGGER_ODDBALL); 
-      }
       if (socket != null)
-      { socket.sendByte(TRIGGER_ODDBALL);
+      {
+        System.out.println("Oddball: Socket Send TRIGGER_NORMAL=" + TRIGGER_ODDBALL);
+        socket.sendByte(TRIGGER_ODDBALL);
       }
       background.setIcon(new ImageIcon(badImage));
       oddballCount++;
       break;
-      
+
     case WAIT:
-      if (parallelPort != null) 
-      { System.out.println("Parallel Port: Send TRIGGER_WAIT"+TRIGGER_WAIT); 
-        parallelPort.sendByte(TRIGGER_WAIT);
-      }
       if (socket != null)
-      { socket.sendByte(TRIGGER_WAIT);
+      {
+        System.out.println("Oddball: Socket Send TRIGGER_NORMAL=" + TRIGGER_WAIT);
+        socket.sendByte(TRIGGER_WAIT);
       }
       background.setIcon(new ImageIcon(waitImage));
       break;
-      
+
     case INSTRUCTIONS:
       background.setIcon(new ImageIcon(instructionImage));
       break;
-      
+
     case FINISHED:
       background.setIcon(new ImageIcon(finishedImage));
       break;
     }
   }
 
-  
-  
-  
-  
   private enum Screen
   {
     INSTRUCTIONS, NORMAL, ODDBALL, WAIT, FINISHED;
   }
 
-
-
-
-
-//  @Override
-//  public void keyPressed(KeyEvent arg0)
-//  {
-//    // TODO Auto-generated method stub
-//    
-//  }
-//
-//  @Override
-//  public void keyReleased(KeyEvent arg0)
-//  {
-//    // TODO Auto-generated method stub
-//    
-//  }
-//
-//  @Override
-//  public void keyTyped(KeyEvent arg0)
-//  {
-//    int keyCode = e.getKeyCode();
-//    if (keyCode == KeyEvent.VK_SPACE)
-//    
-//  }
+  // @Override
+  // public void keyPressed(KeyEvent arg0)
+  // {
+  // // TODO Auto-generated method stub
+  //
+  // }
+  //
+  // @Override
+  // public void keyReleased(KeyEvent arg0)
+  // {
+  // // TODO Auto-generated method stub
+  //
+  // }
+  //
+  // @Override
+  // public void keyTyped(KeyEvent arg0)
+  // {
+  // int keyCode = e.getKeyCode();
+  // if (keyCode == KeyEvent.VK_SPACE)
+  //
+  // }
 }

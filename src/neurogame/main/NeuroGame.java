@@ -35,7 +35,7 @@ import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
 import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Player;
-import neurogame.gameplay.PowerUp;
+import neurogame.gameplay.Ammo;
 import neurogame.gameplay.Star;
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -321,7 +321,7 @@ public class NeuroGame
     controller.setControllable(true);
     player = world.getPlayer();
     GameObject.resetGameObjectCount();
-    PowerUp.initGame();
+    Ammo.initGame();
     Enemy.initGame();
 
     if (loggingMode) log = new Logger();

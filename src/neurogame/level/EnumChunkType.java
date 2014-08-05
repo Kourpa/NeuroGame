@@ -4,8 +4,8 @@
 package neurogame.level;
 
 import neurogame.gameplay.GameObjectType;
-import neurogame.gameplay.PowerUp;
 import neurogame.gameplay.Zapper;
+import neurogame.gameplay.Ammo;
 import neurogame.library.Library;
 
 public enum EnumChunkType
@@ -15,7 +15,7 @@ public enum EnumChunkType
     public double getStepSize()  { return 0.1; }
     public double getDefaultOpeningHeight()  { return 0.8; }
     public double getMinimumOpeningHeight()  { return 0.8; }
-    public PowerUp getPowerUp() { return null; }
+    public Ammo getPowerUp() { return null; }
     public GameObjectType getEnemyType() { return null; }
   },
 
@@ -24,7 +24,7 @@ public enum EnumChunkType
     public double getStepSize()  { return 0.01; }
     public double getDefaultOpeningHeight()  { return 0.6; }
     public double getMinimumOpeningHeight()  { return 0.224; }
-    public PowerUp getPowerUp()  { return null; }
+    public Ammo getPowerUp()  { return null; }
     public GameObjectType getEnemyType()  { return GameObjectType.ENEMY_STRAIGHT; }
   },
 
@@ -33,7 +33,7 @@ public enum EnumChunkType
     public double getStepSize() { return 0.1; }
     public double getDefaultOpeningHeight() { return 0.6; }
     public double getMinimumOpeningHeight()  { return 0.224; }
-    public PowerUp getPowerUp() { return null; }
+    public Ammo getPowerUp() { return null; }
     public GameObjectType getEnemyType() {  return GameObjectType.ENEMY_FOLLOW; }
   },
 
@@ -42,7 +42,7 @@ public enum EnumChunkType
     public double getStepSize() { return 0.1; }
     public double getDefaultOpeningHeight() { return 0.6; }
     public double getMinimumOpeningHeight()  { return 0.224; }
-    public PowerUp getPowerUp() { return null; }
+    public Ammo getPowerUp() { return null; }
     public GameObjectType getEnemyType() { return GameObjectType.ENEMY_SINUSOIDAL; }
   },
 
@@ -51,8 +51,8 @@ public enum EnumChunkType
     public double getStepSize() { return 0.06; }
     public double getDefaultOpeningHeight() { return 0.6; }
     public double getMinimumOpeningHeight()  { return 0.224; }
-    public PowerUp getPowerUp() { return null; }
-    public GameObjectType getEnemyType() { return GameObjectType.ZAPPER; }//{ return GameObjectType.ENEMY_STRAIGHT; }
+    public Ammo getPowerUp() { return null; }
+    public GameObjectType getEnemyType() { return GameObjectType.ENEMY_STRAIGHT; }
   };
 
   public static EnumChunkType getRandomType()
@@ -70,6 +70,6 @@ public enum EnumChunkType
   public abstract double getStepSize();
   public abstract double getDefaultOpeningHeight();
   public abstract double getMinimumOpeningHeight();
-  public abstract PowerUp getPowerUp();
+  public abstract Ammo getPowerUp();
   public abstract GameObjectType getEnemyType();
 }

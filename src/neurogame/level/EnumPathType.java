@@ -5,7 +5,7 @@ package neurogame.level;
 
 import java.awt.Color;
 import neurogame.gameplay.Enemy;
-import neurogame.gameplay.PowerUp;
+import neurogame.gameplay.Ammo;
 import neurogame.library.Library;
 
 public enum EnumPathType{
@@ -20,7 +20,7 @@ public enum EnumPathType{
     private final double maxChange;
     private final double stepSize;
     private final double shipPadding;
-    private final PowerUp powerUp;
+    private final Ammo powerUp;
     private final Enemy enemy;
     private final Color color;
     
@@ -29,7 +29,7 @@ public enum EnumPathType{
                  double stepSize, 
                  double shipPadding, 
                  Enemy enemy, 
-                 PowerUp powerUp, 
+                 Ammo powerUp, 
                  Color color){
         this.speed = speed;
         this.maxChange = maxChange;
@@ -49,7 +49,7 @@ public enum EnumPathType{
     public double getMaxChange(){return maxChange;}
     public double getStepSize(){return stepSize;}
     public double getShipPadding(){return shipPadding;}
-    public PowerUp getPowerUp(){return powerUp;}
+    public Ammo getPowerUp(){return powerUp;}
     public Enemy getEnemy(){return enemy;}
     public Color getColor(){return color;}
 }

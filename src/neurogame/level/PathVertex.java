@@ -11,8 +11,8 @@ import neurogame.library.Library;
 public class PathVertex
 {
   private double x;
-  private double topY;
-  private double bottomY;
+  private double top;
+  private double bottom;
   private static final double ROCK_PADDING = .01;
   private Direction directionMoved;
   
@@ -32,8 +32,8 @@ public class PathVertex
     double maxChange = pathType.getMaxChange();
 
     x = 0;
-    topY = ROCK_PADDING;
-    bottomY = 1 - ROCK_PADDING;
+    top = ROCK_PADDING;
+    bottom = 1 - ROCK_PADDING;
 
     if (reference != null)
     {
@@ -44,56 +44,56 @@ public class PathVertex
       {
         if(r == 1){
           directionMoved = Direction.DOWN;
-          topY = reference.topY + Library.RANDOM.nextDouble() * maxChange;
-          bottomY = reference.bottomY + Library.RANDOM.nextDouble() * maxChange;
+          top = reference.top + Library.RANDOM.nextDouble() * maxChange;
+          bottom = reference.bottom + Library.RANDOM.nextDouble() * maxChange;
         }
         else
         {
           directionMoved = Direction.UP;
-          topY = reference.topY - Library.RANDOM.nextDouble() * maxChange;
-          bottomY = reference.bottomY - Library.RANDOM.nextDouble() * maxChange;
+          top = reference.top - Library.RANDOM.nextDouble() * maxChange;
+          bottom = reference.bottom - Library.RANDOM.nextDouble() * maxChange;
         }
       }
       else
       {
         if(r == 1){
           directionMoved = Direction.UP;
-          topY = reference.topY - Library.RANDOM.nextDouble() * maxChange;
-          bottomY = reference.bottomY - Library.RANDOM.nextDouble() * maxChange;
+          top = reference.top - Library.RANDOM.nextDouble() * maxChange;
+          bottom = reference.bottom - Library.RANDOM.nextDouble() * maxChange;
         }
         else
         {
           directionMoved = Direction.DOWN;
-          topY = reference.topY + Library.RANDOM.nextDouble() * maxChange;
-          bottomY = reference.bottomY + Library.RANDOM.nextDouble() * maxChange;
+          top = reference.top + Library.RANDOM.nextDouble() * maxChange;
+          bottom = reference.bottom + Library.RANDOM.nextDouble() * maxChange;
         }
       }
     }
 
     /** checks * */
-    double dy = bottomY - topY;
+    double dy = bottom - top;
     if (dy < shipPadding)
     {
-      bottomY += (shipPadding - dy) / 2;
-      topY -= (shipPadding - dy) / 2;
+      bottom += (shipPadding - dy) / 2;
+      top -= (shipPadding - dy) / 2;
     }
 
-    if (bottomY > 1 - ROCK_PADDING)
+    if (bottom > 1 - ROCK_PADDING)
     { directionMoved = Direction.UP;
-      bottomY += 1 - ROCK_PADDING - bottomY;
+      bottom += 1 - ROCK_PADDING - bottom;
     }
-    else if (bottomY < shipPadding)
+    else if (bottom < shipPadding)
     { directionMoved = Direction.DOWN;
-      bottomY += shipPadding - bottomY;
+      bottom += shipPadding - bottom;
     }
 
-    if (topY < ROCK_PADDING)
+    if (top < ROCK_PADDING)
     { directionMoved = Direction.DOWN;
-      topY += ROCK_PADDING - topY;
+      top += ROCK_PADDING - top;
     }
-    else if (topY > 1 - shipPadding)
+    else if (top > 1 - shipPadding)
     { directionMoved = Direction.UP;
-      topY += 1 - shipPadding - topY;
+      top += 1 - shipPadding - top;
     }
 
   }
@@ -101,8 +101,8 @@ public class PathVertex
   public PathVertex(PathVertex clone)
   {
     x = clone.x;
-    topY = clone.topY;
-    bottomY = clone.bottomY;
+    top = clone.top;
+    bottom = clone.bottom;
   }
 
   /**
@@ -115,8 +115,8 @@ public class PathVertex
   public PathVertex(double x, double topY, double bottomY)
   {
     this.x = x;
-    this.topY = topY;
-    this.bottomY = bottomY;
+    this.top = topY;
+    this.bottom = bottomY;
   }
 
   public double getX()
@@ -124,25 +124,25 @@ public class PathVertex
     return x;
   }
 
-  public double getTopY()
+  public double getTop()
   {
-    return topY;
+    return top;
   }
 
-  public double getBottomY()
+  public double getBottom()
   {
-    return bottomY;
+    return bottom;
   }
 
   public double getCenter()
   {
-    return (bottomY + topY) / 2;
+    return (bottom + top) / 2;
   }
   
   @Override
   public String toString()
   {
-    return "X:" + x + " TopY:" + topY + " BottomY:" + bottomY;
+    return "X:" + x + " TopY:" + top + " BottomY:" + bottom;
   }
   
   enum Direction{

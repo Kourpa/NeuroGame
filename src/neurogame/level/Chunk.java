@@ -72,8 +72,8 @@ public final class Chunk
     topAndBottom[0].moveTo(firstVertex.getX(), 0);
     topAndBottom[1].moveTo(firstVertex.getX(), 1);
 
-    topAndBottom[0].lineTo(firstVertex.getX(), firstVertex.getTopY());
-    topAndBottom[1].lineTo(firstVertex.getX(), firstVertex.getBottomY());
+    topAndBottom[0].lineTo(firstVertex.getX(), firstVertex.getTop());
+    topAndBottom[1].lineTo(firstVertex.getX(), firstVertex.getBottom());
 
     vertexList.add(firstVertex);
 
@@ -96,8 +96,8 @@ public final class Chunk
 
         vertex = new PathVertex(vertex, pathType, shipPadding);
         vertexList.add(vertex);
-        topAndBottom[0].lineTo(vertex.getX(), vertex.getTopY());
-        topAndBottom[1].lineTo(vertex.getX(), vertex.getBottomY());
+        topAndBottom[0].lineTo(vertex.getX(), vertex.getTop());
+        topAndBottom[1].lineTo(vertex.getX(), vertex.getBottom());
 
       }
     }
@@ -130,13 +130,13 @@ public final class Chunk
     for (int c = 0; c < chunkSize; c++)
     {
       double x = vertex.getX() - chunkType.getStepSize();
-      vertex2 = new PathVertex(x, vertex.getTopY(), vertex.getBottomY());
+      vertex2 = new PathVertex(x, vertex.getTop(), vertex.getBottom());
 
-      topAndBottom[0].lineTo(vertex2.getX(), vertex2.getTopY());
-      topAndBottom[1].lineTo(vertex2.getX(), vertex2.getBottomY());
+      topAndBottom[0].lineTo(vertex2.getX(), vertex2.getTop());
+      topAndBottom[1].lineTo(vertex2.getX(), vertex2.getBottom());
 
-      topAndBottom[0].lineTo(vertex.getX(), vertex.getTopY());
-      topAndBottom[1].lineTo(vertex.getX(), vertex.getBottomY());
+      topAndBottom[0].lineTo(vertex.getX(), vertex.getTop());
+      topAndBottom[1].lineTo(vertex.getX(), vertex.getBottom());
 
       vertex = new PathVertex(vertex, chunkType, shipPadding);
       vertexList.add(vertex2);
@@ -165,23 +165,23 @@ public final class Chunk
       curve = r == 1 ? random.nextDouble() * .1 : random.nextDouble() * -.1;
 
       lastX = vertex.getX();
-      lastTopY = vertex.getTopY();
-      lastBottomY = vertex.getBottomY();
+      lastTopY = vertex.getTop();
+      lastBottomY = vertex.getBottom();
 
       vertex = new PathVertex(vertex, chunkType, shipPadding);
       vertexList.add(vertex);
 
       topAndBottom[0].curveTo(lastX, lastTopY, (lastX + vertex.getX()) / 2,
-          (vertex.getTopY() + lastTopY) / 2 + curve, vertex.getX(),
-          vertex.getTopY());
+          (vertex.getTop() + lastTopY) / 2 + curve, vertex.getX(),
+          vertex.getTop());
 
       /** re randomize the curve to avoid identical sides. **/
       r = random.nextInt(2);
       curve = r == 1 ? random.nextDouble() * .1 : random.nextDouble() * -.1;
 
       topAndBottom[1].curveTo(lastX, lastBottomY, (lastX + vertex.getX()) / 2,
-          (vertex.getBottomY() + lastBottomY) / 2 + curve, vertex.getX(),
-          vertex.getBottomY());
+          (vertex.getBottom() + lastBottomY) / 2 + curve, vertex.getX(),
+          vertex.getBottom());
 
     }
   }
@@ -248,11 +248,11 @@ public final class Chunk
       {
         if (vertex0 == vertex1) return vertex0;
         
-        double top0 = vertex0.getTopY();
-        double top1 = vertex1.getTopY();
+        double top0 = vertex0.getTop();
+        double top1 = vertex1.getTop();
         
-        double bot0 = vertex0.getBottomY();
-        double bot1 = vertex1.getBottomY();
+        double bot0 = vertex0.getBottom();
+        double bot1 = vertex1.getBottom();
         
         double x0 = vertex0.getX();
         double x1 = vertex1.getX();
