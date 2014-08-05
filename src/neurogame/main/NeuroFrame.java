@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 
 import neurogame.gameplay.GameObject;
-import neurogame.gameplay.PowerUp;
+import neurogame.gameplay.Ammo;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.User;

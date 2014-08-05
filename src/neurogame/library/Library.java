@@ -71,9 +71,10 @@ public final class Library
   public static final double HORIZONTAL_MIN = 0.0;
 
   public static final int HEALTH_MAX = 100;
-  public static final int ENEMY_POINTS = 150;
+  public static final int ENEMY_POINTS = 100;
 
   public static final int HEALTH_PER_COIN = 1;
+  public static final int SCORE_PER_COIN = 10;
 
   public static final int DAMAGE_PER_WALL_HIT = 10;
   public static final int DAMAGE_PER_SEC_IN_ZAPPER = 1;

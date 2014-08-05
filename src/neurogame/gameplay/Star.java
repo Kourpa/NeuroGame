@@ -32,16 +32,13 @@ public class Star extends GameObject
   private static final int spriteWidth = 64;
   private static final int spriteHeight = 64;
   private static final int spriteSheetHeight = 2560;
+  
+  private static Star[] starList = new Star[Star.MAX_STAR_COUNT];
 
-  public static final double MIN_PROBALITY_SPAWN_PER_SEC = 0.2;
   public static final double MAX_PROBALITY_SPAWN_PER_SEC = 0.9;
   
   public static final int MAX_STAR_COUNT = 20;
   private static int currentStarCount;
-  
-  private int starIdx;
-  
-
 
   private static double lastCoinSpawnX;
 
@@ -62,11 +59,10 @@ public class Star extends GameObject
   public Star(double x, double y, World world)
   {
     super(GameObjectType.STAR, x, y, world);
-    starIdx = currentStarCount;
     
     spriteY = 0;
     lastCoinSpawnX = x;
-    currentStarCount++;
+    
   }
   
   public static void initGame()
@@ -119,8 +115,6 @@ public class Star extends GameObject
                        0, spriteY, spriteWidth, spriteY+spriteHeight, null);
   }
   
-  
-  public int getStarIdx(){return starIdx;}
 
   public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
@@ -131,7 +125,7 @@ public class Star extends GameObject
     EnumChunkType type = myChunk.getChunkType();
     if (type == EnumChunkType.FLAT) return 0;
 
-    if (r > world.getPlayer().skillProbabilitySpawnCoinPerSec * deltaTime) return 0;
+    if (r > MAX_PROBALITY_SPAWN_PER_SEC * deltaTime) return 0;
 
     //System.out.println("probabilitySpawnCoinPerSec=" + world.getPlayer().skillProbabilitySpawnCoinPerSec);
 
@@ -160,11 +154,22 @@ public class Star extends GameObject
 
     for (int i = 0; i < targetSpawnCount; i++)
     {
-      Star myCoin = new Star(x, y, world);
-      if (myCoin.wallCollision() != EnumCollisionType.NONE) return numCoinsSpawned;
-      world.addGameObject(myCoin);
-      numCoinsSpawned++;
       if (currentStarCount >= MAX_STAR_COUNT) return 0;
+      
+      Star myStar = new Star(x, y, world);
+      
+      if (myStar.wallCollision() != EnumCollisionType.NONE) return numCoinsSpawned;
+      
+      int starIdx = getFreeStarIndex();
+      //System.out.println("Star.spawn(): starIdx="+starIdx + ", currentStarCount="+currentStarCount);
+      
+      starList[starIdx] = myStar;
+      
+      
+      world.addGameObject(myStar);
+      numCoinsSpawned++;
+      currentStarCount++;
+      
 
       if (Library.RANDOM.nextDouble() > .75) x += GameObjectType.STAR.getWidth()
           * (Library.RANDOM.nextDouble() * 2.0);
@@ -174,5 +179,17 @@ public class Star extends GameObject
     return numCoinsSpawned;
 
   }
+  
+  private static int getFreeStarIndex()
+  {
+    for (int i=0; i<MAX_STAR_COUNT; i++)
+    {
+      if (starList[i] == null) return i;
+      if (!starList[i].isAlive()) return i;
+    }
+    return -1;
+  }
+  
+  public static Star[] getStarList() { return starList; }
 
 }

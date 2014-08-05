@@ -30,7 +30,7 @@ public class Player extends GameObject
   private double gameScore;
   private double gameTotalSeconds;
   
-  public double skillProbabilitySpawnCoinPerSec;
+  //public double skillProbabilitySpawnCoinPerSec;
   private double skillEnemyStraight;
   private double skillEnemyFollow;
   private double skillEnemySinusoidal;
@@ -67,7 +67,7 @@ public class Player extends GameObject
     
     missileCurrentCooldown = 0;
     
-    skillProbabilitySpawnCoinPerSec = (Star.MIN_PROBALITY_SPAWN_PER_SEC + Star.MAX_PROBALITY_SPAWN_PER_SEC)/2.0;
+    //skillProbabilitySpawnCoinPerSec = (Star.MIN_PROBALITY_SPAWN_PER_SEC + Star.MAX_PROBALITY_SPAWN_PER_SEC)/2.0;
 
     lastVelocityX = 0;
     lastVelocityY = 0;
@@ -170,7 +170,7 @@ public class Player extends GameObject
   public void hit(GameObject obj)
   {
     GameObjectType type = obj.getType();
-    if (type == GameObjectType.STAR) collectCoin();
+    if (type == GameObjectType.STAR) collectCoin(obj);
     else if (type.isEnemy()) crashedIntoEnemy(obj);
     else if (type == GameObjectType.POWER_UP)
     { addMissileCount(10);
@@ -204,10 +204,10 @@ public class Player extends GameObject
 
     collisionCountInCurrentChunk++;
     
-    skillProbabilitySpawnCoinPerSec += 0.05;
-    if (skillProbabilitySpawnCoinPerSec > Star.MAX_PROBALITY_SPAWN_PER_SEC)
-    { skillProbabilitySpawnCoinPerSec = Star.MAX_PROBALITY_SPAWN_PER_SEC;
-    }
+//    skillProbabilitySpawnCoinPerSec += 0.05;
+//    if (skillProbabilitySpawnCoinPerSec > Star.MAX_PROBALITY_SPAWN_PER_SEC)
+//    { skillProbabilitySpawnCoinPerSec = Star.MAX_PROBALITY_SPAWN_PER_SEC;
+//    }
     
 
     int sparkCount = Library.RANDOM.nextInt(20) + Library.RANDOM.nextInt(20)
@@ -219,18 +219,22 @@ public class Player extends GameObject
     }
   }
 
-  public void collectCoin()
+  public void collectCoin(GameObject star)
   {
     health += Library.HEALTH_PER_COIN;
+    gameScore += Library.SCORE_PER_COIN;
+    InfoMessage scoreInfo = new InfoMessage(star.getCenterX(), star.getCenterY(), world, String.valueOf(Library.SCORE_PER_COIN));
+    world.addGameObject(scoreInfo);
     
-    skillProbabilitySpawnCoinPerSec -= 0.005;
-    if (health > Library.HEALTH_MAX) 
-    { health = Library.HEALTH_MAX;
-      skillProbabilitySpawnCoinPerSec -= 0.025;
-    }
-    if (skillProbabilitySpawnCoinPerSec < Star.MIN_PROBALITY_SPAWN_PER_SEC)
-    { skillProbabilitySpawnCoinPerSec = Star.MIN_PROBALITY_SPAWN_PER_SEC;
-    }
+    
+//    skillProbabilitySpawnCoinPerSec -= 0.005;
+//    if (health > Library.HEALTH_MAX) 
+//    { health = Library.HEALTH_MAX;
+//      skillProbabilitySpawnCoinPerSec -= 0.025;
+//    }
+//    if (skillProbabilitySpawnCoinPerSec < Star.MIN_PROBALITY_SPAWN_PER_SEC)
+//    { skillProbabilitySpawnCoinPerSec = Star.MIN_PROBALITY_SPAWN_PER_SEC;
+//    }
   }
 
 
@@ -246,7 +250,7 @@ public class Player extends GameObject
     //System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
     
     int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
-    if (!shotWithMissle) score = score/3;
+    if (!shotWithMissle) score = score/4;
     
     gameScore += score;
     
