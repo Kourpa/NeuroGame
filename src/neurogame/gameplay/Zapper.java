@@ -24,22 +24,22 @@ import neurogame.library.Library;
  * @team Danny Gomez
  * @team Marcos Lemus
  */
-public class Zapper extends GameObject
+public class Zapper extends Enemy
 {
   public static final int spriteWidth = 48;
   public static final int spriteHeight = 48;
   public static final double width = Library.worldUnitToScreen(spriteWidth);
   public static final double height = Library.worldUnitToScreen(spriteHeight);
   private static final String name = "zapper";
-  private static final int timeOn = Library.MIN_FRAME_MILLISEC;
-  private static final BufferedImage masterImage = Library.getSprites().get(
-      name);
+  private static final int timeOn = Library.MIN_FRAME_MILLISEC*20;
+  private static final BufferedImage masterImage = Library.getSprites().get(name);
   private BufferedImage zapAreaImage;
   private Graphics2D zapAreaCanvas;
   private int frameDelay;
   private int frameCounter;
   private boolean on;
   private Player player;
+  private double threshold = 0.1;
 
   // private int zapX1, zapY1, zapX2, zapY2, zapPlayerX, zapPlayerY, zapMinX,
   // zapMinY, zapAreaWidth, zapAreaHeight;
@@ -69,16 +69,18 @@ public class Zapper extends GameObject
    */
   public Zapper(double x1, double y1, double x2, double y2, World world)
   {
-    super(null, x1, y1, world);
+    super(GameObjectType.ZAPPER, x1, y1,GameObjectType.ZAPPER.getWidth(), GameObjectType.ZAPPER.getHeight(), "Zapper", world);
     zapNodeWorldX1 = x1;
     zapNodeWorldX2 = x2;
     zapNodeWorldY1 = y1;
     zapNodeWorldY2 = y2;
+    
     // image = new BufferedImage(spriteWidth, spriteHeight,
     // BufferedImage.TYPE_INT_ARGB);
     // graphics = image.createGraphics();
     // graphics.drawImage(masterImage, 0, 0, spriteWidth, spriteHeight, null);
-    frameDelay = (Library.RANDOM.nextInt(3) + 1) * Library.MIN_FRAME_MILLISEC
+    
+    frameDelay = (Library.RANDOM.nextInt(30) + 1) * Library.MIN_FRAME_MILLISEC
         + timeOn;
     frameCounter = Library.RANDOM.nextInt(frameDelay);
     on = false;
@@ -207,10 +209,9 @@ public class Zapper extends GameObject
       turnOff();
     }
 
-    if (collision(player))
-    {
+    if((on) && (Math.abs(player.getCenterX() - this.getX()) < threshold)){
       player.loseHealth(player.getCenterX(), player.getCenterY(),
-          Library.DAMAGE_PER_SEC_IN_ZAPPER);
+          Library.DAMAGE_PER_SEC_IN_ZAPPER*deltaTime);
     }
 
   }
@@ -219,11 +220,16 @@ public class Zapper extends GameObject
   { die(false);
   }
   
+  public boolean checkCollisionWithWall()
+  {
+    return false;
+  }
   
-  public void die(boolean showDeathEffect)
+  /*public void die(boolean showDeathEffect)
   { 
     isAlive = false;
-  }
+  }*/
+  
   public void render(Graphics2D g)
   {
 
@@ -241,7 +247,6 @@ public class Zapper extends GameObject
       drawLightning(false);
 
       g.drawImage(zapAreaImage, zapMinX, zapMinY, null);
-
     }
     g.drawImage(masterImage, zapX1, zapY1, spriteWidth, spriteHeight, null);
     g.drawImage(masterImage, zapX2, zapY2, spriteWidth, spriteHeight, null);

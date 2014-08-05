@@ -52,15 +52,15 @@ public enum EnumChunkType
     public double getDefaultOpeningHeight() { return 0.6; }
     public double getMinimumOpeningHeight()  { return 0.224; }
     public Ammo getPowerUp() { return null; }
-    public GameObjectType getEnemyType() { return GameObjectType.ENEMY_STRAIGHT; }
+    public GameObjectType getEnemyType() { return GameObjectType.ZAPPER; }
   };
 
   public static EnumChunkType getRandomType()
   {
     //Never return FLAT
     int r = Library.RANDOM.nextInt(values().length - 2)+1;
-    return values()[r];
-    //return values()[values().length];
+    //return values()[r];
+    return values()[values().length-1];
   }
   
   public static final int SIZE = values().length;

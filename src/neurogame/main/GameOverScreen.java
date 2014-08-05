@@ -16,16 +16,9 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
@@ -37,8 +30,6 @@ import javax.swing.JPanel;
 
 import neurogame.library.Library;
 import neurogame.library.User;
-
-import org.lwjgl.input.Controller;
 
 /**
  * The title screen for NeuroGame.
@@ -225,7 +216,7 @@ public class GameOverScreen extends MenuScreen {
 		backButtonArea.setOpaque(false);
 
 		backButtonArea.setLayout(new BoxLayout(backButtonArea, 1));
-		backButtonArea.setBounds((int) (width * 0.255) - 110, (int) (height * 0.82),
+		backButtonArea.setBounds((int) (width * 0.28) - 110, (int) (height * 0.82),
 				220, 50);
 
 		backButtonArea.add("North", exitButton.b);
@@ -236,7 +227,7 @@ public class GameOverScreen extends MenuScreen {
 		restartButtonArea.setOpaque(false);
 
 		restartButtonArea.setLayout(new BoxLayout(restartButtonArea, 1));
-		restartButtonArea.setBounds((int) (width * 0.715) - 110, (int) (height * 0.82),
+		restartButtonArea.setBounds((int) (width * 0.74) - 110, (int) (height * 0.82),
 				230, 50);
 		restartButtonArea.add("North", restartButton.b);
 

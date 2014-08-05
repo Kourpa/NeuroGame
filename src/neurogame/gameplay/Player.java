@@ -42,6 +42,7 @@ public class Player extends GameObject
   private double skillEnemyStraight;
   private double skillEnemyFollow;
   private double skillEnemySinusoidal;
+  private double skillEnemyZapper;
   public double skillProbabilitySpawnPowerUpPerSec;
 
   private QuickSet<Spark> sparkList;
@@ -49,7 +50,7 @@ public class Player extends GameObject
   private DirectionVector directionVector = new DirectionVector();
   private double lastVelocityX, lastVelocityY;
   
-  private int health;
+  private double health;
 
   public Player(double x, double y, World world)
   {
@@ -83,6 +84,7 @@ public class Player extends GameObject
     skillEnemyStraight = 1;
     skillEnemyFollow = 1;
     skillEnemySinusoidal = 1;
+    skillEnemyZapper = 1;
     skillProbabilitySpawnPowerUpPerSec = 0.05;
     
   }
@@ -214,7 +216,7 @@ public class Player extends GameObject
   
   
 
-  public void loseHealth(double hitX, double hitY, int damage)
+  public void loseHealth(double hitX, double hitY, double damage)
   {
     if (invulnerable) return;
     
@@ -293,7 +295,10 @@ public class Player extends GameObject
     { skillEnemySinusoidal += 0.2;
       if (skillEnemySinusoidal > Enemy.MAX_ENEMY_COUNT) skillEnemySinusoidal = Enemy.MAX_ENEMY_COUNT;
     }
-
+    else if (type == GameObjectType.ZAPPER){
+    	skillEnemyZapper += 0.5;
+    	if (skillEnemyZapper > Enemy.MAX_ENEMY_COUNT) skillEnemyZapper = Enemy.MAX_ENEMY_COUNT;
+    }
   }
   
   
@@ -318,6 +323,10 @@ public class Player extends GameObject
     else if (type == GameObjectType.ENEMY_SINUSOIDAL)
     { skillEnemySinusoidal -= 1.2;
       if (skillEnemySinusoidal < 1) skillEnemySinusoidal = 1;
+    }
+    else if (type == GameObjectType.ZAPPER){
+    	skillEnemyZapper -= 0.5;
+    	if (skillEnemyZapper < 1) skillEnemyZapper= 1;
     }
   }
   
@@ -376,6 +385,7 @@ public class Player extends GameObject
     if (enemytype == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
     else if (enemytype == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
     else if (enemytype == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
+    else if (enemytype == GameObjectType.ZAPPER) return (int)skillEnemyZapper;
     return 1;
   }
   
@@ -384,11 +394,12 @@ public class Player extends GameObject
     if (chunkType.getEnemyType() == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
     else if (chunkType.getEnemyType() == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
     else if (chunkType.getEnemyType() == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
+    else if (chunkType.getEnemyType() == GameObjectType.ZAPPER) return (int)skillEnemyZapper;
     return 1;
   }
   
 
-  public int getHealth() {return health;}
+  public int getHealth() {return (int)(health);}
   
   public void render(Graphics2D canvas)
   {

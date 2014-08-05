@@ -255,6 +255,7 @@ public class Enemy extends GameObject
   
   public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
+	  Enemy myEnemy = null;
     GameObjectType type = myChunk.getChunkType().getEnemyType();
     Player player =  world.getPlayer();
     if (type == null) return 0;
@@ -289,7 +290,14 @@ public class Enemy extends GameObject
 
     int enemyIdx = getFreeEnemyIndex();
     
-    Enemy myEnemy = new Enemy(type, x, y, type.getWidth(), type.getHeight(), type.getName(), world);
+    if(type == GameObjectType.ZAPPER){
+    	y = vertex.getTop();
+    	double y2 = vertex.getBottom() - GameObjectType.ZAPPER.getHeight();
+    	
+    	myEnemy = new Zapper(x, y, x, y2,world);
+    }else{
+    	myEnemy = new Enemy(type, x, y, type.getWidth(), type.getHeight(), type.getName(), world);
+    }
     enemyList[enemyIdx] = myEnemy;
    
     world.addGameObject(myEnemy);
