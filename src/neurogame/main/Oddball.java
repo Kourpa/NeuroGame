@@ -35,7 +35,7 @@ public class Oddball // implements KeyListener
   private static final String HOST = "127.0.0.1";
   private static final int PORT = 55555;
 
-  private static final boolean SEND_TRIGGERS_VIA_SOCKET = true;
+  private static boolean SEND_TRIGGERS_VIA_SOCKET = false;
 
   private long time;
   private final int numberOfGoodScreens = 50;
@@ -55,9 +55,12 @@ public class Oddball // implements KeyListener
 
   private JLabel background;
 
-  public Oddball(final NeuroFrame frame)
+  public Oddball(final NeuroFrame frame, NeuroGame game)
   {
-
+	if(game.getLoggingMode()){
+		SEND_TRIGGERS_VIA_SOCKET=true;
+	}
+	  
     if (SEND_TRIGGERS_VIA_SOCKET)
     {
       socket = new SocketToParallelPort(HOST, PORT);

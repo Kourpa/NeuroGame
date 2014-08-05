@@ -248,7 +248,7 @@ public class GameController{
        if (game.getTitleScreen().IsStarting)
        {
          disableAll();
-         game.setLoggingMode(game.getTitleScreen().GetLogging());
+         //game.setLoggingMode(game.getTitleScreen().GetLogging());
          SelectJoystick(game.getTitleScreen().GetSelectedJoystick(), game.getTitleScreen().GetSelectedJoystickIndex());
 
          frame.setUser(game.getTitleScreen().GetSelectedUser());
