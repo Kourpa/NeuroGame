@@ -339,6 +339,8 @@ public class Player extends GameObject
   
   public void shootMissile()
   {
+    if ((Missile.getCurrentMissile() != null) && (Missile.getCurrentMissile().isAlive())) return;
+   
     //if (missileCurrentCooldown > 0) return;
     //System.out.println("Player.shootMissile()   missileCount=" + missileCount);
     if (missileCount < 1) return;
