@@ -35,9 +35,11 @@ public class Oddball // implements KeyListener
   private static final String HOST = "127.0.0.1";
   private static final int PORT = 55555;
 
-  private static final boolean SEND_TRIGGERS_VIA_SOCKET = true;
+  private static boolean SEND_TRIGGERS_VIA_SOCKET = false;
 
   private long time;
+  private NeuroFrame frame;
+  private NeuroGame game;
   private final int numberOfGoodScreens = 50;
   private final int numberOfBadScreens = 200;
   private int currentNumber;
@@ -55,9 +57,16 @@ public class Oddball // implements KeyListener
 
   private JLabel background;
 
-  public Oddball(final NeuroFrame frame)
-  {
 
+  public Oddball(final NeuroFrame frame, NeuroGame game)
+  {
+	  this.frame = frame;
+	  this.game = game;
+	  
+	if(game.getLoggingMode()){
+		SEND_TRIGGERS_VIA_SOCKET=true;
+	}
+	  
     if (SEND_TRIGGERS_VIA_SOCKET)
     {
       socket = new SocketToParallelPort(HOST, PORT);
@@ -234,6 +243,14 @@ public class Oddball // implements KeyListener
   {
     return testFinished;
   }
+  
+  public void forceClose(){
+	  background.setVisible(false);
+      frame.getContentPane().removeAll();
+      frame.getContentPane().setLayout(null);
+      testFinished = true;
+      game.showTitle();
+  }
 
   public void render()
   {
@@ -283,26 +300,4 @@ public class Oddball // implements KeyListener
   {
     INSTRUCTIONS, NORMAL, ODDBALL, WAIT, FINISHED;
   }
-
-  // @Override
-  // public void keyPressed(KeyEvent arg0)
-  // {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public void keyReleased(KeyEvent arg0)
-  // {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public void keyTyped(KeyEvent arg0)
-  // {
-  // int keyCode = e.getKeyCode();
-  // if (keyCode == KeyEvent.VK_SPACE)
-  //
-  // }
 }

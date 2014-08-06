@@ -35,7 +35,7 @@ import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
 import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Player;
-import neurogame.gameplay.PowerUp;
+import neurogame.gameplay.Ammo;
 import neurogame.gameplay.Star;
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -108,7 +108,7 @@ public class NeuroGame
     Library.initSprites(frame);
     Library.loadFont();
     
-  	title = new TitleScreen(frame);
+  	title = new TitleScreen(frame, this);
     controller = new GameController(this, frame);
     
     frame.setGameController(controller);
@@ -265,6 +265,10 @@ public class NeuroGame
   {
     this.loggingMode = loggingMode;
   }
+  
+  public boolean getLoggingMode(){
+	  return loggingMode;
+  }
 
   /**
    * Setter for enabling/disabling the sound.
@@ -314,14 +318,14 @@ public class NeuroGame
     controller.setControllable(true);
     player = world.getPlayer();
     GameObject.resetGameObjectCount();
-    PowerUp.initGame();
+    Ammo.initGame();
     Enemy.initGame();
 
     if (loggingMode) log = new Logger();
   }
   
   public void showOddBall(){  
-	oddball = new Oddball(frame);
+	oddball = new Oddball(frame, this);
 	gameState = GameState.ODDBALL;
   }
   /**
@@ -442,14 +446,7 @@ public class NeuroGame
     }
   }
   
-  
-  /**
-   * Activate the powerUp (if held).
-   */
-  public void usePowerUp(){
-    player.shootMissile();
-  }
-
+ 
 
   /**
    * Gets the time since initialization (in milliseconds).

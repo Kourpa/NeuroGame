@@ -12,7 +12,10 @@ package neurogame.gameplay;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -24,22 +27,22 @@ import neurogame.library.Library;
  * @team Danny Gomez
  * @team Marcos Lemus
  */
-public class Zapper extends GameObject
+public class Zapper extends Enemy
 {
-  public static final int spriteWidth = 48;
-  public static final int spriteHeight = 48;
+  public static final int spriteWidth = 64;
+  public static final int spriteHeight = 64;
   public static final double width = Library.worldUnitToScreen(spriteWidth);
   public static final double height = Library.worldUnitToScreen(spriteHeight);
   private static final String name = "zapper";
-  private static final int timeOn = Library.MIN_FRAME_MILLISEC;
-  private static final BufferedImage masterImage = Library.getSprites().get(
-      name);
+  private static final int timeOn = Library.MIN_FRAME_MILLISEC*20;
+  private static final BufferedImage masterImage = Library.getSprites().get(name);
   private BufferedImage zapAreaImage;
   private Graphics2D zapAreaCanvas;
   private int frameDelay;
   private int frameCounter;
   private boolean on;
   private Player player;
+  private double threshold = 0.1;
 
   // private int zapX1, zapY1, zapX2, zapY2, zapPlayerX, zapPlayerY, zapMinX,
   // zapMinY, zapAreaWidth, zapAreaHeight;
@@ -69,16 +72,18 @@ public class Zapper extends GameObject
    */
   public Zapper(double x1, double y1, double x2, double y2, World world)
   {
-    super(null, x1, y1, world);
+    super(GameObjectType.ZAPPER, x1, y1,GameObjectType.ZAPPER.getWidth(), GameObjectType.ZAPPER.getHeight(), "Zapper", world);
     zapNodeWorldX1 = x1;
     zapNodeWorldX2 = x2;
     zapNodeWorldY1 = y1;
     zapNodeWorldY2 = y2;
+    
     // image = new BufferedImage(spriteWidth, spriteHeight,
     // BufferedImage.TYPE_INT_ARGB);
     // graphics = image.createGraphics();
     // graphics.drawImage(masterImage, 0, 0, spriteWidth, spriteHeight, null);
-    frameDelay = (Library.RANDOM.nextInt(3) + 1) * Library.MIN_FRAME_MILLISEC
+    
+    frameDelay = (Library.RANDOM.nextInt(30) + 1) * Library.MIN_FRAME_MILLISEC
         + timeOn;
     frameCounter = Library.RANDOM.nextInt(frameDelay);
     on = false;
@@ -207,10 +212,9 @@ public class Zapper extends GameObject
       turnOff();
     }
 
-    if (collision(player))
-    {
+    if((on) && (Math.abs(player.getCenterX() - this.getX()) < threshold)){
       player.loseHealth(player.getCenterX(), player.getCenterY(),
-          Library.DAMAGE_PER_SEC_IN_ZAPPER);
+          Library.DAMAGE_PER_SEC_IN_ZAPPER*deltaTime);
     }
 
   }
@@ -219,11 +223,16 @@ public class Zapper extends GameObject
   { die(false);
   }
   
+  public boolean checkCollisionWithWall()
+  {
+    return false;
+  }
   
-  public void die(boolean showDeathEffect)
+  /*public void die(boolean showDeathEffect)
   { 
     isAlive = false;
-  }
+  }*/
+  
   public void render(Graphics2D g)
   {
 
@@ -241,11 +250,17 @@ public class Zapper extends GameObject
       drawLightning(false);
 
       g.drawImage(zapAreaImage, zapMinX, zapMinY, null);
-
     }
-    g.drawImage(masterImage, zapX1, zapY1, spriteWidth, spriteHeight, null);
+    
+    // Rotate 180 to face down
+    AffineTransform tx = AffineTransform.getRotateInstance(Math.toRadians(180), spriteWidth/2, spriteHeight/2);
+    tx.scale(0.5, 0.5);
+    AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+    
+    //g.drawImage(masterImage, zapX1, zapY1, spriteWidth, spriteHeight, null);
+    g.drawImage(op.filter(masterImage, null), zapX1, zapY1, null);
+    
     g.drawImage(masterImage, zapX2, zapY2, spriteWidth, spriteHeight, null);
-
   }
 
   public void drawLightning(boolean hitPlayer)
@@ -279,6 +294,14 @@ public class Zapper extends GameObject
 
   public void drawBolt(int x1, int y1, int x2, int y2, int displace)
   {
+	  // max displacement near the middle.  No displacement at the ends
+	  int zapX1 = Library.worldPosXToScreen(zapNodeWorldX1);
+	  int zapY1 = Library.worldPosYToScreen(zapNodeWorldY1);
+	  int zapX2 = Library.worldPosXToScreen(zapNodeWorldX2);
+	  int zapY2 = Library.worldPosYToScreen(zapNodeWorldY2);
+	  
+	  int maxDist = zapY2 - zapY1;
+	    
     int dx = Math.abs(x1 - x2);
     int dy = Math.abs(y1 - y2);
     // System.out.println("("+x1+", "+y1 + ") ("
@@ -315,8 +338,11 @@ public class Zapper extends GameObject
     {
       int x = (x2 + x1) / 2;
       int y = (y2 + y1) / 2;
-      x += (Library.RANDOM.nextDouble() - .5) * displace;
+      
+      double displaceAmount = 1.0 - (y - maxDist/2);
+      
       y += (Library.RANDOM.nextDouble() - .5) * displace;
+      x += (Library.RANDOM.nextDouble() - .5) * displace;
 
       if (x < 1) x = 1;
       if (y < 1) y = 1;

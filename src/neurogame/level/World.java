@@ -3,11 +3,17 @@
  * @author Marcos
  */
 package neurogame.level;
-import neurogame.gameplay.*;
-import neurogame.library.Library;
-
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
+
+import neurogame.gameplay.GameObjectType;
+import neurogame.gameplay.Star;
+import neurogame.gameplay.Enemy;
+import neurogame.gameplay.EnumCollisionType;
+import neurogame.gameplay.GameObject;
+import neurogame.gameplay.Player;
+import neurogame.gameplay.Ammo;
+import neurogame.library.Library;
 
 public class World
 {
@@ -15,6 +21,7 @@ public class World
   private Chunk chunkLeft, chunkRight;
   private ArrayList<GameObject> gameObjectList = new ArrayList<GameObject>();
   private ArrayList<GameObject> objectWaitList = new ArrayList<GameObject>();
+
 
   private double windowWidth;
   private int frameCountSinceLastChunkTypeChange;
@@ -65,6 +72,7 @@ public class World
   /**
    * updates the chunks regenerating if the width is reached
    * 
+   * @param graphics
    * @param deltaTime
    * @return
    */
@@ -152,7 +160,7 @@ public class World
   {
     Star.spawn(chunkRight, this, deltaTime);
     Enemy.spawn(chunkRight, this, deltaTime);
-    PowerUp.spawn(chunkRight, this, deltaTime);
+    Ammo.spawn(chunkRight, this, deltaTime);
 
   }
   
@@ -161,7 +169,9 @@ public class World
     //This method may be called while another part of the program is iterating through the game list
     //Therefore, add the object to a waitlist that gets updated on the next call to world.update
     
+    GameObjectType type = obj.getType();
     objectWaitList.add(obj);
+    
     
   }
 

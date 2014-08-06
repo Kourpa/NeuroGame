@@ -3,7 +3,11 @@ package neurogame.main;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 
@@ -11,7 +15,6 @@ public class MenuButton {
 	
 	public JButton b;
 	private Color SelectedColor,DeselectedColor;
-	private int MaxSize = 12;
 	private int DEFAULT_BUTTON_SIZE = 30;
 	private Font FONT30;
 	private Font FONT40;
@@ -36,11 +39,6 @@ public class MenuButton {
     	
     	// Center Text
     	String newText = "";
-    	/*
-    	for(int i=0; i < 6 - (int)(text.length()/2); i++){
-    		newText += "   ";
-    	}
-    	newText += text;*/
     	newText = text;
         b = new JButton(newText);
         
@@ -62,19 +60,6 @@ public class MenuButton {
         SelectedColor = new Color(100, 191, 255);
         DeselectedColor = new Color(180,180,180);
         b.setForeground(DeselectedColor);
-        
-        /*
-        b.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                setSelected(true);
-            }
-
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-            	setSelected(false);
-            }
-        });*/
     }
     
     public void setSelected(boolean choice){

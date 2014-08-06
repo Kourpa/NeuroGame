@@ -13,12 +13,14 @@ import java.util.Map;
 
 import neurogame.level.World;
 import neurogame.library.Library;
+import neurogame.library.User;
 
 public class PlayerHud {
 	private int windowWidth;
 	private int windowHeight;
 	
 	private World world;
+	private User user;
 
 	private Map<String, BufferedImage> sprites;
 
@@ -30,9 +32,6 @@ public class PlayerHud {
 
 	private BufferedImage MissleIcon;
 	Rectangle rect = new Rectangle(0, 0, 100, 50);
-	BufferedImage bi = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB);
-	Graphics2D big;
-
 	int last_x, last_y;
 
 	boolean firstTime = true;
@@ -44,8 +43,9 @@ public class PlayerHud {
 
 	Rectangle area;
 
-	public PlayerHud(NeuroFrame frame, World world) {
+	public PlayerHud(NeuroFrame frame, World world,User user) {
 		this.world = world;
+		this.user = user;
 		sprites = Library.getSprites();
 
 		windowWidth = frame.getWidth();
@@ -76,8 +76,13 @@ public class PlayerHud {
 
 	private void loadBestScore(){
 		long score;
-		Highscore = Library.getBestHighScores(1)[0];
-		score = Long.parseLong(Highscore.toString().substring(6, Highscore.toString().length()));
+		System.out.println("PlayerHUD: current user is "+user.getName());
+		Highscore = user.getBestScore();//Library.getBestHighScores(1)[0];
+		if(Highscore.toString().length() > 1){
+			score = Long.parseLong(Highscore.toString().substring(6, Highscore.toString().length()));
+		}else{
+			score = 0;
+		}
 		Highscore = score;
 	}
 	
@@ -100,7 +105,7 @@ public class PlayerHud {
 		canvasObjectLayer.setFont(FONT30);
 		canvasObjectLayer.setColor(Color.WHITE);
 		canvasObjectLayer.drawString("Best: ",
-				(int) (windowWidth * 0.5 - 100 - highscoreMessage.length()/2), 
+				(int) (windowWidth * 0.5 - 65 - highscoreMessage.length()/2), 
 				(int) (windowHeight * 0.04));
 
 		canvasObjectLayer.setColor(BLUE);

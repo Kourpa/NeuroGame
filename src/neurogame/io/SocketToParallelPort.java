@@ -7,8 +7,6 @@ import java.net.UnknownHostException;
 
 public class SocketToParallelPort
 {
-
-
   private Socket clientSocket;
   private DataOutputStream writer;
   private long startNanoSec;

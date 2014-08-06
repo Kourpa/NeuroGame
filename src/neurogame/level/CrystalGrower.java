@@ -173,11 +173,11 @@ public class CrystalGrower extends Thread
       PathVertex vertex = vertexList.get(i);
       int x = pixelStartOfNewChunk + (int)(Library.U_VALUE*(vertex.getX() - chunk.getStartX()));
 
-      int y = (int)(Library.U_VALUE*vertex.getTopY()) - Library.RANDOM.nextInt(10);
+      int y = (int)(Library.U_VALUE*vertex.getTop()) - Library.RANDOM.nextInt(10);
       if (y < 0) y = 0;
       makeCrystal(x, y, palett);
       
-      y = (int)(Library.U_VALUE*vertex.getBottomY()) + Library.RANDOM.nextInt(10);
+      y = (int)(Library.U_VALUE*vertex.getBottom()) + Library.RANDOM.nextInt(10);
       if (y >= bufferPixelHeight) y = bufferPixelHeight-1;
       makeCrystal(x, y, palett);
     }

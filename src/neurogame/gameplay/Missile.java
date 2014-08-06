@@ -10,12 +10,14 @@ import neurogame.library.Library;
 public class Missile extends GameObject
 {
   private static Image image = Library.getSprites().get(GameObjectType.MISSILE.getName());
+  private static Missile currentMissile; 
 
   
   public Missile(double x, double y, World world)
   {
     super(GameObjectType.MISSILE, x, y, world);  
     //overrideDefaultHitBoxInPixels(34, 11, -34, 0, 34, 11);
+    currentMissile = this;
   }
   
 
@@ -70,7 +72,7 @@ public class Missile extends GameObject
     return false;
   }
   
-  
+  public static Missile getCurrentMissile() {return currentMissile;}
   
   public void render(Graphics2D canvas)
   {

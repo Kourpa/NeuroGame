@@ -13,13 +13,13 @@ import java.awt.geom.AffineTransform;
 public class Enemy extends GameObject
 {
   private static int activeEnemyCount;
+  private static Enemy[] enemyList = new Enemy[Enemy.MAX_ENEMY_COUNT];
   
   private Image image;
   
   private double maxSpeed;
   public static final int MAX_ENEMY_COUNT = 6; 
   
-  private int enemyIdx;
   private boolean enemyFollowStoppedFollowing = false;
   private static double playerHeightAtLastSpawn = -77;
   
@@ -29,8 +29,6 @@ public class Enemy extends GameObject
   {
     super(type, x, y, world);
     
-    enemyIdx = activeEnemyCount;
-
     if (type == GameObjectType.ENEMY_STRAIGHT)
     { 
       image = Library.getSprites().get(name);
@@ -120,11 +118,11 @@ public class Enemy extends GameObject
     boolean changedSpeedToAvoidWall = false;
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(xx);
     if (vertex != null)
-    { if (yy - getType().getHeight() < vertex.getTopY())
+    { if (yy - getType().getHeight() < vertex.getTop())
       { changedSpeedToAvoidWall = true;
         velocity.y = maxDistanceChange/2.0;
       }
-      else if (yy + getType().getHeight()*2.0 > vertex.getBottomY())    
+      else if (yy + getType().getHeight()*2.0 > vertex.getBottom())    
       { changedSpeedToAvoidWall = true;
         velocity.y = -maxDistanceChange/2.0;
       }
@@ -152,6 +150,27 @@ public class Enemy extends GameObject
       { enemyFollowStoppedFollowing = true;
       }
     }
+    
+    boolean changedSpeedToAvoidWall = false;
+    double xx = getX()+velocity.x;
+    double yy = getY()+velocity.y;
+    
+    PathVertex vertex = world.getInterpolatedWallTopAndBottom(xx);
+    if (vertex != null)
+    { if (yy - getType().getHeight() < vertex.getTop())
+      { changedSpeedToAvoidWall = true;
+        velocity.y = maxDistanceChange/2.0;
+      }
+      else if (yy + getType().getHeight()*2.0 > vertex.getBottom())    
+      { changedSpeedToAvoidWall = true;
+        velocity.y = -maxDistanceChange/2.0;
+      }
+    
+      if (changedSpeedToAvoidWall)
+      { velocity.setMaxMagnitude(maxDistanceChange);
+      }
+    }
+    
   }
   
   
@@ -183,8 +202,8 @@ public class Enemy extends GameObject
       velocity.y = velocity.y + maxDistanceChange/10;
     }
  
-    if (getY() + velocity.y > vertex.getBottomY() - getHeight()) velocity.y = - maxDistanceChange;
-    if (getY() + velocity.y < vertex.getTopY()) velocity.y = maxDistanceChange; 
+    if (getY() + velocity.y > vertex.getBottom() - getHeight()) velocity.y = - maxDistanceChange;
+    if (getY() + velocity.y < vertex.getTop()) velocity.y = maxDistanceChange; 
     
   }
 
@@ -234,6 +253,7 @@ public class Enemy extends GameObject
   
   public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
+	  Enemy myEnemy = null;
     GameObjectType type = myChunk.getChunkType().getEnemyType();
     Player player =  world.getPlayer();
     if (type == null) return 0;
@@ -260,14 +280,23 @@ public class Enemy extends GameObject
     if (vertex == null) return 0;
 
     double x = vertex.getX(); 
-    double rangeY = (vertex.getBottomY() - vertex.getTopY()) - type.getHeight();
+    double rangeY = (vertex.getBottom() - vertex.getTop()) - type.getHeight();
     if (rangeY < 0.01) return 0;
     
     double y = player.getY() + type.getHeight()*(Library.RANDOM.nextDouble() - Library.RANDOM.nextDouble())*3;
-    if ((y <= vertex.getTopY()) || y > vertex.getBottomY() - type.getHeight()) y = vertex.getCenter()-type.getHeight()/2;
+    if ((y <= vertex.getTop()) || y > vertex.getBottom() - type.getHeight()) y = vertex.getCenter()-type.getHeight()/2;
 
+    int enemyIdx = getFreeEnemyIndex();
     
-    Enemy myEnemy = new Enemy(type, x, y, type.getWidth(), type.getHeight(), type.getName(), world);
+    if(type == GameObjectType.ZAPPER){
+    	y = vertex.getTop();
+    	double y2 = vertex.getBottom() - GameObjectType.ZAPPER.getHeight();
+    	
+    	myEnemy = new Zapper(x, y, x, y2,world);
+    }else{
+    	myEnemy = new Enemy(type, x, y, type.getWidth(), type.getHeight(), type.getName(), world);
+    }
+    enemyList[enemyIdx] = myEnemy;
    
     world.addGameObject(myEnemy);
     playerHeightAtLastSpawn = player.getY();
@@ -278,13 +307,23 @@ public class Enemy extends GameObject
 
   }
 
+  
+  private static int getFreeEnemyIndex()
+  {
+    for (int i=0; i<MAX_ENEMY_COUNT; i++)
+    {
+      if (enemyList[i] == null) return i;
+      if (!enemyList[i].isAlive()) return i;
+    }
+    return -1;
+  }
 
   public static void initGame() 
   { 
     activeEnemyCount = 0;
   }
   
-  public int getEnemyIdx(){return enemyIdx;}
   public static int getActiveEnemyCount() {return activeEnemyCount;}
+  public static Enemy[] getEnemyList() { return enemyList; }
 
 }

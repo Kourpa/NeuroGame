@@ -8,6 +8,7 @@ import neurogame.level.EnumChunkType;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.QuickSet;
+import neurogame.main.GameController;
 
 /**
  * @author Daniel
@@ -18,22 +19,29 @@ public class Player extends GameObject
 
   private static Image image = Library.getSprites().get(GameObjectType.PLAYER.getName());
   public static final int MAX_MISSILE_COUNT = 20;
-  private static final double MISSILE_COOLDOWN_SECONDS = 0.3;
   private int missileCount;
-  private double missileCurrentCooldown; //seconds
 
   private boolean invulnerable = false;
 
   private int collisionCountInCurrentChunk;
+  
+  private int collisionLogBitsThisUpdate;
+  public static final int COLLISION_BITS_WALL_ABOVE = 1;
+  public static final int COLLISION_BITS_WALL_BELOW = 2;
+  public static final int COLLISION_BITS_ENEMY = 4;
+  public static final int COLLISION_BITS_STAR = 8;
+  public static final int COLLISION_BITS_AMMO = 16;
+  public static final int COLLISION_FLAG_MISSILE_HIT_ENEMY = 32;
  
   private double timeOfLastWallCollision;
   private double gameScore;
   private double gameTotalSeconds;
   
-  public double skillProbabilitySpawnCoinPerSec;
+  //public double skillProbabilitySpawnCoinPerSec;
   private double skillEnemyStraight;
   private double skillEnemyFollow;
   private double skillEnemySinusoidal;
+  private double skillEnemyZapper;
   public double skillProbabilitySpawnPowerUpPerSec;
 
   private QuickSet<Spark> sparkList;
@@ -41,7 +49,7 @@ public class Player extends GameObject
   private DirectionVector directionVector = new DirectionVector();
   private double lastVelocityX, lastVelocityY;
   
-  private int health;
+  private double health;
 
   public Player(double x, double y, World world)
   {
@@ -65,9 +73,9 @@ public class Player extends GameObject
     
     missileCount = 10;
     
-    missileCurrentCooldown = 0;
+    //missileCurrentCooldown = 0;
     
-    skillProbabilitySpawnCoinPerSec = (Star.MIN_PROBALITY_SPAWN_PER_SEC + Star.MAX_PROBALITY_SPAWN_PER_SEC)/2.0;
+    //skillProbabilitySpawnCoinPerSec = (Star.MIN_PROBALITY_SPAWN_PER_SEC + Star.MAX_PROBALITY_SPAWN_PER_SEC)/2.0;
 
     lastVelocityX = 0;
     lastVelocityY = 0;
@@ -75,6 +83,7 @@ public class Player extends GameObject
     skillEnemyStraight = 1;
     skillEnemyFollow = 1;
     skillEnemySinusoidal = 1;
+    skillEnemyZapper = 1;
     skillProbabilitySpawnPowerUpPerSec = 0.05;
     
   }
@@ -89,8 +98,12 @@ public class Player extends GameObject
   {
     //System.out.println("Player.update("+deltaSec+")");
     gameTotalSeconds += deltaSec;
-    if (missileCurrentCooldown > 0) missileCurrentCooldown -= deltaSec;
+    //if (missileCurrentCooldown > 0) missileCurrentCooldown -= deltaSec;
+    
+    collisionLogBitsThisUpdate = 0;
 
+    updatePlayerInputDirection();
+    
     double inputSpeed = directionVector.getAcceleration();
     double maxSpeed = GameObjectType.PLAYER.getMaxSpeed();
     if (inputSpeed > maxSpeed) inputSpeed = maxSpeed;
@@ -126,6 +139,9 @@ public class Player extends GameObject
     EnumCollisionType collisionLocation = wallCollision();
     if (collisionLocation != EnumCollisionType.NONE)
     {
+      if (collisionLocation == EnumCollisionType.WALL_TOP) collisionLogBitsThisUpdate |= COLLISION_BITS_WALL_ABOVE;
+      if (collisionLocation == EnumCollisionType.WALL_BOTTOM) collisionLogBitsThisUpdate |= COLLISION_BITS_WALL_BELOW;
+      
       
       lastVelocityX = 0;
       lastVelocityY = -lastVelocityY;
@@ -164,21 +180,30 @@ public class Player extends GameObject
         }
       }
     }
+    
+    if (GameController.isPlayerPressingButton()) shootMissile();
+    
   }
   
   
   public void hit(GameObject obj)
   {
     GameObjectType type = obj.getType();
-    if (type == GameObjectType.STAR) collectCoin();
+    if (type == GameObjectType.STAR) collectCoin(obj);
     else if (type.isEnemy()) crashedIntoEnemy(obj);
     else if (type == GameObjectType.POWER_UP)
-    { addMissileCount(10);
+    { addMissileCount(obj, 10);
     }
   }
   
-  public void addMissileCount(int count)
+  public void addMissileCount(GameObject ammoBox, int count)
   {
+    collisionLogBitsThisUpdate |= COLLISION_BITS_AMMO;
+    
+    gameScore += Library.SCORE_AMMOBOX;
+    InfoMessage scoreInfo = new InfoMessage(ammoBox.getCenterX(), ammoBox.getCenterY(), world, String.valueOf(Library.SCORE_AMMOBOX));
+    world.addGameObject(scoreInfo);
+    
     missileCount+=count;
     if (missileCount > MAX_MISSILE_COUNT) missileCount = MAX_MISSILE_COUNT;
   }
@@ -186,16 +211,19 @@ public class Player extends GameObject
   public int getMissileCount() {return missileCount;}
   
 
-  public void setDirection(DirectionVector directionVector)
+  private void updatePlayerInputDirection()
   {
-    this.directionVector.x = lastVelocityX * 0.25 + directionVector.x;
-    this.directionVector.y = lastVelocityY * 0.25 + directionVector.y;
+    DirectionVector inputDir = GameController.getPlayerInputDirectionVector();
+    directionVector.x = lastVelocityX * 0.25 + inputDir.x;
+    directionVector.y = lastVelocityY * 0.25 + inputDir.y;
+    
   }
   
   
   
+  
 
-  public void loseHealth(double hitX, double hitY, int damage)
+  public void loseHealth(double hitX, double hitY, double damage)
   {
     if (invulnerable) return;
     
@@ -204,10 +232,10 @@ public class Player extends GameObject
 
     collisionCountInCurrentChunk++;
     
-    skillProbabilitySpawnCoinPerSec += 0.05;
-    if (skillProbabilitySpawnCoinPerSec > Star.MAX_PROBALITY_SPAWN_PER_SEC)
-    { skillProbabilitySpawnCoinPerSec = Star.MAX_PROBALITY_SPAWN_PER_SEC;
-    }
+//    skillProbabilitySpawnCoinPerSec += 0.05;
+//    if (skillProbabilitySpawnCoinPerSec > Star.MAX_PROBALITY_SPAWN_PER_SEC)
+//    { skillProbabilitySpawnCoinPerSec = Star.MAX_PROBALITY_SPAWN_PER_SEC;
+//    }
     
 
     int sparkCount = Library.RANDOM.nextInt(20) + Library.RANDOM.nextInt(20)
@@ -219,18 +247,24 @@ public class Player extends GameObject
     }
   }
 
-  public void collectCoin()
+  public void collectCoin(GameObject star)
   {
-    health += Library.HEALTH_PER_COIN;
+    collisionLogBitsThisUpdate |= COLLISION_BITS_STAR;
     
-    skillProbabilitySpawnCoinPerSec -= 0.005;
-    if (health > Library.HEALTH_MAX) 
-    { health = Library.HEALTH_MAX;
-      skillProbabilitySpawnCoinPerSec -= 0.025;
-    }
-    if (skillProbabilitySpawnCoinPerSec < Star.MIN_PROBALITY_SPAWN_PER_SEC)
-    { skillProbabilitySpawnCoinPerSec = Star.MIN_PROBALITY_SPAWN_PER_SEC;
-    }
+    health += Library.HEALTH_PER_COIN;
+    gameScore += Library.SCORE_COIN;
+    InfoMessage scoreInfo = new InfoMessage(star.getCenterX(), star.getCenterY(), world, String.valueOf(Library.SCORE_COIN));
+    world.addGameObject(scoreInfo);
+    
+    
+//    skillProbabilitySpawnCoinPerSec -= 0.005;
+//    if (health > Library.HEALTH_MAX) 
+//    { health = Library.HEALTH_MAX;
+//      skillProbabilitySpawnCoinPerSec -= 0.025;
+//    }
+//    if (skillProbabilitySpawnCoinPerSec < Star.MIN_PROBALITY_SPAWN_PER_SEC)
+//    { skillProbabilitySpawnCoinPerSec = Star.MIN_PROBALITY_SPAWN_PER_SEC;
+//    }
   }
 
 
@@ -246,7 +280,7 @@ public class Player extends GameObject
     //System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
     
     int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
-    if (!shotWithMissle) score = score/3;
+    if (!shotWithMissle) score = score/10;
     
     gameScore += score;
     
@@ -268,12 +302,17 @@ public class Player extends GameObject
     { skillEnemySinusoidal += 0.2;
       if (skillEnemySinusoidal > Enemy.MAX_ENEMY_COUNT) skillEnemySinusoidal = Enemy.MAX_ENEMY_COUNT;
     }
-
+    else if (type == GameObjectType.ZAPPER){
+    	skillEnemyZapper += 0.5;
+    	if (skillEnemyZapper > Enemy.MAX_ENEMY_COUNT) skillEnemyZapper = Enemy.MAX_ENEMY_COUNT;
+    }
   }
   
   
   public void crashedIntoEnemy(GameObject obj)
   {
+    collisionLogBitsThisUpdate |= COLLISION_BITS_ENEMY;
+    
     double hitX = (getCenterX() + obj.getCenterX()) / 2.0;
     double hitY = (getCenterY() + obj.getCenterY()) / 2.0;
 
@@ -292,6 +331,10 @@ public class Player extends GameObject
     { skillEnemySinusoidal -= 1.2;
       if (skillEnemySinusoidal < 1) skillEnemySinusoidal = 1;
     }
+    else if (type == GameObjectType.ZAPPER){
+    	skillEnemyZapper -= 0.5;
+    	if (skillEnemyZapper < 1) skillEnemyZapper= 1;
+    }
   }
   
 
@@ -301,14 +344,16 @@ public class Player extends GameObject
     isAlive = false;
   }
   
-  public void shootMissile()
+  private void shootMissile()
   {
-    if (missileCurrentCooldown > 0) return;
+    if ((Missile.getCurrentMissile() != null) && (Missile.getCurrentMissile().isAlive())) return;
+   
+    //if (missileCurrentCooldown > 0) return;
     //System.out.println("Player.shootMissile()   missileCount=" + missileCount);
     if (missileCount < 1) return;
     
     missileCount--;
-    missileCurrentCooldown = MISSILE_COOLDOWN_SECONDS;
+    //missileCurrentCooldown = MISSILE_COOLDOWN_SECONDS;
     world.addGameObject(new Missile(getX()+getWidth(), getCenterY(), world));
   }
   
@@ -349,6 +394,7 @@ public class Player extends GameObject
     if (enemytype == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
     else if (enemytype == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
     else if (enemytype == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
+    else if (enemytype == GameObjectType.ZAPPER) return (int)skillEnemyZapper;
     return 1;
   }
   
@@ -357,11 +403,14 @@ public class Player extends GameObject
     if (chunkType.getEnemyType() == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
     else if (chunkType.getEnemyType() == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
     else if (chunkType.getEnemyType() == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
+    else if (chunkType.getEnemyType() == GameObjectType.ZAPPER) return (int)skillEnemyZapper;
     return 1;
   }
   
 
-  public int getHealth() {return health;}
+  public int getHealth() {return (int)(health);}
+  
+  public int getCollisionLogBitsThisUpdate() {return collisionLogBitsThisUpdate;}
   
   public void render(Graphics2D canvas)
   {
