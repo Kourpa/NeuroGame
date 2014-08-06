@@ -35,6 +35,16 @@ public class Logger
   
   private Long time0;
   
+  
+  
+  private static final byte TRIGGER_GAMESTART = 64;
+  private static final byte TRIGGER_GAMEOVER =  127;
+  
+
+  private SocketToParallelPort socket;
+  private static final String HOST = "127.0.0.1";
+  private static final int PORT = 55555;
+  
 
   /**
    * Instantiate a new Logger with the default file path.
@@ -72,6 +82,12 @@ public class Logger
     {  ex.printStackTrace();
        System.exit(0);
     }
+    
+    socket = new SocketToParallelPort(HOST, PORT);
+    if (socket != null)
+    {
+      socket.sendByte(TRIGGER_GAMESTART);
+    }
   }
 
 
@@ -95,6 +111,12 @@ public class Logger
     DirectionVector joystickVector = GameController.getPlayerInputDirectionVector();
     
     int collisionBits = player.getCollisionLogBitsThisUpdate();
+    if (collisionBits > 0)
+    { if (socket != null)
+      {
+        socket.sendByte((byte)collisionBits);
+      }
+    }
     
     String out = Long.toString(System.currentTimeMillis()-time0) +  
         String.format("," + FLOAT4 + "," + FLOAT4  + ","+ FLOAT4 + ",%d," + FLOAT4  + ","+ FLOAT4 +",%d,%d,",
@@ -147,10 +169,17 @@ public class Logger
     catch (IOException ex)
     {  ex.printStackTrace();
     }
+
+    
   }
   
   public void closeLog()
   {
+    
+    if (socket != null)
+    {
+      socket.sendByte(TRIGGER_GAMEOVER);
+    }
     try
     {
       writer.close();

@@ -179,7 +179,6 @@ public class Oddball // implements KeyListener
           if (socket != null)
           {
             socket.sendByte(TRIGGER_START);
-            socket.close();
           }
         }
         randomFloat = Library.RANDOM.nextFloat();

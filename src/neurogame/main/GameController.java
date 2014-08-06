@@ -357,7 +357,7 @@ public class GameController{
   }
   
   private void oddballKeyHandler(){
-	  System.out.println("Oddball Key Handler: "+inputs.get("escape"));
+	  //System.out.println("Oddball Key Handler: "+inputs.get("escape"));
 	  
 	  if (inputs.get("escape")){
 		  game.getOddballScreen().forceClose();
