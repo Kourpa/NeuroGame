@@ -49,6 +49,10 @@ public class GameOverScreen extends MenuScreen {
 	private static MenuButton exitButton, restartButton;
 	private Map<String, BufferedImage> sprites;
 	
+	private Color BLUE = new Color(100, 191, 255);
+	private Font FONT_SMALL = new Font("Karmatic Arcade", Font.PLAIN, 20);
+	private Font FONT_LARGE = new Font("Karmatic Arcade", Font.PLAIN, 40);
+	
 	private NeuroFrame frame;
 	private JLayeredPane lpane;
 
@@ -89,6 +93,12 @@ public class GameOverScreen extends MenuScreen {
 		});
 	}
 
+	/**
+	 * Fills the Layered Pane with content
+	 */
+	/**
+	 * @param frame
+	 */
 	private void CreateGameOverScreen(final NeuroFrame frame) {
 		frame.getContentPane().setLayout(new BorderLayout());
 
@@ -101,20 +111,20 @@ public class GameOverScreen extends MenuScreen {
 		final JLabel background = new JLabel(new ImageIcon(backgroundImage));
 
 		// Grab the highscore arrays
-		Object[] data = frame.getUser().getHighScores(5);
-		String[] highscoresPersonal = new String[data.length];
+		Object[] userHighScores = frame.getUser().getHighScores(5);
+		String[] highscoresPersonal = new String[userHighScores.length];
 
 		// Parse the highscore bits: YYMMDD + Highscore
-		for (int i = 0; i < data.length; i++) {
+		for (int i = 0; i < userHighScores.length; i++) {
 			highscoresPersonal[i] = " "
-					+ data[i].toString().substring(2, 4)
+					+ userHighScores[i].toString().substring(2, 4)
 					+ "-"
-					+ data[i].toString().substring(4, 6)
+					+ userHighScores[i].toString().substring(4, 6)
 					+ "-"
-					+ data[i].toString().substring(0, 2)
+					+ userHighScores[i].toString().substring(0, 2)
 					+ ":       "
-					+ data[i].toString().substring(6,
-							data[i].toString().length());
+					+ userHighScores[i].toString().substring(6,
+							userHighScores[i].toString().length());
 		}
 
 		// Personal best highscores JList
@@ -122,36 +132,32 @@ public class GameOverScreen extends MenuScreen {
 		personalJList.setBackground(Color.getColor("TRANSLUCENT"));
 		personalJList.setOpaque(false);
 
-		personalJList.setForeground(new Color(110, 170, 255));
+		personalJList.setForeground(BLUE);
 		personalJList.setFont(new Font("Karmatic Arcade", Font.PLAIN, 20));
 
-		Object[] data2 = Library.getBestHighScores(5);
-		String[] highscoresGlobal = new String[data2.length];
+		Object[] bestHighScores = Library.getBestHighScores(5);
+		String[] highscoresGlobal = new String[bestHighScores.length];
 
 		// Parse the highscore bits: YYMMDD + Highscore
-		for (int i = 0; i < data2.length; i++) {
+		for (int i = 0; i < bestHighScores.length; i++) {
 			highscoresGlobal[i] = " "
-					+ data2[i].toString().substring(2, 4)
+					+ bestHighScores[i].toString().substring(2, 4)
 					+ "-"
-					+ data2[i].toString().substring(4, 6)
+					+ bestHighScores[i].toString().substring(4, 6)
 					+ "-"
-					+ data2[i].toString().substring(0, 2)
+					+ bestHighScores[i].toString().substring(0, 2)
 					+ ":       "
-					+ data2[i].toString().substring(6,
-							data2[i].toString().length());
+					+ bestHighScores[i].toString().substring(6,
+							bestHighScores[i].toString().length());
 		}
 
 		// Global best highscores JList
 		JList<String> globalJList = new JList<String>(highscoresGlobal);
 		globalJList.setBackground(Color.getColor("TRANSLUCENT"));
 		globalJList.setOpaque(false);
-		globalJList.setForeground(new Color(110, 170, 255));
-		globalJList.setFont(new Font("Karmatic Arcade", Font.PLAIN, 20));
+		globalJList.setForeground(BLUE);
+		globalJList.setFont(FONT_SMALL);
 		
-		// Create the fonts
-		Font FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 20);
-		Font FONT_LARGE = new Font("Karmatic Arcade", Font.PLAIN, 40);
-
 		// High Score Panels
 		final JPanel highscores = new JPanel();
 		highscores.setBackground(Color.BLACK);
@@ -164,7 +170,7 @@ public class GameOverScreen extends MenuScreen {
 		
 		// Personal best scores message
 		JLabel personalMessage = new JLabel("Personal Best: ");
-		personalMessage.setFont(FONT30);
+		personalMessage.setFont(FONT_SMALL);
 		personalMessage.setForeground(Color.white);
 		
 		highscores.add(personalMessage);
@@ -172,7 +178,7 @@ public class GameOverScreen extends MenuScreen {
 
 		// All time best scores message
 		JLabel bestMessage = new JLabel("All Time Best: ");
-		bestMessage.setFont(FONT30);
+		bestMessage.setFont(FONT_SMALL);
 		bestMessage.setForeground(Color.white);
 		
 		besthighscores.add(bestMessage);
@@ -201,7 +207,7 @@ public class GameOverScreen extends MenuScreen {
 		highscoreMessage.setForeground(Color.WHITE);
 
 		JLabel newHighscoreMessage = new JLabel(" You got a highscore! ");
-		newHighscoreMessage.setFont(FONT30);
+		newHighscoreMessage.setFont(FONT_SMALL);
 		newHighscoreMessage.setForeground(Color.WHITE);
 
 		Message.add(highscoreMessage);

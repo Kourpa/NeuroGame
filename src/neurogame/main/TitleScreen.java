@@ -96,11 +96,11 @@ public class TitleScreen extends MenuScreen {
 	private static JTextField nameInputField;
 	private JComboBox<String> userList = new JComboBox<String>(
 			Library.getUserNames());
-	// private JComboBox<Integer> joystickIndexList = new JComboBox<Integer>();
+
+	private JComboBox<Integer> xJoystickIndex;
+	private JComboBox<Integer> yJoystickIndex;
 
 	private String selected;
-
-	private boolean enableLogging;
 
 	private BufferedImage masterImage;
 	private JComboBox<String> controllerList;
@@ -170,7 +170,7 @@ public class TitleScreen extends MenuScreen {
 	}
 
 	/**
-	 * Create the main menu screen
+	 * Adds content to the layered pane
 	 */
 	private void CreateMainMenu() {
 		lpane = new JLayeredPane();
@@ -232,8 +232,46 @@ public class TitleScreen extends MenuScreen {
 
 		// Controller list
 		JComboBox<String> joysticks = Options();
-		joysticks.setPreferredSize(new Dimension(375, 40));
-
+		joysticks.setPreferredSize(new Dimension(240, 40));
+		
+		// Choose the joystick index
+		Integer[] joystickIndexes = {0,1,2,3,4};
+	
+		xJoystickIndex = new JComboBox<Integer>(joystickIndexes);
+		xJoystickIndex.setSelectedIndex(0);
+		yJoystickIndex = new JComboBox<Integer>(joystickIndexes);
+		xJoystickIndex.setSelectedIndex(1);
+		
+		xJoystickIndex.setBackground(Color.BLACK);
+		xJoystickIndex.setForeground(Color.WHITE);
+		yJoystickIndex.setBackground(Color.BLACK);
+		yJoystickIndex.setForeground(Color.WHITE);
+		
+		xJoystickIndex.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				if (xJoystickIndex.getSelectedIndex() == yJoystickIndex.getSelectedIndex()){
+					yJoystickIndex.setSelectedIndex(yJoystickIndex.getSelectedIndex() + 1);
+				}
+			}
+		});
+		
+		yJoystickIndex.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0) {
+				if (xJoystickIndex.getSelectedIndex() == yJoystickIndex.getSelectedIndex()){
+					xJoystickIndex.setSelectedIndex(xJoystickIndex.getSelectedIndex() + 1);
+				}
+			}
+		});
+		
+		// Messages
+		JLabel xIndexMessage = new JLabel(" X");
+		xIndexMessage.setFont(FONT_SMALL);
+		xIndexMessage.setForeground(TextColor);
+		
+		JLabel yIndexMessage = new JLabel(" Y");
+		yIndexMessage.setFont(FONT_SMALL);
+		yIndexMessage.setForeground(TextColor);
+		
 		JLabel inputMessage = new JLabel("Input: ");
 		inputMessage.setFont(FONT_SMALL);
 		inputMessage.setForeground(TextColor);
@@ -267,7 +305,6 @@ public class TitleScreen extends MenuScreen {
 		creditNames = new JLabel("Here are the credits");
 		creditNames.setFont(FONT_SMALL);
 		creditNames.setForeground(TextColor);
-
 		creditPanel.add(creditNames);
 
 		//
@@ -275,6 +312,10 @@ public class TitleScreen extends MenuScreen {
 		userPanel.add(userList);
 		userPanel.add(inputMessage);
 		userPanel.add(joysticks);
+		userPanel.add(xIndexMessage);
+		userPanel.add(xJoystickIndex);
+		userPanel.add(yIndexMessage);
+		userPanel.add(yJoystickIndex);
 		userPanel.add(loggingMessage);
 		userPanel.add(loggingBox);
 
@@ -343,6 +384,13 @@ public class TitleScreen extends MenuScreen {
 		}
 	}
 
+	public int getJoystickIndex(int index){
+		if(index == 0){
+			return xJoystickIndex.getSelectedIndex();			
+		}
+		
+		return yJoystickIndex.getSelectedIndex(); 
+	}
 	/**
 	 * Getters and setters for game options
 	 */
@@ -358,9 +406,9 @@ public class TitleScreen extends MenuScreen {
 		return selectedJoystickIndex;
 	}
 
-	public boolean GetLogging() {
+	/*public boolean GetLogging() {
 		return this.enableLogging;
-	}
+	}*/
 
 	/**
 	 * Save user preferences to a file
@@ -394,7 +442,7 @@ public class TitleScreen extends MenuScreen {
 			rootEle.appendChild(e);
 
 			e = dom.createElement("Logging");
-			e.appendChild(dom.createTextNode("" + this.enableLogging));
+			e.appendChild(dom.createTextNode("" + this.loggingBox.isSelected()));
 			rootEle.appendChild(e);
 
 			dom.appendChild(rootEle);
@@ -551,11 +599,6 @@ public class TitleScreen extends MenuScreen {
 			}
 		});
 
-		// Joystick panel
-		JPanel message = new JPanel();
-		message.setLayout(new BoxLayout(message, BoxLayout.X_AXIS));
-		message.add(text1);
-		message.add(controllerList);
 		return controllerList;
 	}
 
