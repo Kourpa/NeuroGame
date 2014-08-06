@@ -8,6 +8,7 @@ import neurogame.level.EnumChunkType;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.QuickSet;
+import neurogame.main.GameController;
 
 /**
  * @author Daniel
@@ -18,9 +19,7 @@ public class Player extends GameObject
 
   private static Image image = Library.getSprites().get(GameObjectType.PLAYER.getName());
   public static final int MAX_MISSILE_COUNT = 20;
-  //private static final double MISSILE_COOLDOWN_SECONDS = 0.3;
   private int missileCount;
-  //private double missileCurrentCooldown; //seconds
 
   private boolean invulnerable = false;
 
@@ -103,6 +102,8 @@ public class Player extends GameObject
     
     collisionLogBitsThisUpdate = 0;
 
+    updatePlayerInputDirection();
+    
     double inputSpeed = directionVector.getAcceleration();
     double maxSpeed = GameObjectType.PLAYER.getMaxSpeed();
     if (inputSpeed > maxSpeed) inputSpeed = maxSpeed;
@@ -179,6 +180,9 @@ public class Player extends GameObject
         }
       }
     }
+    
+    if (GameController.isPlayerPressingButton()) shootMissile();
+    
   }
   
   
@@ -207,11 +211,14 @@ public class Player extends GameObject
   public int getMissileCount() {return missileCount;}
   
 
-  public void setDirection(DirectionVector directionVector)
+  private void updatePlayerInputDirection()
   {
-    this.directionVector.x = lastVelocityX * 0.25 + directionVector.x;
-    this.directionVector.y = lastVelocityY * 0.25 + directionVector.y;
+    DirectionVector inputDir = GameController.getPlayerInputDirectionVector();
+    directionVector.x = lastVelocityX * 0.25 + inputDir.x;
+    directionVector.y = lastVelocityY * 0.25 + inputDir.y;
+    
   }
+  
   
   
   
@@ -337,7 +344,7 @@ public class Player extends GameObject
     isAlive = false;
   }
   
-  public void shootMissile()
+  private void shootMissile()
   {
     if ((Missile.getCurrentMissile() != null) && (Missile.getCurrentMissile().isAlive())) return;
    

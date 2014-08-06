@@ -453,14 +453,7 @@ public class NeuroGame
     }
   }
   
-  
-  /**
-   * Activate the powerUp (if held).
-   */
-  public void usePowerUp(){
-    player.shootMissile();
-  }
-
+ 
 
   /**
    * Gets the time since initialization (in milliseconds).

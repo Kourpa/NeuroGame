@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import neurogame.gameplay.Ammo;
+import neurogame.gameplay.DirectionVector;
+import neurogame.gameplay.Missile;
 import neurogame.gameplay.Star;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
@@ -17,6 +19,7 @@ import neurogame.gameplay.Player;
 import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
+import neurogame.main.GameController;
 public class Logger
 {
  
@@ -49,7 +52,7 @@ public class Logger
     
     time0 = System.currentTimeMillis();
     
-    String out = "Milliseconds, PlayerX, PlayerY, Health, Collision, WallAbove, WallBelow, ";
+    String out = "Milliseconds, PlayerX, PlayerY, Health, Ammo, JoystickX, JoystickY, JoystickButton, Collision, WallAbove, WallBelow, ";
     for (int i=0; i<Enemy.MAX_ENEMY_COUNT; i++)
     { out += "Enemy" + i + "X, Enemy" + i + "Y, ";
     }
@@ -57,7 +60,7 @@ public class Logger
     { out += "Star" + i + "X, Star" + i + "Y, ";
     }
     
-    out += "AmmoBoxX, AmmoBoxY\n" + time0 + "\n"; 
+    out += "AmmoBoxX, AmmoBoxY, MissileX, MissileY\n" + time0 + "\n"; 
 
     
     try
@@ -84,12 +87,19 @@ public class Logger
     Enemy[] enemyList = Enemy.getEnemyList();
     Star[] starList = Star.getStarList();
     Ammo ammo = Ammo.getCurrentAmmoBox();
+    Missile missile = Missile.getCurrentMissile();
+    double health = (double)(player.getHealth())/Library.HEALTH_MAX;
+    int joystickButton = 0;
+    if (GameController.isPlayerPressingButton()) joystickButton = 1;
+    
+    DirectionVector joystickVector = GameController.getPlayerInputDirectionVector();
     
     int collisionBits = player.getCollisionLogBitsThisUpdate();
     
     String out = Long.toString(System.currentTimeMillis()-time0) +  
-        String.format("," + FLOAT4 + "," + FLOAT4  + ","+ FLOAT4 +",%d,",
-        player.getCenterX(), player.getCenterY(), (double)(player.getHealth())/Library.HEALTH_MAX, collisionBits );
+        String.format("," + FLOAT4 + "," + FLOAT4  + ","+ FLOAT4 + ",%d," + FLOAT4  + ","+ FLOAT4 +",%d,%d,",
+        player.getCenterX(), player.getCenterY(), health, 
+        player.getMissileCount(), joystickVector.x, joystickVector.y, joystickButton, collisionBits );
     
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(player.getX()+player.getWidth());
     
@@ -109,19 +119,24 @@ public class Logger
     { 
       if ((enemyList[i] != null) && (enemyList[i].isAlive()))
       { 
-        out += String.format("," + FLOAT4 + "," + FLOAT4  + ",", enemyList[i].getCenterX(), enemyList[i].getCenterY());
+        out += String.format(FLOAT4 + "," + FLOAT4  + ",", enemyList[i].getCenterX(), enemyList[i].getCenterY());
       }
       else out += "0,0,";
     }
     for (int i=0; i<Star.MAX_STAR_COUNT; i++)
     { if ((starList[i] != null) && (starList[i].isAlive())) 
       {
-        out += String.format("," + FLOAT4 + "," + FLOAT4  + ",", starList[i].getCenterX(), starList[i].getCenterY());
+        out += String.format(FLOAT4 + "," + FLOAT4  + ",", starList[i].getCenterX(), starList[i].getCenterY());
       }
       else out += "0,0,";
     }
     if ((ammo != null) && (ammo.isAlive())) 
-    { out += String.format("," + FLOAT4 + "," + FLOAT4  + "\n", ammo.getCenterX(), ammo.getCenterY());
+    { out += String.format(FLOAT4 + "," + FLOAT4, ammo.getCenterX(), ammo.getCenterY());
+    }
+    else out += "0,0,";
+    
+    if ((missile != null) && (missile.isAlive())) 
+    { out += String.format(FLOAT4 + "," + FLOAT4  + "\n", missile.getCenterX(), missile.getCenterY());
     }
     else out += "0,0\n";
     
