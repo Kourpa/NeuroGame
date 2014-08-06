@@ -663,8 +663,7 @@ public class TitleScreen extends MenuScreen {
 
 			selectedJoystick = controllerList.getSelectedIndex();
 			selectedUser = Library.getUser(userList.getSelectedIndex() - 1);
-			System.out.println("Titlescreen - User is "+selectedUser.getName());
-			enableLogging = loggingBox.isSelected();
+			game.setLoggingMode(loggingBox.isSelected());
 
 			savePreferences();
 			IsStarting = true;
@@ -681,7 +680,7 @@ public class TitleScreen extends MenuScreen {
 
 		selectedJoystick = controllerList.getSelectedIndex();
 		selectedUser = Library.getUser(userList.getSelectedIndex());
-		enableLogging = loggingBox.isSelected();
+		game.setLoggingMode(loggingBox.isSelected());
 
 		savePreferences();
 		IsOption = true;

@@ -98,7 +98,7 @@ public class SpriteMap extends HashMap<String, BufferedImage>
         Library.worldUnitToScreen(GameObjectType.ENEMY_FOLLOW.getWidth()),
         Library.worldUnitToScreen(GameObjectType.ENEMY_FOLLOW.getHeight()));
     add("coin", "/images/coin.png", 64, 2560);
-    add("zapper", "/images/zapper.png", 48, 48);
+    add("zapper", "/images/zapper.png", 128, 128);
     // Power-up HUD icons.
     add("powerupMissileAmmo", "/images/powerup-MissileAmmo.png", Library.worldUnitToScreen(GameObjectType.POWER_UP.getWidth()), 
         Library.worldUnitToScreen(GameObjectType.POWER_UP.getHeight()));

@@ -168,7 +168,6 @@ public class GameController{
     game.showTitle();
   }
 
-
   public Map<String, Boolean> getInputs(){
 	  return inputs;
   }
@@ -210,8 +209,10 @@ public class GameController{
  		  game.showTitle();
  	  }
  	  
+ 	 oddballKeyHandler();
+ 	  
  	  if (game.getOddballScreen() != null)
- 	    {	    	
+ 	    {	
  	    	if(joystick!=null){
  	    		game.getOddballScreen().updateJoystick(joystick, JOYSTICK_X, JOYSTICK_Y);
  	    	}
@@ -310,7 +311,7 @@ public class GameController{
     }
 
     // Pause/unpause.
-    if (inputs.get("pause") || inputs.get("escape"))
+    if (inputs.get("pause"))
     {
       disableAll();
       game.togglePause();
@@ -356,6 +357,14 @@ public class GameController{
 			ButtonPressed = true;
 		}
 	}
+  }
+  
+  private void oddballKeyHandler(){
+	  System.out.println("Oddball Key Handler: "+inputs.get("escape"));
+	  
+	  if (inputs.get("escape")){
+		  game.getOddballScreen().forceClose();
+	  }
   }
 
   

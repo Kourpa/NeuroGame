@@ -12,7 +12,10 @@ package neurogame.gameplay;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 
 import neurogame.level.World;
 import neurogame.library.Library;
@@ -26,8 +29,8 @@ import neurogame.library.Library;
  */
 public class Zapper extends Enemy
 {
-  public static final int spriteWidth = 48;
-  public static final int spriteHeight = 48;
+  public static final int spriteWidth = 64;
+  public static final int spriteHeight = 64;
   public static final double width = Library.worldUnitToScreen(spriteWidth);
   public static final double height = Library.worldUnitToScreen(spriteHeight);
   private static final String name = "zapper";
@@ -248,9 +251,16 @@ public class Zapper extends Enemy
 
       g.drawImage(zapAreaImage, zapMinX, zapMinY, null);
     }
-    g.drawImage(masterImage, zapX1, zapY1, spriteWidth, spriteHeight, null);
+    
+    // Rotate 180 to face down
+    AffineTransform tx = AffineTransform.getRotateInstance(Math.toRadians(180), spriteWidth/2, spriteHeight/2);
+    tx.scale(0.5, 0.5);
+    AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+    
+    //g.drawImage(masterImage, zapX1, zapY1, spriteWidth, spriteHeight, null);
+    g.drawImage(op.filter(masterImage, null), zapX1, zapY1, null);
+    
     g.drawImage(masterImage, zapX2, zapY2, spriteWidth, spriteHeight, null);
-
   }
 
   public void drawLightning(boolean hitPlayer)
@@ -284,6 +294,14 @@ public class Zapper extends Enemy
 
   public void drawBolt(int x1, int y1, int x2, int y2, int displace)
   {
+	  // max displacement near the middle.  No displacement at the ends
+	  int zapX1 = Library.worldPosXToScreen(zapNodeWorldX1);
+	  int zapY1 = Library.worldPosYToScreen(zapNodeWorldY1);
+	  int zapX2 = Library.worldPosXToScreen(zapNodeWorldX2);
+	  int zapY2 = Library.worldPosYToScreen(zapNodeWorldY2);
+	  
+	  int maxDist = zapY2 - zapY1;
+	    
     int dx = Math.abs(x1 - x2);
     int dy = Math.abs(y1 - y2);
     // System.out.println("("+x1+", "+y1 + ") ("
@@ -320,8 +338,11 @@ public class Zapper extends Enemy
     {
       int x = (x2 + x1) / 2;
       int y = (y2 + y1) / 2;
-      x += (Library.RANDOM.nextDouble() - .5) * displace;
+      
+      double displaceAmount = 1.0 - (y - maxDist/2);
+      
       y += (Library.RANDOM.nextDouble() - .5) * displace;
+      x += (Library.RANDOM.nextDouble() - .5) * displace;
 
       if (x < 1) x = 1;
       if (y < 1) y = 1;
