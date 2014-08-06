@@ -59,8 +59,8 @@ public enum EnumChunkType
   {
     //Never return FLAT
     int r = Library.RANDOM.nextInt(values().length - 2)+1;
-    //return values()[r];
-    return values()[values().length-1];
+    return values()[r];
+    //return values()[values().length-1];
   }
   
   public static final int SIZE = values().length;

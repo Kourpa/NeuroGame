@@ -49,8 +49,12 @@ public class GameController{
   private static final double JOYSTICK_THRESHOLD = 0.01;
   private double joystickLastX, joystickLastY;
   private boolean ButtonPressed;
+  
+  private static boolean playerIsPressingButton = false;
 
   private boolean joystickReady;
+  
+  private static DirectionVector playerInputDirectionVector = new DirectionVector();
   
 
   /**
@@ -278,39 +282,7 @@ public class GameController{
    */
   public void keyHandler()
   {
-    // Use power-up.
-    if (inputs.get("space"))
-    {
-      game.usePowerUp();
-    }
-
-    if (joystick != null && useJoystick==true)
-    {
-      if (joystick.isButtonPressed(0))
-      {
-        game.usePowerUp();
-      }
-      else if (joystick.isButtonPressed(1))
-      {
-        game.usePowerUp();
-      }
-      else if (joystick.isButtonPressed(2))
-      {
-        game.usePowerUp();
-      }
-      else if (joystick.isButtonPressed(3))
-      {
-        game.usePowerUp();
-      }
-      else if (joystick.isButtonPressed(4))
-      {
-        game.usePowerUp();
-      }
-      else if (joystick.isButtonPressed(5))
-      {
-        game.usePowerUp();
-      }
-    }
+    updateButtonStatus();
 
     // Pause/unpause.
     if (inputs.get("pause"))
@@ -322,10 +294,33 @@ public class GameController{
     // Movement. If controllable is false, ignore.
     if (controllable)
     {
-      DirectionVector dir = moveHelper();
-      if (game.getWorld().getPlayer() != null)
-      {
-        game.getWorld().getPlayer().setDirection(dir);
+      moveHelper();
+    }
+  }
+  
+  
+  
+  public static boolean isPlayerPressingButton() { return playerIsPressingButton;}
+  
+  private void updateButtonStatus()
+  { 
+    playerIsPressingButton = false;
+    
+    if (inputs.get("space"))
+    {
+      playerIsPressingButton = true;
+      return;
+    }
+    
+
+    if ((joystick != null) && useJoystick)
+    { 
+      for (int i=0; i<6; i++)
+      { if (joystick.isButtonPressed(i))
+        {
+          playerIsPressingButton = true;
+          return;
+        }
       }
     }
   }
@@ -351,7 +346,7 @@ public class GameController{
 			}
 		}
 		
-		if((ButtonCheck == false) && (ButtonPressed == true)){
+		if((ButtonCheck == false) && (ButtonPressed)){
 			ButtonPressed = false;
 			game.showHighScores();
 		}
@@ -376,14 +371,16 @@ public class GameController{
    * @return Directions enum for how the ship should move, or null if it should
    *         remain stationary.
    */
-  private DirectionVector moveHelper()
+  private void moveHelper()
   {
-    DirectionVector dir = new DirectionVector();
 
     boolean n = false;
     boolean s = false;
     boolean w = false;
     boolean e = false;
+    
+    playerInputDirectionVector.x= 0;
+    playerInputDirectionVector.y = 0;
 
     if (joystick == null || this.useJoystick == false)
     {
@@ -395,20 +392,20 @@ public class GameController{
       // System.out.println(n + " " + e + " " + s + " " + w);
       if (n)
       {
-        dir.y = -1;
+        playerInputDirectionVector.y = -1;
       }
       else if (s)
       {
-        dir.y = 1;
+        playerInputDirectionVector.y = 1;
       }
 
       if (e)
       {
-        dir.x = 1;
+        playerInputDirectionVector.x = 1;
       }
       else if (w)
       {
-        dir.x = -1;
+        playerInputDirectionVector.x = -1;
       }
     }
 
@@ -433,11 +430,10 @@ public class GameController{
 
       if (joystickReady)
       {
-        dir.x = stickX;
-        dir.y = stickY;
+        playerInputDirectionVector.x = stickX;
+        playerInputDirectionVector.y = stickY;
       }
     }
-    return dir;
 
   }
 
@@ -513,7 +509,7 @@ public class GameController{
     assert (inputs.get(key) == state);
   }
 
-
+  public static DirectionVector getPlayerInputDirectionVector() {return playerInputDirectionVector;}
 
 
   /**
