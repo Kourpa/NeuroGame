@@ -61,7 +61,7 @@ public enum GameObjectType
   
   ENEMY_FOLLOW
   { public String getName() {return "EnemyFollow";}
-    public double getWidth() {return 0.08;}
+    public double getWidth() {return 0.09936;}
     public double getHeight() {return 0.06;}
     public int getHitDamage() {return 25;}
     public boolean isEnemy() {return true;}

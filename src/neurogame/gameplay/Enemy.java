@@ -157,7 +157,7 @@ public class Enemy extends GameObject
       
       if (enemyList[i].getX() > getX()) continue;
       
-      if (Math.abs(lastVelocityY) > 0.000001) velocity.y = lastVelocityY;
+      if (Math.abs(lastVelocityY) > maxDistanceChange/3.0) velocity.y = lastVelocityY;
       else if (vertex != null)
       { if (getCenterY() > vertex.getCenter()) velocity.y = -maxDistanceChange/2.0;
         else velocity.y = maxDistanceChange/2.0;
@@ -170,18 +170,23 @@ public class Enemy extends GameObject
   
   public void strategyFollow(double maxDistanceChange, double scrollDistance)
   {
-    if (enemyFollowStoppedFollowing) strategyStraight(maxDistanceChange, scrollDistance);
-    else
-    {
-      Player player = world.getPlayer();
-      velocity.x = scrollDistance + player.getCenterX() - (getX() + getType().getWidth()/2);
-      velocity.y = player.getCenterY() - (getY() + getType().getHeight()/2);
-      
-      velocity.setMaxMagnitude(maxDistanceChange);
+    double lastVelocityY =  velocity.y;
     
-      if (getX() + getWidth()*(2 + 8*Library.RANDOM.nextDouble()) < player.getX())
-      { enemyFollowStoppedFollowing = true;
-      }
+    if (enemyFollowStoppedFollowing) 
+    { strategyStraight(maxDistanceChange, scrollDistance);
+      return;
+    }
+    
+   
+    Player player = world.getPlayer();
+    if (!player.isAlive()) enemyFollowStoppedFollowing = true;
+    velocity.x = scrollDistance + player.getCenterX() - (getX() + getType().getWidth()/2);
+    velocity.y = player.getCenterY() - (getY() + getType().getHeight()/2);
+      
+    velocity.setMaxMagnitude(maxDistanceChange);
+    
+    if (getX() + getWidth()*(4 + 8*Library.RANDOM.nextDouble()) < player.getX())
+    { enemyFollowStoppedFollowing = true;
     }
     
     boolean changedSpeedToAvoidWall = false;
@@ -204,6 +209,38 @@ public class Enemy extends GameObject
       }
     }
     
+    boolean takeEvasiveAction = false;
+    //Avoid hitting other palyer enemies
+    for (int i=0; i<MAX_ENEMY_COUNT; i++)
+    {
+      if ((enemyList[i] == null) || (enemyList[i] == this)) continue;
+      if (!enemyList[i].isAlive) continue;
+      
+      if (Math.abs(enemyList[i].getY() - getY()) > getType().getHeight()) continue;
+      
+      if (enemyList[i].getX() > getX()) continue;
+      
+      takeEvasiveAction = true;
+    }
+    
+    //Avoid missiles
+    Missile curMissile = Missile.getCurrentMissile();
+    if ((curMissile != null) &&  (curMissile.isAlive()))
+    {  
+      if (Math.abs(curMissile.getY() - getY()) < getType().getHeight())
+      { 
+        if (curMissile.getX() < getX()) 
+        {  takeEvasiveAction = true;
+        }
+      }
+    }
+    if (takeEvasiveAction )
+    { if (Math.abs(lastVelocityY) > maxDistanceChange/3.0) velocity.y = lastVelocityY;
+      else
+      { if (getCenterY() > player.getCenterY()) velocity.y = maxDistanceChange/2.0;
+        else velocity.y = -maxDistanceChange/2.0;
+      }
+    }
   }
   
   

@@ -23,8 +23,6 @@ public class Player extends GameObject
   private boolean triggerReleasedSinceLastMissile;
 
   private boolean invulnerable = false;
-
-  private int collisionCountInCurrentChunk;
   
   private int collisionLogBitsThisUpdate;
   public static final int COLLISION_BITS_WALL_ABOVE = 1;
@@ -65,7 +63,6 @@ public class Player extends GameObject
   public void initGame()
   {
     health = Library.HEALTH_MAX;
-    collisionCountInCurrentChunk = 0;
     gameScore = 0;
     gameTotalSeconds = 0;
     timeOfLastWallCollision = 0;
@@ -189,7 +186,7 @@ public class Player extends GameObject
   public void hit(GameObject obj)
   {
     GameObjectType type = obj.getType();
-    if (type == GameObjectType.STAR) collectCoin(obj);
+    if (type == GameObjectType.STAR) collectStar(obj);
     else if (type.isEnemy()) crashedIntoEnemy(obj);
     else if (type == GameObjectType.AMMO)
     { addMissileCount(obj, 10);
@@ -230,7 +227,6 @@ public class Player extends GameObject
     health -= damage;
     if (health < 0) health = 0;
 
-    collisionCountInCurrentChunk++;
     
 //    skillProbabilitySpawnCoinPerSec += 0.05;
 //    if (skillProbabilitySpawnCoinPerSec > Star.MAX_PROBALITY_SPAWN_PER_SEC)
@@ -247,13 +243,13 @@ public class Player extends GameObject
     }
   }
 
-  public void collectCoin(GameObject star)
+  public void collectStar(GameObject star)
   {
     collisionLogBitsThisUpdate |= COLLISION_BITS_STAR;
     
-    health += Library.HEALTH_PER_COIN;
-    gameScore += Library.SCORE_COIN;
-    InfoMessage scoreInfo = new InfoMessage(star.getCenterX(), star.getCenterY(), world, String.valueOf(Library.SCORE_COIN));
+    health += Library.HEALTH_PER_STAR;
+    gameScore += Library.SCORE_STAR;
+    InfoMessage scoreInfo = new InfoMessage(star.getCenterX(), star.getCenterY(), world, String.valueOf(Library.SCORE_STAR));
     world.addGameObject(scoreInfo);
     
     
@@ -378,15 +374,6 @@ public class Player extends GameObject
     return (int) gameScore;
   }
 
-  public void resetCollisionCountInCurrentChunk()
-  {
-    collisionCountInCurrentChunk = 0;
-  }
-
-  public int getCollisionCountInCurrentChunk()
-  {
-    return collisionCountInCurrentChunk;
-  }
 
   public void addScore(double score)
   {

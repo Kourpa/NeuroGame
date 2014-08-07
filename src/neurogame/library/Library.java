@@ -73,8 +73,8 @@ public final class Library
   public static final int HEALTH_MAX = 100;
   public static final int ENEMY_POINTS = 100;
 
-  public static final int HEALTH_PER_COIN = 1;
-  public static final int SCORE_COIN = 10;
+  public static final int HEALTH_PER_STAR = 1;
+  public static final int SCORE_STAR = 10;
   public static final int SCORE_AMMOBOX = 40;
 
   public static final int DAMAGE_PER_WALL_HIT = 10;
