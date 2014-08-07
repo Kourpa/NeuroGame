@@ -92,7 +92,7 @@ public enum GameObjectType
     public boolean hasCollider() {return true;}
   },
   
-  POWER_UP
+  AMMO
   { public String getName() {return "powerupMissileAmmo";}
     public double getWidth() {return 0.08;}
     public double getHeight() {return 0.08;}

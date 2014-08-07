@@ -29,19 +29,18 @@ import neurogame.library.Library;
 
 public class Ammo extends GameObject
 {
-  private static Image image = Library.getSprites().get(GameObjectType.POWER_UP.getName());
-  private static final double MIN_SECONDS_BETWEEN_SPAWNS = 10;
-  private static double spawnCoolDownRemaining;
+  private static Image image = Library.getSprites().get(GameObjectType.AMMO.getName());
   private static Ammo currentAmmoBox;
+  
+  private static final double PROBABILITY_SPAWN_AMMO_PER_SEC = 0.07;
   
   public static void initGame()
   {
-    spawnCoolDownRemaining = MIN_SECONDS_BETWEEN_SPAWNS;
   }
 
   public Ammo(double x, double y, World world)
   {
-    super(GameObjectType.POWER_UP, x, y, world);
+    super(GameObjectType.AMMO, x, y, world);
   }
 
   /**
@@ -66,16 +65,13 @@ public class Ammo extends GameObject
   {
     if ((currentAmmoBox != null) && (currentAmmoBox.isAlive())) return 0;
     
-    if (spawnCoolDownRemaining > 0) 
-    { spawnCoolDownRemaining -= deltaTime;
-      return 0;
-    }
 
     double r = Library.RANDOM.nextDouble();
     EnumChunkType type = myChunk.getChunkType();
     if (type == EnumChunkType.FLAT) return 0;
+    if (type == EnumChunkType.SQUARE) return 0;
 
-    if (r > world.getPlayer().skillProbabilitySpawnPowerUpPerSec * deltaTime) return 0;
+    if (r > PROBABILITY_SPAWN_AMMO_PER_SEC * deltaTime) return 0;
 
     //System.out.println("probabilitySpawnCoinPerSec=" + world.getPlayer().skillProbabilitySpawnCoinPerSec);
 
@@ -87,13 +83,12 @@ public class Ammo extends GameObject
 
     double x = vertex.getX();
    
-    spawnCoolDownRemaining = MIN_SECONDS_BETWEEN_SPAWNS;
 
-    double y = vertex.getTop() + GameObjectType.POWER_UP.getHeight() / 3;
+    double y = vertex.getTop() + GameObjectType.AMMO.getHeight() / 3;
 
     if (Library.RANDOM.nextBoolean())
     {
-      y = vertex.getBottom() - 1.3 * GameObjectType.POWER_UP.getHeight();
+      y = vertex.getBottom() - 1.3 * GameObjectType.AMMO.getHeight();
     }
 
     currentAmmoBox = new Ammo(x, y, world);
