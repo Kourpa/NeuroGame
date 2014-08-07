@@ -56,7 +56,7 @@ public class MenuButton {
 		
         b.setFont(FONT30);
         SelectedColor = new Color(100, 191, 255);
-        DeselectedColor = new Color(180,180,180);
+        DeselectedColor = new Color(230,230,230);
         b.setForeground(DeselectedColor);
     }
     

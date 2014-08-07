@@ -169,6 +169,7 @@ public class TitleScreen extends MenuScreen {
 		});
 	}
 
+	
 	/**
 	 * Adds content to the layered pane
 	 */
@@ -217,10 +218,14 @@ public class TitleScreen extends MenuScreen {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if (userList.getSelectedIndex() == 0) {
+				if (userList.getSelectedIndex() == 1) {
 					CreateNewUser(frame);
 				}
+				else if(userList.getSelectedIndex() < 2){
+					startButton.b.setEnabled(false);
+				}
 				else{
+					startButton.b.setEnabled(true);
 					frame.requestFocus();
 					savePreferences();
 				}
@@ -402,14 +407,6 @@ public class TitleScreen extends MenuScreen {
 		return this.selectedJoystick;
 	}
 
-	public int GetSelectedJoystickIndex() {
-		return selectedJoystickIndex;
-	}
-
-	/*public boolean GetLogging() {
-		return this.enableLogging;
-	}*/
-
 	/**
 	 * Save user preferences to a file
 	 */
@@ -486,13 +483,10 @@ public class TitleScreen extends MenuScreen {
 
 		ArrayList<String> perfs = new ArrayList<String>();
 		Document dom;
-		// Make an instance of the DocumentBuilderFactory
+		
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		try {
-			// use the factory to take an instance of the document builder
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			// parse using the builder to get the DOM mapping of the
-			// XML file
 			dom = db.parse(path + "pref.xml");
 
 			Element doc = dom.getDocumentElement();
@@ -522,12 +516,15 @@ public class TitleScreen extends MenuScreen {
 			controllerList.setSelectedIndex(Integer.parseInt(perfs.get(0)));
 			loggingBox.setSelected(Boolean.parseBoolean(perfs.get(2)));
 			game.setLoggingMode(loggingBox.isSelected());
-			userList.setSelectedIndex(Integer.parseInt(perfs.get(1)));
+			userList.setSelectedIndex(0);
 		} catch (Exception e) {
 		}
 
 	}
 
+	/**
+	 * Scrolls the credits
+	 */
 	public void ScrollCredits(float deltaTime) {
 		int marqueeSize = 40;
 		int updateSpeed = 10; // Higher is slower
@@ -552,8 +549,9 @@ public class TitleScreen extends MenuScreen {
 			creditIndex++;
 		}
 	}
+	
 
-		/**
+	/**
 	 * Creates the panel for the controller options
 	 */
 	public JComboBox<String> Options() {
@@ -602,6 +600,31 @@ public class TitleScreen extends MenuScreen {
 		return controllerList;
 	}
 
+	
+	/**
+	 * Configuration screen for the joystick
+	 */
+	public void JoystickConfigure(final NeuroFrame frame) {
+		final JDialog dialog = new JDialog(frame, "Configure");
+
+		JPanel mainBox = new JPanel();
+		mainBox.setLayout(new BoxLayout(mainBox, BoxLayout.Y_AXIS));
+
+		JPanel message = new JPanel();
+		message.setLayout(new BorderLayout());
+		message.add(new JLabel("Press Left on the Joystick:"), BorderLayout.WEST);
+		message.setBackground(Color.WHITE);
+
+		mainBox.add(message);
+
+		dialog.setModal(true);
+		dialog.setContentPane(mainBox);
+		dialog.pack();
+		dialog.setLocationRelativeTo(frame);
+		dialog.setVisible(true);
+	}
+
+	
 	/**
 	 * Gets the name and starts the creation process in Library.java
 	 */
@@ -653,58 +676,38 @@ public class TitleScreen extends MenuScreen {
 		updateUsers(null);
 	}
 	
+	/**
+	 * Update the user list when you add a new user
+	 */
 	private void updateUsers(String usrName){
 		String[] names = Library.getUserNames();
 		System.out.println("Update Users: Length " + names.length);
 
 		userList.removeAllItems();
+		userList.addItem("- Select User -");
 		userList.addItem("NEW USER");
+		
 		for (int i = 0; i < names.length; i++) {
-			//System.out.println("TitleScreen - UserName: " + names[i]);
 			userList.addItem(names[i]);
 			
 			if((usrName != null) && (names[i].compareTo(usrName))==0){
-				userList.setSelectedIndex(i+1);
+				userList.setSelectedIndex(i+2);
 			}
 		}
 	}
-
+	
 	/**
-	 * Toggles which button is selected.
+	 * Called when the start button is activated
 	 */
-	public void switchButton() {
-		selected = (selected == "start" ? "exit" : "start");
-		// draw();
-	}
-
-	/**
-	 * Getter for selected.
-	 * 
-	 * @return selected String representation of selected button.
-	 */
-	public String getSelected() {
-		return selected;
-	}
-
-	/**
-	 * Getter for the buffered image.
-	 * 
-	 * @return BufferedImage of the title screen.
-	 */
-	public BufferedImage getImage() {
-		return masterImage;
-	}
-
-	// Start button has been pressed
 	private void onStartButtonPress() {
 
 		// User is selected
-		if (Library.getUser(userList.getSelectedIndex()) != null) {
+		if (Library.getUser(userList.getSelectedIndex()-2) != null) {
 			frame.requestFocus();
 			lpane.setVisible(false);
 
 			selectedJoystick = controllerList.getSelectedIndex();
-			selectedUser = Library.getUser(userList.getSelectedIndex() - 1);
+			selectedUser = Library.getUser(userList.getSelectedIndex() - 2);
 			game.setLoggingMode(loggingBox.isSelected());
 
 			savePreferences();

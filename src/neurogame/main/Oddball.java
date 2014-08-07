@@ -127,7 +127,7 @@ public class Oddball // implements KeyListener
     JLabel msg1 = new JLabel(msgTitle);
     msg1.setForeground(Color.WHITE);
     msg1.setFont(FONT_LARGE);
-    msg1.setBounds((int)(width*0.15), (int)(height*0.02), width, 150);
+    msg1.setBounds((int)(width*0.5)-500, (int)(height*0.02), 1000, 150);
     
     
     // Instructions with a scroll pane
@@ -142,7 +142,7 @@ public class Oddball // implements KeyListener
     JScrollPane areaScrollPane = new JScrollPane(msg2);
     areaScrollPane.setVerticalScrollBarPolicy( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     areaScrollPane.setBorder(null);
-    areaScrollPane.setBounds((int)(width*0.2), (int)(height*0.2), (int)(width*0.6), 150);
+    areaScrollPane.setBounds((int)(width*0.5)-450, (int)(height*0.2), 1000, 150);
     areaScrollPane.setOpaque(false);
     areaScrollPane.setBackground(new Color(0,0,0,0));
     areaScrollPane.setForeground(Color.BLACK);
@@ -152,7 +152,7 @@ public class Oddball // implements KeyListener
     JLabel msg3 = new JLabel(msgInput);
     msg3.setForeground(Color.BLUE);
     msg3.setFont(FONT_SMALL);
-    msg3.setBounds((int)(width*0.2), (int)(height*0.75), width, 150);
+    msg3.setBounds((int)(width*0.5)-400, (int)(height*0.75), 800, 150);
     
     // The enemy and friendly ship
     JLabel enemyImage = new JLabel(new ImageIcon(goodImage));
@@ -231,7 +231,7 @@ public class Oddball // implements KeyListener
     		finishedInstructions = true;
     		pane.setVisible(false);
     		frame.getContentPane().remove(pane);
-    		
+    			
     		System.out.println("Parallel Port: Sending Start trigger");
             if (socket != null)
             {

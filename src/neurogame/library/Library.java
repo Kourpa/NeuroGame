@@ -137,24 +137,26 @@ public final class Library
 		path += "/Users/";
 		File dir = new File(path);
 
-    if(!dir.exists()){
-      dir.mkdir();
-      addUser("Guest");
-    }
+	    if(!dir.exists()){
+	      dir.mkdir();
+	      addUser("FEC LAB");
+	      addUser("LOGAN LAB");
+	    }
 
     boolean guestexists = false;
     for (File file : dir.listFiles()) {
 			if (file.getName().endsWith((".user"))) {
 				parseUser(file);
 			}
-      if(file.getName().startsWith("Guest")){
+      if(file.getName().startsWith("FEC")){
         guestexists = true;
       }
 		}
 
     if(!guestexists){
-      addUser("Guest");
-    }
+    	addUser("FEC LAB");
+	    addUser("LOGAN LAB");
+    	}
 	}
 
 	/**
