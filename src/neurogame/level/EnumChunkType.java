@@ -4,12 +4,12 @@
 package neurogame.level;
 
 import neurogame.gameplay.GameObjectType;
-import neurogame.gameplay.Zapper;
 import neurogame.gameplay.Ammo;
 import neurogame.library.Library;
 
 public enum EnumChunkType
 {
+  
   FLAT
   { public double getMaxChange()  { return 0.1; }
     public double getStepSize()  { return 0.1; }
@@ -22,7 +22,7 @@ public enum EnumChunkType
   SMOOTH
   { public double getMaxChange() { return 0.01; }
     public double getStepSize()  { return 0.01; }
-    public double getDefaultOpeningHeight()  { return 0.6; }
+    public double getDefaultOpeningHeight()  { return 0.8; }
     public double getMinimumOpeningHeight()  { return 0.224; }
     public Ammo getPowerUp()  { return null; }
     public GameObjectType getEnemyType()  { return GameObjectType.ENEMY_STRAIGHT; }
@@ -31,7 +31,7 @@ public enum EnumChunkType
   SPIKE
   { public double getMaxChange() { return 0.1; }
     public double getStepSize() { return 0.1; }
-    public double getDefaultOpeningHeight() { return 0.6; }
+    public double getDefaultOpeningHeight() { return 0.8; }
     public double getMinimumOpeningHeight()  { return 0.224; }
     public Ammo getPowerUp() { return null; }
     public GameObjectType getEnemyType() {  return GameObjectType.ENEMY_FOLLOW; }
@@ -40,7 +40,7 @@ public enum EnumChunkType
   CURVED
   { public double getMaxChange() { return 0.05; }
     public double getStepSize() { return 0.1; }
-    public double getDefaultOpeningHeight() { return 0.6; }
+    public double getDefaultOpeningHeight() { return 0.8; }
     public double getMinimumOpeningHeight()  { return 0.224; }
     public Ammo getPowerUp() { return null; }
     public GameObjectType getEnemyType() { return GameObjectType.ENEMY_SINUSOIDAL; }
@@ -49,7 +49,7 @@ public enum EnumChunkType
   SQUARE
   { public double getMaxChange() { return 0.06; }
     public double getStepSize() { return 0.06; }
-    public double getDefaultOpeningHeight() { return 0.6; }
+    public double getDefaultOpeningHeight() { return 0.8; }
     public double getMinimumOpeningHeight()  { return 0.224; }
     public Ammo getPowerUp() { return null; }
     public GameObjectType getEnemyType() { return GameObjectType.ZAPPER; }
@@ -64,8 +64,8 @@ public enum EnumChunkType
   }
   
   public static final int SIZE = values().length;
-
   public static final double MAX_STEP_SIZE = 0.1;
+  
   public abstract double getMaxChange();
   public abstract double getStepSize();
   public abstract double getDefaultOpeningHeight();

@@ -69,6 +69,10 @@ public class Star extends GameObject
   {
     lastCoinSpawnX = 0;
     currentStarCount = 0;
+    for (int i=0; i<MAX_STAR_COUNT; i++)
+    {
+      starList[i] = null;
+    }
   }
 
   /**
@@ -99,7 +103,6 @@ public class Star extends GameObject
 
   public void render(Graphics2D g)
   {
-
     // Animation.
     frameCounter++;
     if (frameCounter % 2 == 0)
@@ -161,7 +164,11 @@ public class Star extends GameObject
       if (myStar.wallCollision() != EnumCollisionType.NONE) return numCoinsSpawned;
       
       int starIdx = getFreeStarIndex();
-      //System.out.println("Star.spawn(): starIdx="+starIdx + ", currentStarCount="+currentStarCount);
+      if (starIdx < 0)
+      {
+        System.out.println("***ERROR*** Star.spawn() getFreeStarIndex() returned -1");
+        return 0;
+      }
       
       starList[starIdx] = myStar;
       

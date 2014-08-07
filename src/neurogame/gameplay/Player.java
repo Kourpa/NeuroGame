@@ -18,12 +18,11 @@ public class Player extends GameObject
 {
 
   private static Image image = Library.getSprites().get(GameObjectType.PLAYER.getName());
-  public static final int MAX_MISSILE_COUNT = 20;
-  private int missileCount;
+  public static final int MAX_AMMO_COUNT = 20;
+  private int ammoCount;
+  private boolean triggerReleasedSinceLastMissile;
 
   private boolean invulnerable = false;
-
-  private int collisionCountInCurrentChunk;
   
   private int collisionLogBitsThisUpdate;
   public static final int COLLISION_BITS_WALL_ABOVE = 1;
@@ -37,12 +36,10 @@ public class Player extends GameObject
   private double gameScore;
   private double gameTotalSeconds;
   
-  //public double skillProbabilitySpawnCoinPerSec;
   private double skillEnemyStraight;
   private double skillEnemyFollow;
   private double skillEnemySinusoidal;
   private double skillEnemyZapper;
-  public double skillProbabilitySpawnPowerUpPerSec;
 
   private QuickSet<Spark> sparkList;
 
@@ -66,12 +63,12 @@ public class Player extends GameObject
   public void initGame()
   {
     health = Library.HEALTH_MAX;
-    collisionCountInCurrentChunk = 0;
     gameScore = 0;
     gameTotalSeconds = 0;
     timeOfLastWallCollision = 0;
+    triggerReleasedSinceLastMissile = true;
     
-    missileCount = 10;
+    ammoCount = 10;
     
     //missileCurrentCooldown = 0;
     
@@ -84,7 +81,6 @@ public class Player extends GameObject
     skillEnemyFollow = 1;
     skillEnemySinusoidal = 1;
     skillEnemyZapper = 1;
-    skillProbabilitySpawnPowerUpPerSec = 0.05;
     
   }
 
@@ -182,6 +178,7 @@ public class Player extends GameObject
     }
     
     if (GameController.isPlayerPressingButton()) shootMissile();
+    else { triggerReleasedSinceLastMissile = true;}
     
   }
   
@@ -189,9 +186,9 @@ public class Player extends GameObject
   public void hit(GameObject obj)
   {
     GameObjectType type = obj.getType();
-    if (type == GameObjectType.STAR) collectCoin(obj);
+    if (type == GameObjectType.STAR) collectStar(obj);
     else if (type.isEnemy()) crashedIntoEnemy(obj);
-    else if (type == GameObjectType.POWER_UP)
+    else if (type == GameObjectType.AMMO)
     { addMissileCount(obj, 10);
     }
   }
@@ -204,11 +201,11 @@ public class Player extends GameObject
     InfoMessage scoreInfo = new InfoMessage(ammoBox.getCenterX(), ammoBox.getCenterY(), world, String.valueOf(Library.SCORE_AMMOBOX));
     world.addGameObject(scoreInfo);
     
-    missileCount+=count;
-    if (missileCount > MAX_MISSILE_COUNT) missileCount = MAX_MISSILE_COUNT;
+    ammoCount+=count;
+    if (ammoCount > MAX_AMMO_COUNT) ammoCount = MAX_AMMO_COUNT;
   }
   
-  public int getMissileCount() {return missileCount;}
+  public int getAmmoCount() {return ammoCount;}
   
 
   private void updatePlayerInputDirection()
@@ -230,7 +227,6 @@ public class Player extends GameObject
     health -= damage;
     if (health < 0) health = 0;
 
-    collisionCountInCurrentChunk++;
     
 //    skillProbabilitySpawnCoinPerSec += 0.05;
 //    if (skillProbabilitySpawnCoinPerSec > Star.MAX_PROBALITY_SPAWN_PER_SEC)
@@ -247,13 +243,13 @@ public class Player extends GameObject
     }
   }
 
-  public void collectCoin(GameObject star)
+  public void collectStar(GameObject star)
   {
     collisionLogBitsThisUpdate |= COLLISION_BITS_STAR;
     
-    health += Library.HEALTH_PER_COIN;
-    gameScore += Library.SCORE_COIN;
-    InfoMessage scoreInfo = new InfoMessage(star.getCenterX(), star.getCenterY(), world, String.valueOf(Library.SCORE_COIN));
+    health += Library.HEALTH_PER_STAR;
+    gameScore += Library.SCORE_STAR;
+    InfoMessage scoreInfo = new InfoMessage(star.getCenterX(), star.getCenterY(), world, String.valueOf(Library.SCORE_STAR));
     world.addGameObject(scoreInfo);
     
     
@@ -279,14 +275,16 @@ public class Player extends GameObject
     double pathHeightBonus = 1.0 + 5*Math.max(0, pathType.getDefaultOpeningHeight() - world.getSkillBasedChunkGapHeight());
     //System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
     
-    int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
-    if (!shotWithMissle) score = score/10;
     
-    gameScore += score;
+    if (shotWithMissle) 
+    { int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
+    
+      gameScore += score;
     
    
-    InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(score));
-    world.addGameObject(scoreInfo);
+      InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(score));
+      world.addGameObject(scoreInfo);
+    }
     //System.out.println("    obj ("+ obj.getCenterX() +", " + obj.getCenterY() +")  worldLeft="+Library.leftEdgeOfWorld);
     
     
@@ -298,7 +296,7 @@ public class Player extends GameObject
     { skillEnemyFollow += 0.2;
       if (skillEnemyFollow > Enemy.MAX_ENEMY_COUNT) skillEnemyFollow = Enemy.MAX_ENEMY_COUNT;
     }
-    else if (type == GameObjectType.ENEMY_FOLLOW)
+    else if (type == GameObjectType.ENEMY_SINUSOIDAL)
     { skillEnemySinusoidal += 0.2;
       if (skillEnemySinusoidal > Enemy.MAX_ENEMY_COUNT) skillEnemySinusoidal = Enemy.MAX_ENEMY_COUNT;
     }
@@ -346,13 +344,15 @@ public class Player extends GameObject
   
   private void shootMissile()
   {
+    if (!triggerReleasedSinceLastMissile) return;
     if ((Missile.getCurrentMissile() != null) && (Missile.getCurrentMissile().isAlive())) return;
+    triggerReleasedSinceLastMissile = false;
    
     //if (missileCurrentCooldown > 0) return;
     //System.out.println("Player.shootMissile()   missileCount=" + missileCount);
-    if (missileCount < 1) return;
+    if (ammoCount < 1) return;
     
-    missileCount--;
+    ammoCount--;
     //missileCurrentCooldown = MISSILE_COOLDOWN_SECONDS;
     world.addGameObject(new Missile(getX()+getWidth(), getCenterY(), world));
   }
@@ -374,15 +374,6 @@ public class Player extends GameObject
     return (int) gameScore;
   }
 
-  public void resetCollisionCountInCurrentChunk()
-  {
-    collisionCountInCurrentChunk = 0;
-  }
-
-  public int getCollisionCountInCurrentChunk()
-  {
-    return collisionCountInCurrentChunk;
-  }
 
   public void addScore(double score)
   {

@@ -52,7 +52,7 @@ public enum GameObjectType
   { public String getName() {return "EnemyStraight";}
     public double getWidth() {return 0.08;}
     public double getHeight() {return 0.07;}
-    public int getHitDamage() {return 10;}
+    public int getHitDamage() {return 25;}
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
     public double getMaxSpeed() {return 0.7;}
@@ -61,9 +61,9 @@ public enum GameObjectType
   
   ENEMY_FOLLOW
   { public String getName() {return "EnemyFollow";}
-    public double getWidth() {return 0.08;}
+    public double getWidth() {return 0.09936;}
     public double getHeight() {return 0.06;}
-    public int getHitDamage() {return 15;}
+    public int getHitDamage() {return 25;}
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
     public double getMaxSpeed() {return 0.5;}
@@ -74,7 +74,7 @@ public enum GameObjectType
   { public String getName() {return "EnemySinusoidal";}
     public double getWidth() {return 0.09;}
     public double getHeight() {return 0.07;}
-    public int getHitDamage() {return 10;}
+    public int getHitDamage() {return 25;}
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
     public double getMaxSpeed() {return 0.6;}
@@ -85,14 +85,14 @@ public enum GameObjectType
   { public String getName() {return "Zapper";}
     public double getWidth() {return 0.09;}
     public double getHeight() {return 0.07;}
-    public int getHitDamage() {return 10;}
+    public int getHitDamage() {return 25;} //per second
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return false;}
     public double getMaxSpeed() {return 0.0;}
     public boolean hasCollider() {return true;}
   },
   
-  POWER_UP
+  AMMO
   { public String getName() {return "powerupMissileAmmo";}
     public double getWidth() {return 0.08;}
     public double getHeight() {return 0.08;}

@@ -42,8 +42,10 @@ public class GameController{
   private boolean useJoystick;
   
   private Controller joystick = null;
-  private static final int JOYSTICK_X = 1;
-  private static final int JOYSTICK_Y = 0;
+  
+  private static int JOYSTICK_X = 1;
+  private static int JOYSTICK_Y = 0;
+  
   private static final double JOYSTICK_THRESHOLD = 0.01;
   private double joystickLastX, joystickLastY;
   private boolean ButtonPressed;
@@ -237,37 +239,37 @@ public class GameController{
      }
 
    /**
-    * A helper method to handle keyboard input on the title screen.
+    * A method that polls the title screen and updates the joystick
     */
    public void titleUpdate()
    {
-     if (game.getTitleScreen() != null)
+	   TitleScreen screen = game.getTitleScreen();
+	   
+     if (screen != null)
      {
-     	game.getTitleScreen().ScrollCredits(0.1f);
-     	SelectJoystick(game.getTitleScreen().GetSelectedJoystick(), game.getTitleScreen().GetSelectedJoystickIndex());
+     	screen.ScrollCredits(0.1f);
+     	SelectJoystick(screen.GetSelectedJoystick(), screen.getJoystickIndex(0),screen.getJoystickIndex(1));
      	
      	if(joystick!=null && useJoystick==true){
-     		game.getTitleScreen().updateJoystick(joystick, JOYSTICK_X, JOYSTICK_Y);
+     		screen.updateJoystick(joystick, JOYSTICK_X, JOYSTICK_Y);
      	}
 
        if (game.getTitleScreen().IsStarting)
        {
          disableAll();
-         //game.setLoggingMode(game.getTitleScreen().GetLogging());
-         SelectJoystick(game.getTitleScreen().GetSelectedJoystick(), game.getTitleScreen().GetSelectedJoystickIndex());
+         SelectJoystick(screen.GetSelectedJoystick(), screen.getJoystickIndex(0),screen.getJoystickIndex(1));
 
-         frame.setUser(game.getTitleScreen().GetSelectedUser());
-         game.getTitleScreen().showTitleScreen(false);
+         frame.setUser(screen.GetSelectedUser());
+         screen.showTitleScreen(false);
          game.newGame();
        }
-       else if (game.getTitleScreen().IsExiting)
+       else if (screen.IsExiting)
        {
          disableAll();
          game.quit();
        }
-       else if (game.getTitleScreen().IsOption)
+       else if (screen.IsOption)
        {
- 			System.out.println("OddBall Test");
  			game.showOddBall();
        }
      }
@@ -355,7 +357,7 @@ public class GameController{
   }
   
   private void oddballKeyHandler(){
-	  System.out.println("Oddball Key Handler: "+inputs.get("escape"));
+	  //System.out.println("Oddball Key Handler: "+inputs.get("escape"));
 	  
 	  if (inputs.get("escape")){
 		  game.getOddballScreen().forceClose();
@@ -440,7 +442,7 @@ public class GameController{
    * Selects Joystick based on Options Dialog choice
    * @param selectedIndex
    */
-  private void SelectJoystick(int selectedIndex, int JoyIndex){
+  private void SelectJoystick(int selectedIndex, int xAxis, int yAxis){
       try{
           Controllers.create();
       } catch(Exception e){
@@ -453,6 +455,9 @@ public class GameController{
       
       if(selectedIndex > 0){
     	  	useJoystick = true;
+    	  	
+    	  	JOYSTICK_X = xAxis;
+    	  	JOYSTICK_Y = yAxis;
     	  	
 	        Controller controller = Controllers.getController(selectedIndex-1);
 	        joystick = controller;

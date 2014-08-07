@@ -1,11 +1,19 @@
 package neurogame.io;
 
+//Triggers: Oddball must be different codes than game tgriggers
+//*Triggers on oddball: only on change.
+//Triggers: collision, game start, game over
+// Auto run/connect to parallel port
+//Trigger: fire trigger whenever butten is pressed. When ememy explodes
+// Remove points from ememys that escape, more bullits.
+//  Hide options in options memu.
+//Trigger whenever hit
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import neurogame.gameplay.Ammo;
@@ -13,8 +21,6 @@ import neurogame.gameplay.DirectionVector;
 import neurogame.gameplay.Missile;
 import neurogame.gameplay.Star;
 import neurogame.gameplay.Enemy;
-import neurogame.gameplay.GameObject;
-import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Player;
 import neurogame.level.PathVertex;
 import neurogame.level.World;
@@ -34,6 +40,16 @@ public class Logger
   private BufferedWriter writer;
   
   private Long time0;
+  
+  
+  
+  private static final byte TRIGGER_GAMESTART = 64;
+  private static final byte TRIGGER_GAMEOVER =  127;
+  
+
+  private SocketToParallelPort socket;
+  private static final String HOST = "127.0.0.1";
+  private static final int PORT = 55555;
   
 
   /**
@@ -72,6 +88,12 @@ public class Logger
     {  ex.printStackTrace();
        System.exit(0);
     }
+    
+    socket = new SocketToParallelPort(HOST, PORT);
+    if (socket != null)
+    {
+      socket.sendByte(TRIGGER_GAMESTART);
+    }
   }
 
 
@@ -95,11 +117,17 @@ public class Logger
     DirectionVector joystickVector = GameController.getPlayerInputDirectionVector();
     
     int collisionBits = player.getCollisionLogBitsThisUpdate();
+    if (collisionBits > 0)
+    { if (socket != null)
+      {
+        socket.sendByte((byte)collisionBits);
+      }
+    }
     
     String out = Long.toString(System.currentTimeMillis()-time0) +  
         String.format("," + FLOAT4 + "," + FLOAT4  + ","+ FLOAT4 + ",%d," + FLOAT4  + ","+ FLOAT4 +",%d,%d,",
         player.getCenterX(), player.getCenterY(), health, 
-        player.getMissileCount(), joystickVector.x, joystickVector.y, joystickButton, collisionBits );
+        player.getAmmoCount(), joystickVector.x, joystickVector.y, joystickButton, collisionBits );
     
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(player.getX()+player.getWidth());
     
@@ -147,10 +175,17 @@ public class Logger
     catch (IOException ex)
     {  ex.printStackTrace();
     }
+
+    
   }
   
   public void closeLog()
   {
+    
+    if (socket != null)
+    {
+      socket.sendByte(TRIGGER_GAMEOVER);
+    }
     try
     {
       writer.close();

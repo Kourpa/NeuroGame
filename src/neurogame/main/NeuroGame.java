@@ -82,7 +82,6 @@ public class NeuroGame
   private Logger log;
   
   private boolean soundEnabled;
-  private boolean godMode;
   
 
   /**
@@ -118,7 +117,6 @@ public class NeuroGame
     // Defaults
     loggingMode = true;
     soundEnabled = true;
-    godMode = false;
     timepassed = 0.0;
   }
   
@@ -204,7 +202,6 @@ public class NeuroGame
     
 	gameState = GameState.TITLE;
     drawPanel.setVisible(false);
-    drawPanel.setTitle(title);
     title.showTitleScreen(true);
     
   }
@@ -281,18 +278,6 @@ public class NeuroGame
     this.soundEnabled = soundEnabled;
   }
 
-  /**
-   * Setter for God mode. The global God mode is unaffected by the immunity
-   * granted by the super PowerUp.
-   *
-   * @param godMode
-   *          Boolean for enabling/disabling God mode.
-   */
-  public void setGodMode(boolean godMode)
-  {
-    this.godMode = godMode;
-  }
-
 
   /**
    * Kill the player.
@@ -317,7 +302,6 @@ public class NeuroGame
     frame.startGame(world);
     controller.setControllable(true);
     player = world.getPlayer();
-    GameObject.resetGameObjectCount();
     Ammo.initGame();
     Enemy.initGame();
 

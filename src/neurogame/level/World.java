@@ -6,7 +6,6 @@ package neurogame.level;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Star;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.EnumCollisionType;
@@ -18,6 +17,7 @@ import neurogame.library.Library;
 public class World
 {
   private final Player player;
+  private double playerHealthAtStartOfLastChunk;
   private Chunk chunkLeft, chunkRight;
   private ArrayList<GameObject> gameObjectList = new ArrayList<GameObject>();
   private ArrayList<GameObject> objectWaitList = new ArrayList<GameObject>();
@@ -42,6 +42,7 @@ public class World
     Library.leftEdgeOfWorld = 0.0;
     windowWidth = Library.getWindowAspect();
     frameCountSinceLastChunkTypeChange = 0;
+    playerHealthAtStartOfLastChunk = Library.HEALTH_MAX;
 
     player = new Player(0.1, 1 / 2.0, this);
     
@@ -62,8 +63,8 @@ public class World
 
     chunkLeft = new Chunk(null, windowWidth, EnumChunkType.FLAT, EnumChunkType.FLAT.getDefaultOpeningHeight());
 
-    double gapHeight = skillBasedChunkGapHeight[EnumChunkType.SMOOTH.ordinal()];
-    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SMOOTH, gapHeight);
+    double gapHeight = skillBasedChunkGapHeight[EnumChunkType.SPIKE.ordinal()];
+    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SPIKE, gapHeight);
     
 
     crystalWalls = new CrystalGrower(chunkLeft, chunkRight);
@@ -121,21 +122,23 @@ public class World
     }
     
     double gapHeight = skillBasedChunkGapHeight[pathType.ordinal()];
-
-    if (player.getCollisionCountInCurrentChunk() == 0)
+    double currentPlayerHealth = player.getHealth();
+    
+    if (currentPlayerHealth >= playerHealthAtStartOfLastChunk)
     {
       gapHeight = gapHeight * 0.9;
       if (gapHeight < pathType.getMinimumOpeningHeight()) gapHeight = pathType.getMinimumOpeningHeight();
     }
-    else if (player.getCollisionCountInCurrentChunk() >= 2)
+    else
     {
-      gapHeight = gapHeight * 1.1;
+      double percentHealthLoss = (playerHealthAtStartOfLastChunk - currentPlayerHealth)/playerHealthAtStartOfLastChunk;
+      gapHeight = gapHeight * (1 + percentHealthLoss);;
       if (gapHeight > pathType.getDefaultOpeningHeight()) gapHeight = pathType.getDefaultOpeningHeight();
     }
     
+    System.out.println("World.createChunk(type="+pathType+"): gapHeight="+gapHeight);
     skillBasedChunkGapHeight[pathType.ordinal()] = gapHeight;
-    player.resetCollisionCountInCurrentChunk();
-    
+    playerHealthAtStartOfLastChunk = currentPlayerHealth;
     
     if (pathType == chunkRight.getChunkType()) frameCountSinceLastChunkTypeChange++;
 
@@ -169,7 +172,6 @@ public class World
     //This method may be called while another part of the program is iterating through the game list
     //Therefore, add the object to a waitlist that gets updated on the next call to world.update
     
-    GameObjectType type = obj.getType();
     objectWaitList.add(obj);
     
     
