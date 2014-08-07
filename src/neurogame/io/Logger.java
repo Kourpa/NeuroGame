@@ -1,11 +1,19 @@
 package neurogame.io;
 
+//Triggers: Oddball must be different codes than game tgriggers
+//*Triggers on oddball: only on change.
+//Triggers: collision, game start, game over
+// Auto run/connect to parallel port
+//Trigger: fire trigger whenever butten is pressed. When ememy explodes
+// Remove points from ememys that escape, more bullits.
+//  Hide options in options memu.
+//Trigger whenever hit
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import neurogame.gameplay.Ammo;
@@ -13,8 +21,6 @@ import neurogame.gameplay.DirectionVector;
 import neurogame.gameplay.Missile;
 import neurogame.gameplay.Star;
 import neurogame.gameplay.Enemy;
-import neurogame.gameplay.GameObject;
-import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Player;
 import neurogame.level.PathVertex;
 import neurogame.level.World;

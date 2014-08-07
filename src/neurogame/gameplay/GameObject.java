@@ -9,9 +9,6 @@ import neurogame.level.World;
  */
 public abstract class GameObject
 {
-  private static int gameObjectCount;
-  
-  private final int gameObjectID;
   private GameObjectType type;
 
   private double x; 
@@ -37,19 +34,7 @@ public abstract class GameObject
     hitBoxMaxY =   + 0.90 * (type.getHeight() / 2.0);
     
     //System.out.println("hitbox("+type+"): ("+hitBoxMinX+", " + hitBoxMinY+"), ("+hitBoxMaxX+", " + hitBoxMaxY+")");
-
-    
-
-    gameObjectID = gameObjectCount;
-    gameObjectCount++;
   }
-  
-  
-  public static void resetGameObjectCount() 
-  { gameObjectCount = 0;
-  }
-  
-  public int getGameObjectId() {  return gameObjectID; }
   
   
   public void overrideDefaultHitBoxInPixels(int pixelWidth, int pixelHeight, int x1, int y1, int x2, int y2)
@@ -178,6 +163,6 @@ public abstract class GameObject
   
   public String toString()
   {
-    return type.getName() + "["+gameObjectID+"]";
+    return type.getName();
   }
 }

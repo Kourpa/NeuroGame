@@ -6,7 +6,6 @@ package neurogame.level;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Star;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.EnumCollisionType;
@@ -169,7 +168,6 @@ public class World
     //This method may be called while another part of the program is iterating through the game list
     //Therefore, add the object to a waitlist that gets updated on the next call to world.update
     
-    GameObjectType type = obj.getType();
     objectWaitList.add(obj);
     
     

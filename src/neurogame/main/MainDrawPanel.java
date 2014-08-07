@@ -22,7 +22,6 @@ import neurogame.main.NeuroGame.GameState;
 @SuppressWarnings("serial")
 public class MainDrawPanel extends JPanel
 {	
-  private TitleScreen title;
   private Graphics2D canvasObjectLayer;
   private BufferedImage imageObjectLayer;
 
@@ -44,12 +43,6 @@ public class MainDrawPanel extends JPanel
 	  System.out.println("MainGameDrawPanel(): Enter");
 	  this.frame = frame;
 	  this.game = game;
-  }
-
-
-  public void setTitle(TitleScreen title)
-  {
-    this.title = title;
   }
   
   public void setGameOver(GameOverScreen screen){

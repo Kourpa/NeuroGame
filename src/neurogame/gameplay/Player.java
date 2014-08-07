@@ -298,7 +298,7 @@ public class Player extends GameObject
     { skillEnemyFollow += 0.2;
       if (skillEnemyFollow > Enemy.MAX_ENEMY_COUNT) skillEnemyFollow = Enemy.MAX_ENEMY_COUNT;
     }
-    else if (type == GameObjectType.ENEMY_FOLLOW)
+    else if (type == GameObjectType.ENEMY_SINUSOIDAL)
     { skillEnemySinusoidal += 0.2;
       if (skillEnemySinusoidal > Enemy.MAX_ENEMY_COUNT) skillEnemySinusoidal = Enemy.MAX_ENEMY_COUNT;
     }

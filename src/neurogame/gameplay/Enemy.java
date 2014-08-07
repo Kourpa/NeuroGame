@@ -27,25 +27,36 @@ public class Enemy extends GameObject
   
   private Vector2 velocity = new Vector2();
   
-  public Enemy(GameObjectType type, double x, double y, double width, double height, String name, World world)
+  public Enemy(GameObjectType type, PathVertex vertex, World world)
   {
-    super(type, x, y, world);
+    super(type, 0, 0, world);
+    
+    double x = vertex.getX(); 
+    double y = vertex.getCenter() - type.getHeight()/2;
+   
     
     if (type == GameObjectType.ENEMY_STRAIGHT)
     { 
-      image = Library.getSprites().get(name);
+      
+      y = world.getPlayer().getY() + type.getHeight()*(Library.RANDOM.nextDouble() - Library.RANDOM.nextDouble())*3;
+      if ((y <= vertex.getTop()) || y > vertex.getBottom() - type.getHeight()) y = vertex.getCenter()-type.getHeight()/2;
+      
+      image = Library.getSprites().get(type.getName());
       maxSpeed = 0.60 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/20.0;      
     }
     else if (type == GameObjectType.ENEMY_FOLLOW)
     { 
-      image = Library.getSprites().get(name);
+      image = Library.getSprites().get(type.getName());
       maxSpeed = 0.25 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/50.0;
     }
     else if (type == GameObjectType.ENEMY_SINUSOIDAL)
     { 
-      image = Library.getSprites().get(name);
+      y = (vertex.getTop()+vertex.getCenter())/2.0;
+      
+      image = Library.getSprites().get(type.getName());
       maxSpeed = 0.40 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/50.0;
     }
+    setLocation(x, y);
     
   }
   
@@ -103,7 +114,8 @@ public class Enemy extends GameObject
     GameObjectType type = obj.getType();
     if (type == GameObjectType.STAR) return;
     if (type == GameObjectType.POWER_UP) return;
-    die(true);
+    if (type == GameObjectType.PLAYER) die (false); 
+    else die(true);
   }
     
   public void strategyStraight(double maxDistanceChange, double scrollDistance)
@@ -255,7 +267,6 @@ public class Enemy extends GameObject
   
   public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
-	  Enemy myEnemy = null;
     GameObjectType type = myChunk.getChunkType().getEnemyType();
     Player player =  world.getPlayer();
     if (type == null) return 0;
@@ -281,26 +292,23 @@ public class Enemy extends GameObject
 
     if (vertex == null) return 0;
 
-    double x = vertex.getX(); 
-    double rangeY = (vertex.getBottom() - vertex.getTop()) - type.getHeight();
-    if (rangeY < 0.01) return 0;
-    
-    double y = player.getY() + type.getHeight()*(Library.RANDOM.nextDouble() - Library.RANDOM.nextDouble())*3;
-    if ((y <= vertex.getTop()) || y > vertex.getBottom() - type.getHeight()) y = vertex.getCenter()-type.getHeight()/2;
-
     int enemyIdx = getFreeEnemyIndex();
-    
-    if(type == GameObjectType.ZAPPER){
-    	y = vertex.getTop();
-    	double y2 = vertex.getBottom() - GameObjectType.ZAPPER.getHeight();
-    	
-    	myEnemy = new Zapper(x, y, x, y2,world);
-    }else{
-    	myEnemy = new Enemy(type, x, y, type.getWidth(), type.getHeight(), type.getName(), world);
+    if (enemyIdx < 0)
+    {
+      System.out.println("***ERROR*** Enemy.spawn() getFreeEnemyIndex() returned -1");
+      return 0;
     }
-    enemyList[enemyIdx] = myEnemy;
+    
+    if(type == GameObjectType.ZAPPER)
+    {
+      enemyList[enemyIdx] = new Zapper(vertex, world);
+    }
+    else
+    {
+      enemyList[enemyIdx] = new Enemy(type, vertex, world);
+    }
    
-    world.addGameObject(myEnemy);
+    world.addGameObject(enemyList[enemyIdx]);
     playerHeightAtLastSpawn = player.getY();
     activeEnemyCount++;
     //System.out.println("   ===> activeEnemyCount=" + activeEnemyCount);

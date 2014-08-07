@@ -161,7 +161,11 @@ public class Star extends GameObject
       if (myStar.wallCollision() != EnumCollisionType.NONE) return numCoinsSpawned;
       
       int starIdx = getFreeStarIndex();
-      //System.out.println("Star.spawn(): starIdx="+starIdx + ", currentStarCount="+currentStarCount);
+      if (starIdx < 0)
+      {
+        System.out.println("***ERROR*** Star.spawn() getFreeStarIndex() returned -1");
+        return 0;
+      }
       
       starList[starIdx] = myStar;
       

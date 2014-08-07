@@ -4,7 +4,6 @@
 package neurogame.level;
 
 import neurogame.gameplay.GameObjectType;
-import neurogame.gameplay.Zapper;
 import neurogame.gameplay.Ammo;
 import neurogame.library.Library;
 

@@ -15,8 +15,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 
+import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
 
@@ -70,13 +70,16 @@ public class Zapper extends Enemy
    * @param world
    *          World in which this Zapper will be placed.
    */
-  public Zapper(double x1, double y1, double x2, double y2, World world)
+  public Zapper(PathVertex vertex, World world)
   {
-    super(GameObjectType.ZAPPER, x1, y1,GameObjectType.ZAPPER.getWidth(), GameObjectType.ZAPPER.getHeight(), "Zapper", world);
-    zapNodeWorldX1 = x1;
-    zapNodeWorldX2 = x2;
-    zapNodeWorldY1 = y1;
-    zapNodeWorldY2 = y2;
+    super(GameObjectType.ZAPPER, vertex, world);
+    
+    zapNodeWorldX1 = vertex.getX();
+    zapNodeWorldX2 = vertex.getX();
+    zapNodeWorldY1 = vertex.getTop();
+    zapNodeWorldY2 = vertex.getBottom() - GameObjectType.ZAPPER.getHeight();
+    
+    setLocation(zapNodeWorldX1, zapNodeWorldY1);
     
     // image = new BufferedImage(spriteWidth, spriteHeight,
     // BufferedImage.TYPE_INT_ARGB);
@@ -149,49 +152,7 @@ public class Zapper extends Enemy
     // hitBox = getHitBox();
   }
 
-  /**
-   * Override of GameObject's getHitBox.
-   * 
-   * @return A collidable hitbox for this Zapper, which incldues the area
-   *         between the end points if the Zapper is on.
-   */
-  // public Path2D getHitBox() {
-  // hitBox.reset();
-  // if (on) {
-  // hitBox.moveTo(x-world.getDeltaX(), y-world.getDeltaY());
-  // hitBox.lineTo(zapNodeWorldX2-world.getDeltaX(),
-  // zapNodeWorldY2-world.getDeltaY());
-  // hitBox.lineTo(x-world.getDeltaX(), y-world.getDeltaY()+height);
-  // hitBox.lineTo(zapNodeWorldX2-world.getDeltaX(),
-  // zapNodeWorldY2-world.getDeltaY()+height);
-  // hitBox.lineTo(x-world.getDeltaX()+width,
-  // y-world.getDeltaY()+height);
-  // hitBox.lineTo(zapNodeWorldX2-world.getDeltaX()+width,
-  // zapNodeWorldY2-world.getDeltaY()+height);
-  // hitBox.lineTo(x-world.getDeltaX()+width, y-world.getDeltaY());
-  // hitBox.lineTo(zapNodeWorldX2-world.getDeltaX()+width,
-  // zapNodeWorldY2-world.getDeltaY());
-  // hitBox.lineTo(x-world.getDeltaX(), y-world.getDeltaY());
-  // hitBox.closePath();
-  // } else {
-  // hitBox.moveTo(x-world.getDeltaX(), y-world.getDeltaY());
-  // hitBox.lineTo(x-world.getDeltaX(), y-world.getDeltaY()+height);
-  // hitBox.lineTo(x-world.getDeltaX()+width, y-world.getDeltaY()+height);
-  // hitBox.lineTo(x-world.getDeltaX()+width, y-world.getDeltaY());
-  // hitBox.lineTo(x-world.getDeltaX(), y-world.getDeltaY());
-  // hitBox.moveTo(zapNodeWorldX2-world.getDeltaX(),
-  // zapNodeWorldY2-world.getDeltaY());
-  // hitBox.lineTo(zapNodeWorldX2-world.getDeltaX(),
-  // zapNodeWorldY2-world.getDeltaY()+height);
-  // hitBox.lineTo(zapNodeWorldX2-world.getDeltaX()+width,
-  // zapNodeWorldY2-world.getDeltaY()+height);
-  // hitBox.lineTo(zapNodeWorldX2-world.getDeltaX()+width,
-  // zapNodeWorldY2-world.getDeltaY());
-  // hitBox.closePath();
-  // }
-  // return hitBox;
-  // }
-  //
+  
   /**
    * Override of GameObject's update.
    */
@@ -214,7 +175,7 @@ public class Zapper extends Enemy
 
     if((on) && (Math.abs(player.getCenterX() - this.getX()) < threshold)){
       player.loseHealth(player.getCenterX(), player.getCenterY(),
-          Library.DAMAGE_PER_SEC_IN_ZAPPER*deltaTime);
+          GameObjectType.ZAPPER.getHitDamage()*deltaTime);
     }
 
   }

@@ -78,8 +78,6 @@ public final class Library
   public static final int SCORE_AMMOBOX = 40;
 
   public static final int DAMAGE_PER_WALL_HIT = 10;
-  public static final int DAMAGE_PER_SEC_IN_ZAPPER = 25;
-
 
 
   private static boolean debug = false;
