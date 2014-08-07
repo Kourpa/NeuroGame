@@ -20,6 +20,7 @@ public class Player extends GameObject
   private static Image image = Library.getSprites().get(GameObjectType.PLAYER.getName());
   public static final int MAX_AMMO_COUNT = 20;
   private int ammoCount;
+  private boolean triggerReleasedSinceLastMissile;
 
   private boolean invulnerable = false;
 
@@ -68,6 +69,7 @@ public class Player extends GameObject
     gameScore = 0;
     gameTotalSeconds = 0;
     timeOfLastWallCollision = 0;
+    triggerReleasedSinceLastMissile = true;
     
     ammoCount = 10;
     
@@ -179,6 +181,7 @@ public class Player extends GameObject
     }
     
     if (GameController.isPlayerPressingButton()) shootMissile();
+    else { triggerReleasedSinceLastMissile = true;}
     
   }
   
@@ -276,14 +279,16 @@ public class Player extends GameObject
     double pathHeightBonus = 1.0 + 5*Math.max(0, pathType.getDefaultOpeningHeight() - world.getSkillBasedChunkGapHeight());
     //System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
     
-    int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
-    if (!shotWithMissle) score = score/10;
     
-    gameScore += score;
+    if (shotWithMissle) 
+    { int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
+    
+      gameScore += score;
     
    
-    InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(score));
-    world.addGameObject(scoreInfo);
+      InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(score));
+      world.addGameObject(scoreInfo);
+    }
     //System.out.println("    obj ("+ obj.getCenterX() +", " + obj.getCenterY() +")  worldLeft="+Library.leftEdgeOfWorld);
     
     
@@ -343,7 +348,9 @@ public class Player extends GameObject
   
   private void shootMissile()
   {
+    if (!triggerReleasedSinceLastMissile) return;
     if ((Missile.getCurrentMissile() != null) && (Missile.getCurrentMissile().isAlive())) return;
+    triggerReleasedSinceLastMissile = false;
    
     //if (missileCurrentCooldown > 0) return;
     //System.out.println("Player.shootMissile()   missileCount=" + missileCount);

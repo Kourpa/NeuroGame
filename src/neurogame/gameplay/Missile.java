@@ -24,9 +24,7 @@ public class Missile extends GameObject
   
   public void die(boolean showDeathEffect)
   { 
-    if (isAlive())
-    { isAlive = false;
-    }
+    isAlive = false;
   }
   
   
