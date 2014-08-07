@@ -69,6 +69,10 @@ public class Star extends GameObject
   {
     lastCoinSpawnX = 0;
     currentStarCount = 0;
+    for (int i=0; i<MAX_STAR_COUNT; i++)
+    {
+      starList[i] = null;
+    }
   }
 
   /**
@@ -99,7 +103,6 @@ public class Star extends GameObject
 
   public void render(Graphics2D g)
   {
-
     // Animation.
     frameCounter++;
     if (frameCounter % 2 == 0)

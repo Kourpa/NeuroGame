@@ -91,7 +91,7 @@ public class MainDrawPanel extends JPanel
    */
 private void drawHUD()
 {
-	HUD.updateHUD(canvasObjectLayer, frame, world.getPlayer().getMissileCount());
+	HUD.updateHUD(canvasObjectLayer, frame, world.getPlayer().getAmmoCount());
 }
 
 public void paintComponent(Graphics g)
@@ -111,8 +111,7 @@ public void paintComponent(Graphics g)
       if (gameObjList != null)
       {
         for (GameObject obj : gameObjList)
-        {
-          obj.render(canvasObjectLayer);
+        { if (obj.isAlive()) obj.render(canvasObjectLayer);
         }
       }
       

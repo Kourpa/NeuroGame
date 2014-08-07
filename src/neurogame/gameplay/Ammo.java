@@ -32,10 +32,10 @@ public class Ammo extends GameObject
   private static Image image = Library.getSprites().get(GameObjectType.AMMO.getName());
   private static Ammo currentAmmoBox;
   
-  private static final double PROBABILITY_SPAWN_AMMO_PER_SEC = 0.07;
+  private static final double PROBABILITY_SPAWN_AMMO_PER_SEC = 0.025;
   
   public static void initGame()
-  {
+  { currentAmmoBox = null;
   }
 
   public Ammo(double x, double y, World world)
@@ -66,11 +66,14 @@ public class Ammo extends GameObject
     if ((currentAmmoBox != null) && (currentAmmoBox.isAlive())) return 0;
     
 
-    double r = Library.RANDOM.nextDouble();
+    
     EnumChunkType type = myChunk.getChunkType();
     if (type == EnumChunkType.FLAT) return 0;
     if (type == EnumChunkType.SQUARE) return 0;
-
+    
+    double r = Library.RANDOM.nextDouble();
+    if (world.getPlayer().getAmmoCount() < 2) r /= 4.0;
+    else if (world.getPlayer().getAmmoCount() < Player.MAX_AMMO_COUNT/2) r /= 2.0;
     if (r > PROBABILITY_SPAWN_AMMO_PER_SEC * deltaTime) return 0;
 
     //System.out.println("probabilitySpawnCoinPerSec=" + world.getPlayer().skillProbabilitySpawnCoinPerSec);

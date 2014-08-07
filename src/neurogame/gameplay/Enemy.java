@@ -38,7 +38,7 @@ public class Enemy extends GameObject
     if (type == GameObjectType.ENEMY_STRAIGHT)
     { 
       
-      y = world.getPlayer().getY() + type.getHeight()*(Library.RANDOM.nextDouble() - Library.RANDOM.nextDouble())*3;
+      y = world.getPlayer().getY() + type.getHeight()*(Library.RANDOM.nextDouble() - Library.RANDOM.nextDouble())*2;
       if ((y <= vertex.getTop()) || y > vertex.getBottom() - type.getHeight()) y = vertex.getCenter()-type.getHeight()/2;
       
       image = Library.getSprites().get(type.getName());
@@ -120,6 +120,7 @@ public class Enemy extends GameObject
     
   public void strategyStraight(double maxDistanceChange, double scrollDistance)
   {
+    double lastVelocityY =  velocity.y;
     velocity.x = scrollDistance - maxDistanceChange;
     velocity.y = velocity.y * 0.75;
     
@@ -145,6 +146,24 @@ public class Enemy extends GameObject
       { velocity.setMaxMagnitude(maxDistanceChange);
       }
     }
+    
+    //Avoid hitting other palyer enemies
+    for (int i=0; i<MAX_ENEMY_COUNT; i++)
+    {
+      if ((enemyList[i] == null) || (enemyList[i] == this)) continue;
+      if (!enemyList[i].isAlive) continue;
+      
+      if (Math.abs(enemyList[i].getY() - getY()) > getType().getHeight()) continue;
+      
+      if (enemyList[i].getX() > getX()) continue;
+      
+      if (Math.abs(lastVelocityY) > 0.000001) velocity.y = lastVelocityY;
+      else if (vertex != null)
+      { if (getCenterY() > vertex.getCenter()) velocity.y = -maxDistanceChange/2.0;
+        else velocity.y = maxDistanceChange/2.0;
+      }
+    }
+    
   }
   
   
@@ -331,6 +350,10 @@ public class Enemy extends GameObject
   public static void initGame() 
   { 
     activeEnemyCount = 0;
+    for (int i=0; i<MAX_ENEMY_COUNT; i++)
+    {
+      enemyList[i] = null;
+    }
   }
   
   public static int getActiveEnemyCount() {return activeEnemyCount;}

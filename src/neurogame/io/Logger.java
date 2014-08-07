@@ -127,7 +127,7 @@ public class Logger
     String out = Long.toString(System.currentTimeMillis()-time0) +  
         String.format("," + FLOAT4 + "," + FLOAT4  + ","+ FLOAT4 + ",%d," + FLOAT4  + ","+ FLOAT4 +",%d,%d,",
         player.getCenterX(), player.getCenterY(), health, 
-        player.getMissileCount(), joystickVector.x, joystickVector.y, joystickButton, collisionBits );
+        player.getAmmoCount(), joystickVector.x, joystickVector.y, joystickButton, collisionBits );
     
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(player.getX()+player.getWidth());
     

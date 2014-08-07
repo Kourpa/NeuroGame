@@ -18,8 +18,8 @@ public class Player extends GameObject
 {
 
   private static Image image = Library.getSprites().get(GameObjectType.PLAYER.getName());
-  public static final int MAX_MISSILE_COUNT = 20;
-  private int missileCount;
+  public static final int MAX_AMMO_COUNT = 20;
+  private int ammoCount;
 
   private boolean invulnerable = false;
 
@@ -37,7 +37,6 @@ public class Player extends GameObject
   private double gameScore;
   private double gameTotalSeconds;
   
-  //public double skillProbabilitySpawnCoinPerSec;
   private double skillEnemyStraight;
   private double skillEnemyFollow;
   private double skillEnemySinusoidal;
@@ -70,7 +69,7 @@ public class Player extends GameObject
     gameTotalSeconds = 0;
     timeOfLastWallCollision = 0;
     
-    missileCount = 10;
+    ammoCount = 10;
     
     //missileCurrentCooldown = 0;
     
@@ -202,11 +201,11 @@ public class Player extends GameObject
     InfoMessage scoreInfo = new InfoMessage(ammoBox.getCenterX(), ammoBox.getCenterY(), world, String.valueOf(Library.SCORE_AMMOBOX));
     world.addGameObject(scoreInfo);
     
-    missileCount+=count;
-    if (missileCount > MAX_MISSILE_COUNT) missileCount = MAX_MISSILE_COUNT;
+    ammoCount+=count;
+    if (ammoCount > MAX_AMMO_COUNT) ammoCount = MAX_AMMO_COUNT;
   }
   
-  public int getMissileCount() {return missileCount;}
+  public int getAmmoCount() {return ammoCount;}
   
 
   private void updatePlayerInputDirection()
@@ -348,9 +347,9 @@ public class Player extends GameObject
    
     //if (missileCurrentCooldown > 0) return;
     //System.out.println("Player.shootMissile()   missileCount=" + missileCount);
-    if (missileCount < 1) return;
+    if (ammoCount < 1) return;
     
-    missileCount--;
+    ammoCount--;
     //missileCurrentCooldown = MISSILE_COOLDOWN_SECONDS;
     world.addGameObject(new Missile(getX()+getWidth(), getCenterY(), world));
   }
