@@ -10,6 +10,7 @@ import javax.swing.JButton;
 public class MenuButton {
 	
 	public JButton b;
+	private boolean selected;
 	private Color SelectedColor,DeselectedColor;
 	private int DEFAULT_BUTTON_SIZE = 30;
 	private Font FONT30;
@@ -42,13 +43,14 @@ public class MenuButton {
         b.setIcon(null);
         b.setBorderPainted(false);
         b.setContentAreaFilled(false);
-        b.setBorder(null);
         b.setMargin(new Insets(5,5,5,5));
+        b.setBorder(null);
         
         if(arg != null){
         	b.addActionListener(arg);
-        }        
+        }
         
+        // Fonts
         FONT30 = new Font("Karmatic Arcade", Font.PLAIN, textSize);
 		FONT40 = new Font("Karmatic Arcade", Font.PLAIN, 25);
 		
@@ -59,11 +61,16 @@ public class MenuButton {
     }
     
     public void setSelected(boolean choice){
+    	selected = choice;
     	if (choice == true){
     		b.setForeground(SelectedColor);
     	}
     	else{
     		b.setForeground(DeselectedColor);
     	}
+    }
+    
+    public boolean isSelected(){
+    	return selected;
     }
 }

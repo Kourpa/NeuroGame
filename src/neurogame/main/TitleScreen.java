@@ -692,7 +692,6 @@ public class TitleScreen extends MenuScreen {
 	 * @return BufferedImage of the title screen.
 	 */
 	public BufferedImage getImage() {
-		// System.out.println("TitleScreen.getImage(): image.size = ("+image.getWidth()+", "+image.getHeight()+")");
 		return masterImage;
 	}
 
@@ -730,18 +729,13 @@ public class TitleScreen extends MenuScreen {
 	}
 	
 	public void actionPerformed(ActionEvent arg0) {
-		Object src = arg0.getSource();
-
-		// Start
-		if (src == startButton.b) {
+		if (startButton.isSelected()){
 			onStartButtonPress();
 		}
-
-		else if (src == exitButton.b) {
+		else if (exitButton.isSelected()) {
 			onExitButtonPress();
 		}
-
-		else if (src == oddballButton.b) {
+		else if (oddballButton.isSelected()) {
 			onOddballButtonPress();
 		}
 	}

@@ -2,8 +2,8 @@ package neurogame.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -12,13 +12,15 @@ import java.util.Collections;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.Timer;
-
-import org.lwjgl.input.Controller;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import neurogame.io.SocketToParallelPort;
 import neurogame.library.Library;
 import neurogame.library.SpriteMap;
+
+import org.lwjgl.input.Controller;
 
 /**
  * @author kourpa
@@ -37,9 +39,11 @@ public class Oddball // implements KeyListener
 
   private static boolean SEND_TRIGGERS_VIA_SOCKET = false;
 
+  private boolean finishedInstructions;
   private long time;
   private NeuroFrame frame;
   private NeuroGame game;
+  private JPanel pane;
   private final int numberOfGoodScreens = 50;
   private final int numberOfBadScreens = 200;
   private int currentNumber;
@@ -62,7 +66,7 @@ public class Oddball // implements KeyListener
   {
 	  this.frame = frame;
 	  this.game = game;
-	  
+	  	  
 	if(game.getLoggingMode()){
 		SEND_TRIGGERS_VIA_SOCKET=true;
 	}
@@ -82,6 +86,8 @@ public class Oddball // implements KeyListener
     this.instructionImage = sprites.get("InstructionOddball");
     this.finishedImage = sprites.get("CountOddball");
     this.waitImage = sprites.get("WaitOddball");
+    
+    finishedInstructions = false;
 
     // Frame
     frame.getContentPane().removeAll();
@@ -105,13 +111,87 @@ public class Oddball // implements KeyListener
     frame.addKeyListener(Keys);
     frame.requestFocus();
 
+    
+    // Instruction screen
+    String msgTitle = "'Oddball' Test Instructions";
+    String msgInstructions = "Keep a mental count of the number of times the enemy ship is displayed.  This is a test to see how wrapping text looks like in the textarea.  Does the text area scroll the text when it gets too long?";
+    String msgFriendly = "Friendly Ship";
+    String msgEnemy = "Enemy Ship";
+    String msgInput = "[ Press the space bar or a controller button ]";
+    
+    // Fonts
+    Font FONT_SMALL = new Font("Karmatic Arcade", Font.PLAIN, 23);
+    Font FONT_LARGE = new Font("Karmatic Arcade", Font.PLAIN, 50);
+    
     // Draw the image here
-    background = new JLabel(new ImageIcon(badImage));
+    JLabel msg1 = new JLabel(msgTitle);
+    msg1.setForeground(Color.WHITE);
+    msg1.setFont(FONT_LARGE);
+    msg1.setBounds((int)(width*0.15), (int)(height*0.02), width, 150);
+    
+    
+    // Instructions with a scroll pane
+    JTextArea msg2 = new JTextArea(msgInstructions);
+    msg2.setForeground(Color.white);
+    msg2.setBackground(Color.BLACK);
+    msg2.setEditable(false);
+    msg2.setLineWrap(true);
+    msg2.setWrapStyleWord(true);
+    msg2.setFont(FONT_SMALL);
+    
+    JScrollPane areaScrollPane = new JScrollPane(msg2);
+    areaScrollPane.setVerticalScrollBarPolicy( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+    areaScrollPane.setBorder(null);
+    areaScrollPane.setBounds((int)(width*0.2), (int)(height*0.2), (int)(width*0.6), 150);
+    areaScrollPane.setOpaque(false);
+    areaScrollPane.setBackground(new Color(0,0,0,0));
+    areaScrollPane.setForeground(Color.BLACK);
+    
+    
+    // Message explaining the controlls
+    JLabel msg3 = new JLabel(msgInput);
+    msg3.setForeground(Color.BLUE);
+    msg3.setFont(FONT_SMALL);
+    msg3.setBounds((int)(width*0.2), (int)(height*0.75), width, 150);
+    
+    // The enemy and friendly ship
+    JLabel enemyImage = new JLabel(new ImageIcon(goodImage));
+    enemyImage.setBounds((int)(width*0.25)-128, (int)(height*0.5), 256, 256);
+    
+    JLabel friendlyImage = new JLabel(new ImageIcon(badImage));
+    friendlyImage.setBounds((int)(width*0.75)-128, (int)(height*0.5), 256, 256);
+    
+    JLabel enemyText = new JLabel(msgEnemy);
+    enemyText.setBounds((int)(width*0.25)-128, (int)(height*0.3), 256, 256);
+    enemyText.setFont(FONT_SMALL);
+    
+    JLabel friendlyText = new JLabel(msgFriendly);
+    friendlyText.setFont(FONT_SMALL);
+    friendlyText.setBounds((int)(width*0.75)-128, (int)(height*0.3), 256, 256);
+    
+    // background for displaying the images
+    background = new JLabel();
     background.setBackground(Color.BLACK);
-    background.setBounds(0, 0, width, height);
-    background.setOpaque(true);
+    background.setBounds(width/2 - 128, 0, width, height);
+    
+    // Make a panel to center the text
+    pane = new JPanel();
+    pane.setLayout(null);
+    pane.add(msg1);
+    pane.add(areaScrollPane);
+    pane.add(enemyText);
+    pane.add(enemyImage);
+    pane.add(friendlyText);
+    pane.add(friendlyImage);
+    pane.add(msg3);
+    pane.add(new JLabel(msgInstructions));
+    pane.setBackground(Color.BLACK);
 
     frame.getContentPane().add(background);
+    frame.getContentPane().add(pane);
+    frame.getContentPane().setBackground(Color.BLACK);
+    frame.setVisible(true);
+	frame.repaint();
 
     wait = instructions = false;
     startTime = System.currentTimeMillis();
@@ -134,90 +214,81 @@ public class Oddball // implements KeyListener
     showCount = false;
     testFinished = false;
     currentNumber = 0;
-
-    // Timer
-    Timer timer = new Timer(100, new ActionListener()
-    {
-
-      @Override
-      public void actionPerformed(ActionEvent arg0)
-      {
-        update();
-      }
-    });
-    timer.start();
+    
+    // Start the test
+    update();
   }
 
   public void update()
   {
     float randomFloat;
     double probabilityOfTarget;
-
-    time = System.currentTimeMillis();
-
-    if (instructions)
-    {
-      currentScreen = Screen.INSTRUCTIONS;
-      // if (time > 2) currentScreen = Screen.GOOD;
-
-    }
-    else if (showCount)
-    {
-      currentScreen = Screen.FINISHED;
-    }
-    else if (wait)
-    {
-      if (time - startTime > waitTime)
-      {
-
-        probabilityOfTarget = currentImageNum / 5.0; // Max of 6
-
-        // Target or False screen
-        if (currentScreen == Screen.INSTRUCTIONS)
-        {
-          System.out.println("Parallel Port: Sending Start trigger");
-          if (socket != null)
-          {
-            socket.sendByte(TRIGGER_START);
-          }
+    
+    while(true){
+    	
+    	// This only runs once when you start the game
+    	if((!instructions) && (finishedInstructions == false)){
+    		finishedInstructions = true;
+    		pane.setVisible(false);
+    		frame.getContentPane().remove(pane);
+    		
+    		System.out.println("Parallel Port: Sending Start trigger");
+            if (socket != null)
+            {
+              socket.sendByte(TRIGGER_START);
+            }
         }
-        randomFloat = Library.RANDOM.nextFloat();
-        if (randomFloat < probabilityOfTarget)
-        {
-          currentImageNum = 0;
-          currentScreen = Screen.ODDBALL;
-        }
-        else
-        {
-          currentScreen = Screen.NORMAL;
-          currentImageNum += 1;
-          currentNumber++;
-        }
-
-        wait = false;
-        startTime = System.currentTimeMillis();
-
-        // Finished the test
-        if (currentNumber > numberOfGoodScreens)
-        {
-          if (socket != null)
-          {
-            socket.sendByte(TRIGGER_DONE);
-            socket.close();
-          }
-
-          System.out.println("Oddball Test Done. Total oddball count = " + oddballCount);
-          showCount = true;
-        }
-      }
+    	
+    	// Which screen to display
+	    if (instructions){
+	    }
+	    else if (showCount){
+	      currentScreen = Screen.FINISHED;
+	    }
+	    
+	    else if (wait){	
+	        probabilityOfTarget = currentImageNum / 5.0; // Max of 6
+		        
+	        // Choose which image to display
+	        randomFloat = Library.RANDOM.nextFloat();
+	        if (randomFloat < probabilityOfTarget){
+	          currentImageNum = 0;
+	          currentScreen = Screen.ODDBALL;
+	        }
+	        else{
+	          currentScreen = Screen.NORMAL;
+	          currentImageNum += 1;
+	          currentNumber++;
+	        }
+	
+	        wait = false;
+	
+	        // Finished the test
+	        if (currentNumber > numberOfGoodScreens)
+	        {
+	          if (socket != null)
+	          {
+	            socket.sendByte(TRIGGER_DONE);
+	            socket.close();
+	          }
+	
+	          System.out.println("Oddball Test Done. Total oddball count = " + oddballCount);
+	          showCount = true;
+	        }
+	      }
+    	
+	    else if (wait==false)
+	    {
+	    	wait = true;
+	    	currentScreen = Screen.WAIT;
+	    }
+	    	
+	    render();
+	    try{
+	    	Thread.sleep(screenTime);
+	    }catch(Exception e){
+	    }
     }
-    else if (time - startTime > screenTime)
-    {
-      wait = true;
-      currentScreen = Screen.WAIT;
-    }
-
-    render();
   }
 
   /* Menu Button Methods */
@@ -286,7 +357,7 @@ public class Oddball // implements KeyListener
       break;
 
     case INSTRUCTIONS:
-      background.setIcon(new ImageIcon(instructionImage));
+      //background.setIcon(new ImageIcon(instructionImage));
       break;
 
     case FINISHED:
