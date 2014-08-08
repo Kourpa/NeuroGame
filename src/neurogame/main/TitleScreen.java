@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -69,7 +70,7 @@ public class TitleScreen extends MenuScreen {
 
 
 	private static MenuButton oddballButton, exitButton, startButton,
-			rewindButton;
+			rewindButton,configureButton;
 
 	public boolean IsExiting, IsStarting, IsOption;
 	public int selectedJoystick;
@@ -312,6 +313,11 @@ public class TitleScreen extends MenuScreen {
 		creditNames.setForeground(TextColor);
 		creditPanel.add(creditNames);
 
+		// Joystick configureButton
+		configureButton = new MenuButton("  Configure", 22, this);
+		configureButton.b.addMouseListener(this);
+		buttonList.add(configureButton);
+
 		//
 		userPanel.add(userMessage);
 		userPanel.add(userList);
@@ -323,6 +329,7 @@ public class TitleScreen extends MenuScreen {
 		userPanel.add(yJoystickIndex);
 		userPanel.add(loggingMessage);
 		userPanel.add(loggingBox);
+		userPanel.add(configureButton.b);
 
 		// Panels
 		buttonPanel.add(startButton.b);
@@ -605,20 +612,20 @@ public class TitleScreen extends MenuScreen {
 	 * Configuration screen for the joystick
 	 */
 	public void JoystickConfigure(final NeuroFrame frame) {
-		final JDialog dialog = new JDialog(frame, "Configure");
-
-		JPanel mainBox = new JPanel();
-		mainBox.setLayout(new BoxLayout(mainBox, BoxLayout.Y_AXIS));
+		final JDialog dialog = new JDialog(frame, "Configure Options");
 
 		JPanel message = new JPanel();
 		message.setLayout(new BorderLayout());
-		message.add(new JLabel("Press Left on the Joystick:"), BorderLayout.WEST);
-		message.setBackground(Color.WHITE);
+		
+		JLabel joystickInstructions = new JLabel("Press Left on the Joystick:");
+		joystickInstructions.setFont(FONT_SMALL);
+		joystickInstructions.setBackground(Color.WHITE);
+		message.add(joystickInstructions);
+		message.setBounds(0,0,150,150);
+		message.setBackground(new Color(50,50,50));
 
-		mainBox.add(message);
-
+		dialog.setContentPane(message);
 		dialog.setModal(true);
-		dialog.setContentPane(mainBox);
 		dialog.pack();
 		dialog.setLocationRelativeTo(frame);
 		dialog.setVisible(true);
@@ -629,20 +636,32 @@ public class TitleScreen extends MenuScreen {
 	 * Gets the name and starts the creation process in Library.java
 	 */
 	public void CreateNewUser(final NeuroFrame frame) {
-		final JDialog dialog = new JDialog(frame, "NewUser");
+		final JDialog dialog = new JDialog(frame, "New User");
 
 		JPanel mainBox = new JPanel();
 		mainBox.setLayout(new BoxLayout(mainBox, BoxLayout.Y_AXIS));
 
 		JPanel message = new JPanel();
 		message.setLayout(new BorderLayout());
-		message.add(new JLabel("New User Name:  "), BorderLayout.WEST);
-		message.setBackground(Color.WHITE);
+		JLabel msg = new JLabel("  New User Name:  ");
+		msg.setFont(FONT_SMALL);
+		msg.setForeground(this.TextColor);
+		message.add(msg, BorderLayout.WEST);
+		message.setBackground(new Color(50,50,50));
 
 		nameInputField = new JTextField(16);
 		nameInputField.setPreferredSize(new Dimension(400, 50));
+		nameInputField.setBackground(Color.BLACK);
+		nameInputField.setForeground(Color.WHITE);
 
 		JButton newUserButton2 = new JButton("Add");
+		newUserButton2.setIcon(null);
+		newUserButton2.setBorderPainted(false);
+		newUserButton2.setContentAreaFilled(false);
+		newUserButton2.setMargin(new Insets(5,5,5,5));
+		newUserButton2.setBorder(null);
+		newUserButton2.setFont(FONT_SMALL);
+		newUserButton2.setForeground(new Color(100, 191, 255));
 		newUserButton2.setPreferredSize(new Dimension(100, 50));
 
 		newUserButton2.addActionListener(new ActionListener() {
@@ -666,6 +685,7 @@ public class TitleScreen extends MenuScreen {
 		dialog.setContentPane(mainBox);
 		dialog.pack();
 		dialog.setLocationRelativeTo(frame);
+		dialog.setIconImage(null);
 		dialog.setVisible(true);
 	}
 
@@ -731,6 +751,10 @@ public class TitleScreen extends MenuScreen {
 		IsOption = true;
 	}
 	
+	private void onConfigureButtonPress() {
+		JoystickConfigure(frame);
+	}
+	
 	public void actionPerformed(ActionEvent arg0) {
 		if (startButton.isSelected()){
 			onStartButtonPress();
@@ -740,6 +764,9 @@ public class TitleScreen extends MenuScreen {
 		}
 		else if (oddballButton.isSelected()) {
 			onOddballButtonPress();
+		}
+		else if (configureButton.isSelected()){
+			onConfigureButtonPress();
 		}
 	}
 }
