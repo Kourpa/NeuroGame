@@ -100,6 +100,7 @@ public class Zapper extends Enemy
     double dy = Math.abs(zapNodeWorldY1 - zapNodeWorldY2);
 
     zapAreaWidth = (int) (dx * Library.U_VALUE) + spriteWidth;
+    zapAreaWidth = zapAreaWidth / 2;
     zapAreaHeight = (int) (dy * Library.U_VALUE) + spriteHeight;
 
     zapAreaHypotenuse = (int) Math.sqrt(zapAreaWidth * zapAreaWidth
@@ -188,12 +189,7 @@ public class Zapper extends Enemy
   {
     return false;
   }
-  
-  /*public void die(boolean showDeathEffect)
-  { 
-    isAlive = false;
-  }*/
-  
+   
   public void render(Graphics2D g)
   {
 
@@ -210,7 +206,7 @@ public class Zapper extends Enemy
       drawLightning(collision(player));
       drawLightning(false);
 
-      g.drawImage(zapAreaImage, zapMinX, zapMinY, null);
+      g.drawImage(zapAreaImage, zapMinX+20, zapMinY, null); // Offset the X so the lightning is center
     }
     
     // Rotate 180 to face down
@@ -248,25 +244,15 @@ public class Zapper extends Enemy
     // else
     // {
     int displace = zapAreaHypotenuse / 2;
-    drawBolt(1, 1, zapAreaWidth - 2, zapAreaHeight - 2, displace);
+    drawBolt(zapAreaWidth/2, 1, zapAreaWidth/2, zapAreaHeight - 2, displace);
     // }
     // myPic.repaint();
   }
 
   public void drawBolt(int x1, int y1, int x2, int y2, int displace)
-  {
-	  // max displacement near the middle.  No displacement at the ends
-	  int zapX1 = Library.worldPosXToScreen(zapNodeWorldX1);
-	  int zapY1 = Library.worldPosYToScreen(zapNodeWorldY1);
-	  int zapX2 = Library.worldPosXToScreen(zapNodeWorldX2);
-	  int zapY2 = Library.worldPosYToScreen(zapNodeWorldY2);
-	  
-	  int maxDist = zapY2 - zapY1;
-	    
+  {	    
     int dx = Math.abs(x1 - x2);
     int dy = Math.abs(y1 - y2);
-    // System.out.println("("+x1+", "+y1 + ") ("
-    // +x2+", "+y2+")    zapArea=("+zapAreaWidth+", "+zapAreaHeight+")" );
 
     if (dx <= 1 && dy <= 1)
     {
@@ -299,9 +285,7 @@ public class Zapper extends Enemy
     {
       int x = (x2 + x1) / 2;
       int y = (y2 + y1) / 2;
-      
-      double displaceAmount = 1.0 - (y - maxDist/2);
-      
+            
       y += (Library.RANDOM.nextDouble() - .5) * displace;
       x += (Library.RANDOM.nextDouble() - .5) * displace;
 
