@@ -70,7 +70,7 @@ public class TitleScreen extends MenuScreen {
 
 
 	private static MenuButton oddballButton, exitButton, startButton,
-			rewindButton,configureButton;
+			configureButton;
 
 	public boolean IsExiting, IsStarting, IsOption;
 	public int selectedJoystick;
@@ -194,14 +194,14 @@ public class TitleScreen extends MenuScreen {
 		startButton.setSelected(true);
 
 		// Oddball button
-		oddballButton = new MenuButton("Visual Test", this);
+		oddballButton = new MenuButton("P300 Responce Test", this);
 		oddballButton.b.addMouseListener(this);
 		buttonList.add(oddballButton);
 
-		// Rewind button
-		rewindButton = new MenuButton("Rewind", this);
-		rewindButton.b.addMouseListener(this);
-		buttonList.add(rewindButton);
+//		// Rewind button
+//		rewindButton = new MenuButton("Rewind", this);
+//		rewindButton.b.addMouseListener(this);
+//		buttonList.add(rewindButton);
 
 		// Exit button
 		exitButton = new MenuButton("Exit", this);
@@ -334,12 +334,12 @@ public class TitleScreen extends MenuScreen {
 		// Panels
 		buttonPanel.add(startButton.b);
 		buttonPanel.add(oddballButton.b);
-		buttonPanel.add(rewindButton.b);
+		//buttonPanel.add(rewindButton.b);
 		buttonPanel.add(exitButton.b);
 
 		startButton.b.setBounds(0, 0, buttonPanelWidth, 50);
 		oddballButton.b.setBounds(0, 50, buttonPanelWidth, 50);
-		rewindButton.b.setBounds(0, 100, buttonPanelWidth, 50);
+		//rewindButton.b.setBounds(0, 100, buttonPanelWidth, 50);
 		exitButton.b.setBounds(0, 150, buttonPanelWidth, 50);
 
 		buttonPanel.setBounds(width / 2 - buttonPanelWidth / 2,

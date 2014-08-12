@@ -248,6 +248,7 @@ public class Player extends GameObject
     collisionLogBitsThisUpdate |= COLLISION_BITS_STAR;
     
     health += Library.HEALTH_PER_STAR;
+    if (health > Library.HEALTH_MAX) health = Library.HEALTH_MAX;
     gameScore += Library.SCORE_STAR;
     InfoMessage scoreInfo = new InfoMessage(star.getCenterX(), star.getCenterY(), world, String.valueOf(Library.SCORE_STAR));
     world.addGameObject(scoreInfo);

@@ -2,7 +2,6 @@ package neurogame.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -369,5 +368,69 @@ public class Oddball // implements KeyListener
   private enum Screen
   {
     INSTRUCTIONS, NORMAL, ODDBALL, WAIT, FINISHED;
+  }
+  
+  
+  public static void main(String[] args)
+  {
+    /* d) After 2 consecutive Standard events, there is a 
+        25% chance that the next event will be an oddball.
+     d) After 3 consecutive Standard events, there is a 
+        50% chance that the next event will be an oddball.
+     e) After 4 consecutive Standard events, there is a 
+        75% chance that the next event will be an oddball.
+     f) After 5 consecutive Standard events, the next event 
+        will be an oddball.
+        */
+    boolean STANDARD = false;
+    boolean ODDBALL = true;
+    int standardCount = 0;
+    int oddballCount = 0;
+    int lastOddBallIdx = 0;
+    
+    //boolean[] event=new boolean[500000];
+    for (int i=0; i<2500000; i++)
+    {
+      if (i-lastOddBallIdx < 3) standardCount++;
+      else if (i-lastOddBallIdx >=6) 
+      {
+        oddballCount++;
+        lastOddBallIdx = i;
+      }
+      else 
+      { if (Library.RANDOM.nextDouble() < 0.189)
+        {
+          oddballCount++;
+          lastOddBallIdx = i;
+        }
+        else standardCount++;
+      }
+    }
+//      if (!event[i-1] && !event[i-2])
+//      { if (!event[i-3])
+//        { if (!event[i-4])
+//          { if (!event[i-5]) 
+//            { if (!event[i-6]) event[i] =  true;
+//              else
+//              { if (Library.RANDOM.nextDouble() < 0.8) event[i] = true;
+//              }
+//            }
+//            else
+//            { if (Library.RANDOM.nextDouble() < 0.5) event[i] = true;
+//            }
+//          }
+//          else
+//          { if (Library.RANDOM.nextDouble() < 0.3) event[i] = true;
+//          }
+//        }
+//        else
+//        { if (Library.RANDOM.nextDouble() < 0.1) event[i] = true;
+//        }
+//      }
+      
+      //if (event[i]) oddballCount++; else standardCount++;
+    //}
+    System.out.println(standardCount+":" + oddballCount + " = " + ((double)standardCount/(double)oddballCount));
+    
   }
 }

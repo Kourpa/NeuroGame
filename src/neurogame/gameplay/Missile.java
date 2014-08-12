@@ -87,5 +87,10 @@ public class Missile extends GameObject
       canvas.drawRect(x1,y1, x2-x1, y2-y1);
     }
   }
+  
+  public static void initGame()
+  {
+    currentMissile = null;
+  }
 
 }
