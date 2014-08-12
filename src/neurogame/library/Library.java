@@ -250,7 +250,12 @@ public final class Library
 		
 		Collections.sort(scores);
 		Collections.reverse(scores);
-		return scores.subList(0, amount).toArray(new Long[0]);
+		try{
+			return scores.subList(0, amount).toArray(new Long[0]);
+		}catch(Exception e){
+			Long[] nullList = {};
+			return nullList;
+		}
 	}
 
 
