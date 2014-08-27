@@ -71,20 +71,9 @@ public class MainDrawPanel extends JPanel
         BufferedImage.TYPE_INT_ARGB);
     canvasObjectLayer = imageObjectLayer.createGraphics();
 
-    // imageBackgroundLayer = new BufferedImage(windowWidth, windowHeight,
-    // BufferedImage.TYPE_INT_RGB);
-    // canvasBackgroundLayer = imageBackgroundLayer.createGraphics();
-
-
     render(null);
 
   }
-
-  // public void clearScreen()
-  // {
-  // canvasObjectLayer.setColor(Color.BLACK);
-  // canvasObjectLayer.fillRect(0, 0, windowWidth, windowHeight);
-  // }
 
   /**
    * Draw the heads-up display.
@@ -120,53 +109,4 @@ public void render(ArrayList<GameObject> gameObjList)
 
     repaint();
   }
-  // Render one frame.
-  // do
-  // {
-  // do
-  // {
-  // if (!isVisible())
-  // {
-  // setVisible(true);
-  // }
-  // graphics = (Graphics2D) strategy.getDrawGraphics();
-
-  // switch (mode)
-  // {
-  // case PLAYING:
-  // graphics.drawImage(engine.image(), 0, 0, windowWidth, windowHeight, null);
-  //
-  // // if (debug)
-  // // {
-  // // debug();
-  // // }
-  // drawHUD();
-  // break;
-  // case PAUSED:
-  // graphics.drawImage(engine.image(), 0, 0, windowWidth, windowHeight, null);
-  // // if (debug)
-  // // {
-  // // debug();
-  // // }
-  // drawHUD();
-  // break;
-  // case TITLE:
-  // if (title != null)
-  // {
-  // graphics.drawImage(title.image(), 0, 0, windowWidth, windowHeight, null);
-  // }
-  // break;
-  // default:
-  // break;
-  // }
-  // }
-  // while (strategy.contentsRestored());
-  // // Show the buffer.
-  // strategy.show();
-  // }
-  // while (strategy.contentsLost());
-
-  // this.repaint();
-  // }
-
 }

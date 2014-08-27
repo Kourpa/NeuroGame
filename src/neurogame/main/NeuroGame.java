@@ -34,6 +34,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import neurogame.gameplay.Enemy;
 import neurogame.gameplay.GameObject;
 import neurogame.gameplay.GameObjectType;
+import neurogame.gameplay.Missile;
 import neurogame.gameplay.Player;
 import neurogame.gameplay.Ammo;
 import neurogame.gameplay.Star;
@@ -298,6 +299,7 @@ public class NeuroGame
     
     world = new World();
     Star.initGame();
+    Missile.initGame();
     // zappers = world.getZappers();
     frame.startGame(world);
     controller.setControllable(true);

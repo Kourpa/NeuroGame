@@ -284,15 +284,10 @@ public class GameOverScreen extends MenuScreen {
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
-		System.out.println("Action Performed");
-		Object src = arg0.getSource();
-
-		// Start
-		if (src == exitButton.b) {
+		if (exitButton.isSelected()){
 			onMainMenuButtonPress();
-		}
-
-		else if (src == restartButton.b) {
+		} 
+		else if (restartButton.isSelected()){
 			onExitButtonPress();
 		}
 	}
