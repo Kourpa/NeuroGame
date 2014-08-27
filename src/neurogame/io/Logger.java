@@ -43,8 +43,7 @@ public class Logger
   
   
   
-  private static final byte TRIGGER_GAMESTART = 64;
-  private static final byte TRIGGER_GAMEOVER =  127;
+
   
 
   private SocketToParallelPort socket;
@@ -92,7 +91,7 @@ public class Logger
     socket = new SocketToParallelPort(HOST, PORT);
     if (socket != null)
     {
-      socket.sendByte(TRIGGER_GAMESTART);
+      socket.sendByte(SocketToParallelPort.TRIGGER_GAME_START);
     }
   }
 
@@ -184,7 +183,7 @@ public class Logger
     
     if (socket != null)
     {
-      socket.sendByte(TRIGGER_GAMEOVER);
+      socket.sendByte(SocketToParallelPort.TRIGGER_GAME_OVER);
     }
     try
     {
