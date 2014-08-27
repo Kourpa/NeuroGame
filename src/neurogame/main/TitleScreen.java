@@ -152,6 +152,8 @@ public class TitleScreen extends MenuScreen {
 				height = frame.getHeight();
 			}
 		});
+
+    Options();
 	}
 
 	
