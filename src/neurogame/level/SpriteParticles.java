@@ -25,7 +25,7 @@ public class SpriteParticles
       for(int y = 0; y < height; y++){
         c = image.getRGB(x, y);
         if(c != 0){
-          pixels.add(new Particle(width - x, height - y, new Color(c)));
+          pixels.add(new Particle(width - x, y, new Color(c)));
         }
       }
     }

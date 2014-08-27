@@ -10,12 +10,24 @@
 
 package neurogame.main;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.Insets;
+import neurogame.library.Library;
+import neurogame.library.User;
+import org.lwjgl.input.Controller;
+import org.lwjgl.input.Controllers;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.swing.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -27,34 +39,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import neurogame.library.Library;
-import neurogame.library.User;
-
-import org.lwjgl.input.Controller;
-import org.lwjgl.input.Controllers;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * The title screen for NeuroGame.
@@ -236,10 +220,6 @@ public class TitleScreen extends MenuScreen {
 		JPanel userPanel = new JPanel();
 		userPanel.setBackground(Color.black);
 
-		// Controller list
-		JComboBox<String> joysticks = Options();
-		joysticks.setPreferredSize(new Dimension(240, 40));
-		
 		// Choose the joystick index
 		Integer[] joystickIndexes = {0,1,2,3,4};
 	
@@ -269,18 +249,6 @@ public class TitleScreen extends MenuScreen {
 			}
 		});
 		
-		// Messages
-		JLabel xIndexMessage = new JLabel(" X");
-		xIndexMessage.setFont(FONT_SMALL);
-		xIndexMessage.setForeground(TextColor);
-		
-		JLabel yIndexMessage = new JLabel(" Y");
-		yIndexMessage.setFont(FONT_SMALL);
-		yIndexMessage.setForeground(TextColor);
-		
-		JLabel inputMessage = new JLabel("Input: ");
-		inputMessage.setFont(FONT_SMALL);
-		inputMessage.setForeground(TextColor);
 
 		JLabel userMessage = new JLabel("User:  ");
 		userMessage.setFont(FONT_SMALL);
@@ -302,9 +270,7 @@ public class TitleScreen extends MenuScreen {
 			}
 		});
 
-		JLabel loggingMessage = new JLabel("Logging: ");
-		loggingMessage.setFont(FONT_SMALL);
-		loggingMessage.setForeground(TextColor);
+
 
 		// Scrolling Credits
 		JPanel creditPanel = new JPanel();
@@ -314,21 +280,13 @@ public class TitleScreen extends MenuScreen {
 		creditPanel.add(creditNames);
 
 		// Joystick configureButton
-		configureButton = new MenuButton("  Configure", 22, this);
+		configureButton = new MenuButton("  Settings", 22, this);
 		configureButton.b.addMouseListener(this);
 		buttonList.add(configureButton);
 
-		//
 		userPanel.add(userMessage);
 		userPanel.add(userList);
-		userPanel.add(inputMessage);
-		userPanel.add(joysticks);
-		userPanel.add(xIndexMessage);
-		userPanel.add(xJoystickIndex);
-		userPanel.add(yIndexMessage);
-		userPanel.add(yJoystickIndex);
-		userPanel.add(loggingMessage);
-		userPanel.add(loggingBox);
+
 		userPanel.add(configureButton.b);
 
 		// Panels
@@ -612,21 +570,63 @@ public class TitleScreen extends MenuScreen {
 	 * Configuration screen for the joystick
 	 */
 	public void JoystickConfigure(final NeuroFrame frame) {
-		final JDialog dialog = new JDialog(frame, "Configure Options");
+    Dimension dm = new Dimension(250, 200);
 
-		JPanel message = new JPanel();
-		message.setLayout(new BorderLayout());
-		
-		JLabel joystickInstructions = new JLabel("Press Left on the Joystick:");
-		joystickInstructions.setFont(FONT_SMALL);
-		joystickInstructions.setBackground(Color.WHITE);
-		message.add(joystickInstructions);
-		message.setBounds(0,0,150,150);
-		message.setBackground(new Color(50,50,50));
+    final JDialog dialog = new JDialog(frame, "Configure Options");
+    dialog.setMaximumSize(dm);
+    dialog.setMinimumSize(dm);
 
-		dialog.setContentPane(message);
-		dialog.setModal(true);
-		dialog.pack();
+    JPanel panel = new JPanel();
+    panel.setBackground(Color.BLACK);
+//    panel.setLayout(new BorderLayout());
+    panel.setSize(dm);
+    panel.setMaximumSize(dm);
+
+    JLabel inputMessage = new JLabel("Input: ");
+    inputMessage.setFont(FONT_SMALL);
+    inputMessage.setForeground(TextColor);
+
+    // Controller list
+    JComboBox<String> joysticks = Options();
+    joysticks.setPreferredSize(new Dimension(240, 40));
+
+    // Messages
+    JLabel xIndexMessage = new JLabel(" X");
+    xIndexMessage.setFont(FONT_SMALL);
+    xIndexMessage.setForeground(TextColor);
+
+    JLabel yIndexMessage = new JLabel(" Y");
+    yIndexMessage.setFont(FONT_SMALL);
+    yIndexMessage.setForeground(TextColor);
+
+    JLabel loggingMessage = new JLabel("Logging: ");
+    loggingMessage.setFont(FONT_SMALL);
+    loggingMessage.setForeground(TextColor);
+
+
+    panel.add(inputMessage);
+    panel.add(joysticks);
+    panel.add(xIndexMessage);
+    panel.add(xJoystickIndex);
+    panel.add(yIndexMessage);
+    panel.add(yJoystickIndex);
+    panel.add(loggingMessage);
+    panel.add(loggingBox);
+
+//		JPanel message = new JPanel();
+//		message.setLayout(new BorderLayout());
+//
+//		JLabel joystickInstructions = new JLabel("Press Left on the Joystick:");
+//		joystickInstructions.setFont(FONT_SMALL);
+//		joystickInstructions.setBackground(Color.WHITE);
+//		message.add(joystickInstructions);
+//		message.setBounds(0,0,150,150);
+//		message.setBackground(new Color(50,50,50));
+
+//		dialog.setContentPane(message);
+//		dialog.setModal(true);
+    dialog.pack();
+    dialog.add(panel);
 		dialog.setLocationRelativeTo(frame);
 		dialog.setVisible(true);
 	}
@@ -752,11 +752,11 @@ public class TitleScreen extends MenuScreen {
 	}
 	
 	private void onConfigureButtonPress() {
-		JoystickConfigure(frame);
+    JoystickConfigure(frame);
 	}
 	
 	public void actionPerformed(ActionEvent arg0) {
-		if (startButton.isSelected()){
+    if (startButton.isSelected()){
 			onStartButtonPress();
 		}
 		else if (exitButton.isSelected()) {
