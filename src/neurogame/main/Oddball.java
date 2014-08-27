@@ -6,8 +6,6 @@ import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -41,14 +39,9 @@ public class Oddball // implements KeyListener
 
   private static final int TOTAL_EVENTS = 250;
 
-  private boolean finishedInstructions;
-  private long time;
   private NeuroFrame frame;
   private NeuroGame game;
   private JPanel pane;
-  private final int numberOfGoodScreens = 50;
-  private final int numberOfBadScreens = 200;
-  private int currentNumber;
   private boolean testFinished;
   private boolean showCount;
   private Screen currentScreen;
@@ -84,7 +77,6 @@ public class Oddball // implements KeyListener
     this.finishedImage = sprites.get("CountOddball");
     this.waitImage = sprites.get("WaitOddball");
 
-    finishedInstructions = false;
 
     // Frame
     frame.getContentPane().removeAll();
@@ -200,25 +192,22 @@ public class Oddball // implements KeyListener
   public void mainOddBallLoop()
   {
 
-    boolean STANDARD = false;
-    boolean ODDBALL = true;
     int standardCount = 0;
     int oddballCount = 0;
     int lastOddBallIdx = 0;
 
-    finishedInstructions = true;
-    pane.setVisible(false);
-    frame.getContentPane().remove(pane);
+   
 
     if (socket != null)
     {
       socket.sendByte(SocketToParallelPort.TRIGGER_ODDBALL_START);
     }
     while (instructions)
-    { render();
-    try { Thread.sleep(250); } catch (InterruptedException e) { }
+    { //render();
+      try { Thread.sleep(250); } catch (InterruptedException e) { }
     }
-    
+    pane.setVisible(false);
+    frame.getContentPane().remove(pane);
 
     // boolean[] event=new boolean[500000];
     for (int i = 0; i < TOTAL_EVENTS; i++)
