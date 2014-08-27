@@ -41,10 +41,7 @@ public class Logger
   
   private Long time0;
   
-  
-  
-
-  
+ 
 
   private SocketToParallelPort socket;
   private static final String HOST = "127.0.0.1";
@@ -96,6 +93,10 @@ public class Logger
   }
 
 
+  public void sendByteBySocket(byte data)
+  { socket.sendByte(data);
+  }
+  
   private String generateFileName()
   {
     return LOG_PREFIX + FILE_DATE_FORMAT.format(new Date()) + LOG_EXTENSION;

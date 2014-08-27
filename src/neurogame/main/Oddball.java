@@ -25,9 +25,9 @@ import org.lwjgl.input.Controller;
 public class Oddball // implements KeyListener
 {
 
-  private SocketToParallelPort socket;
-  private static final String HOST = "127.0.0.1";
-  private static final int PORT = 55555;
+  //private SocketToParallelPort socket;
+//  private static final String HOST = "127.0.0.1";
+//  private static final int PORT = 55555;
 
   private static boolean SEND_TRIGGERS_VIA_SOCKET = false;
 
@@ -56,15 +56,15 @@ public class Oddball // implements KeyListener
     this.frame = frame;
     this.game = game;
 
-    if (game.getLoggingMode())
-    {
-      SEND_TRIGGERS_VIA_SOCKET = true;
-    }
-
-    if (SEND_TRIGGERS_VIA_SOCKET)
-    {
-      socket = new SocketToParallelPort(HOST, PORT);
-    }
+//    if (game.getLoggingMode())
+//    {
+//      SEND_TRIGGERS_VIA_SOCKET = true;
+//    }
+//
+//    if (SEND_TRIGGERS_VIA_SOCKET)
+//    {
+//      socket = new SocketToParallelPort(HOST, PORT);
+//    }
     int width = frame.getWidth();
     int height = frame.getHeight();
 
@@ -198,10 +198,11 @@ public class Oddball // implements KeyListener
 
    
 
-    if (socket != null)
+    if (game.getLoggingMode())
     {
-      socket.sendByte(SocketToParallelPort.TRIGGER_ODDBALL_START);
+      game.log.sendByteBySocket(SocketToParallelPort.TRIGGER_ODDBALL_START);
     }
+    
     while (instructions)
     { //render();
       try { Thread.sleep(250); } catch (InterruptedException e) { }
@@ -253,10 +254,9 @@ public class Oddball // implements KeyListener
     System.out.println(standardCount + ":" + oddballCount + " = " + ((double) standardCount / (double) oddballCount));
 
     currentScreen = Screen.FINISHED;
-    if (socket != null)
+    if (game.getLoggingMode())
     {
-      socket.sendByte(SocketToParallelPort.TRIGGER_ODDBALL_DONE);
-      socket.close();
+      game.log.sendByteBySocket(SocketToParallelPort.TRIGGER_ODDBALL_DONE);
     }
     render();
 
@@ -301,21 +301,22 @@ public class Oddball // implements KeyListener
     switch (currentScreen)
     {
     case NORMAL:
-      if (socket != null)
+      if (game.getLoggingMode())
       {
 
         System.out
             .println("Oddball: Socket Send TRIGGER_NORMAL=" + SocketToParallelPort.TRIGGER_ODDBALL_STANDARD_EVENT);
-        socket.sendByte(SocketToParallelPort.TRIGGER_ODDBALL_STANDARD_EVENT);
+        game.log.sendByteBySocket(SocketToParallelPort.TRIGGER_ODDBALL_STANDARD_EVENT);
       }
       background.setIcon(new ImageIcon(goodImage));
       break;
 
     case ODDBALL:
-      if (socket != null)
+      if (game.getLoggingMode())
       {
+
         System.out.println("Oddball: Socket Send TRIGGER_NORMAL=" + SocketToParallelPort.TRIGGER_ODDBALL_RARE_EVENT);
-        socket.sendByte(SocketToParallelPort.TRIGGER_ODDBALL_RARE_EVENT);
+        game.log.sendByteBySocket(SocketToParallelPort.TRIGGER_ODDBALL_RARE_EVENT);
       }
       background.setIcon(new ImageIcon(badImage));
       break;

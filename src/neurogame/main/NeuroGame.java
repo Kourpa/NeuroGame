@@ -80,7 +80,7 @@ public class NeuroGame
   
   private Oddball oddball;
   private boolean loggingMode;
-  private Logger log;
+  public Logger log;
   
   private boolean soundEnabled;
   
@@ -307,12 +307,19 @@ public class NeuroGame
     Ammo.initGame();
     Enemy.initGame();
 
-    if (loggingMode) log = new Logger();
+    if (loggingMode)
+    { if (log == null) log = new Logger();
+    }
   }
   
-  public void showOddBall(){  
-	oddball = new Oddball(frame, this);
-	gameState = GameState.ODDBALL;
+  public void showOddBall()
+  {
+    if (loggingMode)
+    {
+      if (log == null) log = new Logger();
+    }
+    oddball = new Oddball(frame, this);
+    gameState = GameState.ODDBALL;
   }
   /**
    * Pause the game.
@@ -341,11 +348,7 @@ public class NeuroGame
    */
   private void gameOver()
   {
-    if (loggingMode) 
-    { log.closeLog();
-      log = null;
-    }
-    
+  
     
   	frame.getUser().saveHighscore(player.getScore());
    	Library.saveUser(frame.getUser());
@@ -512,6 +515,11 @@ public class NeuroGame
    */
   public void quit()
   {
+    if (loggingMode) 
+    { log.closeLog();
+      log = null;
+    }
+    
     System.exit(0);
   }
 
