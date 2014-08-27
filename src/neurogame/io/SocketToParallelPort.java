@@ -10,8 +10,25 @@ public class SocketToParallelPort
   private Socket clientSocket;
   private DataOutputStream writer;
   private long startNanoSec;
+  
+  
+  public static final byte TRIGGER_ODDBALL_START          = 20;
+  public static final byte TRIGGER_ODDBALL_STANDARD_EVENT = 22;
+  public static final byte TRIGGER_ODDBALL_RARE_EVENT     = 25;
+  public static final byte TRIGGER_ODDBALL_DONE           = 29;  
 
+  
+  public static final byte TRIGGER_GAME_SHOOT_BUTTON       = 90;
+  public static final byte TRIGGER_GAME_PLAYER_CRASH_WALL  = 91;
+  public static final byte TRIGGER_GAME_PLAYER_CRASH_ENEMY = 92;
+  public static final byte TRIGGER_GAME_COLLECT_STAR       = 93;
+  public static final byte TRIGGER_GAME_COLLECT_AMMO       = 94;
+  public static final byte TRIGGER_GAME_MISSILE_HIT_ENEMY  = 97;
+  public static final byte TRIGGER_GAME_START              = 99;
+  public static final byte TRIGGER_GAME_OVER               = 100;
 
+  
+  
   public SocketToParallelPort(String host, int portNumber)
   {
     startNanoSec = System.nanoTime();
