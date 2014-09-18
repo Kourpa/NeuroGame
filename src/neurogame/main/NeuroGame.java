@@ -309,7 +309,9 @@ public class NeuroGame
 
     if (loggingMode)
     { if (log == null) log = new Logger();
+      log.startGame();
     }
+    
   }
   
   public void showOddBall()
@@ -516,7 +518,7 @@ public class NeuroGame
   public void quit()
   {
     if (loggingMode) 
-    { log.closeLog();
+    { if (log != null) log.closeLog();
       log = null;
     }
     

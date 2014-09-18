@@ -21,6 +21,7 @@ public class Player extends GameObject
   public static final int MAX_AMMO_COUNT = 20;
   private int ammoCount;
   private boolean triggerReleasedSinceLastMissile;
+  public boolean triggerPressed = false;
 
   private boolean invulnerable = false;
   
@@ -346,7 +347,9 @@ public class Player extends GameObject
   private void shootMissile()
   {
     if (!triggerReleasedSinceLastMissile) return;
+    triggerPressed = true;
     if ((Missile.getCurrentMissile() != null) && (Missile.getCurrentMissile().isAlive())) return;
+    
     triggerReleasedSinceLastMissile = false;
    
     //if (missileCurrentCooldown > 0) return;

@@ -43,8 +43,8 @@ public class GameController{
   
   private Controller joystick = null;
   
-  private static int JOYSTICK_X = 1;
-  private static int JOYSTICK_Y = 0;
+  private static int JOYSTICK_X = 3;
+  private static int JOYSTICK_Y = 2;
   
   private static final double JOYSTICK_THRESHOLD = 0.01;
   private double joystickLastX, joystickLastY;

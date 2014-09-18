@@ -31,13 +31,12 @@ public class Oddball // implements KeyListener
 
   private static boolean SEND_TRIGGERS_VIA_SOCKET = false;
 
-  private static final int EVENT_MIN_MSEC = 800;
-  private static final int EVENT_MAX_MSEC = 1200;
+  private static final int EVENT_MSEC = 500;
 
   private static final int WAIT_MIN_MSEC = 1600;
   private static final int WAIT_MAX_MSEC = 2000;
 
-  private static final int TOTAL_EVENTS = 250;
+  private static final int TOTAL_EVENTS = 200;
 
   private NeuroFrame frame;
   private NeuroGame game;
@@ -241,10 +240,10 @@ public class Oddball // implements KeyListener
 
       render();
 
-      int eventTime = EVENT_MIN_MSEC + Library.RANDOM.nextInt(EVENT_MAX_MSEC - EVENT_MIN_MSEC);
+  
       int waitTime = WAIT_MIN_MSEC + Library.RANDOM.nextInt(WAIT_MAX_MSEC - WAIT_MIN_MSEC);
 
-      try { Thread.sleep(eventTime); } catch (InterruptedException e) { }
+      try { Thread.sleep(EVENT_MSEC); } catch (InterruptedException e) { }
 
       currentScreen = Screen.WAIT;
       render();

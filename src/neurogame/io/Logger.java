@@ -9,6 +9,8 @@ package neurogame.io;
 //  Hide options in options memu.
 //Trigger whenever hit
 
+//Joystick x=3, y=2
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.BufferedWriter;
@@ -86,10 +88,7 @@ public class Logger
     }
     
     socket = new SocketToParallelPort(HOST, PORT);
-    if (socket != null)
-    {
-      socket.sendByte(SocketToParallelPort.TRIGGER_GAME_START);
-    }
+
   }
 
 
@@ -100,6 +99,16 @@ public class Logger
   private String generateFileName()
   {
     return LOG_PREFIX + FILE_DATE_FORMAT.format(new Date()) + LOG_EXTENSION;
+  }
+  
+  
+  public void startGame()
+  {
+    
+    if (socket != null)
+    {
+      socket.sendByte(SocketToParallelPort.TRIGGER_GAME_START);
+    }
   }
   
   public void update(World world)
@@ -114,15 +123,37 @@ public class Logger
     int joystickButton = 0;
     if (GameController.isPlayerPressingButton()) joystickButton = 1;
     
-    DirectionVector joystickVector = GameController.getPlayerInputDirectionVector();
-    
     int collisionBits = player.getCollisionLogBitsThisUpdate();
-    if (collisionBits > 0)
-    { if (socket != null)
-      {
-        socket.sendByte((byte)collisionBits);
+    
+    
+    if (socket != null)
+    { 
+      if (player.triggerPressed) socket.sendByte(SocketToParallelPort.TRIGGER_GAME_SHOOT_BUTTON);
+      else if ((collisionBits & (Player.COLLISION_BITS_WALL_ABOVE | Player.COLLISION_BITS_WALL_BELOW)) > 0)
+      { socket.sendByte(SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_WALL);
+      }
+      else if ((collisionBits & Player.COLLISION_BITS_ENEMY) > 0)
+      { socket.sendByte(SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_ENEMY);
+      }
+      else if ((collisionBits & Player.COLLISION_BITS_STAR) > 0)
+      { socket.sendByte(SocketToParallelPort.TRIGGER_GAME_COLLECT_STAR);
+      }
+      else if ((collisionBits & Player.COLLISION_BITS_AMMO) > 0)
+      { socket.sendByte(SocketToParallelPort.TRIGGER_GAME_COLLECT_AMMO);
+      }
+      else if ((collisionBits & Player.COLLISION_BITS_AMMO) > 0)
+      { socket.sendByte(SocketToParallelPort.TRIGGER_GAME_COLLECT_AMMO);
+      }
+      else if ((collisionBits & Player.COLLISION_FLAG_MISSILE_HIT_ENEMY) > 0)
+      { socket.sendByte(SocketToParallelPort.TRIGGER_GAME_MISSILE_HIT_ENEMY);
       }
     }
+    
+  
+    
+    DirectionVector joystickVector = GameController.getPlayerInputDirectionVector();
+    
+    
     
     String out = Long.toString(System.currentTimeMillis()-time0) +  
         String.format("," + FLOAT4 + "," + FLOAT4  + ","+ FLOAT4 + ",%d," + FLOAT4  + ","+ FLOAT4 +",%d,%d,",
