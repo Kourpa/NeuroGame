@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import neurogame.gameplay.GameObjectType;
 import neurogame.level.SpriteParticles;
 import neurogame.main.NeuroGame;
+import neurogame.main.Oddball;
 
 /**
  * An image library for NeuroGame - handles loading and storage of game images.
@@ -75,9 +76,9 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("pDmg2", "/images/damage2.png", 68, 68);
     
     // Visual test graphics
-    add("OddballPlayerShip","/images/playerShip.png", 68*3, 68*3);
-    add("OddballEnemyShip","/images/enemySinusoidal.png", 68*3, 68*3);
-    add("WaitOddball","/images/cross.png", 68*3, 68*3);
+    add("OddballPlayerShip","/images/playerShip.png", Oddball.ICON_SIZE, Oddball.ICON_SIZE);
+    add("OddballEnemyShip","/images/enemySinusoidal.png", Oddball.ICON_SIZE, Oddball.ICON_SIZE);
+    add("WaitOddball","/images/cross.png", Oddball.ICON_SIZE, Oddball.ICON_SIZE);
     add("EnemyStraight", "/images/enemyStraight.png",
         Library.worldUnitToScreen(GameObjectType.ENEMY_STRAIGHT.getWidth()),
         Library.worldUnitToScreen(GameObjectType.ENEMY_STRAIGHT.getHeight()));

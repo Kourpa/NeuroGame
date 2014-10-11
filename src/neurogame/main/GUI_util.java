@@ -64,7 +64,7 @@ public class GUI_util
   {
     JLabel label = new JLabel(text);
     parent.add(label);
-    label.setFont(FONT_ARIAL20);
+    label.setFont(FONT_ARIAL30);
     label.setForeground(COLOR_DESELECTED);
     return label;
   }
@@ -92,7 +92,6 @@ public class GUI_util
     return area;
   }
 
-  
     
   public static void setSelected(JButton button, boolean selected)
   {

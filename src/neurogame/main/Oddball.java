@@ -12,6 +12,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 
 import neurogame.io.SocketToParallelPort;
 import neurogame.io.User;
@@ -30,6 +32,7 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     SETUP, INTRO, START, PLAY_STANDARD, PLAY_ODDBALL, PLAY_WAIT, DONE, EXIT
   };
 
+  public static final int ICON_SIZE = 204;
   private OddballMode mode = OddballMode.SETUP;
 
   private static final double EVENT_SEC = 0.5;
@@ -41,13 +44,13 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
 
   private NeuroGame game;
 
-  private JLabel msg1, msg3, label_enemyTxt, label_friendTxt;
+  private JLabel msg1, msg3;
   private JLabel label_enemyImg, label_friendImg, label_waitImg;
   private JTextArea msg2;
+  private JLabel label_friendTxt1, label_enemyTxt1, label_friendTxt2, label_enemyTxt2;
 
   private BufferedImage enemyImage, friendlyImage, waitImage;
   private int panelWidth, panelHeight;
-  private int iconSize;
 
   private User currentUser;
 
@@ -84,18 +87,11 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     msg1 = GUI_util.makeLabelArial30("Welcome to cadet training!", this);
     this.add(msg1);
 
-    msg2 = new JTextArea(INTRO_STR);
+    msg2 = GUI_util.makeTextAreaArial20(INTRO_STR, this);
 
-    msg2.setBackground(Color.BLACK);
-    msg2.setEditable(false);
-    msg2.setLineWrap(true);
-    msg2.setWrapStyleWord(true);
-    msg2.setFont(GUI_util.FONT_ARIAL20);
-    this.add(msg2);
-
-    msg3 = GUI_util.makeLabelArial30("Let us know when you are ready to begin training.", this);
-
+    msg3 = GUI_util.makeLabelArial20("[Press game controller button, spacebar or click to begin]", this);
     msg3.setForeground(GUI_util.COLOR_SELECTED);
+    msg3.setHorizontalAlignment(SwingConstants.CENTER);
 
     label_friendImg = new JLabel(new ImageIcon(friendlyImage));
 
@@ -104,14 +100,19 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     label_waitImg = new JLabel(new ImageIcon(waitImage));
 
     
-    label_friendTxt = GUI_util.makeLabel20("Our Delton-class starfighter", this);
-    label_enemyTxt = GUI_util.makeLabelArial20("Enemy Glion battlecrusiers", this);
+    label_friendTxt1 = GUI_util.makeLabelArial20("Our", this);
+    label_friendTxt2 = GUI_util.makeLabelArial20("Delton-class Starfighter", this);
+    label_enemyTxt1 = GUI_util.makeLabelArial20("Enemy", this);
+    label_enemyTxt2 = GUI_util.makeLabelArial20("Glion Battlecrusiers", this);
+    
+    label_friendTxt1.setHorizontalAlignment(SwingConstants.CENTER);
+    label_friendTxt2.setHorizontalAlignment(SwingConstants.CENTER);
+    label_enemyTxt1.setHorizontalAlignment(SwingConstants.CENTER);
+    label_enemyTxt2.setHorizontalAlignment(SwingConstants.CENTER);
+    
 
-
-    this.add(label_enemyTxt);
     this.add(label_enemyImg);
     this.add(label_waitImg);
-    this.add(label_friendTxt);
     this.add(label_friendImg);
 
     this.addMouseListener(this);
@@ -143,27 +144,37 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     int boxH20 = fontH20 + 8;
     int rowH20 = boxH20 + 3;
 
-    int titleLeft = fontW30 * 4;
+    int titleLeft = fontW30 * 2;
     int introLeft = titleLeft + fontW30 * 3;
 
     int titleWidth = panelWidth - titleLeft * 2;
     int introWidth = panelWidth - introLeft * 2;
     int introHeight = fontH20 * 10;
 
-    int titleTop = fontH30;
-    int introTop = titleTop + fontH30 * 2;
+    int titleTop = fontH20;
+    int introTop = titleTop + fontH30 + rowH20;
 
     msg1.setBounds(titleLeft, titleTop, titleWidth, boxH30);
     msg2.setBounds(introLeft, introTop, introWidth, introHeight);
 
-    iconSize = 256;
 
-    label_enemyImg.setBounds((int) (panelWidth * 0.25) - 128, (int) (panelHeight * 0.5), iconSize, iconSize);
-    label_friendImg.setBounds((int) (panelWidth * 0.75) - 128, (int) (panelHeight * 0.5), iconSize, iconSize);
-    label_friendTxt.setBounds((int) (panelWidth * 0.25) - 128, (int) (panelHeight * 0.3), iconSize, 256);
-    label_enemyTxt.setBounds((int) (panelWidth * 0.75) - 128, (int) (panelHeight * 0.3), iconSize, 256);
+    int iconTop = introTop + introHeight + 5;
+    int iconLeft = introLeft + fontW20*5;
+    int col2 = panelWidth - 2*ICON_SIZE - iconLeft;
+    label_friendImg.setBounds(iconLeft, iconTop, ICON_SIZE, ICON_SIZE);
+    label_enemyImg.setBounds(col2, iconTop, ICON_SIZE, ICON_SIZE);
+    
+    int imageLabelTop = iconTop+ICON_SIZE+5;
+    int imageLabelWidth = ICON_SIZE*2;
+    int text1L = (iconLeft+ICON_SIZE/2)-imageLabelWidth/2;
+    int text2L = (col2+ICON_SIZE/2)-imageLabelWidth/2;
+    label_friendTxt1.setBounds(text1L, imageLabelTop, imageLabelWidth, fontH20);
+    label_friendTxt2.setBounds(text1L, imageLabelTop+fontH20, imageLabelWidth, boxH20);
+    label_enemyTxt1.setBounds(text2L, imageLabelTop, imageLabelWidth, fontH20);
+    label_enemyTxt2.setBounds(text2L, imageLabelTop+fontH20, imageLabelWidth, boxH20);
 
-    msg3.setBounds((int) (panelWidth * 0.5) - 400, (int) (panelHeight * 0.75), 800, 150);
+    
+    msg3.setBounds(0,panelHeight - rowH30 - 15,panelWidth,boxH30);
 
     this.repaint();
 
@@ -185,14 +196,14 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     oddballCount = 0;
     lastOddBallIdx = 0;
     timeTotalElapsed = 0;
-    timeCurrentSymbolEnd = 0.25;
+    timeCurrentSymbolEnd = WAIT_MIN_SEC;
 
-    int imageLeft = (panelWidth - iconSize) / 2;
-    int imageTop = (panelHeight - iconSize) / 2;
+    int imageLeft = (panelWidth - ICON_SIZE) / 2;
+    int imageTop = (panelHeight - ICON_SIZE) / 2;
 
-    label_friendImg.setBounds(imageLeft, imageTop, iconSize, iconSize);
-    label_enemyImg.setBounds(imageLeft, imageTop, iconSize, iconSize);
-    label_waitImg.setBounds(imageLeft, imageTop, iconSize, iconSize);
+    label_friendImg.setBounds(imageLeft, imageTop, ICON_SIZE, ICON_SIZE);
+    label_enemyImg.setBounds(imageLeft, imageTop, ICON_SIZE, ICON_SIZE);
+    label_waitImg.setBounds(imageLeft, imageTop, ICON_SIZE, ICON_SIZE);
 
     mode = OddballMode.START;
     showWait();
@@ -205,8 +216,10 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     msg1.setVisible(state);
     msg2.setVisible(state);
     msg3.setVisible(state);
-    label_enemyTxt.setVisible(state);
-    label_friendTxt.setVisible(state);
+    label_enemyTxt1.setVisible(state);
+    label_enemyTxt2.setVisible(state);
+    label_friendTxt1.setVisible(state);
+    label_friendTxt2.setVisible(state);
     label_enemyImg.setVisible(state);
     label_friendImg.setVisible(state);
 
