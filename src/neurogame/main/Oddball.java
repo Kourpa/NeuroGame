@@ -65,7 +65,7 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
       + "We’ll show you images of our Delton-class starfighter interspersed with "
       + "images of Glion battlecruisers.\n\n"
       + "You must keep a mental count of the number of Glion battlecrusiers you see, "
-      + "and report this count when this 6 minute exercise is over.";
+      + "and report this count when this 7 minute exercise is over.";
 
   public Oddball(NeuroGame game)
   {
@@ -117,6 +117,7 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
 
     this.addMouseListener(this);
     this.addKeyListener(this);
+    this.requestFocus();
   }
 
   public void init(User currentUser)
@@ -173,8 +174,8 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     label_enemyTxt1.setBounds(text2L, imageLabelTop, imageLabelWidth, fontH20);
     label_enemyTxt2.setBounds(text2L, imageLabelTop+fontH20, imageLabelWidth, boxH20);
 
-    
-    msg3.setBounds(0,panelHeight - rowH30 - 15,panelWidth,boxH30);
+    int startMsgTop = (panelHeight - rowH30) - rowH20;
+    msg3.setBounds(0,startMsgTop,panelWidth,boxH20);
 
     this.repaint();
 
@@ -222,30 +223,30 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     label_friendTxt2.setVisible(state);
     label_enemyImg.setVisible(state);
     label_friendImg.setVisible(state);
-
-    // areaScrollPane.setVisible(state);
   }
 
   public boolean oddballUpdate(double deltaSec)
   {
+    this.requestFocus();
     if (mode == OddballMode.EXIT) return false;
 
     if (mode == OddballMode.INTRO) return true;
     if (mode == OddballMode.START) return true;
-    if (mode == OddballMode.DONE) return true;
+    if (mode == OddballMode.DONE)  return false;
     if (mode == OddballMode.SETUP) return true;
+
 
     timeTotalElapsed += deltaSec;
     if (timeTotalElapsed < timeCurrentSymbolEnd) return true;
 
-    totalEventCount++;
-    if (totalEventCount > TOTAL_EVENTS)
+
+    if (totalEventCount >= TOTAL_EVENTS)
     {
       oddballDone();
       return true;
     }
+    
 
-    System.out.println("Oddball: event #=" + totalEventCount + ", timeTotalElapsed=" + timeTotalElapsed);
 
     if (mode != OddballMode.PLAY_WAIT)
     {
@@ -254,6 +255,9 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
       timeCurrentSymbolEnd += waitTime;
       return true;
     }
+    
+    totalEventCount++;
+    System.out.println("Oddball: event #=" + totalEventCount + ", timeTotalElapsed=" + timeTotalElapsed);
 
     if (totalEventCount - lastOddBallIdx < 3) showNormal();
     else if (totalEventCount - lastOddBallIdx >= 6) showOddball();
@@ -267,24 +271,6 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     return true;
   }
 
-  // /* Menu Button Methods */
-  // /**
-  // * Called from the HighscoreUpdate() in gamecontroller To select the buttons
-  // * with the joystick
-  // */
-  // public void updateJoystick(Controller joystick, int JOYSTICK_X, int
-  // JOYSTICK_Y)
-  // {
-  // joystick.poll();
-  //
-  // for (int i = 0; i < 5; i++)
-  // {
-  // if (joystick.isButtonPressed(i))
-  // {
-  // instructions = false;
-  // }
-  // }
-  // }
 
   private void oddballDone()
   {
@@ -352,14 +338,6 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
   @Override
   public void keyTyped(KeyEvent event)
   {
-    int code = event.getKeyCode();
-    if (mode == OddballMode.INTRO)
-    {
-      if ((code == KeyEvent.VK_ENTER) || (code == KeyEvent.VK_SPACE)) startOddball();
-    }
-
-    if (code == KeyEvent.VK_ESCAPE) mode = OddballMode.EXIT;
-
   }
 
   @Override
@@ -369,7 +347,15 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
   @Override
   public void keyReleased(KeyEvent event)
   {
+    int code = event.getKeyCode();
+    //System.out.println("keyTyped code= " + code);
+    
+    if (mode == OddballMode.INTRO)
+    {
+      if ((code == KeyEvent.VK_ENTER) || (code == KeyEvent.VK_SPACE)) startOddball();
+    }
 
+    if (code == KeyEvent.VK_ESCAPE) mode = OddballMode.EXIT;
   }
 
   @Override

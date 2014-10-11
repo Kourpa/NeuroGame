@@ -124,7 +124,7 @@ public final class Library
 					.getLocalGraphicsEnvironment();
 			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(path
 					+ "KarmaticArcade.ttf")));
-			System.out.println("Registered Font - should only happen once!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("Registered Font");
 		} catch (IOException | FontFormatException e) {
 			System.out.println("Error Loading Font - MenuButtons.java");
 		}
