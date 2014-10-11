@@ -10,7 +10,7 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import neurogame.main.GameController;
+import neurogame.io.InputController;
 
 /**
  * Key bindings module library.
@@ -19,7 +19,7 @@ import neurogame.main.GameController;
  */
 public class KeyBinds
 {
-  private GameController controller;
+  private InputController controller;
   private InputMap iMap;
   private ActionMap aMap;
 
@@ -29,7 +29,7 @@ public class KeyBinds
    * @param pane
    *          JComponent to which to attach the key bindings.
    */
-  public KeyBinds(JComponent pane, GameController controller)
+  public KeyBinds(JComponent pane, InputController controller)
   {
     this.controller = controller;
     iMap = pane.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW);

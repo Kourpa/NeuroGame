@@ -25,12 +25,8 @@ public class MainDrawPanel extends JPanel
   private Graphics2D canvasObjectLayer;
   private BufferedImage imageObjectLayer;
 
-  // private Graphics2D canvasBackgroundLayer;
-  // private BufferedImage imageBackgroundLayer;
-
   private int windowWidth, windowHeight;
 
-  private NeuroFrame frame;
   private World world;
   private NeuroGame game;
   private PlayerHud HUD;
@@ -38,22 +34,21 @@ public class MainDrawPanel extends JPanel
   /**
    * Instantiates a new NeuroFrame.
    */
-  public MainDrawPanel(final NeuroGame game, NeuroFrame frame)
+  public MainDrawPanel(final NeuroGame game)
   {
 	  System.out.println("MainGameDrawPanel(): Enter");
-	  this.frame = frame;
 	  this.game = game;
   }
   
-  public void setGameOver(GameOverScreen screen){
-	  //this.gameOver = screen;
+  public void setGameOver()
+  {
 	  HUD.drawGameOver(true);
   }
 
   public void setWorld(World world)
   {
     this.world = world;
-    HUD = new PlayerHud(frame, world,frame.getUser());
+    HUD = new PlayerHud(game, world, game.getUser());
     HUD.drawGameOver(false); // reset the HUD
   }
 
@@ -80,7 +75,7 @@ public class MainDrawPanel extends JPanel
    */
 private void drawHUD()
 {
-	HUD.updateHUD(canvasObjectLayer, frame, world.getPlayer().getAmmoCount());
+	HUD.updateHUD(canvasObjectLayer, game, world.getPlayer().getAmmoCount());
 }
 
 public void paintComponent(Graphics g)

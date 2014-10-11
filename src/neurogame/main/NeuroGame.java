@@ -25,10 +25,21 @@
 
 package neurogame.main;
 
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import javax.swing.JFrame;
+import javax.swing.Timer;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import neurogame.gameplay.Enemy;
@@ -41,6 +52,8 @@ import neurogame.gameplay.Star;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.io.Logger;
+import neurogame.io.User;
+import neurogame.io.InputController;
 
 /**
  * NeuroGame's main class.
@@ -49,10 +62,10 @@ import neurogame.io.Logger;
  * @team Danny Gomez
  * @team Marcos Lemus
  */
-public class NeuroGame
+@SuppressWarnings("serial")
+public class NeuroGame extends JFrame implements ActionListener
 {
-  private NeuroFrame frame;
-  private GameController controller;
+  private InputController controller;
 
   public enum GameState
   {
@@ -62,27 +75,37 @@ public class NeuroGame
     PAUSED,       // Normal game play paused
     DEAD,         // TODO : Player has died, continue showing game moving, no player controls, display "Game Over" overlay.
     GAMEOVER,     // show the high scores 
-    ODDBALL,	  // Oddball visual test 
+    ODDBALL,	    // Oddball visual test 
     HIGHSCORE;	  // Highscore screen after winning
   }
   
-  private long startTime;
-  private long elapsedTime;
+  private static final int MIN_WINDOW_WIDTH = 200;
+  private static final int MIN_WINDOW_HEIGHT = 200;
+  
+  public static final double NANO_TO_SEC = 1.0e-9;
+  
+  private Timer timer;
+  private double timeSec_start, timeSec_LastTick;
+  
   
   private GameState gameState = GameState.INITIALIZING;
-  private TitleScreen title;
-  private GameOverScreen gameOver;
+  private TitleScreen titlePanel;
+  private HighScoreScreen highScorePanel;
 
   private World world;
   private Player player;
-  private double timepassed;
   
   
   private Oddball oddball;
-  private boolean loggingMode;
   public Logger log;
   
-  private boolean soundEnabled;
+  
+  private MainDrawPanel drawPanel;
+  private int windowPixelWidth, windowPixelHeight;
+
+  private Container contentPane;
+
+  private User currentUser;
   
 
   /**
@@ -90,62 +113,78 @@ public class NeuroGame
    */
   public NeuroGame()
   {
-    init();
-  }
+    System.out.println("NeuroFrame(): Enter");
 
-  /**
-   * Sets up gameFrame and controller.
-   */
-  private void init()
-  {
-    startTime = elapsedTime = System.currentTimeMillis();
+
+    this.setResizable(true);
+    this.setTitle(Library.GAME_TITLE);
+
+    Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+    int screenWidth = screenSize.width;
+    int screenHeight = screenSize.height;
+
+    this.setBounds(0, 0, screenWidth, screenHeight);
+    this.setVisible(true);
+    contentPane = getContentPane();
+    contentPane.setLayout(null);
+    
+    calculateWindowSize();
+    
+    Library.initSprites(this);
+    Library.loadFont();
+
+    drawPanel = new MainDrawPanel(this);
+    contentPane.add(drawPanel);
+    drawPanel.setVisible(false);
+
+
+
+    //startTime = elapsedTime = System.currentTimeMillis();
     
     // Load user profiles
-    Library.loadUsers();
-    final NeuroGame game = this;
-        
-    frame = new NeuroFrame(game);
-    Library.initSprites(frame);
-    Library.loadFont();
+    User.loadUsers();
     
-  	title = new TitleScreen(frame, this);
-    controller = new GameController(this, frame);
+    controller = new InputController(this);
     
-    frame.setGameController(controller);
-    frame.render(null);
+  	titlePanel = new TitleScreen(this, controller);
+  	contentPane.add(titlePanel);
+  	
+  	highScorePanel = new HighScoreScreen(this);
+  	contentPane.add(highScorePanel);
+  	
+    drawPanel.setLocation(0, 0);
+    titlePanel.setLocation(0, 0);
+    highScorePanel.setLocation(0, 0);
+  	
+  	
+    resizeHelper();
+    
     showTitle();
     
-    // Defaults
-    loggingMode = true;
-    soundEnabled = true;
-    timepassed = 0.0;
-  }
-  
-  public void mainGameLoop()
-  {
-    long timeMS_start = System.currentTimeMillis();
-    long timeMS_curr = timeMS_start;
-    long timeMS_last = timeMS_start;
-    update(0);
+    this.addComponentListener(new ComponentAdapter()
+    {
+      public void componentResized(ComponentEvent e)
+      {
+        resizeHelper();
+      }
+    });
 
-    while (true)
+    // Listener to check for the frame closing and cleanly exit.
+    addWindowListener(new WindowAdapter()
     {
 
-      long deltaMilliSec = System.currentTimeMillis() - timeMS_last;
-
-      if (deltaMilliSec < Library.MIN_FRAME_MILLISEC)
+      public void windowClosing(WindowEvent e)
       {
-        try { Thread.sleep(Library.MIN_FRAME_MILLISEC - deltaMilliSec); }
-        catch (Exception e) { }
+        quit();
       }
-      timeMS_curr = System.currentTimeMillis();
-      double deltaSec = (timeMS_curr - timeMS_last) / 1000.0;
-
-      timeMS_last = timeMS_curr;
-      update(deltaSec);
-    }
+    });
+    
+    timeSec_start = System.nanoTime()*NANO_TO_SEC;
+    timeSec_LastTick = timeSec_start;
+    timer = new Timer(Library.MIN_FRAME_MILLISEC, this);
+    timer.start();
   }
-
+  
 
 
   /**
@@ -168,16 +207,17 @@ public class NeuroGame
       pauseUpdate();
       break;
     case TITLE:
-    	controller.titleUpdate();
+      titlePanel.update(deltaSec);
       break;
     case GAMEOVER:
-    	controller.gameOverUpdate(deltaSec);
+    	gameOverUpdate(deltaSec);
     	break;
     case HIGHSCORE:
-    	controller.highscoreUpdate();
+    	highScorePanel.update();
     	break;
     case ODDBALL:
-    	controller.oddballUpdate();
+      boolean oddballRunning = oddball.oddballUpdate(deltaSec);
+      if (!oddballRunning) showTitle();
     	break;
     default:
       break;
@@ -188,8 +228,41 @@ public class NeuroGame
     { gameObjectList = world.getObjectList();
     }
 
-    frame.render(gameObjectList);
+    render(gameObjectList);
   }
+  
+  
+  
+  /**
+   * Continue scrolling the game when the player dies
+   */
+  public void gameOverUpdate(double deltaTime)
+  {
+    // Player input.
+   controller.gameOverKeyHandler();
+    double scrollDistance = world.update(deltaTime);
+
+    // Draw the Zappers.
+    updateObjectList(world.getObjectList(), deltaTime, scrollDistance);
+  }
+  
+//  public void oddballUpdate()
+//  {
+//    if (getOddballScreen().isFinished() == true)
+//    {
+//      showTitle();
+//    }
+//
+//    controller.oddballKeyHandler();
+//
+//    if (getOddballScreen() != null)
+//    {
+////      if (joystick != null)
+////      {
+////        game.getOddballScreen().updateJoystick(joystick, joystickAxisX, joystickAxisY);
+////      }
+//    }
+//  }
 
   public World getWorld(){
 	  return world;
@@ -199,29 +272,23 @@ public class NeuroGame
    * Displays the title screen.
    */
   public void showTitle(){
-	MainDrawPanel drawPanel = frame.getDrawPanel();
-    
-	gameState = GameState.TITLE;
+	  gameState = GameState.TITLE;
     drawPanel.setVisible(false);
-    title.showTitleScreen(true);
+    if (oddball != null) oddball.setVisible(false);
+    titlePanel.showTitleScreen();
     
   }
   
   private void showGameOver(){
-	  MainDrawPanel drawPanel = frame.getDrawPanel();
-	  
 	  gameState = GameState.GAMEOVER;
-	  drawPanel.setGameOver(null);
+	  drawPanel.setGameOver();
 	  this.player.die(true);
   }
   
   public void showHighScores(){
-	  MainDrawPanel drawPanel = frame.getDrawPanel();
-	  
 	  gameState = GameState.HIGHSCORE;
-	  gameOver = new GameOverScreen(frame,frame.getCurrentUser());
-	  drawPanel.setGameOver(gameOver);
 	  drawPanel.setVisible(false);
+	  highScorePanel.showScorePanel(currentUser);
   }
 
   /**
@@ -235,10 +302,7 @@ public class NeuroGame
       controller.getInputs().put("pause", false);
       unpause();
     }
-    if (controller.getInputs().get("sound"))
-    {
-      soundEnabled = !soundEnabled;
-    }
+
   }
 
   /**
@@ -254,33 +318,6 @@ public class NeuroGame
 
 
   /**
-   * Setter for loggingMode.
-   *
-   * @param loggingMode
-   *          Boolean for enabling/disabling local logging.
-   */
-  public void setLoggingMode(boolean loggingMode)
-  {
-    this.loggingMode = loggingMode;
-  }
-  
-  public boolean getLoggingMode(){
-	  return loggingMode;
-  }
-
-  /**
-   * Setter for enabling/disabling the sound.
-   *
-   * @param soundEnabled
-   *          Enable/disable the sound if true/false, respectively.
-   */
-  public void setSound(boolean soundEnabled)
-  {
-    this.soundEnabled = soundEnabled;
-  }
-
-
-  /**
    * Kill the player.
    */
   private void killPlayer()
@@ -291,36 +328,55 @@ public class NeuroGame
   /**
    * Start a new game.
    */
-  public void newGame()
+  public void startGame(User currentUser)
   {
-    System.out.println("GameController.newGame()  loggingMode="+loggingMode );
-    gameState = GameState.PLAYING;
-
     
+    this.currentUser = currentUser;
+    
+    
+    titlePanel.setVisible(false);
+    highScorePanel.setVisible(false);
+    
+    drawPanel.setVisible(true);
+
     world = new World();
+    
+    //System.out.println("NeuroGame.newGame()  world="+world);
+    
     Star.initGame();
     Missile.initGame();
     // zappers = world.getZappers();
-    frame.startGame(world);
+    
+    drawPanel.setWorld(world);
+    
     controller.setControllable(true);
     player = world.getPlayer();
     Ammo.initGame();
     Enemy.initGame();
 
-    if (loggingMode)
+    if (currentUser.isLogging())
     { if (log == null) log = new Logger();
       log.startGame();
     }
     
+    gameState = GameState.PLAYING;
+    
   }
   
-  public void showOddBall()
+  public void startOddBall(User currentUser)
   {
-    if (loggingMode)
+    this.currentUser = currentUser;
+    titlePanel.setVisible(false);
+    
+    if (currentUser.isLogging())
     {
       if (log == null) log = new Logger();
     }
-    oddball = new Oddball(frame, this);
+    if (oddball == null)
+    { oddball = new Oddball(this);
+      this.add(oddball);
+    }
+    oddball.init(currentUser);
     gameState = GameState.ODDBALL;
   }
   /**
@@ -332,7 +388,7 @@ public class NeuroGame
 		  gameState = GameState.PAUSED;
 	  }
 	  else if(gameState == GameState.PAUSED){
-		  gameState = GameState.PLAYING;
+		  gameState = GameState.PLAYING;    
 	  }
   }
 
@@ -350,21 +406,14 @@ public class NeuroGame
    */
   private void gameOver()
   {
-  
-    
-  	frame.getUser().saveHighscore(player.getScore());
-   	Library.saveUser(frame.getUser());
-
+    currentUser.setHighscore(player.getScore());
     showGameOver();
   }
 
   public TitleScreen getTitleScreen(){
-	  return title;
+	  return titlePanel;
   }
   
-  public GameOverScreen getGameOverScreen(){
-	  return gameOver;
-  }
   
   public Oddball getOddballScreen(){
 	  return oddball;
@@ -375,11 +424,13 @@ public class NeuroGame
     
     // Player input.
     controller.keyHandler();
+    //System.out.println("NeuroGame.game() = world=" + world);
+    
     double scrollDistance = world.update(deltaTime);
 
     updateObjectList(world.getObjectList(), deltaTime, scrollDistance);
     
-    if (loggingMode) log.update(world);
+    if (currentUser.isLogging()) log.update(world);
   }
 
   public GameState getGameState(){
@@ -439,54 +490,7 @@ public class NeuroGame
   
  
 
-  /**
-   * Gets the time since initialization (in milliseconds).
-   * 
-   * @return Time since initialization (in milliseconds).
-   */
-  public long elapsedTime(){
-    return System.currentTimeMillis() - startTime;
-  }
-
-  /**
-   * Converts the time since initialization to a string.
-   * 
-   * @return String representation of the elapsed time.
-   */
-  public String elapsedTimeString()
-  {
-    StringBuilder time = new StringBuilder("");
-    elapsedTime = elapsedTime();
-    long elapsedSecs = elapsedTime / 1000;
-    long elapsedMins = elapsedSecs / 60;
-    long hours = elapsedMins / 60;
-    long mins = elapsedMins % 60;
-    long secs = elapsedSecs % 60;
-
-    // Hours.
-    if (hours < 10)
-    {
-      time.append("0");
-    }
-    time.append(hours);
-    time.append(":");
-    // Minutes.
-    if (mins < 10)
-    {
-      time.append("0");
-    }
-    time.append(mins);
-    time.append(":");	
-    // Seconds.
-    if (secs < 10)
-    {
-      time.append("0");
-    }
-    time.append(secs);
-
-    return time.toString();
-  }
-
+ 
   /**
    * Print CLI instructions.
    */
@@ -517,7 +521,7 @@ public class NeuroGame
    */
   public void quit()
   {
-    if (loggingMode) 
+    if (currentUser != null && currentUser.isLogging()) 
     { if (log != null) log.closeLog();
       log = null;
     }
@@ -608,6 +612,119 @@ public class NeuroGame
 	    // Hand off control to the GameController and start the timer. The
 	    // timer must not be started until after setting the frame to full-
 	    // screen-exclusive mode, as it can cause concurrency issues.
-	    game.mainGameLoop();
+	    //game.mainGameLoop();
+  }
+  
+  
+  public void setGameController(InputController cont){
+    this.controller = cont;
+  }
+
+
+  public MainDrawPanel getDrawPanel(){
+    return drawPanel;
+  }
+  
+ 
+  
+  /**
+ * Sets the user for the session
+ */
+public void setUser(User newUser){
+    this.currentUser = newUser;
+  }
+public User getUser(){
+  return this.currentUser;
+}
+  
+  /**
+ * Returns the current user 
+ */
+public User getCurrentUser(){
+    return this.currentUser;
+  }
+
+  /**
+   * A helper method that gets called when the window is resized, which releases
+   * the old buffered image and generates a new one with the new window
+   * dimensions.
+   */
+  private void resizeHelper()
+  {
+
+    boolean sizeIsOkay = calculateWindowSize();
+
+    if (sizeIsOkay)
+    {
+      drawPanel.resizeHelper(windowPixelWidth, windowPixelHeight);
+      titlePanel.resizeHelper(windowPixelWidth, windowPixelHeight);
+      
+      System.out.println("NeuroFrame.resizeHelper(): Enter (" + windowPixelWidth
+          + ", " + windowPixelHeight + ")");
+    }
+  }
+  
+  private boolean calculateWindowSize()
+  {
+    boolean sizeIsOkay = true;
+    int outsideFrameWidth = this.getWidth();
+    int outsideFrameHeight = this.getHeight();
+
+    if (outsideFrameWidth < MIN_WINDOW_WIDTH)
+    {
+      outsideFrameWidth = MIN_WINDOW_WIDTH;
+      sizeIsOkay = false;
+    }
+
+    if (outsideFrameHeight < MIN_WINDOW_HEIGHT)
+    {
+      outsideFrameHeight = MIN_WINDOW_HEIGHT;
+      sizeIsOkay = false;
+    }
+
+    if (outsideFrameHeight > outsideFrameWidth)
+    {
+      outsideFrameHeight = outsideFrameWidth;
+      sizeIsOkay = false;
+    }
+    if (outsideFrameWidth > outsideFrameHeight * 2)
+    {
+      outsideFrameWidth = outsideFrameHeight * 2;
+      sizeIsOkay = false;
+    }
+    
+    
+    Insets inset = this.getInsets();
+    windowPixelWidth = outsideFrameWidth - inset.left - inset.right;
+    windowPixelHeight = outsideFrameHeight - inset.top - inset.bottom;
+
+
+
+    if (!sizeIsOkay)
+    {
+      this.setSize(outsideFrameWidth, outsideFrameHeight);
+      return false;
+    }
+    
+    Library.setWindowPixelWidth(windowPixelWidth);
+    Library.setWindowPixelHeight(windowPixelHeight);
+    Library.U_VALUE = windowPixelHeight;
+
+    return true;
+  }
+
+  public void render(ArrayList<GameObject> gameObjList)
+  {
+    drawPanel.render(gameObjList);
+  }
+
+  //This is the main game loop controlled by a timer.
+  public void actionPerformed(ActionEvent e)
+  {
+    double timeCurrent = System.nanoTime()*NANO_TO_SEC;
+    double deltaSec = timeCurrent - timeSec_LastTick;
+
+    update(deltaSec);
+    timeSec_LastTick = timeCurrent;
   }
 }

@@ -17,7 +17,7 @@ import java.util.LinkedList;
 
 import neurogame.gameplay.GameObjectType;
 import neurogame.level.SpriteParticles;
-import neurogame.main.NeuroFrame;
+import neurogame.main.NeuroGame;
 
 /**
  * An image library for NeuroGame - handles loading and storage of game images.
@@ -30,12 +30,12 @@ import neurogame.main.NeuroFrame;
 public class SpriteMap extends HashMap<String, BufferedImage>
 {
   private LinkedList<SpriteMeta> spriteList;
-  private NeuroFrame frame;
+  private NeuroGame frame;
 
   /**
    * Instantiate a new SpriteMap and load the resources.
    */
-  public SpriteMap(NeuroFrame frame)
+  public SpriteMap(NeuroGame frame)
   {
     spriteList = new LinkedList<SpriteMeta>();
     this.frame = frame;
@@ -68,26 +68,16 @@ public class SpriteMap extends HashMap<String, BufferedImage>
 
     add("titleBackground", "/images/title-screen.png",
         Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
-    
-    add("profileBackground", "/images/profile-screen.png",
-            Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
-   
-    
-    add("checkboxSelected", "/images/checkbox_selected.png", 32, 32);
-    add("checkboxPlain", "/images/checkbox_deselected.png", 32, 32);
-    
+     
     // Game graphics.
     add("player", "/images/playerShip.png", 68, 68);
     add("pDmg1", "/images/damage1.png", 68, 68);
     add("pDmg2", "/images/damage2.png", 68, 68);
     
     // Visual test graphics
-    add("TargetOddball","/images/playerShip.png", 68*3, 68*3);
-    add("FalseOddball","/images/enemySinusoidal.png", 68*3, 68*3);
+    add("OddballPlayerShip","/images/playerShip.png", 68*3, 68*3);
+    add("OddballEnemyShip","/images/enemySinusoidal.png", 68*3, 68*3);
     add("WaitOddball","/images/cross.png", 68*3, 68*3);
-    add("InstructionOddball","/images/VisualTestInstruction.png", frame.getWidth(),frame.getHeight());
-    add("CountOddball","/images/VisualTestFinished.png", frame.getWidth(),frame.getHeight());
-
     add("EnemyStraight", "/images/enemyStraight.png",
         Library.worldUnitToScreen(GameObjectType.ENEMY_STRAIGHT.getWidth()),
         Library.worldUnitToScreen(GameObjectType.ENEMY_STRAIGHT.getHeight()));
@@ -133,14 +123,13 @@ public class SpriteMap extends HashMap<String, BufferedImage>
    */
   public void loadResources()
   {
+    System.out.println("SpriteMap.loadResources()");
     for (SpriteMeta s : spriteList)
     {
       BufferedImage original = Library.loadImage(s.path, frame);
-      System.out.println("Loading Sprite: " + s.path);
-      BufferedImage resized = new BufferedImage(s.width, s.height,
-          BufferedImage.TYPE_INT_ARGB);
-      resized.createGraphics().drawImage(original, 0, 0, s.width, s.height,
-          null);
+      //System.out.println("Loading Sprite: " + s.path);
+      BufferedImage resized = new BufferedImage(s.width, s.height, BufferedImage.TYPE_INT_ARGB);
+      resized.createGraphics().drawImage(original, 0, 0, s.width, s.height, null);
       put(s.name, resized);
     }
   }

@@ -1,774 +1,735 @@
-/**
- * NeuroGame.
- * CS 351, Project 3
- *
- * Team members:
- * Ramon A. Lovato
- * Danny Gomez
- * Marcos Lemus
- */
-
 package neurogame.main;
 
+import neurogame.gameplay.DirectionVector;
+import neurogame.io.User;
 import neurogame.library.Library;
-import neurogame.library.User;
+import neurogame.io.InputController;
+
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-import javax.swing.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-/**
- * The title screen for NeuroGame.
- * 
- * @author Ramon A. Lovato
- * @team Danny Gomez
- * @team Marcos Lemus
- * @team Martin Lidy
- */
-public class TitleScreen extends MenuScreen {
-	private Image titleBackground, checkboxSelected,
-			checkboxPlain;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 
+@SuppressWarnings("serial")
+public class TitleScreen extends JPanel implements ActionListener, KeyListener
+{
+	private BufferedImage backgroundImage;
+	
+	private static final int BUTTON_CONFIG_IDX = 0;
+	private static final int BUTTON_START_IDX = 1;
+	private static final int BUTTON_ODDBALL_IDX = 2;
+	private static final int BUTTON_EXIT_IDX = 3;
+	private static final int BUTTON_COUNT = 4;
+	
+	private static final int SELECT_CURRENT = 0;
+	private static final int SELECT_UP = 1;
+	private static final int SELECT_DOWN = 2;
+	
+	
+	private int buttonSelectedIdx;
+	
 
-	private static MenuButton oddballButton, exitButton, startButton,
-			configureButton;
+	private static JButton[] buttonList = new JButton[BUTTON_COUNT];
+	
 
-	public boolean IsExiting, IsStarting, IsOption;
-	public int selectedJoystick;
-	public User selectedUser;
-	public int selectedJoystickIndex;
-	public Color TextColor;
-
-	//
-	private NeuroFrame frame;
 	private NeuroGame game;
-	private JLayeredPane lpane;
-
-	private Font FONT_SMALL;
+	private InputController gameController;
 
 	// Credits
-	private JLabel creditNames;
+	private JLabel label_creditNames;
+	private JLabel label_user, label_controller, label_Xaxis, label_Yaxis;
 	private String creditNameString;
-	private int creditIndex, creditCheck;
+	private double creditIndex = 0;
 
 	private String[] Names = { "Joel Castellanos", "Martin Lidy",
 			"Marcus Lemus", "Danny Gomez", "Ramon A. Lovato" };
 
-	private JCheckBox loggingBox;
-	private static JTextField nameInputField;
-	private JComboBox<String> userList = new JComboBox<String>(
-			Library.getUserNames());
-
-	private JComboBox<Integer> xJoystickIndex;
-	private JComboBox<Integer> yJoystickIndex;
-
-	private String selected;
-
-	private BufferedImage masterImage;
-	private JComboBox<String> controllerList;
 	private Map<String, BufferedImage> sprites;
 
-	private int width;
-	private int height;
+	
+	private JComboBox<String> dropDown_userList;
 
-	private int buttonPanelWidth, buttonPanelHeight;
+	private JPanel userPanel;
+	private JLabel label_userName;
+	private JCheckBox loggingBox;
+	private JTextField nameInputField;
 
-	/**
-	 * Instantiate a new TitleScreen.
-	 * 
-	 * @param frame
-	 *            NeuroFrame to contain this TitleScreen.
-	 */
-	public TitleScreen(final NeuroFrame frame, NeuroGame game) {
-		this.frame = frame;
+	private JComboBox<String> dropDownController;
+	private JComboBox<Integer> dropDown_joystickX;
+	private JComboBox<Integer> dropDown_joystickY;
+	private JButton but_configOK, but_configCancel;
+	private JoystickTestDrawPanel joyTestPanel;
+
+
+	public TitleScreen(NeuroGame game, InputController gameController) {
 		this.game = game;
+		this.gameController = gameController;
 		
-		// For Polling
-		IsExiting = false;
-		IsStarting = false;
-		IsOption = false;
+    this.setLayout(null);
+		
 
-		width = Library.getWindowPixelWidth();
-		height = Library.getWindowPixelHeight();
 		sprites = Library.getSprites();
 
 		// Get the images.
-		titleBackground = sprites.get("titleBackground");
-		checkboxSelected = sprites.get("checkboxSelected");
-		checkboxPlain = sprites.get("checkboxPlain");
+		backgroundImage = sprites.get("titleBackground");
+		
+		
+		
+    label_user = GUI_util.makeLabel30("User ", this);
+    dropDown_userList = new JComboBox<String>();
+    updateUserList();
+    dropDown_userList.setSelectedIndex(0);
+    this.add(dropDown_userList);
+    dropDown_userList.setFont(GUI_util.FONT30);
+    
+    System.out.println("TitleScreen():: dropDown_userList.getSelectedIndex()="+dropDown_userList.getSelectedIndex());
 
-		// Fonts
-		FONT_SMALL = new Font("Karmatic Arcade", Font.PLAIN, 23);
-
-		// Colors
-		TextColor = new Color(200, 200, 200);
+		
 
 		// Credits
 		ArrayList<String> nameSorted = new ArrayList<String>();
 		nameSorted.addAll(Arrays.asList(Names));
 		Collections.shuffle(nameSorted);
 
-		creditNameString = "Created By... ";
+		creditNameString = "Created By: ";
 		for (int i = 0; i < nameSorted.size(); i++) {
 			creditNameString += "   " + nameSorted.get(i) + "   ";
 		}
-
-		System.out.println("    Credit Names: " + creditNameString);
-
-		// Panel Size
-		buttonPanelWidth = 400;
-		buttonPanelHeight = 400;
-
-		// New UI
-		CreateMainMenu();
-
-		//
-		frame.getRootPane().addComponentListener(new ComponentAdapter() {
-			public void componentResized(ComponentEvent e) {
-				width = frame.getWidth();
-				height = frame.getHeight();
-			}
-		});
-
-    Options();
-	}
-
-	
-	/**
-	 * Adds content to the layered pane
-	 */
-	private void CreateMainMenu() {
-		lpane = new JLayeredPane();
-		lpane.setLayout(null);
-
-		// Background
-		final JLabel background = new JLabel(new ImageIcon(titleBackground));
-		background.setBackground(Color.GRAY);
-
-		// Panels
-		final JPanel buttonPanel = new JPanel();
-		buttonPanel.setBackground(Color.BLACK);
-		buttonPanel.setLayout(null);
-
+		
+    // Configure Button
+		buttonList[BUTTON_CONFIG_IDX] = GUI_util.makeButton("Configuration...", this, this);
+		
 		// Start Button
-		startButton = new MenuButton("Start Game", this);
-		startButton.b.addMouseListener(this);
-		buttonList.add(startButton);
-		startButton.setSelected(true);
+		buttonList[BUTTON_START_IDX] = GUI_util.makeButton("Start Game", this, this);
+		GUI_util.setSelected(buttonList[BUTTON_START_IDX], true);
+		buttonSelectedIdx = BUTTON_START_IDX;
 
 		// Oddball button
-		oddballButton = new MenuButton("P300 Responce Test", this);
-		oddballButton.b.addMouseListener(this);
-		buttonList.add(oddballButton);
+		buttonList[BUTTON_ODDBALL_IDX] = GUI_util.makeButton("Oddball Test", this, this);
 
-//		// Rewind button
-//		rewindButton = new MenuButton("Rewind", this);
-//		rewindButton.b.addMouseListener(this);
-//		buttonList.add(rewindButton);
 
 		// Exit button
-		exitButton = new MenuButton("Exit", this);
-		exitButton.b.addMouseListener(this);
-		buttonList.add(exitButton);
+		buttonList[BUTTON_EXIT_IDX] = GUI_util.makeButton("Exit", this, this);
 
-		// List of users to select
-		userList.setPreferredSize(new Dimension(375, 40));
-		userList.setFont(new Font("KarmaticArcade", Font.BOLD, 12));
-		userList.setBackground(Color.BLACK);
-		userList.setForeground(Color.WHITE);
-		updateUsers();
 
-		userList.addActionListener(new ActionListener() {
+		
+		
+		
+		
+    // Scrolling Credits
+    label_creditNames = new JLabel(creditNameString);
+    label_creditNames.setFont(GUI_util.FONT20);
+    label_creditNames.setForeground(GUI_util.COLOR_DESELECTED);
+    this.add(label_creditNames);
 
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (userList.getSelectedIndex() == 1) {
-					CreateNewUser(frame);
-				}
-				else if(userList.getSelectedIndex() < 2){
-					startButton.b.setEnabled(false);
-				}
-				else{
-					startButton.b.setEnabled(true);
-					frame.requestFocus();
-					savePreferences();
-				}
-			}
-		});
 
-		JPanel userPanel = new JPanel();
-		userPanel.setBackground(Color.black);
+		userPanel = new JPanel();
+		userPanel.setVisible(false);
+		userPanel.setLayout(null);
+		this.add(userPanel);
+		
+		Border raisedbevel = BorderFactory.createRaisedBevelBorder();
+		Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+		Border compound = BorderFactory.createCompoundBorder(raisedbevel, loweredbevel);
+		userPanel.setBorder(compound);
 
-		// Choose the joystick index
-		Integer[] joystickIndexes = {0,1,2,3,4};
+		Integer[] joystickIndexes = {0,1,2,3};
 	
-		xJoystickIndex = new JComboBox<Integer>(joystickIndexes);
-		xJoystickIndex.setSelectedIndex(0);
-		yJoystickIndex = new JComboBox<Integer>(joystickIndexes);
-		xJoystickIndex.setSelectedIndex(1);
-		
-		xJoystickIndex.setBackground(Color.BLACK);
-		xJoystickIndex.setForeground(Color.WHITE);
-		yJoystickIndex.setBackground(Color.BLACK);
-		yJoystickIndex.setForeground(Color.WHITE);
-		
-		xJoystickIndex.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0) {
-				if (xJoystickIndex.getSelectedIndex() == yJoystickIndex.getSelectedIndex()){
-					yJoystickIndex.setSelectedIndex(yJoystickIndex.getSelectedIndex() + 1);
-				}
-			}
-		});
-		
-		yJoystickIndex.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0) {
-				if (xJoystickIndex.getSelectedIndex() == yJoystickIndex.getSelectedIndex()){
-					xJoystickIndex.setSelectedIndex(xJoystickIndex.getSelectedIndex() + 1);
-				}
-			}
-		});
+		dropDown_joystickX = new JComboBox<Integer>(joystickIndexes);
+		dropDown_joystickY = new JComboBox<Integer>(joystickIndexes);
 		
 
-		JLabel userMessage = new JLabel("User:  ");
-		userMessage.setFont(FONT_SMALL);
-		userMessage.setForeground(TextColor);
+		label_userName = GUI_util.makeLabel20("User Name ", userPanel);
+		label_controller = GUI_util.makeLabel20("Controller ", userPanel);
+		label_Xaxis = GUI_util.makeLabel20("X-Axis ", userPanel);
+		label_Yaxis = GUI_util.makeLabel20("Y-Axis ", userPanel);
 
-		// Logging info
-		loggingBox = new JCheckBox();
-		loggingBox.setBackground(Color.getColor("TRANSLUCENT"));
-		loggingBox.setOpaque(false);
-		loggingBox.setIcon(new ImageIcon(checkboxPlain));
-		loggingBox.setSelectedIcon(new ImageIcon(checkboxSelected));
-		loggingBox.setSelected(true);
+	  nameInputField = new JTextField();
 
-		loggingBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				game.setLoggingMode(loggingBox.isSelected());
-				frame.requestFocus();
-				savePreferences();
-			}
-		});
+	  dropDownController = new JComboBox<String>();
+	  dropDownController.addActionListener(this);
+	  
+	  but_configOK = new JButton("OK");
+	  but_configCancel = new JButton("Cancel");
+	  
+	  userPanel.add(but_configOK);
+	  userPanel.add(but_configCancel);
+    
+	  but_configOK.addActionListener(this);
+	  but_configCancel.addActionListener(this);    
+	  but_configOK.setFont(GUI_util.FONT20);
+	  but_configCancel.setFont(GUI_util.FONT20);
 
+		loggingBox = new JCheckBox("Logging");
 
+    userPanel.add(nameInputField);
+    userPanel.add(loggingBox);
+    
 
-		// Scrolling Credits
-		JPanel creditPanel = new JPanel();
-		creditNames = new JLabel("Here are the credits");
-		creditNames.setFont(FONT_SMALL);
-		creditNames.setForeground(TextColor);
-		creditPanel.add(creditNames);
-
-		// Joystick configureButton
-		configureButton = new MenuButton("  Settings", 22, this);
-		configureButton.b.addMouseListener(this);
-		buttonList.add(configureButton);
-
-		userPanel.add(userMessage);
-		userPanel.add(userList);
-
-		userPanel.add(configureButton.b);
-
-		// Panels
-		buttonPanel.add(startButton.b);
-		buttonPanel.add(oddballButton.b);
-		//buttonPanel.add(rewindButton.b);
-		buttonPanel.add(exitButton.b);
-
-		startButton.b.setBounds(0, 0, buttonPanelWidth, 50);
-		oddballButton.b.setBounds(0, 50, buttonPanelWidth, 50);
-		//rewindButton.b.setBounds(0, 100, buttonPanelWidth, 50);
-		exitButton.b.setBounds(0, 150, buttonPanelWidth, 50);
-
-		buttonPanel.setBounds(width / 2 - buttonPanelWidth / 2,
-				(int) (height * 0.57), buttonPanelWidth, buttonPanelHeight);
-		buttonPanel.setOpaque(false);
-
-		userPanel.setBounds((int) (width * 0.5) - 250, (int) (height * 0.37),
-				500, 140);
-
-		//
-		creditNames.setBounds(0, 0, (int) (width * 0.8), 30);
-		creditNames.setPreferredSize(new Dimension((int) (width * 0.6), 30));
-		creditPanel.setBounds((int) (width * 0.5)-400,
-				(int) (height * 0.9), (int) (width * 0.8), 30);
-		creditPanel.setOpaque(false);
-
-		background.setBackground(Color.BLACK);
-		background.setBounds(0, 0, width, height);
-		background.setOpaque(true);
-
-		lpane.setBounds(0, 0, width, height);
-		lpane.add(background, 0, 0);
-		lpane.add(buttonPanel, 1, 0);
-		lpane.add(userPanel, 2, 0);
-		lpane.add(creditPanel, 3, 0);
-
-		//
-		frame.requestFocus();
-		frame.addKeyListener(this);
-		frame.getContentPane().add(lpane);
-		frame.setVisible(true);
-		frame.repaint();
-
-		restorePreferences();
-	}
-
-	public void showTitleScreen(boolean bShow) {
-
-		// Reset everything and display screen
-		if (bShow) {
-			this.IsExiting = false;
-			this.IsOption = false;
-			this.IsStarting = false;
-			lpane.setVisible(true);
-
-			frame.getContentPane().setLayout(null); // dont need this. fix in
-													// Gameover screen
-			frame.getContentPane().add(lpane);
-			lpane.repaint();
-			frame.requestFocus();
-
-		} else {
-			frame.getContentPane().remove(lpane);
-		}
-	}
-
-	public int getJoystickIndex(int index){
-		if(index == 0){
-			return xJoystickIndex.getSelectedIndex();			
-		}
+    userPanel.add(dropDownController);
+		userPanel.add(dropDown_joystickX);
+		userPanel.add(dropDown_joystickY);
 		
-		return yJoystickIndex.getSelectedIndex(); 
-	}
-	/**
-	 * Getters and setters for game options
-	 */
-	public User GetSelectedUser() {
-		return this.selectedUser;
-	}
+    nameInputField.setFont(GUI_util.FONT20);
+    loggingBox.setFont(GUI_util.FONT20);
 
-	public int GetSelectedJoystick() {
-		return this.selectedJoystick;
-	}
+   
+    dropDownController.setFont(GUI_util.FONT20);
+    dropDown_joystickX.setFont(GUI_util.FONT20);
+    dropDown_joystickY.setFont(GUI_util.FONT20);
 
-	/**
-	 * Save user preferences to a file
-	 */
-	private void savePreferences() {
-		Document dom;
-		Element e = null;
-		String path = System.getProperty("user.dir");
-		path += "/Users/";
-
-		// instance of a DocumentBuilderFactory
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
-		try {
-			// use factory to get an instance of document builder
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			// create instance of DOM
-			dom = db.newDocument();
-
-			// create the root element
-			Element rootEle = dom.createElement("pref");
-
-			// create data elements and place them under root
-			e = dom.createElement("Controller");
-			e.appendChild(dom.createTextNode(""
-					+ controllerList.getSelectedIndex()));
-			rootEle.appendChild(e);
-
-			e = dom.createElement("User");
-			e.appendChild(dom.createTextNode("" + userList.getSelectedIndex()));
-			rootEle.appendChild(e);
-
-			e = dom.createElement("Logging");
-			e.appendChild(dom.createTextNode("" + this.loggingBox.isSelected()));
-			rootEle.appendChild(e);
-
-			dom.appendChild(rootEle);
-
-			try {
-				Transformer tr = TransformerFactory.newInstance()
-						.newTransformer();
-				tr.setOutputProperty(OutputKeys.INDENT, "yes");
-				tr.setOutputProperty(OutputKeys.METHOD, "xml");
-				tr.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-				tr.setOutputProperty(
-						"{http://xml.apache.org/xslt}indent-amount", "4");
-
-				// send DOM to file
-				FileOutputStream out = new FileOutputStream(path + "pref.xml");
-				out.close();
-
-				tr.transform(new DOMSource(dom), new StreamResult(
-						new FileOutputStream(path + "pref.xml")));
-
-			} catch (TransformerException te) {
-				System.out.println(te.getMessage());
-			} catch (IOException ioe) {
-				System.out.println(ioe.getMessage());
-			}
-		} catch (ParserConfigurationException pce) {
-			System.out
-					.println("UsersXML: Error trying to instantiate DocumentBuilder "
-							+ pce);
-		}
-
-		System.out.println("Finished Saving Perfs: ");
-	}
-
-	/**
-	 * Restore the saved user preferences file
-	 */
-	private void restorePreferences() {
-		String path = System.getProperty("user.dir");
-		path += "/Users/";
-
-		ArrayList<String> perfs = new ArrayList<String>();
-		Document dom;
+    joyTestPanel = new JoystickTestDrawPanel();
+    Border raisedetched = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
+    joyTestPanel.setBorder(raisedetched);
+    userPanel.add(joyTestPanel);
+    
+		this.addKeyListener(this);
+		dropDown_userList.addActionListener(this);
+    dropDown_joystickX.addActionListener(this);
+    dropDown_joystickY.addActionListener(this);
 		
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		try {
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			dom = db.parse(path + "pref.xml");
-
-			Element doc = dom.getDocumentElement();
-
-			perfs.add(doc.getElementsByTagName("Controller").item(0)
-					.getFirstChild().getNodeValue());
-			perfs.add(doc.getElementsByTagName("User").item(0).getFirstChild()
-					.getNodeValue());
-			perfs.add(doc.getElementsByTagName("Logging").item(0)
-					.getFirstChild().getNodeValue());
-
-		} catch (Exception pce) {
-			System.out.println(pce.getMessage());
-		}
-
-		System.out.println("Finished Loading Perfs: ");
-
-		// Joystick perfs
-		try {
-			selectedJoystick = Integer.parseInt(perfs.get(0));
-		} catch (Exception e) {
-			System.out.println("Error with joystick");
-		}
-
-		//
-		try {
-			controllerList.setSelectedIndex(Integer.parseInt(perfs.get(0)));
-			loggingBox.setSelected(Boolean.parseBoolean(perfs.get(2)));
-			game.setLoggingMode(loggingBox.isSelected());
-			userList.setSelectedIndex(0);
-		} catch (Exception e) {
-		}
-
-	}
-
-	/**
-	 * Scrolls the credits
-	 */
-	public void ScrollCredits(float deltaTime) {
-		int marqueeSize = 40;
-		int updateSpeed = 10; // Higher is slower
-		creditCheck++;
-
-		// Update slower than the tick speed
-		if (creditCheck % updateSpeed == 0) {
-
-			// reset the index if it passes
-			if (creditIndex > creditNameString.length()) {
-				creditIndex = 0;
-			}
-			
-			else if (creditIndex + marqueeSize > creditNameString.length()){
-				creditNames.setText(creditNameString.substring(creditIndex, creditNameString.length())
-								+ creditNameString.substring(0, marqueeSize - (creditNameString.length() - creditIndex)));
-			}
-			else{
-				creditNames.setText(creditNameString.substring(creditIndex, creditIndex + marqueeSize));
-			}
-
-			creditIndex++;
-		}
 	}
 	
+	
+	
+	
+  public void resizeHelper(int width, int height)
+  {
+    this.setSize(width, height);
+    
+    FontMetrics fm30 = this.getFontMetrics(GUI_util.FONT36);
+    FontMetrics fm20 = this.getFontMetrics(GUI_util.FONT20);
+    
+    int fontW20 = fm20.stringWidth("X");
+    int fontW30 = fm30.stringWidth("X");
+    
+    int left = 25;
+    
+    int menuItemWidth = Math.min(width - 2*left, fontW30*18);
+    
+    int column1 = left + (width - 2*left - menuItemWidth)/2;
+    
+    
+    int spaceW20 = fm20.stringWidth(" ");
+    int leadingCreditSpaces = (menuItemWidth/spaceW20) - 14;
+    String length = Integer.toString(leadingCreditSpaces + creditNameString.length());
+    creditNameString = String.format("%"+length+"s", creditNameString);
+    
+    int fontH30 = fm30.getLeading() + fm30.getMaxAscent() + fm30.getMaxDescent();
+    int boxH30  = fontH30 + 8;
+    int rowH30  = boxH30 + 3;
+    
+    int fontH20 = fm20.getLeading() + fm20.getMaxAscent() + fm20.getMaxDescent();
+    int boxH20  = fontH20 + 8;
+    int rowH20  = boxH20 + 3;
+    
+    
+    int top   = 400;
+    
+    int row1 = top;
+    int row2 = row1 + 2*rowH30;
+    int row3 = row2 + rowH30;
+    int row4 = row3 + rowH30;
+    int row5 = row4 + rowH30;
+    
+    int label_userWidth = fm30.stringWidth(label_user.getText());
+    label_user.setBounds(column1, row1, label_userWidth, boxH30);
+    dropDown_userList.setBounds(column1+label_userWidth, row1, menuItemWidth-label_userWidth, boxH30);
+    
+    
+    buttonList[BUTTON_CONFIG_IDX].setBounds(column1, row2, menuItemWidth, boxH30);
+    buttonList[BUTTON_START_IDX].setBounds(column1, row3, menuItemWidth, boxH30);
+    buttonList[BUTTON_ODDBALL_IDX].setBounds(column1, row4, menuItemWidth, boxH30);
+    buttonList[BUTTON_EXIT_IDX].setBounds(column1, row5, menuItemWidth, boxH30);
 
-	/**
-	 * Creates the panel for the controller options
-	 */
-	public JComboBox<String> Options() {
-		ArrayList<String> ControllerNames = new ArrayList<String>();
+    int rowBottom = height - 2*rowH30;
+    int fullWidth = width - 2*left;
+    label_creditNames.setBounds(left, fullWidth, rowBottom, boxH30 );
+    
+    
+    int userPanelLeft = 10;
+    int userPanelTop = 10;
+    int userPanelWidth = menuItemWidth;
+    int userPanelHeight = rowH30*7;
+    int userPanelColWidth = menuItemWidth - 2*userPanelLeft;
+    int userCol1Width = fontW20*10;
+    int userCol2Left  = userPanelLeft + userCol1Width + 2;
+    int userCol2Width = userPanelColWidth - userCol1Width - 2;
+    userPanel.setBounds(column1, row1, userPanelWidth, userPanelHeight);
 
-		new JDialog(frame, "Options");
+    
+    label_userName.setBounds(userPanelLeft, userPanelTop,  userCol1Width, boxH20);
+    nameInputField.setBounds(userCol2Left, userPanelTop,  userCol2Width, boxH20);
 
-		// Joysticks
-		try {
-			Controllers.create();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
+    label_controller.setBounds(userPanelLeft, userPanelTop+rowH20,  userCol1Width, boxH20);
+    dropDownController.setBounds(userCol2Left, userPanelTop+rowH20,  userCol2Width, boxH20);
+    
+    label_Xaxis.setBounds(userPanelLeft, userPanelTop+2*rowH20,  userCol1Width, boxH20);
+    dropDown_joystickX.setBounds(userCol2Left, userPanelTop+2*rowH20,  userCol2Width, boxH20);
+    
+    label_Yaxis.setBounds(userPanelLeft, userPanelTop+3*rowH20,  userCol1Width, boxH20);
+    dropDown_joystickY.setBounds(userCol2Left, userPanelTop+3*rowH20,  userCol2Width, boxH20);
+    
 
-		JLabel text1 = new JLabel("Input:  ");
-		text1.setFont(FONT_SMALL);
-		text1.setForeground(Color.WHITE);
+    
+    loggingBox.setBounds(userPanelLeft, userPanelTop+5*rowH20,  userCol1Width, boxH20);
+    
+    int butRow = userPanelHeight - 2*rowH20;
+    int butAreaWidth = 2*userCol1Width + fontW30;
+    int col1L = (userPanelWidth - butAreaWidth)/2;
+    int col2L =  col1L + userCol1Width + fontW30;
+    but_configOK.setBounds(col1L, butRow,  userCol1Width, boxH30);
+    but_configCancel.setBounds(col2L, butRow,  userCol1Width, boxH30);
+    
+    int joyBoxTop = userPanelTop+4*rowH20+10;
+    joyTestPanel.setLocation(col2L, joyBoxTop);
 
-		// add the keyboard as default
-		ControllerNames.add("Keyboard");
+    
+  }
 
-		int count = Controllers.getControllerCount();
+	public void showTitleScreen() 
+	{
+		this.setVisible(true);
+		this.requestFocus();
+    this.repaint();
+	}
 
-		for (int i = 0; i < count; i++) {
-			Controller controller = Controllers.getController(i);
-			System.out.println(controller.getName());
-			ControllerNames.add(controller.getName());
-		}
 
-		// Options Menu
-		controllerList = new JComboBox<String>(
-				ControllerNames.toArray(new String[0]));
-		controllerList.setPreferredSize(new Dimension(250, 10));
-		controllerList.setFont(new Font("Consolas", Font.BOLD, 12));
-		controllerList.setBackground(Color.BLACK);
-		controllerList.setForeground(Color.WHITE);
-		
-		controllerList.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent arg0) {
-				frame.requestFocus();
-				savePreferences();
-			}
-		});
+	
+	
+	private void copyUserToGUI()
+	{
+    int idx = dropDown_userList.getSelectedIndex();
+    if (idx < 0)
+    { 
+      dropDown_userList.setSelectedIndex(0);
+    }
+    User user =  User.getUser(dropDown_userList.getSelectedIndex());
+	  System.out.println("TitleScreen.copyUserToGUI(idx="+dropDown_userList.getSelectedIndex()+") user="+user);
+	  
+	  nameInputField.setText(user.getName());
+    loggingBox.setSelected(user.isLogging());
+    
+    
+    String[] controllerList = readControllerList();
+    dropDownController.removeAllItems();
+    dropDownController.addItem("Keyboard (Arror Keys)");
+    for (int i=0; i<controllerList.length; i++)
+    {
+      dropDownController.addItem(controllerList[i]);
+      if (user.getController().equals(controllerList[i]))
+      {
+        dropDownController.setSelectedIndex(i);
+      }
+    }
+
+    
+    dropDown_joystickX.setSelectedIndex(user.getControllerXAxis());
+    dropDown_joystickY.setSelectedIndex(user.getControllerYAxis());
+
+    updateJoystickAxisDropdowns();
+	}
+	
+	
+	
+	 private void copyGUI_toUser()
+	 {
+	   String name = nameInputField.getText();
+	   User user =  User.getUser(name);
+	   if (user == null) user = User.addUser(name);
+	
+	   user.setLogging(loggingBox.isSelected());
+	   
+	   if (dropDownController.getSelectedIndex() != 0)
+	   { user.setController((String)dropDownController.getSelectedItem());
+	     user.setControllerXAxis(dropDown_joystickX.getSelectedIndex());
+	     user.setControllerYAxis(dropDown_joystickY.getSelectedIndex());
+	   }
+	   else 
+	   {
+	     user.setController(InputController.JOYSTICK_NOT_CONNECTED);
+	   }
+	   //User.saveUsers();
+	   updateUserList();
+	   dropDown_userList.setSelectedItem(name);
+	   gameController.setupJoystick(user);
+	  }
+	
+	public void selectComponent(int code)
+	{
+	  if (code == SELECT_DOWN) buttonSelectedIdx++; 
+	  else if (code == SELECT_UP) buttonSelectedIdx--;
+	 
+	  if ((buttonSelectedIdx >= BUTTON_COUNT) || (buttonSelectedIdx < 0))
+    {
+	    buttonSelectedIdx = -1;
+	    dropDown_userList.requestFocus();
+	    dropDown_userList.setPopupVisible(true);
+    }
+	  else
+	  {
+	    this.requestFocus();
+	  }
+	    
+	  for (int i=0; i<buttonList.length; i++)
+	  {
+	    boolean state = false;
+	    
+	    if (i == buttonSelectedIdx) state = true;
+	    GUI_util.setSelected(buttonList[i], state);
+	  }
+	}
+	
+	
+	
+	 public void doSelected()
+	 {
+	    if (buttonSelectedIdx == BUTTON_CONFIG_IDX) toggleUserPanel();
+	    else if (buttonSelectedIdx == BUTTON_START_IDX) startGame();
+	    else if (buttonSelectedIdx == BUTTON_ODDBALL_IDX) {startOddballGame();}
+	    else if (buttonSelectedIdx == BUTTON_EXIT_IDX) game.quit();
+	 }
+	
+	
+	
+	
+	 public void toggleUserPanel()
+	 {
+	   boolean showUserPanel = !userPanel.isVisible();
+	   
+	   label_user.setVisible(!showUserPanel);
+	   dropDown_userList.setVisible(!showUserPanel);
+	   buttonList[BUTTON_CONFIG_IDX].setVisible(!showUserPanel);
+	   buttonList[BUTTON_START_IDX].setVisible(!showUserPanel);
+	   buttonList[BUTTON_ODDBALL_IDX].setVisible(!showUserPanel);
+	   buttonList[BUTTON_EXIT_IDX].setVisible(!showUserPanel);
+	   
+	   if (showUserPanel)
+	   {
+	     copyUserToGUI();
+	   }
+	   
+	   userPanel.setVisible(showUserPanel);
+	   
+	   
+	 }
+
+	 
+	public String[] readControllerList() 
+	{
+
+	  try
+    {
+      Controllers.create();
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      System.exit(0);
+    }
+
+    int count = Controllers.getControllerCount();
+    System.out.println(count + " Controllers Found");
+    String[] controllerList = new String[count];
+
+    for (int i = 0; i < count; i++)
+    {
+      Controller controller = Controllers.getController(i);
+      
+      //System.out.println(controller.getName());
+      controllerList[i] = controller.getName();
+      //if (controller.getName().contains("Gamepad"))
+      //if (controller.getName().contains("Joystick"))
+      //{
+      //  joystick = controller;
+      //  System.out.println("Gamepad found at index " + i);
+      //  break;
+      //}
+    }
+
+//    if (joystick == null)
+//    {
+//      System.out.println("Gamepad not found");
+//      System.exit(0);
+//    }
+
+
 
 		return controllerList;
 	}
 
-	
-	/**
-	 * Configuration screen for the joystick
-	 */
-	public void JoystickConfigure(final NeuroFrame frame) {
-    Dimension dm = new Dimension(250, 200);
-
-    final JDialog dialog = new JDialog(frame, "Configure Options");
-    dialog.setMaximumSize(dm);
-    dialog.setMinimumSize(dm);
-
-    JPanel panel = new JPanel();
-    panel.setBackground(Color.BLACK);
-//    panel.setLayout(new BorderLayout());
-    panel.setSize(dm);
-    panel.setMaximumSize(dm);
-
-    JLabel inputMessage = new JLabel("Input: ");
-    inputMessage.setFont(FONT_SMALL);
-    inputMessage.setForeground(TextColor);
-
-    // Controller list
-    JComboBox<String> joysticks = Options();
-    joysticks.setPreferredSize(new Dimension(240, 40));
-
-    // Messages
-    JLabel xIndexMessage = new JLabel(" X");
-    xIndexMessage.setFont(FONT_SMALL);
-    xIndexMessage.setForeground(TextColor);
-
-    JLabel yIndexMessage = new JLabel(" Y");
-    yIndexMessage.setFont(FONT_SMALL);
-    yIndexMessage.setForeground(TextColor);
-
-    JLabel loggingMessage = new JLabel("Logging: ");
-    loggingMessage.setFont(FONT_SMALL);
-    loggingMessage.setForeground(TextColor);
 
 
-    panel.add(inputMessage);
-    panel.add(joysticks);
-    panel.add(xIndexMessage);
-    panel.add(xJoystickIndex);
-    panel.add(yIndexMessage);
-    panel.add(yJoystickIndex);
-    panel.add(loggingMessage);
-    panel.add(loggingBox);
-
-//		JPanel message = new JPanel();
-//		message.setLayout(new BorderLayout());
+//	
+//	/**
+//	 * Called when the start button is activated
+//	 */
+//	private void onStartButtonPress() {
 //
-//		JLabel joystickInstructions = new JLabel("Press Left on the Joystick:");
-//		joystickInstructions.setFont(FONT_SMALL);
-//		joystickInstructions.setBackground(Color.WHITE);
-//		message.add(joystickInstructions);
-//		message.setBounds(0,0,150,150);
-//		message.setBackground(new Color(50,50,50));
-
-//		dialog.setContentPane(message);
-//		dialog.setModal(true);
-    dialog.pack();
-    dialog.add(panel);
-		dialog.setLocationRelativeTo(frame);
-		dialog.setVisible(true);
+//		// User is selected
+//	  
+//		//if (Library.getUser(userList.getSelectedIndex()-2) != null) {
+//			frame.requestFocus();
+//			lpane.setVisible(false);
+//
+//			IsStarting = true;
+//		//}
+//	}
+//
+//	private void onExitButtonPress() {
+//		IsExiting = true;
+//	}
+//
+	
+	
+	private void startOddballGame() 
+	{
+	  System.out.println("TitleScreen.startOddballGame() "); 
+	  
+	  game.startOddBall(User.getUser(dropDown_userList.getSelectedIndex()));
 	}
+
+
+  private void startGame() 
+  {
+    game.startGame(User.getUser(dropDown_userList.getSelectedIndex()));
+  }
+	
+	
 
 	
-	/**
-	 * Gets the name and starts the creation process in Library.java
-	 */
-	public void CreateNewUser(final NeuroFrame frame) {
-		final JDialog dialog = new JDialog(frame, "New User");
+	 public void keyPressed(KeyEvent arg0) {
+	  }
 
-		JPanel mainBox = new JPanel();
-		mainBox.setLayout(new BoxLayout(mainBox, BoxLayout.Y_AXIS));
-
-		JPanel message = new JPanel();
-		message.setLayout(new BorderLayout());
-		JLabel msg = new JLabel("  New User Name:  ");
-		msg.setFont(FONT_SMALL);
-		msg.setForeground(this.TextColor);
-		message.add(msg, BorderLayout.WEST);
-		message.setBackground(new Color(50,50,50));
-
-		nameInputField = new JTextField(16);
-		nameInputField.setPreferredSize(new Dimension(400, 50));
-		nameInputField.setBackground(Color.BLACK);
-		nameInputField.setForeground(Color.WHITE);
-
-		JButton newUserButton2 = new JButton("Add");
-		newUserButton2.setIcon(null);
-		newUserButton2.setBorderPainted(false);
-		newUserButton2.setContentAreaFilled(false);
-		newUserButton2.setMargin(new Insets(5,5,5,5));
-		newUserButton2.setBorder(null);
-		newUserButton2.setFont(FONT_SMALL);
-		newUserButton2.setForeground(new Color(100, 191, 255));
-		newUserButton2.setPreferredSize(new Dimension(100, 50));
-
-		newUserButton2.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String usrName = nameInputField.getText();
-				Library.addUser(usrName);
-				nameInputField.setText("");
-				updateUsers(usrName);
-				dialog.dispose();
-				frame.requestFocus();
-				savePreferences();
-			}
-		});
-
-		message.add(nameInputField, BorderLayout.CENTER);
-		message.add(newUserButton2, BorderLayout.EAST);
-
-		mainBox.add(message);
-
-		dialog.setModal(true);
-		dialog.setContentPane(mainBox);
-		dialog.pack();
-		dialog.setLocationRelativeTo(frame);
-		dialog.setIconImage(null);
-		dialog.setVisible(true);
-	}
-
-	/**
-	 * Updates the user list after adding a new user
-	 */
-	private void updateUsers() {
-		updateUsers(null);
-	}
+	  public void keyReleased(KeyEvent event) 
+	  {
+	    int code = event.getKeyCode();
+	    System.out.println("TitleScreen.keyReleased(code="+code); 
+	    
+	    if (code == KeyEvent.VK_ENTER)
+	    {
+	      doSelected();
+	      //System.out.println("TitleScreen.keyReleased(code=ENTER"); 
+//	      if (buttonSelectedIdx > 0)
+//	      {
+//	        System.out.println("TitleScreen.keyReleased: buttonSelectedIdx"+buttonSelectedIdx); 
+//	        buttonSelectedIdx = BUTTON_CONFIG_IDX;
+//	        this.selectComponent(SELECT_CURRENT);
+//	      }
+	      
+	      
+	    }
+	      
+	    //if (buttonSelectedIdx < 0) return;
+	    
+	    if (code == KeyEvent.VK_UP) selectComponent(SELECT_UP);
+	    else if (code == KeyEvent.VK_DOWN) selectComponent(SELECT_DOWN);
+	   
 	
-	/**
-	 * Update the user list when you add a new user
-	 */
-	private void updateUsers(String usrName){
-		String[] names = Library.getUserNames();
-		System.out.println("Update Users: Length " + names.length);
+	  }
 
-		userList.removeAllItems();
-		userList.addItem("- Select User -");
-		userList.addItem("NEW USER");
-		
-		for (int i = 0; i < names.length; i++) {
-			userList.addItem(names[i]);
-			
-			if((usrName != null) && (names[i].compareTo(usrName))==0){
-				userList.setSelectedIndex(i+2);
-			}
-		}
-	}
-	
-	/**
-	 * Called when the start button is activated
-	 */
-	private void onStartButtonPress() {
+	  public void keyTyped(KeyEvent arg0) {
+	  }
 
-		// User is selected
-		if (Library.getUser(userList.getSelectedIndex()-2) != null) {
-			frame.requestFocus();
-			lpane.setVisible(false);
+	  
+	  public void update(double deltaSec)
+	  {
+	    //System.out.println(dropDown_userList.isPopupVisible());;
+	    //System.out.println("TitleScreen().update() dropDown_userList.getSelectedIndex()="+dropDown_userList.getSelectedIndex());
+	    
+	    if ((dropDown_userList.isPopupVisible() == false) && (userPanel.isVisible() == false))
+	    { this.requestFocus();
+	    }
+	    
+      if (buttonSelectedIdx < 0)
+	    { if (!dropDown_userList.isPopupVisible())
+        {
+          buttonSelectedIdx = BUTTON_CONFIG_IDX;
+          selectComponent(SELECT_CURRENT);
+        }
+	    }
+	    
+	    if (userPanel.isVisible())
+	    {
+	      gameController.updatePlayerInputDirection();
+	      DirectionVector dir = gameController.getPlayerInputDirectionVector();
+	      joyTestPanel.updateJoy(dir);
+	      joyTestPanel.repaint();
+	      
+	    }
+      
+	    creditIndex += 5 * deltaSec;
+	    
+	    if (creditIndex > creditNameString.length() - 1) creditIndex  = 0;
 
-			selectedJoystick = controllerList.getSelectedIndex();
-			selectedUser = Library.getUser(userList.getSelectedIndex() - 2);
-			game.setLoggingMode(loggingBox.isSelected());
+	    label_creditNames.setText(creditNameString.substring((int)creditIndex));
 
-			savePreferences();
-			IsStarting = true;
-		}
-	}
+	    repaint();
+	    
+	  }
+	  
+	  
+	  private void updateUserList()
+	  {
+	    dropDown_userList.removeAllItems();
+	    ArrayList<User> userList = User.getUserList();
+	    for (User user : userList)
+	    { 
+	      dropDown_userList.addItem(user.getName());
+	    } 
+	  }
+	  
+	  
+	  private void updateJoystickAxisDropdowns()
+	  {
+	    if (dropDownController.getSelectedIndex() == 0)
+      {
+        dropDown_joystickX.setEnabled(false);
+        dropDown_joystickY.setEnabled(false);
+        label_Xaxis.setEnabled(false);
+        label_Yaxis.setEnabled(false);
+        joyTestPanel.setVisible(false);
+      }
+      else
+      {
+        dropDown_joystickX.setEnabled(true);
+        dropDown_joystickY.setEnabled(true);
+        label_Xaxis.setEnabled(true);
+        label_Yaxis.setEnabled(true);
+        joyTestPanel.setVisible(true);
+      }
+	  }
+	  
+	  public void paintComponent(Graphics g)  
+    {  
+      super.paintComponent(g);  
+      g.drawImage(this.backgroundImage, 0, 0, this);  
+    }
 
-	private void onExitButtonPress() {
-		IsExiting = true;
-	}
 
-	private void onOddballButtonPress() {
-		frame.requestFocus();
-		lpane.setVisible(false);
 
-		selectedJoystick = controllerList.getSelectedIndex();
-		selectedUser = Library.getUser(userList.getSelectedIndex());
-		game.setLoggingMode(loggingBox.isSelected());
 
-		savePreferences();
-		IsOption = true;
-	}
-	
-	private void onConfigureButtonPress() {
-    JoystickConfigure(frame);
-	}
-	
-	public void actionPerformed(ActionEvent arg0) {
-    if (startButton.isSelected()){
-			onStartButtonPress();
-		}
-		else if (exitButton.isSelected()) {
-			onExitButtonPress();
-		}
-		else if (oddballButton.isSelected()) {
-			onOddballButtonPress();
-		}
-		else if (configureButton.isSelected()){
-			onConfigureButtonPress();
-		}
-	}
+	  public void actionPerformed(ActionEvent event) 
+	  {
+	    
+	    System.out.println("TitleScreen.actionPerformed()"); 
+	    Object source = event.getSource();
+	    if (source == buttonList[BUTTON_START_IDX]) startGame();
+	    else if (source == buttonList[BUTTON_EXIT_IDX]) game.quit();
+	    else if (source == buttonList[BUTTON_CONFIG_IDX])toggleUserPanel();
+	    else if (source == buttonList[BUTTON_ODDBALL_IDX]) startOddballGame();
+	    else if (source == but_configOK)
+	    {
+	      copyGUI_toUser();
+	      toggleUserPanel();
+	    }
+	    else if (source == but_configCancel) toggleUserPanel();
+	    else if (source == dropDownController) updateJoystickAxisDropdowns();
+	    
+	     
+	     
+	    //System.out.println("TitleScreen.actionPerformed()....selected="+dropDown_userList.getSelectedIndex()+",  visible="+dropDown_userList.isPopupVisible()); 
+	//  
+	    
+	    else if (source == dropDown_userList)
+	    {
+	      if (dropDown_userList.getSelectedIndex() < 0)
+	      {
+	        System.out.println("Stupid non-selected action");
+	        return;
+	      }
+        
+	      
+	      String userName = (String) dropDown_userList.getSelectedItem();
+	      System.out.println("TitleScreen.actionPerformed(): dropDown_userList.getSelectedIndex()="+dropDown_userList.getSelectedIndex() + "("+userName+")");
+	      
+	      User user = User.getUser(userName);
+	      System.out.println("       user="+user);
+	      gameController.setupJoystick(user);
+	    }
+	    
+	    else if (source == dropDown_joystickX || source == dropDown_joystickY)
+	    {
+	      copyGUI_toUser();
+	    }
+	  
+//	      
+//	      System.out.println("TitleScreen.actionPerformed(dropDown_userList)="+dropDown_userList.isPopupVisible()); 
+//	      
+//	      
+//	      buttonSelectedIdx = BUTTON_CONFIG_IDX;
+//	      this.selectComponent(SELECT_CURRENT);
+	    //}
+	    
+//	    if (startButton.isSelected()){
+//	      //onStartButtonPress();
+//	    }
+//	    else if (exitButton.isSelected()) {
+//	      //onExitButtonPress();
+//	    }
+//	    else if (oddballButton.isSelected()) {
+//	      //onOddballButtonPress();
+//	    }
+//	    else if (configureButton.isSelected()){
+//	      //onConfigureButtonPress();
+//	    }
+	  }
+	  
+	  
+  class JoystickTestDrawPanel extends JPanel
+  {
+
+    // private Graphics2D canvasObjectLayer;
+    // private BufferedImage imageObjectLayer;
+
+    public static final int joyBoxWidth = 100;
+    public static final int joyBoxHeight = 100;
+    private static final int centerX = joyBoxWidth / 2;
+    private static final int centerY = joyBoxHeight / 2;
+    private int joyX, joyY;
+
+    public JoystickTestDrawPanel()
+    {
+      setSize(joyBoxWidth, joyBoxHeight);
+    }
+
+    public void updateJoy(DirectionVector dir)
+    {
+      joyX = centerX + (int)(centerX*dir.x);
+      joyY = centerY + (int)(centerY*dir.y);
+      
+      //System.out.println("TitleScreen.updateJoy()=(" + joyX + ", "+joyY+")");
+    }
+
+    public void paintComponent(Graphics g)
+    {
+      // g.drawImage(imageObjectLayer, 0, 0, null);
+      g.setColor(Color.WHITE);
+      g.fillRect(0, 0, joyBoxWidth, joyBoxHeight);
+      g.setColor(Color.BLUE);
+      g.drawLine(centerX, centerY, joyX, joyY);
+      g.fillOval(joyX - 5, joyY - 5, 10, 10);
+    }
+  }
 }

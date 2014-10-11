@@ -8,7 +8,7 @@ import neurogame.level.EnumChunkType;
 import neurogame.level.World;
 import neurogame.library.Library;
 import neurogame.library.QuickSet;
-import neurogame.main.GameController;
+import neurogame.io.InputController;
 
 /**
  * @author Daniel
@@ -178,7 +178,7 @@ public class Player extends GameObject
       }
     }
     
-    if (GameController.isPlayerPressingButton()) shootMissile();
+    if (InputController.isPlayerPressingButton()) shootMissile();
     else { triggerReleasedSinceLastMissile = true;}
     
   }
@@ -211,7 +211,7 @@ public class Player extends GameObject
 
   private void updatePlayerInputDirection()
   {
-    DirectionVector inputDir = GameController.getPlayerInputDirectionVector();
+    DirectionVector inputDir = InputController.getPlayerInputDirectionVector();
     directionVector.x = lastVelocityX * 0.25 + inputDir.x;
     directionVector.y = lastVelocityY * 0.25 + inputDir.y;
     

@@ -1,4 +1,6 @@
-package neurogame.library;
+package neurogame.io;
+
+
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
@@ -8,11 +10,6 @@ public class TestJoystick
 
   private static Controller joystick = null;
   private static int buttonCount;
-  private static int axisX;
-  private static int axisY;
-
-  private static double lastX = 0.0;
-  private static double lastY = 0.0;
 
   private static void update()
   {
@@ -24,22 +21,23 @@ public class TestJoystick
         System.out.println("Pressed Button " + i);
       }
     }
-    double x = joystick.getAxisValue(axisX);
-    double y = joystick.getAxisValue(axisY);
+//    double x = joystick.getAxisValue(axisX);
+//    double y = joystick.getAxisValue(axisY);
 
-    // for (int i = 0; i < joystick.getAxisCount(); i++)
-    // {
-    // double x = joystick.getAxisValue(i);
-    // System.out.println("axis " + i + "=" + x);
-    //
-    // }
+     for (int i = 0; i < joystick.getAxisCount(); i++)
+     {
+       double x = joystick.getAxisValue(i);
+       System.out.format("     %d=%5.2f", i , x);
+    
+     }
+     System.out.println(" ");
 
-    if (lastX != x || lastY != y)
-    {
-      System.out.println("Joystick: (" + x + ", " + y + ")");
-      lastX = x;
-      lastY = y;
-    }
+//    if (lastX != x || lastY != y)
+//    {
+//      System.out.println("Joystick: (" + x + ", " + y + ")");
+//      lastX = x;
+//      lastY = y;
+//    }
   }
 
   public static void main(String[] argv)
@@ -60,8 +58,9 @@ public class TestJoystick
     for (int i = 0; i < count; i++)
     {
       Controller controller = Controllers.getController(i);
-      // System.out.println(controller.getName());
-      if (controller.getName().contains("Gamepad"))
+      System.out.println(controller.getName());
+      //if (controller.getName().contains("Gamepad"))
+      if (controller.getName().contains("Joystick"))
       {
         joystick = controller;
         System.out.println("Gamepad found at index " + i);
@@ -76,8 +75,6 @@ public class TestJoystick
     }
 
     buttonCount = joystick.getButtonCount();
-    axisX = 0;
-    axisY = 1;
 
     boolean running = true;
     while (running)

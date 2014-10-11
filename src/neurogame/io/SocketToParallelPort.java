@@ -11,6 +11,7 @@ public class SocketToParallelPort
   private DataOutputStream writer;
   private long startNanoSec;
   
+  public static final byte TRIGGER_SIGNAL_GROUND          = 0;
   
   public static final byte TRIGGER_ODDBALL_START          = 20;
   public static final byte TRIGGER_ODDBALL_STANDARD_EVENT = 22;

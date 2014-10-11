@@ -2,18 +2,14 @@ package neurogame.main;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
+import neurogame.io.User;
 import neurogame.level.World;
 import neurogame.library.Library;
-import neurogame.library.User;
 
 public class PlayerHud {
 	private int windowWidth;
@@ -28,7 +24,6 @@ public class PlayerHud {
 	private Color healthPaintDamaged = Color.ORANGE;
 	private Color healthPaintNearDeath = Color.RED;
 	
-	private Long Highscore;
 
 	private BufferedImage MissleIcon;
 	Rectangle rect = new Rectangle(0, 0, 100, 50);
@@ -43,7 +38,7 @@ public class PlayerHud {
 
 	Rectangle area;
 
-	public PlayerHud(NeuroFrame frame, World world,User user) {
+	public PlayerHud(NeuroGame frame, World world,User user) {
 		this.world = world;
 		this.user = user;
 		sprites = Library.getSprites();
@@ -51,43 +46,32 @@ public class PlayerHud {
 		windowWidth = frame.getWidth();
 		windowHeight = frame.getHeight();
 		
-		loadFont();
-		loadBestScore();
+		FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 23);
+    FONT70 = new Font("Karmatic Arcade", Font.PLAIN, 70);
 		MissleIcon = sprites.get("missileIcon");
 	}
 	
-	private void loadFont(){
-		String path = System.getProperty("user.dir");
-		path += "/resources/fonts/";
+//	private void loadFont(){
+//		String path = System.getProperty("user.dir");
+//		path += "/resources/fonts/";
+//
+//		try {
+//			GraphicsEnvironment ge = GraphicsEnvironment
+//					.getLocalGraphicsEnvironment();
+//			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(path
+//					+ "KarmaticArcade.ttf")));
+//			System.out.println("Registered Font");
+//		} catch (IOException | FontFormatException e) {
+//			System.out.println("Error Loading Font - PlayerHUD.java");
+//		}
+//
+//		
+//	}
 
-		try {
-			GraphicsEnvironment ge = GraphicsEnvironment
-					.getLocalGraphicsEnvironment();
-			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(path
-					+ "KarmaticArcade.ttf")));
-			System.out.println("Registered Font");
-		} catch (IOException | FontFormatException e) {
-			System.out.println("Error Loading Font - PlayerHUD.java");
-		}
 
-		FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 23);
-		FONT70 = new Font("Karmatic Arcade", Font.PLAIN, 70);
-	}
-
-	private void loadBestScore(){
-		long score;
-		System.out.println("PlayerHUD: current user is "+user.getName());
-		Highscore = user.getBestScore();//Library.getBestHighScores(1)[0];
-		if(Highscore.toString().length() > 1){
-			score = Long.parseLong(Highscore.toString().substring(6, Highscore.toString().length()));
-		}else{
-			score = 0;
-		}
-		Highscore = score;
-	}
 	
-	public void updateHUD(Graphics2D canvasObjectLayer, NeuroFrame frame, int ammo) {
-		String highscoreMessage = "Best:  "+Highscore;
+	public void updateHUD(Graphics2D canvasObjectLayer, NeuroGame frame, int ammo) {
+		String highscoreMessage = "Best:  "+user.getHighScore();
 		String scoreMessage = "Score: "+world.getPlayer().getScore();
 		
 		// Score
@@ -109,7 +93,7 @@ public class PlayerHud {
 				(int) (windowHeight * 0.04));
 
 		canvasObjectLayer.setColor(BLUE);
-		canvasObjectLayer.drawString("" + Highscore,
+		canvasObjectLayer.drawString("" + user.getHighScore(),
 				(int) (windowWidth * 0.5 + 100 - highscoreMessage.length()/2), 
 				(int) (windowHeight * 0.04));
 
@@ -157,7 +141,7 @@ public class PlayerHud {
 	/**
 	 * Draw the health display.
 	 */
-	public void drawHealth(Graphics2D canvasObjectLayer, NeuroFrame frame) {
+	public void drawHealth(Graphics2D canvasObjectLayer, NeuroGame frame) {
 		int health = world.getPlayer().getHealth();
 		// Color outline = Color.GREEN;
 

@@ -19,20 +19,17 @@ import java.awt.MediaTracker;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.imageio.ImageIO;
 
 import neurogame.gameplay.GameObject;
-import neurogame.main.NeuroFrame;
+import neurogame.io.User;
+import neurogame.main.NeuroGame;
 
 /**
  * A static library for NeuroGame.
@@ -46,9 +43,10 @@ public final class Library
   public static final String NEWLINE = System.getProperty("line.separator");
   public static final String SEPARATOR = System.getProperty("file.separator");
 
-  public static final String GAME_TITLE = "Escape from Asteroid Axion v2014-08-10";
+  public static final String GAME_TITLE = "Escape from Asteroid Axon v2014-10-10";
 
-  public static final int MIN_FRAME_MILLISEC = 10;
+  public static final int MIN_FRAME_MILLISEC = 20;
+  
   public static final String ARGS_REGEX = "\\-[hdDlLfFwsSgG]+";
 
   public static final String NUM2_FORMAT = "%.2f";
@@ -84,7 +82,6 @@ public final class Library
   public static double leftEdgeOfWorld = 0;
 
   private static SpriteMap sprites;
-  private static ArrayList<User> users = new ArrayList<User>();
   
   /**
 	 * Creates a new user file
@@ -111,107 +108,9 @@ public final class Library
 		}
 	}
 	
-	public static void saveUser(User newUser){
-		String path = System.getProperty("user.dir");
-		path += "/Users/";
-		
-		try {
-			FileOutputStream saveFile = new FileOutputStream(path+newUser.getName() + ".user");
-			ObjectOutputStream save = new ObjectOutputStream(saveFile);
-			save.writeObject(newUser);
-			save.close();
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			System.out.println("FileNotFound. Failed to save User: " + newUser.getName());
-		} catch (IOException e) {
-			System.out.println("IO. Failed to save User: " + newUser.getName());
-		}
-	}
-
-	/**
-	 * Load all user files in the directory
-	 */
-	public static void loadUsers() {
-		String path = System.getProperty("user.dir");
-		path += "/Users/";
-		File dir = new File(path);
-
-	    if(!dir.exists()){
-	      dir.mkdir();
-	      addUser("FEC LAB");
-	      addUser("LOGAN LAB");
-	    }
-
-    boolean guestexists = false;
-    for (File file : dir.listFiles()) {
-			if (file.getName().endsWith((".user"))) {
-				parseUser(file);
-			}
-      if(file.getName().startsWith("FEC")){
-        guestexists = true;
-      }
-		}
-
-    if(!guestexists){
-    	addUser("FEC LAB");
-	    addUser("LOGAN LAB");
-    	}
-	}
-
-	/**
-	 * Parse a user file into a user object
-	 */
-	private static void parseUser(File file) {
-		User newUser;
-		try {
-			FileInputStream saveFile = new FileInputStream(file);
-			ObjectInputStream save = new ObjectInputStream(saveFile);
-			newUser = (User) save.readObject();
-			users.add(newUser);
-			save.close();
-		} catch (Exception e) {
-			e.getStackTrace();
-			System.out.println("Problem Parsing User: "+file.getName());
-		}
-	}
-
-	/**
-	 * @return a list of the names of the users
-	 */
-	public static String[] getUserNames() {
-		System.out.println("-- Get Names: "+users.size());
-		users.clear();
-		loadUsers();
-		if (users.size() > 0) {
-			String[] names = new String[users.size()];
-			for (int i = 0; i < users.size(); i++) {
-				names[i] = users.get(i).getName();
-			}
-			return names;
-		}
-		
-		String[] nullString = {"No Users"};
-		return nullString;
-	}
 	
-	public static User getUser(int i){
-		try{
-			return users.get(i);
-		}
-		catch(Exception e){
-			return null;
-		}
-	}
 	
-	public static User getUser(String name){
-		for (int i = 0; i < users.size(); i++) {
-			if(name.compareTo(users.get(i).getName()) == 0){
-				return users.get(i); 
-			}
-		}
-		return null;
-	}
+	
 
 	/**
 	 * Load the local fonts
@@ -225,39 +124,12 @@ public final class Library
 					.getLocalGraphicsEnvironment();
 			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File(path
 					+ "KarmaticArcade.ttf")));
-			System.out.println("Registered Font");
+			System.out.println("Registered Font - should only happen once!!!!!!!!!!!!!!!!!!!!!!!!");
 		} catch (IOException | FontFormatException e) {
 			System.out.println("Error Loading Font - MenuButtons.java");
 		}
 	}
 	
-	/**
-	 * Get the best highscores from any user
-	 */
-	public static Long[] getBestHighScores(int amount){
-		ArrayList<Long> scores = new ArrayList<Long>();
-		Long[] userScores;
-		
-		if (users.size() > 0) {
-			for (int i = 0; i < users.size(); i++) {
-				userScores = users.get(i).getHighScores(amount);
-				
-				for (int k = 0; k < userScores.length; k++) {
-					scores.add(userScores[k]);
-				}
-			}
-		}
-		
-		Collections.sort(scores);
-		Collections.reverse(scores);
-		try{
-			return scores.subList(0, amount).toArray(new Long[0]);
-		}catch(Exception e){
-			Long[] nullList = {};
-			return nullList;
-		}
-	}
-
 
   public static int getWindowPixelWidth()
   {
@@ -407,7 +279,7 @@ public final class Library
    * @param SpriteMap
    *          for which to store a reference.
    */
-  public static void initSprites(NeuroFrame frame)
+  public static void initSprites(NeuroGame frame)
   { // System.out.println("Library.initSprites(): Enter");
     sprites = new SpriteMap(frame);
   }
