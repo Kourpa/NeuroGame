@@ -190,6 +190,7 @@ public class NeuroGame extends JFrame implements ActionListener
    */
   private void update(double deltaSec)
   {
+    controller.updatePlayerInputDirection();
     switch (gameState)
     {
     case PLAYING:

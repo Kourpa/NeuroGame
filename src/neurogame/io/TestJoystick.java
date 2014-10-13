@@ -59,8 +59,8 @@ public class TestJoystick
     {
       Controller controller = Controllers.getController(i);
       System.out.println(controller.getName());
-      //if (controller.getName().contains("Gamepad"))
-      if (controller.getName().contains("Joystick"))
+      if (controller.getName().contains("Gamepad"))
+      //if (controller.getName().contains("Joystick"))
       {
         joystick = controller;
         System.out.println("Gamepad found at index " + i);

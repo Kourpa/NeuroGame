@@ -177,7 +177,7 @@ public class InputController implements KeyListener
         playerInputDirectionVector.y = stickY;
       }
     }
-    //System.out.println("InputController.updatePlayerInputDirection joystick=(" + playerInputDirectionVector.x +", "+playerInputDirectionVector.y+")");
+    System.out.println("InputController.updatePlayerInputDirection joystick=(" + playerInputDirectionVector.x +", "+playerInputDirectionVector.y+")");
   }
   
 

@@ -1,5 +1,5 @@
 UserName, HighScore, Date, Logging, Controller, x-axis, y-axis
-Logan Lab,3248,Oct 12, 2014,true,null,3,2
+Logan Lab,240,Oct 13, 2014,true,null,3,2
 Joel,0,New Player,false,2In1 USB Joystick,2,1
 Laura,0,New Player,true,null,3,2
-Marcos,0,New Player,true,null,3,2
+Marcos,0,New Player,true,Controller (Gamepad F310),1,0
