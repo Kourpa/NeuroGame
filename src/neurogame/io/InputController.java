@@ -1,7 +1,9 @@
 package neurogame.io;
 
 
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +11,6 @@ import javax.swing.JComponent;
 
 import neurogame.gameplay.DirectionVector;
 import neurogame.io.User;
-import neurogame.library.KeyBinds;
 import neurogame.main.NeuroGame;
 
 import org.lwjgl.input.Controller;
@@ -22,14 +23,10 @@ import org.lwjgl.input.Controllers;
  * @team Danny Gomez
  * @team Marcos Lemus
  */
-public class InputController
+public class InputController implements KeyListener
 {
   // private final PlayerControls controls;
   public static final String JOYSTICK_NOT_CONNECTED = null;
-
-  private final KeyBinds keyBinds;
-  private final Map<String, Boolean> inputs;
-  private final Map<String, Boolean> previousInputs;
 
   private NeuroGame game;
 
@@ -45,87 +42,20 @@ public class InputController
   private boolean ButtonPressed;
 
   private static boolean playerIsPressingButton = false;
+  private static boolean playerPressedPause = false;
 
   private boolean joystickReady;
 
   private static DirectionVector playerInputDirectionVector = new DirectionVector();
-
-  /**
-   * Instantiates a new GameController.
-   *
-   * @param game
-   *          NeuroGame that owns this GameController.
-   * @param frame
-   *          NeuroFrame displaying this game.
-   * @param executor
-   *          IOExecutor for handling logging and communications.
-   */
+  
   public InputController(NeuroGame game)
   {
     System.out.println("GameController() Enter");
     this.game = game;
-
-    // controls = new PlayerControls();
-
-    inputs = new HashMap<String, Boolean>();
-    inputs.put("up", false);
-    inputs.put("down", false);
-    inputs.put("left", false);
-    inputs.put("right", false);
-    inputs.put("space", false);
-    inputs.put("escape", false);
-    inputs.put("enter", false);
-    inputs.put("pause", false);
-
-    keyBinds = new KeyBinds((JComponent) game.getContentPane(), this);
-
-    controllable = false;
-
-
-
-    // //////////////
-    addBinding("sound");
-    keyBinds.addBinding(KeyEvent.VK_F1, "sound");
-    // keyBinds.addBinding(KeyEvent.VK_SPACE, "shoot");
-
-    // A copy of the inputs map used for logging changes in input states.
-    // This must be done before adding the debugging key binds or the
-    // debugging keys will be logged as well.
-    previousInputs = new HashMap<String, Boolean>();
-    for (Map.Entry<String, Boolean> e : inputs.entrySet())
-    {
-      previousInputs.put(e.getKey(), e.getValue().booleanValue());
-    }
-
-    // Special key bindings for sound, suicide (God-mode-only), and zoom
-    // (debug only). Must be created before showing the title.
-    addBinding("suicide");
-    keyBinds.addBinding(KeyEvent.VK_BACK_SPACE, "suicide");
-    addBinding("zoom_in");
-    keyBinds.addBinding(KeyEvent.VK_EQUALS, "zoom_in");
-    addBinding("zoom_out");
-    keyBinds.addBinding(KeyEvent.VK_MINUS, "zoom_out");
-    addBinding("zoom_reset");
-    keyBinds.addBinding(KeyEvent.VK_BACK_SLASH, "zoom_reset");
-    addBinding("toggle_centered");
-    keyBinds.addBinding(KeyEvent.VK_QUOTE, "toggle_centered");
-    addBinding("debug");
-    keyBinds.addBinding(KeyEvent.VK_BACK_QUOTE, "debug");
-    // Enemy spawners.
-    addBinding("enemy_a");
-    keyBinds.addBinding(KeyEvent.VK_1, "enemy_a");
-    addBinding("enemy_b");
-    keyBinds.addBinding(KeyEvent.VK_2, "enemy_b");
-    addBinding("enemy_c");
-    keyBinds.addBinding(KeyEvent.VK_3, "enemy_c");
-    // Coin spawner.
-    addBinding("coin");
-    keyBinds.addBinding(KeyEvent.VK_C, "coin");
-    // Zapper spawner.
-    addBinding("zapper");
-    keyBinds.addBinding(KeyEvent.VK_Z, "zapper");
-  }
   
+  }
+
+
   public void setupJoystick(User user)
   {
     if ((user == null) || (user.getController() == null))
@@ -169,11 +99,6 @@ public class InputController
   }
     
 
-  public Map<String, Boolean> getInputs()
-  {
-    return inputs;
-  }
-
   public void setControllable(boolean controllable)
   {
     this.controllable = controllable;
@@ -182,38 +107,27 @@ public class InputController
 
 
 
-  /**
-   * Handler for keyboard input.
-   */
-  public void keyHandler()
-  {
-    updateButtonStatus();
-
-    // Pause/unpause.
-    if (inputs.get("pause"))
-    {
-      disableAll();
-      game.togglePause();
-    }
-
-    
-    updatePlayerInputDirection();
-  }
 
   public static boolean isPlayerPressingButton()
   {
     return playerIsPressingButton;
+  }
+  
+  public boolean popPlayerPressingButton()
+  {
+    if (playerIsPressingButton)
+    { 
+      playerIsPressingButton = false;
+      return true;
+    }
+    return false;
   }
 
   private void updateButtonStatus()
   {
     playerIsPressingButton = false;
 
-    if (inputs.get("space"))
-    {
-      playerIsPressingButton = true;
-      return;
-    }
+
 
     if (joystick != null)
     {
@@ -228,88 +142,19 @@ public class InputController
     }
   }
 
-//  /**
-//   * Handler for keyboard input when you die
-//   */
-  public void gameOverKeyHandler()
-  {
-    boolean ButtonCheck = false;
-
-    if (inputs.get("space"))
-    {
-      game.showHighScores();
-    }
-
-    if (joystick != null)
-    {
-      joystick.poll();
-
-      for (int i = 0; i < 5; i++)
-      {
-        if (joystick.isButtonPressed(i))
-        {
-          ButtonCheck = true;
-        }
-      }
-
-      if ((ButtonCheck == false) && (ButtonPressed))
-      {
-        ButtonPressed = false;
-        game.showHighScores();
-      }
-      else if (ButtonCheck == true)
-      {
-        ButtonPressed = true;
-      }
-    }
-  }
 
 
 
   public void updatePlayerInputDirection()
   {
-    boolean n = false;
-    boolean s = false;
-    boolean w = false;
-    boolean e = false;
-
-    playerInputDirectionVector.x = 0;
-    playerInputDirectionVector.y = 0;
-    
-    
-    
     //if (!controllable) return;
       
     
-    if (joystick == null)
+    if (joystick != null)
     {
-      n = inputs.get("up");
-      s = inputs.get("down");
-      w = inputs.get("left");
-      e = inputs.get("right");
-
-      // System.out.println(n + " " + e + " " + s + " " + w);
-      if (n)
-      {
-        playerInputDirectionVector.y = -1;
-      }
-      else if (s)
-      {
-        playerInputDirectionVector.y = 1;
-      }
-
-      if (e)
-      {
-        playerInputDirectionVector.x = 1;
-      }
-      else if (w)
-      {
-        playerInputDirectionVector.x = -1;
-      }
-    }
-
-    else
-    {
+      playerInputDirectionVector.x = 0;
+      playerInputDirectionVector.y = 0;
+      
       joystick.poll();
       double stickX = joystick.getAxisValue(joystickAxisX);
       double stickY = joystick.getAxisValue(joystickAxisY);
@@ -333,87 +178,53 @@ public class InputController
       }
     }
     //System.out.println("InputController.updatePlayerInputDirection joystick=(" + playerInputDirectionVector.x +", "+playerInputDirectionVector.y+")");
-    
   }
   
-  
-  
-
-
-
-  /**
-   * Updates the input map based on the provided input. Called by KeyBinds.
-   * 
-   * @param str
-   *          String representation of the key state change.
-   */
-  public void updateInput(String str)
-  {
-    Boolean state = (str.startsWith("released") ? false : true);
-    String key = (state ? str : str.substring(9));
-    inputs.put(key, state);
-    // If one of the directions was pressed, automatically release the
-    // opposite direction.
-    if (state)
-    {
-      switch (str)
-      {
-      case "up":
-        inputs.put("down", false);
-        break;
-      case "down":
-        inputs.put("up", false);
-        break;
-      case "left":
-        inputs.put("right", false);
-        break;
-      case "right":
-        inputs.put("left", false);
-        break;
-      default:
-        // Fall through.
-      }
-    }
-    assert (inputs.get(key) == state);
-  }
 
   public static DirectionVector getPlayerInputDirectionVector()
   {
     return playerInputDirectionVector;
   }
 
-  /**
-   * Add a key binding option to the map.
-   * 
-   * @param key
-   *          String name for the binding to be added.
-   */
-  public void addBinding(String key)
+  public boolean popPause()
   {
-    inputs.put(key.toLowerCase(), false);
-
-  }
-
-  /**
-   * Disable the input for the passed key String.
-   * 
-   * @param key
-   *          Key String for the input to disable.
-   */
-  public void disable(String key)
-  {
-    inputs.put(key, false);
-  }
-
-  /**
-   * Disable all input states.
-   */
-  public void disableAll()
-  {
-    for (Map.Entry<String, Boolean> entry : inputs.entrySet())
-    {
-      inputs.put(entry.getKey(), false);
+    if (playerPressedPause)
+    { playerPressedPause = false;
+      return true;
     }
+    return false;
+  }
+  
+  @Override
+  public void keyTyped(KeyEvent event)
+  {
   }
 
+  @Override
+  public void keyPressed(KeyEvent event) 
+  {
+    int code = event.getKeyCode();
+    System.out.println("InputController.keyPressed() keyTyped code= " + code);
+    
+    if (code == KeyEvent.VK_SPACE) playerIsPressingButton = true;
+    else if (code == KeyEvent.VK_UP) playerInputDirectionVector.y = -1;
+    else if (code == KeyEvent.VK_DOWN) playerInputDirectionVector.y = 1;
+    else if (code == KeyEvent.VK_RIGHT) playerInputDirectionVector.x = 1;
+    else if (code == KeyEvent.VK_LEFT)  playerInputDirectionVector.x = -1;
+    
+  }
+
+  @Override
+  public void keyReleased(KeyEvent event)
+  {
+    int code = event.getKeyCode();
+    System.out.println("InputController.keyReleased() keyTyped code= " + code);
+    
+    if (code == KeyEvent.VK_SPACE) playerIsPressingButton = false;
+    else if (code == KeyEvent.VK_UP) playerInputDirectionVector.y = 0;
+    else if (code == KeyEvent.VK_DOWN) playerInputDirectionVector.y = 0;
+    else if (code == KeyEvent.VK_RIGHT) playerInputDirectionVector.x = 0;
+    else if (code == KeyEvent.VK_LEFT)  playerInputDirectionVector.x = 0;
+    else if (code == KeyEvent.VK_P)  playerPressedPause = true;
+  }
 }

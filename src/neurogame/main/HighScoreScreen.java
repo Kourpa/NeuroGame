@@ -19,13 +19,13 @@ import neurogame.library.Library;
 
 
 @SuppressWarnings("serial")
-public class HighScoreScreen extends JPanel  implements ActionListener, KeyListener, MouseListener
+public class HighScoreScreen extends JPanel implements ActionListener, KeyListener
 {
 
 	public int selectedJoystick;
 	public User currentUser;
 
-	private JButton exitButton, restartButton;
+	private JButton buttonMainMenu, buttonRestart;
 	
 
 	private int width;
@@ -97,20 +97,21 @@ public class HighScoreScreen extends JPanel  implements ActionListener, KeyListe
 		}
 
 
-		restartButton = GUI_util.makeButton("New Game", this, this);
+		buttonRestart = GUI_util.makeButton("New Game", this, this);
 
 
-		exitButton = GUI_util.makeButton("Main Menu", this, this);
+		buttonMainMenu = GUI_util.makeButton("Main Menu", this, this);
 
 		
 		int butRow = (height - rowH30) - edge;
 		int butWidth = fontW30*10;
     int col1L = edge;
     int col2L =  (width - butWidth) - edge;
-		restartButton.setBounds(col1L, butRow, butWidth, boxH30);
-		exitButton.setBounds(col2L, butRow, butWidth, boxH30);
+		buttonRestart.setBounds(col1L, butRow, butWidth, boxH30);
+		buttonMainMenu.setBounds(col2L, butRow, butWidth, boxH30);
 		
-		GUI_util.setSelected(restartButton, true);
+		GUI_util.setSelected(buttonRestart, true);
+		this.addKeyListener(this);
 	}
 	
 	
@@ -137,6 +138,8 @@ public class HighScoreScreen extends JPanel  implements ActionListener, KeyListe
 	
 	public void update()
 	{
+	  this.requestFocus();
+	  
 	  //System.out.println("HighScoreScreen.update()");
 //
 //	  if (game.getGameOverScreen() != null)
@@ -169,58 +172,47 @@ public class HighScoreScreen extends JPanel  implements ActionListener, KeyListe
   public void keyTyped(KeyEvent arg0) {
   }
 
-  @Override
-  public void mouseClicked(MouseEvent arg0) {}
-
-  @Override
-  public void mouseEntered(MouseEvent arg0) {
-//    Object src = arg0.getSource();
-//    
-//    for(int i=0;i<this.buttonList.size();i++){
-//      if (buttonList.get(i) == src){
-//        //buttonList.get(i).setSelected(true);
-//      }
-//      else{
-//        //buttonList.get(i).setSelected(false);
-//      }
-//    }
-  }
-
-  @Override
-  public void mouseExited(MouseEvent arg0) {}
-
-  @Override
-  public void mousePressed(MouseEvent arg0) {}
-
-  @Override
-  public void mouseReleased(MouseEvent arg0) {}
-
-
-	
+  
 
 	public void actionPerformed(ActionEvent event) 
   {
     Object source = event.getSource();
-    if (source == restartButton) frame.startGame(currentUser);
-    else if (source == exitButton) frame.quit();
+    if (source == buttonRestart) frame.startGame(currentUser);
+    else if (source == buttonMainMenu) frame.showTitle();
 	}
 
 
 
   @Override
-  public void keyPressed(KeyEvent e)
+  public void keyPressed(KeyEvent event)
   {
-    // TODO Auto-generated method stub
+    int code = event.getKeyCode();
+    System.out.println("keyTyped code= " + code);
     
+    if ((code == KeyEvent.VK_ENTER) || (code == KeyEvent.VK_SPACE))
+    { 
+      if (buttonMainMenu.isSelected()) frame.showTitle();
+      else frame.startGame(currentUser);
+    }
+    
+    if ((code == KeyEvent.VK_TAB) || (code == KeyEvent.VK_LEFT) || (code == KeyEvent.VK_RIGHT))
+    {
+      if (buttonMainMenu.isSelected())
+      { GUI_util.setSelected(buttonMainMenu, false);
+        GUI_util.setSelected(buttonRestart, true);
+      }
+      else 
+      { GUI_util.setSelected(buttonMainMenu, true);
+        GUI_util.setSelected(buttonRestart, false);
+      }
+    } 
   }
 
 
 
-  @Override
-  public void keyReleased(KeyEvent e)
+  public void keyReleased(KeyEvent event)
   {
-    // TODO Auto-generated method stub
-    
+
   }
 }
 

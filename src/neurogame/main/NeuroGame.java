@@ -133,18 +133,16 @@ public class NeuroGame extends JFrame implements ActionListener
     Library.initSprites(this);
     Library.loadFont();
 
-    drawPanel = new MainDrawPanel(this);
-    contentPane.add(drawPanel);
-    drawPanel.setVisible(false);
-
-
-
     //startTime = elapsedTime = System.currentTimeMillis();
     
     // Load user profiles
     User.loadUsers();
     
     controller = new InputController(this);
+    
+    drawPanel = new MainDrawPanel(this, controller);
+    contentPane.add(drawPanel);
+    drawPanel.setVisible(false);
     
   	titlePanel = new TitleScreen(this, controller);
   	contentPane.add(titlePanel);
@@ -204,7 +202,7 @@ public class NeuroGame extends JFrame implements ActionListener
       }
       break;
     case PAUSED:
-      pauseUpdate();
+      if (controller.popPause()) unpause();
       break;
     case TITLE:
       titlePanel.update(deltaSec);
@@ -230,7 +228,7 @@ public class NeuroGame extends JFrame implements ActionListener
 
     render(gameObjectList);
   }
-  
+   
   
   
   /**
@@ -238,31 +236,18 @@ public class NeuroGame extends JFrame implements ActionListener
    */
   public void gameOverUpdate(double deltaTime)
   {
-    // Player input.
-   controller.gameOverKeyHandler();
-    double scrollDistance = world.update(deltaTime);
+    if (controller.popPlayerPressingButton())
+    { showHighScores();
+    }
+    else
+    { 
+      double scrollDistance = world.update(deltaTime);
 
-    // Draw the Zappers.
-    updateObjectList(world.getObjectList(), deltaTime, scrollDistance);
+      // Draw the Zappers.
+      updateObjectList(world.getObjectList(), deltaTime, scrollDistance);
+    }
   }
-  
-//  public void oddballUpdate()
-//  {
-//    if (getOddballScreen().isFinished() == true)
-//    {
-//      showTitle();
-//    }
-//
-//    controller.oddballKeyHandler();
-//
-//    if (getOddballScreen() != null)
-//    {
-////      if (joystick != null)
-////      {
-////        game.getOddballScreen().updateJoystick(joystick, joystickAxisX, joystickAxisY);
-////      }
-//    }
-//  }
+ 
 
   public World getWorld(){
 	  return world;
@@ -291,28 +276,8 @@ public class NeuroGame extends JFrame implements ActionListener
 	  highScorePanel.showScorePanel(currentUser);
   }
 
-  /**
-   * Handles keyboard events while paused.
-   */
-  private void pauseUpdate()
-  {
 
-    if (controller.getInputs().get("pause"))
-    {
-      controller.getInputs().put("pause", false);
-      unpause();
-    }
 
-  }
-
-  /**
-   * Send the passed String to the IOExecutor to be queued for logging. Does
-   * nothing if logging is disabled.
-   *
-   * @param s
-   *          String to send to the IOExecutor. The executor's Logger will add
-   *          the time stamp automatically.
-   */
 
 
 
@@ -336,10 +301,10 @@ public class NeuroGame extends JFrame implements ActionListener
     
     titlePanel.setVisible(false);
     highScorePanel.setVisible(false);
-    
-    drawPanel.setVisible(true);
 
     world = new World();
+    
+    drawPanel.initGame();
     
     //System.out.println("NeuroGame.newGame()  world="+world);
     
@@ -422,8 +387,6 @@ public class NeuroGame extends JFrame implements ActionListener
   private void playUpdate(double deltaTime)
   {
     
-    // Player input.
-    controller.keyHandler();
     //System.out.println("NeuroGame.game() = world=" + world);
     
     double scrollDistance = world.update(deltaTime);
@@ -434,7 +397,7 @@ public class NeuroGame extends JFrame implements ActionListener
   }
 
   public GameState getGameState(){
-	  return this.gameState;
+	  return this.gameState; 
   }
 
   
