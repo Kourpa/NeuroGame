@@ -58,7 +58,7 @@ public enum EnumChunkType
   public static EnumChunkType getRandomType()
   {
     //Never return FLAT
-    int r = Library.RANDOM.nextInt(values().length - 2)+1;
+    int r = Library.RANDOM.nextInt(values().length - 1)+1;
     return values()[r];
     //return values()[values().length-1];
   }

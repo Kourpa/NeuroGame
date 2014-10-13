@@ -36,6 +36,7 @@ public class Zapper extends Enemy
   private static final String name = "zapper";
   private static final int timeOn = Library.MIN_FRAME_MILLISEC*20;
   private static final BufferedImage masterImage = Library.getSprites().get(name);
+
   private BufferedImage zapAreaImage;
   private Graphics2D zapAreaCanvas;
   private int frameDelay;
@@ -58,15 +59,6 @@ public class Zapper extends Enemy
   /**
    * Instantiate a new Zapper at the specified coordinates. A beam will be drawn
    * automatically between the two sprites at points (x1, y1), (x2, y2).
-   * 
-   * @param x1
-   *          X-coordinate of first node
-   * @param y1
-   *          Y-coordinate of first node.
-   * @param x2
-   *          X-coordinate of second node.
-   * @param y2
-   *          Y-coordinate of second node.
    * @param world
    *          World in which this Zapper will be placed.
    */
@@ -192,7 +184,6 @@ public class Zapper extends Enemy
    
   public void render(Graphics2D g)
   {
-
     int zapMinX = Library.worldPosXToScreen(zapWorldMinX);
     int zapMinY = Library.worldPosYToScreen(zapWorldMinY);
 
