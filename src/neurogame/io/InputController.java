@@ -81,12 +81,14 @@ public class InputController implements KeyListener
       if (controller.getName().equals(user.getController()))
       {
         joystick = controller;
-        //System.out.println("Gamepad [" + user.getController() + "] found at index " + i+ "  Testing x and y axis: "+joystickAxisX +", " + joystickAxisY);
+        joystickAxisX  = user.getControllerXAxis();
+        joystickAxisY  = user.getControllerYAxis();
+        System.out.println("Gamepad [" + user.getController() + "] found at index " + i+ "  Testing x and y axis: "+joystickAxisX +", " + joystickAxisY);
 
         joystick.poll();
 
-        joystickLastX = joystick.getAxisValue(user.getControllerXAxis());
-        joystickLastY = joystick.getAxisValue(user.getControllerYAxis());
+        joystickLastX = joystick.getAxisValue(joystickAxisX);
+        joystickLastY = joystick.getAxisValue(joystickAxisY);
 
         return;
       }
@@ -125,7 +127,7 @@ public class InputController implements KeyListener
     return false;
   }
 
-  private void updateButtonStatus()
+  public void updateButtonStatus()
   {
     playerIsPressingButton = false;
 
