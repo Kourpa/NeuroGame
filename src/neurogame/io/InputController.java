@@ -31,12 +31,16 @@ public class InputController implements KeyListener
   private NeuroGame game;
 
   private boolean controllable;
+
   
   private Controller joystick = null;
+  private int joystickAxisX, joystickAxisY;
 
 
   private static final double JOYSTICK_THRESHOLD = 0.01;
+  
   private double joystickLastX, joystickLastY;
+
   private boolean ButtonPressed;
 
   private static boolean playerIsPressingButton = false;
@@ -77,12 +81,12 @@ public class InputController implements KeyListener
       if (controller.getName().equals(user.getController()))
       {
         joystick = controller;
-        System.out.println("Gamepad [" + user.getController() + "] found at index " + i+ "  Testing x and y axis: "+joystickAxisX +", " + joystickAxisY);
+        //System.out.println("Gamepad [" + user.getController() + "] found at index " + i+ "  Testing x and y axis: "+joystickAxisX +", " + joystickAxisY);
 
         joystick.poll();
 
-        joystickLastX = joystick.getAxisValue(joystickAxisX);
-        joystickLastY = joystick.getAxisValue(joystickAxisY);
+        joystickLastX = joystick.getAxisValue(user.getControllerXAxis());
+        joystickLastY = joystick.getAxisValue(user.getControllerYAxis());
 
         return;
       }
@@ -175,7 +179,7 @@ public class InputController implements KeyListener
         playerInputDirectionVector.y = stickY;
       }
     }
-    System.out.println("InputController.updatePlayerInputDirection joystick=(" + playerInputDirectionVector.x +", "+playerInputDirectionVector.y+")");
+    //System.out.println("InputController.updatePlayerInputDirection joystick=(" + playerInputDirectionVector.x +", "+playerInputDirectionVector.y+")");
   }
   
 
