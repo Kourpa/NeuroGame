@@ -36,8 +36,6 @@ public final class Chunk
   /**
    * Class constructor takes a reference the chunk size and path type
    * 
-   * @param reference
-   * @param chunkSize
    * @param pathType
    */
   public Chunk(Chunk lastChunk, double requestedWidth, EnumChunkType pathType,
@@ -45,7 +43,9 @@ public final class Chunk
   {
     this.shipPadding = shipPadding;
     int vertexPairCount = EXTRA_VERTEX_COUNT_PER_CHUNK + (int) (requestedWidth / pathType.getStepSize());
+
     if (pathType == EnumChunkType.CURVED) vertexPairCount++;
+    else if (pathType == EnumChunkType.SQUARE) vertexPairCount+=3;
 
     vertexList = new ArrayList<>();
     topAndBottom[0] = new Path2D.Double();
@@ -114,6 +114,12 @@ public final class Chunk
     double widthTop = boundsTop.getWidth();
     double widthBot = boundsBot.getWidth();
 
+    if(chunkType == EnumChunkType.SQUARE)
+    {
+      widthTop -= chunkType.getStepSize();
+      widthBot -= chunkType.getStepSize();
+    }
+
     //System.out.println("chunk.bounds=" + Library.bounds2DString(boundsTop)
     //    + ", " + Library.bounds2DString(boundsBot));
 
@@ -124,6 +130,11 @@ public final class Chunk
 
   }
 
+  /**
+   * Generate chunks which are squares.
+   * @param vertex
+   * @param chunkSize
+   */
   private void square(PathVertex vertex, int chunkSize)
   {
     PathVertex vertex2;
@@ -141,14 +152,15 @@ public final class Chunk
       vertex = new PathVertex(vertex, chunkType, shipPadding);
       vertexList.add(vertex2);
       vertexList.add(vertex);
-
     }
+
+
+
   }
 
   /**
    * Generate the chunk using curved lines.
    * 
-   * @param p
    * @param chunkSize
    */
   private void curved(PathVertex vertex, int chunkSize)
@@ -188,7 +200,6 @@ public final class Chunk
 
   /**
    * sets the chunks next generated pathType.
-   * 
    * @param pathType
    */
   public void setPathType(EnumChunkType pathType)

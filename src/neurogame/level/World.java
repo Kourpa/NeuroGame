@@ -52,19 +52,16 @@ public class World
     
     
     skillBasedChunkGapHeight = new double[EnumChunkType.SIZE];
-    
-
 
     for (EnumChunkType type : EnumChunkType.values())
     {
       skillBasedChunkGapHeight[type.ordinal()] = type.getDefaultOpeningHeight();
     }
-    
 
     chunkLeft = new Chunk(null, windowWidth, EnumChunkType.FLAT, EnumChunkType.FLAT.getDefaultOpeningHeight());
 
-    double gapHeight = skillBasedChunkGapHeight[EnumChunkType.SMOOTH.ordinal()];
-    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SMOOTH, gapHeight);
+    double gapHeight = skillBasedChunkGapHeight[EnumChunkType.SQUARE.ordinal()];
+    chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SQUARE, gapHeight);
 
     crystalWalls = new CrystalGrower(chunkLeft, chunkRight);
   }
@@ -163,7 +160,6 @@ public class World
     Star.spawn(chunkRight, this, deltaTime);
     Enemy.spawn(chunkRight, this, deltaTime);
     Ammo.spawn(chunkRight, this, deltaTime);
-
   }
   
   public void addGameObject(GameObject obj)
@@ -172,8 +168,7 @@ public class World
     //Therefore, add the object to a waitlist that gets updated on the next call to world.update
     
     objectWaitList.add(obj);
-    
-    
+
   }
 
   public void render(Graphics2D g)
