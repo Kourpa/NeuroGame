@@ -85,7 +85,7 @@ public enum GameObjectType
   { public String getName() {return "Zapper";}
     public double getWidth() {return 0.09;}
     public double getHeight() {return 0.07;}
-    public int getHitDamage() {return 25;} //per second
+    public int getHitDamage() {return 10;} //per second
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return false;}
     public double getMaxSpeed() {return 0.0;}
