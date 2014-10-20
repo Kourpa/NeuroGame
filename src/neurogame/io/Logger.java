@@ -48,6 +48,8 @@ public class Logger
   private SocketToParallelPort socket;
   private static final String HOST = "127.0.0.1";
   private static final int PORT = 55555;
+  
+  private int senttrigger;
 
   /**
    * Instantiate a new Logger with the default file path.
@@ -58,6 +60,7 @@ public class Logger
    */
   public Logger()
   {
+	  senttrigger = 0;
     String fileName = generateFileName();
 
     logFile = new File(PATH, fileName);
@@ -114,7 +117,7 @@ public class Logger
 
   public void startGame()
   {
-
+	  senttrigger = 5;
     if (socket != null)
     {
       socket.sendByte(SocketToParallelPort.TRIGGER_GAME_START);
@@ -123,7 +126,20 @@ public class Logger
 
   public void update(World world)
   {
-
+	  
+	if (socket != null)
+	{
+	  if (senttrigger > 0)
+	  {
+		if (senttrigger == 1) {
+		  socket.sendByte(SocketToParallelPort.TRIGGER_SIGNAL_GROUND);
+		senttrigger = 0;
+		}
+		else senttrigger--;
+		
+	  }
+	}
+	
     Player player = world.getPlayer();
     Enemy[] enemyList = Enemy.getEnemyList();
     Star[] starList = Star.getStarList();
@@ -137,30 +153,34 @@ public class Logger
     //System.out.println(socket);
     if (socket != null)
     {
-      if (joystickButton == 1) socket.sendByte(SocketToParallelPort.TRIGGER_GAME_SHOOT_BUTTON);
+      if (joystickButton == 1)
+       { socket.sendByte(SocketToParallelPort.TRIGGER_GAME_SHOOT_BUTTON);
+       senttrigger =1;
+       }
       else if ((collisionBits & (Player.COLLISION_BITS_WALL_ABOVE | Player.COLLISION_BITS_WALL_BELOW)) > 0)
       {
         socket.sendByte(SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_WALL);
+        senttrigger =5;
       }
       else if ((collisionBits & Player.COLLISION_BITS_ENEMY) > 0)
       {
         socket.sendByte(SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_ENEMY);
+        senttrigger =5;
       }
       else if ((collisionBits & Player.COLLISION_BITS_STAR) > 0)
       {
         socket.sendByte(SocketToParallelPort.TRIGGER_GAME_COLLECT_STAR);
+        senttrigger =5;
       }
       else if ((collisionBits & Player.COLLISION_BITS_AMMO) > 0)
       {
         socket.sendByte(SocketToParallelPort.TRIGGER_GAME_COLLECT_AMMO);
-      }
-      else if ((collisionBits & Player.COLLISION_BITS_AMMO) > 0)
-      {
-        socket.sendByte(SocketToParallelPort.TRIGGER_GAME_COLLECT_AMMO);
+        senttrigger =5;
       }
       else if ((collisionBits & Player.COLLISION_FLAG_MISSILE_HIT_ENEMY) > 0)
       {
         socket.sendByte(SocketToParallelPort.TRIGGER_GAME_MISSILE_HIT_ENEMY);
+        senttrigger =5;
       }
     }
 

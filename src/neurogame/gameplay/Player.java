@@ -288,6 +288,7 @@ public class Player extends GameObject
    
       InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(score));
       world.addGameObject(scoreInfo);
+      collisionLogBitsThisUpdate = collisionLogBitsThisUpdate | COLLISION_FLAG_MISSILE_HIT_ENEMY;
     }
     //System.out.println("    obj ("+ obj.getCenterX() +", " + obj.getCenterY() +")  worldLeft="+Library.leftEdgeOfWorld);
     
