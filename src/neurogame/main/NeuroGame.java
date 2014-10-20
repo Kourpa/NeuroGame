@@ -138,7 +138,7 @@ public class NeuroGame extends JFrame implements ActionListener
     // Load user profiles
     User.loadUsers();
     
-    controller = new InputController(this);
+    controller = new InputController();
     
     drawPanel = new MainDrawPanel(this, controller);
     contentPane.add(drawPanel);
@@ -237,7 +237,7 @@ public class NeuroGame extends JFrame implements ActionListener
    */
   public void gameOverUpdate(double deltaTime)
   {
-    if (controller.popPlayerPressingButton())
+    if (InputController.isPlayerPressingButton())
     { showHighScores();
     }
     else
@@ -316,6 +316,7 @@ public class NeuroGame extends JFrame implements ActionListener
     drawPanel.setWorld(world);
     
     controller.setControllable(true);
+    controller.initGame();
     player = world.getPlayer();
     Ammo.initGame();
     Enemy.initGame();

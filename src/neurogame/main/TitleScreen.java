@@ -204,6 +204,7 @@ public class TitleScreen extends JPanel implements ActionListener, KeyListener
     joyTestPanel.setBorder(raisedetched);
     userPanel.add(joyTestPanel);
     
+    setUser();
 		this.addKeyListener(this);
 		dropDown_userList.addActionListener(this);
     dropDown_joystickX.addActionListener(this);
@@ -620,6 +621,18 @@ public class TitleScreen extends JPanel implements ActionListener, KeyListener
       }
 	  }
 	  
+	  private void setUser()
+	  {
+      if (dropDown_userList.getSelectedIndex() < 0) return;
+ 
+      String userName = (String) dropDown_userList.getSelectedItem();
+      System.out.println("TitleScreen.actionPerformed(): dropDown_userList.getSelectedIndex()="+dropDown_userList.getSelectedIndex() + "("+userName+")");
+      
+      User user = User.getUser(userName);
+      System.out.println("       user="+user);
+      gameController.setupJoystick(user);
+	  }
+	  
 	  public void paintComponent(Graphics g)  
     {  
       super.paintComponent(g);  
@@ -651,22 +664,8 @@ public class TitleScreen extends JPanel implements ActionListener, KeyListener
 	    //System.out.println("TitleScreen.actionPerformed()....selected="+dropDown_userList.getSelectedIndex()+",  visible="+dropDown_userList.isPopupVisible()); 
 	//  
 	    
-	    else if (source == dropDown_userList)
-	    {
-	      if (dropDown_userList.getSelectedIndex() < 0)
-	      {
-	        System.out.println("Stupid non-selected action");
-	        return;
-	      }
+	    else if (source == dropDown_userList) setUser();
         
-	      
-	      String userName = (String) dropDown_userList.getSelectedItem();
-	      System.out.println("TitleScreen.actionPerformed(): dropDown_userList.getSelectedIndex()="+dropDown_userList.getSelectedIndex() + "("+userName+")");
-	      
-	      User user = User.getUser(userName);
-	      System.out.println("       user="+user);
-	      gameController.setupJoystick(user);
-	    }
 	    
 	    else if (source == dropDown_joystickX || source == dropDown_joystickY)
 	    {

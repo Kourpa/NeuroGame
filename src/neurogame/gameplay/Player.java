@@ -20,8 +20,8 @@ public class Player extends GameObject
   private static Image image = Library.getSprites().get(GameObjectType.PLAYER.getName());
   public static final int MAX_AMMO_COUNT = 20;
   private int ammoCount;
-  private boolean triggerReleasedSinceLastMissile;
-  private boolean triggerPressed = false;
+  //private boolean triggerReleasedSinceLastMissile;
+ // private boolean triggerPressed = false;
 
   private boolean invulnerable = false;
   
@@ -67,8 +67,8 @@ public class Player extends GameObject
     gameScore = 0;
     gameTotalSeconds = 0;
     timeOfLastWallCollision = 0;
-    triggerPressed = false;
-    triggerReleasedSinceLastMissile = true;
+    //triggerPressed = false;
+    //triggerReleasedSinceLastMissile = true;
     
     ammoCount = 10;
     
@@ -98,7 +98,7 @@ public class Player extends GameObject
     gameTotalSeconds += deltaSec;
     //if (missileCurrentCooldown > 0) missileCurrentCooldown -= deltaSec;
     
-    triggerPressed = false;
+    //triggerPressed = false;
     collisionLogBitsThisUpdate = 0;
 
     updatePlayerInputDirection();
@@ -180,8 +180,8 @@ public class Player extends GameObject
       }
     }
     
-    if (InputController.popPlayerPressingButton2()) shootMissile();
-    else { triggerReleasedSinceLastMissile = true;}
+    if (InputController.isPlayerPressingButton()) shootMissile();
+    //else { triggerReleasedSinceLastMissile = true;}
     
   }
   
@@ -348,11 +348,11 @@ public class Player extends GameObject
   
   private void shootMissile()
   {
-    if (!triggerReleasedSinceLastMissile) return;
-    triggerPressed = true;
+    //if (!triggerReleasedSinceLastMissile) return;
+    //triggerPressed = true;
     if ((Missile.getCurrentMissile() != null) && (Missile.getCurrentMissile().isAlive())) return;
     
-    triggerReleasedSinceLastMissile = false;
+    //triggerReleasedSinceLastMissile = false;
    
     //if (missileCurrentCooldown > 0) return;
     //System.out.println("Player.shootMissile()   missileCount=" + missileCount);

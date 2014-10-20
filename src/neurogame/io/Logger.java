@@ -137,7 +137,7 @@ public class Logger
     //System.out.println(socket);
     if (socket != null)
     {
-      if (player.triggerPressed) socket.sendByte(SocketToParallelPort.TRIGGER_GAME_SHOOT_BUTTON);
+      if (joystickButton == 1) socket.sendByte(SocketToParallelPort.TRIGGER_GAME_SHOOT_BUTTON);
       else if ((collisionBits & (Player.COLLISION_BITS_WALL_ABOVE | Player.COLLISION_BITS_WALL_BELOW)) > 0)
       {
         socket.sendByte(SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_WALL);

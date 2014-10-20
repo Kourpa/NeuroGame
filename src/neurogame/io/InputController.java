@@ -28,7 +28,6 @@ public class InputController implements KeyListener
   // private final PlayerControls controls;
   public static final String JOYSTICK_NOT_CONNECTED = null;
 
-  private NeuroGame game;
 
   private boolean controllable;
 
@@ -41,25 +40,31 @@ public class InputController implements KeyListener
   
   private double joystickLastX, joystickLastY;
 
-  private boolean ButtonPressed;
-
-  private static boolean playerIsPressingButton = false;
+  private static boolean playerPressedButton;
+  private static boolean playerReleasedButton;
+  private static boolean playerPressedSpacebar = false;
   private static boolean playerPressedPause = false;
 
   private boolean joystickReady;
 
   private static DirectionVector playerInputDirectionVector = new DirectionVector();
   
-  public InputController(NeuroGame game)
+  public InputController()
   {
     System.out.println("GameController() Enter");
-    this.game = game;
   
+  }
+  
+  public static void initGame()
+  {
+    playerPressedButton = false;
+    playerReleasedButton = true;
   }
 
 
   public void setupJoystick(User user)
   {
+
     if ((user == null) || (user.getController() == null))
     { joystick = null;
       return;
@@ -112,29 +117,40 @@ public class InputController implements KeyListener
 
 
   
-  public static boolean popPlayerPressingButton()
+  public static boolean isPlayerPressingButton()
   {
-    if (playerIsPressingButton)
-    { 
-      playerIsPressingButton = false;
-      return true;
-    }
-    return false;
+    return playerPressedButton;
   }
 
   private void updateButtonStatus()
   {
+    playerPressedButton = false;
+    if (playerPressedSpacebar)
+    { playerPressedSpacebar = false;
+      playerPressedButton = true;
+      playerReleasedButton = false;
+      return;
+    }
+    
+   
+    
+    
     if (joystick != null)
     {
       for (int i = 0; i < 6; i++)
       {
+   
         if (joystick.isButtonPressed(i))
         {
-          playerIsPressingButton = true;
+          if (playerReleasedButton)
+          { playerPressedButton = true;
+            playerReleasedButton = false;
+          }
           return;
         }
       }
     }
+    playerReleasedButton = true;
   }
 
 
@@ -201,7 +217,7 @@ public class InputController implements KeyListener
     int code = event.getKeyCode();
     //System.out.println("InputController.keyPressed() keyTyped code= " + code);
     
-    if (code == KeyEvent.VK_SPACE) playerIsPressingButton = true;
+    if (code == KeyEvent.VK_SPACE) playerPressedSpacebar = true;
     else if (code == KeyEvent.VK_UP) playerInputDirectionVector.y = -1;
     else if (code == KeyEvent.VK_DOWN) playerInputDirectionVector.y = 1;
     else if (code == KeyEvent.VK_RIGHT) playerInputDirectionVector.x = 1;
@@ -215,8 +231,7 @@ public class InputController implements KeyListener
     int code = event.getKeyCode();
     System.out.println("InputController.keyReleased() keyTyped code= " + code);
     
-    if (code == KeyEvent.VK_SPACE) playerIsPressingButton = false;
-    else if (code == KeyEvent.VK_UP) playerInputDirectionVector.y = 0;
+    if (code == KeyEvent.VK_UP) playerInputDirectionVector.y = 0;
     else if (code == KeyEvent.VK_DOWN) playerInputDirectionVector.y = 0;
     else if (code == KeyEvent.VK_RIGHT) playerInputDirectionVector.x = 0;
     else if (code == KeyEvent.VK_LEFT)  playerInputDirectionVector.x = 0;

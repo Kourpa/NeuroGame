@@ -29,13 +29,16 @@ import neurogame.library.Library;
  */
 public class Zapper extends Enemy
 {
-  public static final int spriteWidth = 64;
-  public static final int spriteHeight = 64;
-  public static final double width = Library.worldUnitToScreen(spriteWidth);
-  public static final double height = Library.worldUnitToScreen(spriteHeight);
-  private static final String name = "zapper";
-  private static final int timeOn = Library.MIN_FRAME_MILLISEC*20;
-  private static final BufferedImage masterImage = Library.getSprites().get(name);
+
+  private final String name = "zapper";
+  private final int timeOn = Library.MIN_FRAME_MILLISEC*5;
+  private BufferedImage topImage;
+  private BufferedImage bottomImage;
+
+  private final Color BLACK = new Color(0,0,0,0);
+
+  private int spriteWidth;
+  private int spriteHeight;
 
   private BufferedImage zapAreaImage;
   private Graphics2D zapAreaCanvas;
@@ -44,15 +47,12 @@ public class Zapper extends Enemy
   private boolean on;
   private Player player;
   private double threshold = 0.1;
+  private boolean hitPlayer;
 
-  // private int zapX1, zapY1, zapX2, zapY2, zapPlayerX, zapPlayerY, zapMinX,
-  // zapMinY, zapAreaWidth, zapAreaHeight;
   private int zapAreaWidth, zapAreaHeight, zapAreaHypotenuse;
-  private double zapNodeWorldX1, zapNodeWorldY1, zapNodeWorldX2,
-      zapNodeWorldY2, zapWorldMinX, zapWorldMinY;
 
-  // private static final Color[] glowColor = {Color.WHITE, new Color(237, 182,
-  // 240), new Color(148, 85, 202)};
+  private double zapNodeWorldX, zapNodeWorldTopY, zapNodeWorldBottomY;
+
   private static final int[] glowColor =
   { 0xFFFFFFFF, 0xFF64FFFF, 0xFF9455CA };
 
@@ -65,66 +65,47 @@ public class Zapper extends Enemy
   public Zapper(PathVertex vertex, World world)
   {
     super(GameObjectType.ZAPPER, vertex, world);
-    
-    zapNodeWorldX1 = vertex.getX();
-    zapNodeWorldX2 = vertex.getX();
-    zapNodeWorldY1 = vertex.getTop();
-    zapNodeWorldY2 = vertex.getBottom() - GameObjectType.ZAPPER.getHeight();
-    
-    setLocation(zapNodeWorldX1, zapNodeWorldY1);
-    
-    // image = new BufferedImage(spriteWidth, spriteHeight,
-    // BufferedImage.TYPE_INT_ARGB);
-    // graphics = image.createGraphics();
-    // graphics.drawImage(masterImage, 0, 0, spriteWidth, spriteHeight, null);
-    
-    frameDelay = (Library.RANDOM.nextInt(30) + 1) * Library.MIN_FRAME_MILLISEC
-        + timeOn;
-    frameCounter = Library.RANDOM.nextInt(frameDelay);
+
+    //Init globals
+    zapNodeWorldX = vertex.getX();
+    zapNodeWorldTopY = vertex.getTop();
+    zapNodeWorldBottomY = vertex.getBottom() - getHeight();
     on = false;
+    hitPlayer = false;
     player = world.getPlayer();
 
-    // image = new BufferedImage(spriteWidth, spriteHeight,
-    // BufferedImage.TYPE_INT_ARGB);
-    // graphics = image.createGraphics();
+    setLocation(zapNodeWorldX, zapNodeWorldTopY);
 
-    double dx = Math.abs(zapNodeWorldX1 - zapNodeWorldX2);
-    double dy = Math.abs(zapNodeWorldY1 - zapNodeWorldY2);
+    frameDelay = (Library.RANDOM.nextInt(10) + 1) * Library.MIN_FRAME_MILLISEC + timeOn;
+    frameCounter = Library.RANDOM.nextInt(frameDelay);
 
-    zapAreaWidth = (int) (dx * Library.U_VALUE) + spriteWidth;
-    zapAreaWidth = zapAreaWidth / 2;
-    zapAreaHeight = (int) (dy * Library.U_VALUE) + spriteHeight;
+
+    //Init images once rather then in render
+    BufferedImage tempImage = Library.getSprites().get(name);
+
+    AffineTransform transform = AffineTransform.getScaleInstance(.5, .5);
+    AffineTransformOp op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
+    bottomImage = op.filter(tempImage, null);
+
+    spriteWidth = bottomImage.getWidth();
+    spriteHeight = bottomImage.getHeight();
+
+    AffineTransform rotate = AffineTransform.getRotateInstance(Math.toRadians(180),spriteWidth/2, spriteHeight/2);
+    op = new AffineTransformOp(rotate, AffineTransformOp.TYPE_BILINEAR);
+    topImage = op.filter(bottomImage, null);
+
+    // Init zap variables
+    zapAreaWidth = spriteWidth / 2;
+    zapAreaHeight = Library.worldUnitToScreen(zapNodeWorldBottomY - zapNodeWorldTopY);
+    zapAreaHeight -= spriteHeight;
 
     zapAreaHypotenuse = (int) Math.sqrt(zapAreaWidth * zapAreaWidth
-        + zapAreaHeight * zapAreaHeight);
+      + zapAreaHeight * zapAreaHeight);
 
-    zapWorldMinX = Math.min(zapNodeWorldX1, zapNodeWorldX2);
-    zapWorldMinY = Math.min(zapNodeWorldY1, zapNodeWorldY2);
-
-    // System.out.println("zapAreaWidth="+zapAreaWidth+", zapAreaHeight="+zapAreaHeight);
     zapAreaImage = new BufferedImage(zapAreaWidth, zapAreaHeight,
-        BufferedImage.TYPE_INT_RGB);
+      BufferedImage.TYPE_INT_ARGB);
     zapAreaCanvas = zapAreaImage.createGraphics();
-  }
-
-  /**
-   * Getter for the x-coordinate of the second node.
-   * 
-   * @return X-coordinate of the second node in u-scale (double).
-   */
-  public double getX2()
-  {
-    return zapNodeWorldX2;
-  }
-
-  /**
-   * Getter for the y-coordinate of the second node.
-   * 
-   * @return Y-coordinate of the second node in u-scale (double).
-   */
-  public double getY2()
-  {
-    return zapNodeWorldY2;
+    zapAreaCanvas.setBackground(BLACK);
   }
 
   /**
@@ -152,7 +133,7 @@ public class Zapper extends Enemy
   @Override
   public void update(double deltaTime, double scrollDistance)
   {
-    if (getX() < Library.leftEdgeOfWorld) die(false);
+    if (getX() + getWidth() < Library.leftEdgeOfWorld) die(false);
     if (!isAlive()) return;
     
     if (++frameCounter >= frameDelay)
@@ -166,9 +147,14 @@ public class Zapper extends Enemy
       turnOff();
     }
 
-    if((on) && (Math.abs(player.getCenterX() - this.getX()) < threshold)){
+    if((on) && (Math.abs(player.getCenterX() - (getCenterX())) < threshold)){
       player.loseHealth(player.getCenterX(), player.getCenterY(),
           GameObjectType.ZAPPER.getHitDamage()*deltaTime);
+      hitPlayer = true;
+    }
+    else
+    {
+      hitPlayer = false;
     }
 
   }
@@ -184,59 +170,47 @@ public class Zapper extends Enemy
    
   public void render(Graphics2D g)
   {
-    int zapMinX = Library.worldPosXToScreen(zapWorldMinX);
-    int zapMinY = Library.worldPosYToScreen(zapWorldMinY);
-
-    int zapX1 = Library.worldPosXToScreen(zapNodeWorldX1);
-    int zapY1 = Library.worldPosYToScreen(zapNodeWorldY1);
-    int zapX2 = Library.worldPosXToScreen(zapNodeWorldX2);
-    int zapY2 = Library.worldPosYToScreen(zapNodeWorldY2);
+    int zapX = Library.worldPosXToScreen(zapNodeWorldX);
+    int zapY1 = Library.worldPosYToScreen(zapNodeWorldTopY);
+    int zapY2 = Library.worldPosYToScreen(zapNodeWorldBottomY);
 
     if (on)
     {
-      drawLightning(collision(player));
-      drawLightning(false);
+      drawLightning(hitPlayer);
+//      drawLightning(false);
 
-      g.drawImage(zapAreaImage, zapMinX+20, zapMinY, null); // Offset the X so the lightning is center
+      g.drawImage(zapAreaImage, zapX+20, zapY1 + spriteHeight, null); // Offset the X so the lightning is center
     }
     
-    // Rotate 180 to face down
-    AffineTransform tx = AffineTransform.getRotateInstance(Math.toRadians(180), spriteWidth/2, spriteHeight/2);
-    tx.scale(0.5, 0.5);
-    AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-    
-    //g.drawImage(masterImage, zapX1, zapY1, spriteWidth, spriteHeight, null);
-    g.drawImage(op.filter(masterImage, null), zapX1, zapY1, null);
-    
-    g.drawImage(masterImage, zapX2, zapY2, spriteWidth, spriteHeight, null);
+    g.drawImage(topImage, zapX, zapY1, null);
+    g.drawImage(bottomImage, zapX, zapY2, null);
   }
 
   public void drawLightning(boolean hitPlayer)
   {
-    // graphics = g;
-    zapAreaCanvas.setColor(Color.BLACK);
-    zapAreaCanvas.fillRect(0, 0, zapAreaWidth, zapAreaHeight);
+    zapAreaCanvas.setBackground(BLACK);
+    zapAreaCanvas.clearRect(0, 0, zapAreaWidth, zapAreaHeight);
 
-    // if (hitPlayer)
-    // {
-    //
-    // int playerX = Library.worldToScreen(player.getX() / player.getWidth());
-    // int playerY = Library.worldToScreen(player.getY() / player.getHeight());
-    // if (playerX < 1) playerX = 1;
-    // if (playerY < 1) playerY = 1;
-    // if (playerX >= zapAreaWidth - 1) playerX = zapAreaWidth - 2;
-    // if (playerY >= zapAreaHeight - 1) playerY = zapAreaHeight - 2;
-    //
-    // int displace = zapAreaHypotenuse / 2;
-    // drawBolt(1, 1, playerX, playerY, displace);
-    // drawBolt(playerX, playerY, zapAreaWidth - 2, zapAreaHeight - 2,
-    // displace);
-    // }
-    // else
-    // {
-    int displace = zapAreaHypotenuse / 2;
-    drawBolt(zapAreaWidth/2, 1, zapAreaWidth/2, zapAreaHeight - 2, displace);
-    // }
+//    if (hitPlayer)
+//    {
+//      System.out.println("hitting player");
+//      int playerX = Library.worldUnitToScreen(player.getCenterX());
+//      int playerY = Library.worldUnitToScreen(player.getCenterY());
+//      if (playerX < 1) playerX = 1;
+//      if (playerY < 1) playerY = 1;
+//      if (playerX >= zapAreaWidth - 1) playerX = zapAreaWidth - 2;
+//      if (playerY >= zapAreaHeight - 1) playerY = zapAreaHeight - 2;
+//
+//      int displace = 1000;
+//      drawBolt(1, 1, playerX, playerY, displace);
+//      drawBolt(playerX, playerY, zapAreaWidth - 2, zapAreaHeight - 2,
+//      displace);
+//    }
+//    else
+//    {
+      int displace = zapAreaHypotenuse / 2;
+      drawBolt(zapAreaWidth/2, 1, zapAreaWidth/2, zapAreaHeight - 2, displace);
+//    }
     // myPic.repaint();
   }
 
