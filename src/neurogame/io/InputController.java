@@ -111,13 +111,8 @@ public class InputController implements KeyListener
 
 
 
-
-  public static boolean isPlayerPressingButton()
-  {
-    return playerIsPressingButton;
-  }
   
-  public boolean popPlayerPressingButton()
+  public static boolean popPlayerPressingButton()
   {
     if (playerIsPressingButton)
     { 
@@ -127,12 +122,8 @@ public class InputController implements KeyListener
     return false;
   }
 
-  public void updateButtonStatus()
+  private void updateButtonStatus()
   {
-    playerIsPressingButton = false;
-
-
-
     if (joystick != null)
     {
       for (int i = 0; i < 6; i++)
@@ -149,10 +140,10 @@ public class InputController implements KeyListener
 
 
 
-  public void updatePlayerInputDirection()
+  public void updatePlayerInput()
   {
     //if (!controllable) return;
-      
+    updateButtonStatus();  
     
     if (joystick != null)
     {
@@ -208,7 +199,7 @@ public class InputController implements KeyListener
   public void keyPressed(KeyEvent event) 
   {
     int code = event.getKeyCode();
-    System.out.println("InputController.keyPressed() keyTyped code= " + code);
+    //System.out.println("InputController.keyPressed() keyTyped code= " + code);
     
     if (code == KeyEvent.VK_SPACE) playerIsPressingButton = true;
     else if (code == KeyEvent.VK_UP) playerInputDirectionVector.y = -1;

@@ -83,6 +83,7 @@ public class SocketToParallelPort
     try
     {
       writer.write(outByteArray);
+      System.out.println("SocketToParallelPort.sendByte("+data+")");
     }
     catch (IOException e) 
     {

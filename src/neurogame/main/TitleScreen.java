@@ -572,7 +572,6 @@ public class TitleScreen extends JPanel implements ActionListener, KeyListener
 	    
 	    if (userPanel.isVisible())
 	    {
-	      gameController.updatePlayerInputDirection();
 	      DirectionVector dir = gameController.getPlayerInputDirectionVector();
 	      joyTestPanel.updateJoy(dir);
 	      joyTestPanel.repaint();

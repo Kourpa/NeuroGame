@@ -21,7 +21,7 @@ public class Player extends GameObject
   public static final int MAX_AMMO_COUNT = 20;
   private int ammoCount;
   private boolean triggerReleasedSinceLastMissile;
-  public boolean triggerPressed = false;
+  private boolean triggerPressed = false;
 
   private boolean invulnerable = false;
   
@@ -67,6 +67,7 @@ public class Player extends GameObject
     gameScore = 0;
     gameTotalSeconds = 0;
     timeOfLastWallCollision = 0;
+    triggerPressed = false;
     triggerReleasedSinceLastMissile = true;
     
     ammoCount = 10;
@@ -97,6 +98,7 @@ public class Player extends GameObject
     gameTotalSeconds += deltaSec;
     //if (missileCurrentCooldown > 0) missileCurrentCooldown -= deltaSec;
     
+    triggerPressed = false;
     collisionLogBitsThisUpdate = 0;
 
     updatePlayerInputDirection();
@@ -178,7 +180,7 @@ public class Player extends GameObject
       }
     }
     
-    if (InputController.isPlayerPressingButton()) shootMissile();
+    if (InputController.popPlayerPressingButton2()) shootMissile();
     else { triggerReleasedSinceLastMissile = true;}
     
   }

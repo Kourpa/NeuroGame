@@ -134,7 +134,7 @@ public class Logger
     if (InputController.isPlayerPressingButton()) joystickButton = 1;
 
     int collisionBits = player.getCollisionLogBitsThisUpdate();
-
+    //System.out.println(socket);
     if (socket != null)
     {
       if (player.triggerPressed) socket.sendByte(SocketToParallelPort.TRIGGER_GAME_SHOOT_BUTTON);
@@ -171,6 +171,7 @@ public class Logger
             player.getCenterX(), player.getCenterY(), health, player.getAmmoCount(), joystickVector.x,
             joystickVector.y, joystickButton, collisionBits);
 
+    //System.out.println(out);
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(player.getX() + player.getWidth());
 
     // System.out.println("Logger(): vertex.getTop()="+vertex.getTop()+", vertex.getBottom()="+
@@ -225,17 +226,17 @@ public class Logger
 
   public void closeLog()
   {
-
     if (socket != null)
     {
-      socket.sendByte(SocketToParallelPort.TRIGGER_GAME_OVER);
-    }
     try
     {
+      socket.sendByte(SocketToParallelPort.TRIGGER_GAME_OVER);
+      socket.close();
       writer.close();
     }
     catch (IOException e)
     {}
+    }
   }
 
 }

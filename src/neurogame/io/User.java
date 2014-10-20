@@ -23,7 +23,7 @@ public class User
 
   public static final String filePath = "/resources/users.txt";
   public static final String COLUMN_HEADERS = "UserName, HighScore, Date, Logging, Controller, x-axis, y-axis";
-  private static final DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy");
+  private static final DateFormat dateFormat = new SimpleDateFormat("MMM-d-yyyy");
   
   private static ArrayList<User> userList = new ArrayList<User>();
 
@@ -32,6 +32,7 @@ public class User
     String[] token = str.split("[,]");
     
     name = token[0];
+    //System.out.println("User("+str+") token.length="+token.length);
     if (token.length == 7)
     {
       highScore      = Integer.parseInt(token[1]);
@@ -118,10 +119,13 @@ public class User
       record = reader.readLine();
       while (record != null)
       {
+        System.out.println("   record=" + record);
         userList.add(new User(record));
-        record = reader.readLine();
+        
         User user = userList.get(userList.size()-1);
-        System.out.println("   user=" + user);
+        System.out.println("   ====>user=" + user);
+        
+        record = reader.readLine();
       }
       reader.close();
     }

@@ -190,8 +190,7 @@ public class NeuroGame extends JFrame implements ActionListener
    */
   private void update(double deltaSec)
   {
-    controller.updatePlayerInputDirection();
-    controller.updateButtonStatus();
+    controller.updatePlayerInput();
     switch (gameState)
     {
     case PLAYING:
@@ -322,7 +321,9 @@ public class NeuroGame extends JFrame implements ActionListener
     Enemy.initGame();
 
     if (currentUser.isLogging())
-    { if (log == null) log = new Logger();
+    { 
+      if (log != null) log.closeLog();
+      log = new Logger();
       log.startGame();
     }
     
@@ -337,7 +338,8 @@ public class NeuroGame extends JFrame implements ActionListener
     
     if (currentUser.isLogging())
     {
-      if (log == null) log = new Logger();
+      if (log != null) log.closeLog();
+      log = new Logger();
     }
     if (oddball == null)
     { oddball = new Oddball(this);
@@ -395,6 +397,7 @@ public class NeuroGame extends JFrame implements ActionListener
 
     updateObjectList(world.getObjectList(), deltaTime, scrollDistance);
     
+    //System.out.println("NeuroGame.palyUpdate("+deltaTime+")  currentUser.isLogging()="+currentUser.isLogging());
     if (currentUser.isLogging()) log.update(world);
   }
 
