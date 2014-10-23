@@ -48,7 +48,7 @@ public class SpriteMap extends HashMap<String, BufferedImage>
       SpriteParticles.setSprite("EnemyStraight", get("EnemyStraight"));
       SpriteParticles.setSprite("EnemySinusoidal", get("EnemySinusoidal"));
       SpriteParticles.setSprite("EnemyFollow", get("EnemyFollow"));
-      SpriteParticles.setSprite("coin", get("star"));
+      SpriteParticles.setSprite("star", get("star"));
       SpriteParticles.setSprite("powerupMissileAmmo", get("powerupMissileAmmo"));
     }
     catch (IOException ex)
@@ -90,7 +90,7 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("EnemyFollow", "/images/enemyFollow.png",
         Library.worldUnitToScreen(GameObjectType.ENEMY_FOLLOW.getWidth()),
         Library.worldUnitToScreen(GameObjectType.ENEMY_FOLLOW.getHeight()));
-    add("coin", "/images/coin.png", 64, 2560);
+    add("coin", "/images/star.png", 64, 2560);
     add("zapper", "/images/zapper.png", 128, 128);
     // Power-up HUD icons.
     add("powerupMissileAmmo", "/images/powerup-MissileAmmo.png", Library.worldUnitToScreen(GameObjectType.AMMO.getWidth()), 

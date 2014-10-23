@@ -1,5 +1,5 @@
 UserName, HighScore, Date, Logging, Controller, x-axis, y-axis
-Logan Lab,120,Oct-22-2014,true,Logitech Dual Action,3,2
+Logan Lab,330,Oct-22-2014,true,Logitech Dual Action,3,2
 Joel,1937,Oct-22-2014,false,2In1 USB Joystick,2,1
 James,7391,Oct-13-2014,false,Controller (Gamepad F310),1,0
 Laura,0,New Player,true,null,3,2

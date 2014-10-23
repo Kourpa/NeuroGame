@@ -40,7 +40,8 @@ public class SpriteParticles
    */
   public static Particle[] getPixels(String name)
   {
-//    System.out.println("This sprites name is: " + name);
+    
+    System.out.println("This sprites name is: " + name);
 
     ArrayList<Particle> pixels = nameSpriteMap.get(name);
     Particle[] newArray = new Particle[pixels.size()];
@@ -49,6 +50,8 @@ public class SpriteParticles
       Particle pp = pixels.get(i);
       newArray[i] = new Particle(width - pp.getX(), pp.getY(), pp.getColor());
     }
-    return newArray;
+
+       return newArray;
+
   }
 }
