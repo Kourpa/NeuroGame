@@ -58,7 +58,7 @@ public class Zapper extends Enemy
 
   /**
    * Instantiate a new Zapper at the specified coordinates. A beam will be drawn
-   * automatically between the two sprites at points (x1, y1), (x2, y2).
+   * automatically between the two sprites at points (x1, y1), (x2, y2).w
    * @param world
    *          World in which this Zapper will be placed.
    */
