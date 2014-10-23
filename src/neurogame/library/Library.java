@@ -198,14 +198,22 @@ public final class Library
    * Converts pixel scale (int) coordinates to u-scale world coordinates by
    * dividing the passed value by the current u-value.
    * 
-   * @param w
+   * @param x
    *          Screen (int) coordinate to convert to u-scale world coordinate.
    * @return Result of converting the parameter to u-scale.
    */
-  // public static double screenToWorld(int w)
-  // {
-  // return (double) w / U_VALUE;
-  // }
+  public static double screenXToWorld(int x)
+  { return ((double) x / U_VALUE) + leftEdgeOfWorld;
+  }
+
+  /**
+   * Converts screen y position to world y position
+   * @param y
+   * @return
+   */
+  public static double screenYToWorld(int y)
+  {return (double) y / U_VALUE;
+  }
 
   public static int worldUnitToScreen(double u)
   {

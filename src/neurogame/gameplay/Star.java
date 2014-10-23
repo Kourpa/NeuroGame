@@ -13,10 +13,7 @@ package neurogame.gameplay;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import neurogame.level.Chunk;
-import neurogame.level.EnumChunkType;
-import neurogame.level.PathVertex;
-import neurogame.level.World;
+import neurogame.level.*;
 import neurogame.library.Library;
 
 /**
@@ -92,13 +89,19 @@ public class Star extends GameObject
   }
   
   public void die(boolean showDeathEffect)
-  { 
+  {
+    if(showDeathEffect)
+    {
+      world.addGameObject(new ParticleEffect(this, world));
+    }
     isAlive = false;
     currentStarCount--;
   }
   
   public void hit(GameObject obj)
-  { die(true);
+  {
+    if(obj.getName() == "player")die(true);
+    else die(false);
   }
 
   public void render(Graphics2D g)

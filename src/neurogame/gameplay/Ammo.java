@@ -13,10 +13,7 @@ package neurogame.gameplay;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-import neurogame.level.Chunk;
-import neurogame.level.EnumChunkType;
-import neurogame.level.PathVertex;
-import neurogame.level.World;
+import neurogame.level.*;
 import neurogame.library.Library;
 
 /**
@@ -31,7 +28,7 @@ public class Ammo extends GameObject
 {
   private static Image image = Library.getSprites().get(GameObjectType.AMMO.getName());
   private static Ammo currentAmmoBox;
-  
+
   private static final double PROBABILITY_SPAWN_AMMO_PER_SEC = 0.025;
   
   public static void initGame()
@@ -57,7 +54,8 @@ public class Ammo extends GameObject
   }
   
   public void hit(GameObject obj)
-  { die(false);
+  { if(obj.getName() == "player")die(true);
+    else die(false);
   }
 
   
@@ -104,7 +102,11 @@ public class Ammo extends GameObject
   
 
   public void die(boolean showDeathEffect)
-  { 
+  {
+    if(showDeathEffect)
+    {
+      world.addGameObject(new ParticleEffect(this, world));
+    }
     isAlive = false;
   }
 

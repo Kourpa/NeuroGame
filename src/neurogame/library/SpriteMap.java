@@ -48,6 +48,8 @@ public class SpriteMap extends HashMap<String, BufferedImage>
       SpriteParticles.setSprite("EnemyStraight", get("EnemyStraight"));
       SpriteParticles.setSprite("EnemySinusoidal", get("EnemySinusoidal"));
       SpriteParticles.setSprite("EnemyFollow", get("EnemyFollow"));
+      SpriteParticles.setSprite("coin", get("star"));
+      SpriteParticles.setSprite("powerupMissileAmmo", get("powerupMissileAmmo"));
     }
     catch (IOException ex)
     {
@@ -96,6 +98,7 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("missile", "/images/missile.png", Library.worldUnitToScreen(GameObjectType.MISSILE.getWidth()), 
         Library.worldUnitToScreen(GameObjectType.MISSILE.getHeight()));
     add("missileIcon", "/images/missileIcon.png", 15 ,33);
+    add("star", "/images/star.png", 64, 64);
   }
 
   /**
