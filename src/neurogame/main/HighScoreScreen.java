@@ -14,15 +14,17 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import neurogame.io.InputController;
 import neurogame.io.User;
 import neurogame.library.Library;
 
 
 @SuppressWarnings("serial")
-public class HighScoreScreen extends JPanel implements ActionListener, KeyListener
+public class HighScoreScreen extends JPanel implements ActionListener
 {
 
 	public int selectedJoystick;
+	private InputController gameController;
 	public User currentUser;
 
 	private JButton buttonMainMenu, buttonRestart;
@@ -39,9 +41,10 @@ public class HighScoreScreen extends JPanel implements ActionListener, KeyListen
 	private NeuroGame frame;
 	
 
-	public HighScoreScreen(NeuroGame frame) 
+	public HighScoreScreen(NeuroGame frame, InputController controller) 
 	{
 	  this.frame = frame;
+	  this.gameController = controller;
 //		width = (int)(frame.getWidth()*0.75);
 //		height = (int)(frame.getHeight()*0.75);;
 //
@@ -111,7 +114,7 @@ public class HighScoreScreen extends JPanel implements ActionListener, KeyListen
 		buttonMainMenu.setBounds(col2L, butRow, butWidth, boxH30);
 		
 		GUI_util.setSelected(buttonRestart, true);
-		this.addKeyListener(this);
+		this.addKeyListener(gameController);
 	}
 	
 	
@@ -136,9 +139,27 @@ public class HighScoreScreen extends JPanel implements ActionListener, KeyListen
 	}
 	
 	
-	public void update()
+	public void update(int keycode)
 	{
 	  this.requestFocus();
+    
+    if (gameController.isPlayerPressingButton())
+    { 
+      if (buttonMainMenu.isSelected()) frame.showTitle();
+      else frame.startGame(currentUser);
+    }
+    
+    if ((keycode == KeyEvent.VK_TAB) || (keycode == KeyEvent.VK_LEFT) || (keycode == KeyEvent.VK_RIGHT))
+    {
+      if (buttonMainMenu.isSelected())
+      { GUI_util.setSelected(buttonMainMenu, false);
+        GUI_util.setSelected(buttonRestart, true);
+      }
+      else 
+      { GUI_util.setSelected(buttonMainMenu, true);
+        GUI_util.setSelected(buttonRestart, false);
+      }
+    } 
 	  
 	  //System.out.println("HighScoreScreen.update()");
 //
@@ -169,10 +190,6 @@ public class HighScoreScreen extends JPanel implements ActionListener, KeyListen
 	
 
 
-  public void keyTyped(KeyEvent arg0) {
-  }
-
-  
 
 	public void actionPerformed(ActionEvent event) 
   {
@@ -182,37 +199,5 @@ public class HighScoreScreen extends JPanel implements ActionListener, KeyListen
 	}
 
 
-
-  @Override
-  public void keyPressed(KeyEvent event)
-  {
-    int code = event.getKeyCode();
-    System.out.println("keyTyped code= " + code);
-    
-    if ((code == KeyEvent.VK_ENTER) || (code == KeyEvent.VK_SPACE))
-    { 
-      if (buttonMainMenu.isSelected()) frame.showTitle();
-      else frame.startGame(currentUser);
-    }
-    
-    if ((code == KeyEvent.VK_TAB) || (code == KeyEvent.VK_LEFT) || (code == KeyEvent.VK_RIGHT))
-    {
-      if (buttonMainMenu.isSelected())
-      { GUI_util.setSelected(buttonMainMenu, false);
-        GUI_util.setSelected(buttonRestart, true);
-      }
-      else 
-      { GUI_util.setSelected(buttonMainMenu, true);
-        GUI_util.setSelected(buttonRestart, false);
-      }
-    } 
-  }
-
-
-
-  public void keyReleased(KeyEvent event)
-  {
-
-  }
 }
 

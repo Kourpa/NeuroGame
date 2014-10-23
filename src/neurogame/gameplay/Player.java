@@ -19,6 +19,9 @@ public class Player extends GameObject
 
   private static Image image = Library.getSprites().get(GameObjectType.PLAYER.getName());
   public static final int MAX_AMMO_COUNT = 20;
+  
+  private InputController controller;
+  
   private int ammoCount;
   //private boolean triggerReleasedSinceLastMissile;
  // private boolean triggerPressed = false;
@@ -49,10 +52,11 @@ public class Player extends GameObject
   
   private double health;
 
-  public Player(double x, double y, World world)
+  public Player(double x, double y, World world, InputController controller)
   {
     super(GameObjectType.PLAYER, x, y, world);
     
+    this.controller =  controller;
     final int hitPixel_x1 = 8;
     final int hitPixel_x2 = 43;
     final int hitPixel_y1 = 0;
@@ -180,7 +184,7 @@ public class Player extends GameObject
       }
     }
     
-    if (InputController.isPlayerPressingButton()) shootMissile();
+    if (controller.isPlayerPressingButton()) shootMissile();
     //else { triggerReleasedSinceLastMissile = true;}
     
   }
@@ -213,7 +217,7 @@ public class Player extends GameObject
 
   private void updatePlayerInputDirection()
   {
-    DirectionVector inputDir = InputController.getPlayerInputDirectionVector();
+    DirectionVector inputDir = controller.getPlayerInputDirectionVector();
     directionVector.x = lastVelocityX * 0.25 + inputDir.x;
     directionVector.y = lastVelocityY * 0.25 + inputDir.y;
     

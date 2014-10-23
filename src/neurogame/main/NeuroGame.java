@@ -32,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -147,7 +148,7 @@ public class NeuroGame extends JFrame implements ActionListener
   	titlePanel = new TitleScreen(this, controller);
   	contentPane.add(titlePanel);
   	
-  	highScorePanel = new HighScoreScreen(this);
+  	highScorePanel = new HighScoreScreen(this, controller);
   	contentPane.add(highScorePanel);
   	
     drawPanel.setLocation(0, 0);
@@ -190,7 +191,7 @@ public class NeuroGame extends JFrame implements ActionListener
    */
   private void update(double deltaSec)
   {
-    controller.updatePlayerInput();
+    int keycode = controller.updatePlayerInput();
     switch (gameState)
     {
     case PLAYING:
@@ -203,16 +204,16 @@ public class NeuroGame extends JFrame implements ActionListener
       }
       break;
     case PAUSED:
-      if (controller.popPause()) unpause();
+      if (keycode == KeyEvent.VK_P) unpause();
       break;
     case TITLE:
-      titlePanel.update(deltaSec);
+      titlePanel.update(deltaSec, keycode);
       break;
     case GAMEOVER:
     	gameOverUpdate(deltaSec);
     	break;
     case HIGHSCORE:
-    	highScorePanel.update();
+    	highScorePanel.update(keycode);
     	break;
     case ODDBALL:
       boolean oddballRunning = oddball.oddballUpdate(deltaSec);
@@ -237,7 +238,7 @@ public class NeuroGame extends JFrame implements ActionListener
    */
   public void gameOverUpdate(double deltaTime)
   {
-    if (InputController.isPlayerPressingButton())
+    if (controller.isPlayerPressingButton())
     { showHighScores();
     }
     else
@@ -303,7 +304,7 @@ public class NeuroGame extends JFrame implements ActionListener
     titlePanel.setVisible(false);
     highScorePanel.setVisible(false);
 
-    world = new World();
+    world = new World(controller);
     
     drawPanel.initGame();
     
@@ -324,7 +325,7 @@ public class NeuroGame extends JFrame implements ActionListener
     if (currentUser.isLogging())
     { 
       if (log != null) log.closeLog();
-      log = new Logger();
+      log = new Logger(controller, currentUser);
       log.startGame();
     }
     
@@ -340,7 +341,7 @@ public class NeuroGame extends JFrame implements ActionListener
     if (currentUser.isLogging())
     {
       if (log != null) log.closeLog();
-      log = new Logger();
+      log = new Logger(controller, currentUser);
     }
     if (oddball == null)
     { oddball = new Oddball(this);

@@ -1,0 +1,5 @@
+Oct 22, 2014: Joel
+  Fixed all menues to work with click, spacebar and joystick button
+  Changed log files names to 1) include user name and 2) drop seconds
+  Fixed in game keyboard arrow controls to not require two presses when changing direction if the new
+  direction is pressed before the old direction is realeased.

@@ -12,6 +12,7 @@ import neurogame.gameplay.EnumCollisionType;
 import neurogame.gameplay.GameObject;
 import neurogame.gameplay.Player;
 import neurogame.gameplay.Ammo;
+import neurogame.io.InputController;
 import neurogame.library.Library;
 
 public class World
@@ -37,14 +38,14 @@ public class World
    * Initializes firstChunk, secondChunk, player and the outer walls. and the
    * fractal.
    */
-  public World()
+  public World(InputController controller)
   {
     Library.leftEdgeOfWorld = 0.0;
     windowWidth = Library.getWindowAspect();
     frameCountSinceLastChunkTypeChange = 0;
     playerHealthAtStartOfLastChunk = Library.HEALTH_MAX;
 
-    player = new Player(0.1, 1 / 2.0, this);
+    player = new Player(0.1, 1 / 2.0, this, controller);
     
     gameObjectList.clear();
     gameObjectList.add(player);

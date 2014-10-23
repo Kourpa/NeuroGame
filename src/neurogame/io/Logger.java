@@ -32,13 +32,16 @@ import neurogame.io.InputController;
 public class Logger
 {
 
-  private static final String LOG_PREFIX = "NGLog_";
+  private static final String LOG_PREFIX = "AxonGameLog_";
   private static final String LOG_EXTENSION = ".csv";
   private static final String PATH = "logs/";
   private static final String PARALLEL_CONNECTION_PROGRAM = "ParallelPortTrigger/timer.exe";
 
-  private static final SimpleDateFormat FILE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd.HH-mm-ss.SSS");
+  private static final SimpleDateFormat FILE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd.HH-mm");
   private static final String FLOAT4 = "%.4f";
+  
+  private User user;
+  private InputController controller;
 
   private File logFile;
   private BufferedWriter writer;
@@ -58,8 +61,11 @@ public class Logger
    *          String containing the time stamp of initialization for NeuroGame,
    *          as acquired by Library.timeStamp().
    */
-  public Logger()
+  public Logger(InputController controller, User user)
   {
+    this.user = user;
+    this.controller =  controller;
+    
 	  senttrigger = 0;
     String fileName = generateFileName();
 
@@ -112,7 +118,7 @@ public class Logger
 
   private String generateFileName()
   {
-    return LOG_PREFIX + FILE_DATE_FORMAT.format(new Date()) + LOG_EXTENSION;
+    return LOG_PREFIX + user.getName() + '_' + FILE_DATE_FORMAT.format(new Date()) + LOG_EXTENSION;
   }
 
   public void startGame()
@@ -147,7 +153,7 @@ public class Logger
     Missile missile = Missile.getCurrentMissile();
     double health = (double) (player.getHealth()) / Library.HEALTH_MAX;
     int joystickButton = 0;
-    if (InputController.isPlayerPressingButton()) joystickButton = 1;
+    if (controller.isPlayerPressingButton()) joystickButton = 1;
 
     int collisionBits = player.getCollisionLogBitsThisUpdate();
     //System.out.println(socket);
@@ -184,7 +190,7 @@ public class Logger
       }
     }
 
-    DirectionVector joystickVector = InputController.getPlayerInputDirectionVector();
+    DirectionVector joystickVector = controller.getPlayerInputDirectionVector();
 
     String out = Long.toString(System.currentTimeMillis() - time0)
         + String.format("," + FLOAT4 + "," + FLOAT4 + "," + FLOAT4 + ",%d," + FLOAT4 + "," + FLOAT4 + ",%d,%d,",

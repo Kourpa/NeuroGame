@@ -32,7 +32,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
 @SuppressWarnings("serial")
-public class TitleScreen extends JPanel implements ActionListener, KeyListener
+public class TitleScreen extends JPanel implements ActionListener
 {
 	private BufferedImage backgroundImage;
 	
@@ -205,7 +205,7 @@ public class TitleScreen extends JPanel implements ActionListener, KeyListener
     userPanel.add(joyTestPanel);
     
     setUser();
-		this.addKeyListener(this);
+		this.addKeyListener(gameController);
 		dropDown_userList.addActionListener(this);
     dropDown_joystickX.addActionListener(this);
     dropDown_joystickY.addActionListener(this);
@@ -518,46 +518,37 @@ public class TitleScreen extends JPanel implements ActionListener, KeyListener
   }
 	
 	
-
-	
-	 public void keyPressed(KeyEvent arg0) {
-	  }
-
-	  public void keyReleased(KeyEvent event) 
-	  {
-	    int code = event.getKeyCode();
-	    System.out.println("TitleScreen.keyReleased(code="+code); 
-	    
-	    if (code == KeyEvent.VK_ENTER)
-	    {
-	      doSelected();
-	      //System.out.println("TitleScreen.keyReleased(code=ENTER"); 
-//	      if (buttonSelectedIdx > 0)
-//	      {
-//	        System.out.println("TitleScreen.keyReleased: buttonSelectedIdx"+buttonSelectedIdx); 
-//	        buttonSelectedIdx = BUTTON_CONFIG_IDX;
-//	        this.selectComponent(SELECT_CURRENT);
-//	      }
-	      
-	      
-	    }
-	      
-	    //if (buttonSelectedIdx < 0) return;
-	    
-	    if (code == KeyEvent.VK_UP) selectComponent(SELECT_UP);
-	    else if (code == KeyEvent.VK_DOWN) selectComponent(SELECT_DOWN);
-	   
-	
-	  }
-
-	  public void keyTyped(KeyEvent arg0) {
-	  }
-
-	  
-	  public void update(double deltaSec)
+	  public void update(double deltaSec, int keyCode)
 	  {
 	    //System.out.println(dropDown_userList.isPopupVisible());;
 	    //System.out.println("TitleScreen().update() dropDown_userList.getSelectedIndex()="+dropDown_userList.getSelectedIndex());
+	    
+	    
+      
+      if (gameController.isPlayerPressingButton())
+      {
+        doSelected();
+        //System.out.println("TitleScreen.keyReleased(code=ENTER"); 
+//        if (buttonSelectedIdx > 0)
+//        {
+//          System.out.println("TitleScreen.keyReleased: buttonSelectedIdx"+buttonSelectedIdx); 
+//          buttonSelectedIdx = BUTTON_CONFIG_IDX;
+//          this.selectComponent(SELECT_CURRENT);
+//        }
+        
+        
+      }
+        
+      //if (buttonSelectedIdx < 0) return;
+      
+      if (keyCode == KeyEvent.VK_UP) selectComponent(SELECT_UP);
+      else if (keyCode == KeyEvent.VK_DOWN) selectComponent(SELECT_DOWN);
+     
+  
+	    
+	    
+	    
+	    
 	    
 	    if ((dropDown_userList.isPopupVisible() == false) && (userPanel.isVisible() == false))
 	    { this.requestFocus();

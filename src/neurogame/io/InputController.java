@@ -27,7 +27,7 @@ public class InputController implements KeyListener
 {
   // private final PlayerControls controls;
   public static final String JOYSTICK_NOT_CONNECTED = null;
-
+  public static final int NO_KEY_PRESSED = -1;
 
   private boolean controllable;
 
@@ -40,14 +40,16 @@ public class InputController implements KeyListener
   
   private double joystickLastX, joystickLastY;
 
-  private static boolean playerPressedButton;
-  private static boolean playerReleasedButton;
-  private static boolean playerPressedSpacebar = false;
-  private static boolean playerPressedPause = false;
+  private boolean triggerPressed;
+  private boolean triggerReleased = true;
+  private boolean spacebarPressed;
+  private boolean spacebarReleased = true;
+  
+  private int keyCode;
 
   private boolean joystickReady;
 
-  private static DirectionVector playerInputDirectionVector = new DirectionVector();
+  private DirectionVector playerInputDirectionVector = new DirectionVector();
   
   public InputController()
   {
@@ -55,10 +57,11 @@ public class InputController implements KeyListener
   
   }
   
-  public static void initGame()
+  public void initGame()
   {
-    playerPressedButton = false;
-    playerReleasedButton = true;
+    triggerPressed = false;
+    spacebarPressed = false;
+    keyCode = NO_KEY_PRESSED;
   }
 
 
@@ -117,46 +120,47 @@ public class InputController implements KeyListener
 
 
   
-  public static boolean isPlayerPressingButton()
+  public boolean isPlayerPressingButton()
   {
-    return playerPressedButton;
+    return triggerPressed;
   }
 
   private void updateButtonStatus()
   {
-    playerPressedButton = false;
-    if (playerPressedSpacebar)
-    { playerPressedSpacebar = false;
-      playerPressedButton = true;
-      playerReleasedButton = false;
+    triggerPressed = false;
+    if (spacebarPressed)
+    { 
+      if (spacebarReleased)
+      {
+        spacebarPressed = false;
+        triggerPressed = true;
+        triggerReleased = false;
+        spacebarReleased = false;
+      }
       return;
     }
-    
-   
-    
-    
+
     if (joystick != null)
     {
       for (int i = 0; i < 6; i++)
       {
-   
         if (joystick.isButtonPressed(i))
         {
-          if (playerReleasedButton)
-          { playerPressedButton = true;
-            playerReleasedButton = false;
+          if (triggerReleased)
+          { triggerPressed = true;
+            triggerReleased = false;
           }
           return;
         }
       }
     }
-    playerReleasedButton = true;
+    triggerReleased = true;
   }
 
 
 
 
-  public void updatePlayerInput()
+  public int updatePlayerInput()
   {
     //if (!controllable) return;
     updateButtonStatus();  
@@ -189,22 +193,18 @@ public class InputController implements KeyListener
       }
     }
     //System.out.println("InputController.updatePlayerInputDirection joystick=(" + playerInputDirectionVector.x +", "+playerInputDirectionVector.y+")");
+  
+    int code = keyCode;
+    keyCode = NO_KEY_PRESSED;
+    return code;
   }
   
 
-  public static DirectionVector getPlayerInputDirectionVector()
+  public DirectionVector getPlayerInputDirectionVector()
   {
     return playerInputDirectionVector;
   }
 
-  public boolean popPause()
-  {
-    if (playerPressedPause)
-    { playerPressedPause = false;
-      return true;
-    }
-    return false;
-  }
   
   @Override
   public void keyTyped(KeyEvent event)
@@ -214,15 +214,18 @@ public class InputController implements KeyListener
   @Override
   public void keyPressed(KeyEvent event) 
   {
-    int code = event.getKeyCode();
+    keyCode = event.getKeyCode();
+    
     //System.out.println("InputController.keyPressed() keyTyped code= " + code);
     
-    if (code == KeyEvent.VK_SPACE) playerPressedSpacebar = true;
-    else if (code == KeyEvent.VK_UP) playerInputDirectionVector.y = -1;
-    else if (code == KeyEvent.VK_DOWN) playerInputDirectionVector.y = 1;
-    else if (code == KeyEvent.VK_RIGHT) playerInputDirectionVector.x = 1;
-    else if (code == KeyEvent.VK_LEFT)  playerInputDirectionVector.x = -1;
-    
+    if (keyCode == KeyEvent.VK_SPACE || keyCode == KeyEvent.VK_ENTER) 
+    { 
+      if(spacebarReleased) spacebarPressed = true;
+    }
+    else if (keyCode == KeyEvent.VK_UP)  playerInputDirectionVector.y = -1;
+    else if (keyCode == KeyEvent.VK_DOWN) playerInputDirectionVector.y = 1;
+    else if (keyCode == KeyEvent.VK_RIGHT) playerInputDirectionVector.x = 1;
+    else if (keyCode == KeyEvent.VK_LEFT)  playerInputDirectionVector.x = -1;
   }
 
   @Override
@@ -231,10 +234,19 @@ public class InputController implements KeyListener
     int code = event.getKeyCode();
     System.out.println("InputController.keyReleased() keyTyped code= " + code);
     
-    if (code == KeyEvent.VK_UP) playerInputDirectionVector.y = 0;
-    else if (code == KeyEvent.VK_DOWN) playerInputDirectionVector.y = 0;
-    else if (code == KeyEvent.VK_RIGHT) playerInputDirectionVector.x = 0;
-    else if (code == KeyEvent.VK_LEFT)  playerInputDirectionVector.x = 0;
-    else if (code == KeyEvent.VK_P)  playerPressedPause = true;
+    if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_ENTER) spacebarReleased = true;
+    else if (code == KeyEvent.VK_UP) 
+    { if (playerInputDirectionVector.y < 0) playerInputDirectionVector.y = 0;
+    }
+    else if (code == KeyEvent.VK_DOWN) 
+    {
+      if (playerInputDirectionVector.y > 0) playerInputDirectionVector.y = 0;
+    }
+    else if (code == KeyEvent.VK_RIGHT)
+    { if (playerInputDirectionVector.x > 0) playerInputDirectionVector.x = 0;
+    }
+    else if (code == KeyEvent.VK_LEFT)
+    { if (playerInputDirectionVector.x < 0) playerInputDirectionVector.x = 0;
+    }
   }
 }
