@@ -92,7 +92,7 @@ public class Star extends GameObject
   {
     if(showDeathEffect)
     {
-      //world.addGameObject(new ParticleEffect(this, world));
+      world.addGameObject(new ParticleEffect(this, world));
     }
     isAlive = false;
     currentStarCount--;
