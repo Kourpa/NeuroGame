@@ -14,7 +14,6 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -119,6 +118,7 @@ public class TitleScreen extends JPanel implements ActionListener
 		
     // Configure Button
 		buttonList[BUTTON_CONFIG_IDX] = GUI_util.makeButton("Configuration...", this, this);
+		buttonList[BUTTON_CONFIG_IDX].setEnabled(false);
 		
 		// Start Button
 		buttonList[BUTTON_START_IDX] = GUI_util.makeButton("Start Game", this, this);

@@ -39,11 +39,6 @@ public class Player extends GameObject
   private double timeOfLastWallCollision;
   private double gameScore;
   private double gameTotalSeconds;
-  
-  private double skillEnemyStraight;
-  private double skillEnemyFollow;
-  private double skillEnemySinusoidal;
-  private double skillEnemyZapper;
 
   private QuickSet<Spark> sparkList;
 
@@ -82,11 +77,6 @@ public class Player extends GameObject
 
     lastVelocityX = 0;
     lastVelocityY = 0;
-    
-    skillEnemyStraight = 1;
-    skillEnemyFollow = 1;
-    skillEnemySinusoidal = 1;
-    skillEnemyZapper = 1;
     
   }
 
@@ -234,13 +224,6 @@ public class Player extends GameObject
     health -= damage;
     if (health < 0) health = 0;
 
-    
-//    skillProbabilitySpawnCoinPerSec += 0.05;
-//    if (skillProbabilitySpawnCoinPerSec > Star.MAX_PROBALITY_SPAWN_PER_SEC)
-//    { skillProbabilitySpawnCoinPerSec = Star.MAX_PROBALITY_SPAWN_PER_SEC;
-//    }
-    
-
     int sparkCount = Library.RANDOM.nextInt(20) + Library.RANDOM.nextInt(20)
         + Library.RANDOM.nextInt(20) + 25;
     sparkList = new QuickSet<Spark>(sparkCount);
@@ -275,7 +258,6 @@ public class Player extends GameObject
   public void killedOrAvoidedEnemy(GameObject obj, boolean shotWithMissle)
   {
     if (!isAlive()) return;
-    GameObjectType type = obj.getType();
     
     EnumChunkType pathType = world.getRightChunkType();
    
@@ -296,23 +278,6 @@ public class Player extends GameObject
     }
     //System.out.println("    obj ("+ obj.getCenterX() +", " + obj.getCenterY() +")  worldLeft="+Library.leftEdgeOfWorld);
     
-    
-    if (type == GameObjectType.ENEMY_STRAIGHT)
-    { skillEnemyStraight += 0.2;
-      if (skillEnemyStraight > Enemy.MAX_ENEMY_COUNT) skillEnemyStraight = Enemy.MAX_ENEMY_COUNT;
-    }
-    else if (type == GameObjectType.ENEMY_FOLLOW)
-    { skillEnemyFollow += 0.2;
-      if (skillEnemyFollow > Enemy.MAX_ENEMY_COUNT) skillEnemyFollow = Enemy.MAX_ENEMY_COUNT;
-    }
-    else if (type == GameObjectType.ENEMY_SINUSOIDAL)
-    { skillEnemySinusoidal += 0.2;
-      if (skillEnemySinusoidal > Enemy.MAX_ENEMY_COUNT) skillEnemySinusoidal = Enemy.MAX_ENEMY_COUNT;
-    }
-    else if (type == GameObjectType.ZAPPER){
-    	skillEnemyZapper += 0.5;
-    	if (skillEnemyZapper > Enemy.MAX_ENEMY_COUNT) skillEnemyZapper = Enemy.MAX_ENEMY_COUNT;
-    }
   }
   
   
@@ -325,23 +290,7 @@ public class Player extends GameObject
 
     GameObjectType type = obj.getType();
     loseHealth(hitX, hitY, type.getHitDamage());
-    
-    if (type == GameObjectType.ENEMY_STRAIGHT)
-    { skillEnemyStraight -= 1.2;
-      if (skillEnemyStraight < 1) skillEnemyStraight = 1;
-    }
-    else if (type == GameObjectType.ENEMY_FOLLOW)
-    { skillEnemyFollow -= 1.2;
-      if (skillEnemyFollow < 1) skillEnemyFollow = 1;
-    }
-    else if (type == GameObjectType.ENEMY_SINUSOIDAL)
-    { skillEnemySinusoidal -= 1.2;
-      if (skillEnemySinusoidal < 1) skillEnemySinusoidal = 1;
-    }
-    else if (type == GameObjectType.ZAPPER){
-    	skillEnemyZapper -= 0.5;
-    	if (skillEnemyZapper < 1) skillEnemyZapper= 1;
-    }
+
   }
   
 
@@ -391,23 +340,23 @@ public class Player extends GameObject
     gameScore += score;
   }
   
-  public int getMaxEnemy(GameObjectType enemytype)
-  {
-    if (enemytype == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
-    else if (enemytype == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
-    else if (enemytype == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
-    else if (enemytype == GameObjectType.ZAPPER) return (int)skillEnemyZapper;
-    return 1;
-  }
-  
-  public int getMaxEnemy(EnumChunkType chunkType)
-  {
-    if (chunkType.getEnemyType() == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
-    else if (chunkType.getEnemyType() == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
-    else if (chunkType.getEnemyType() == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
-    else if (chunkType.getEnemyType() == GameObjectType.ZAPPER) return (int)skillEnemyZapper;
-    return 1;
-  }
+//  public int getMaxEnemy(GameObjectType enemytype)
+//  {
+//    if (enemytype == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
+//    else if (enemytype == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
+//    else if (enemytype == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
+//    else if (enemytype == GameObjectType.ZAPPER) return (int)skillEnemyZapper;
+//    return 1;
+//  }
+//  
+//  public int getMaxEnemy(EnumChunkType chunkType)
+//  {
+//    if (chunkType.getEnemyType() == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
+//    else if (chunkType.getEnemyType() == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
+//    else if (chunkType.getEnemyType() == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
+//    else if (chunkType.getEnemyType() == GameObjectType.ZAPPER) return (int)skillEnemyZapper;
+//    return 1;
+//  }
   
 
   public int getHealth() {return (int)(health);}

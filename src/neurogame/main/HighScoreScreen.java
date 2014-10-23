@@ -5,9 +5,6 @@ import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -71,7 +68,6 @@ public class HighScoreScreen extends JPanel implements ActionListener
     FontMetrics fm30 = this.getFontMetrics(GUI_util.FONT36);
     FontMetrics fm20 = this.getFontMetrics(GUI_util.FONT20);
     
-    int fontW20 = fm20.stringWidth("X");
     int fontW30 = fm30.stringWidth("X");
     int edge = 25;
     
@@ -161,7 +157,7 @@ public class HighScoreScreen extends JPanel implements ActionListener
       }
     } 
 	  
-	  //System.out.println("HighScoreScreen.update()");
+//System.out.println("HighScoreScreen.update()");
 //
 //	  if (game.getGameOverScreen() != null)
 //	    {

@@ -14,16 +14,17 @@ import neurogame.library.Vector2;
 
 public class Enemy extends GameObject
 {
+  public static final int MAX_ENEMY_COUNT = 6; 
   private static int activeEnemyCount;
   private static Enemy[] enemyList = new Enemy[Enemy.MAX_ENEMY_COUNT];
   
   private Image image;
   
   private double maxSpeed;
-  public static final int MAX_ENEMY_COUNT = 6; 
   
   private boolean enemyFollowStoppedFollowing = false;
   private static double playerHeightAtLastSpawn = -77;
+  private static int playerHealthAtLastSpawn;
   
   private Vector2 velocity = new Vector2();
   
@@ -56,6 +57,11 @@ public class Enemy extends GameObject
       image = Library.getSprites().get(type.getName());
       maxSpeed = 0.40 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/50.0;
     }
+    if (playerHealthAtLastSpawn < world.getPlayer().getHealth())
+    {
+      maxSpeed = maxSpeed * 0.75;
+    }
+    
     setLocation(x, y);
     
   }
@@ -321,14 +327,13 @@ public class Enemy extends GameObject
   }
   
   
-  public static int spawn(Chunk myChunk, World world, double deltaTime)
+  public static int spawn(Chunk myChunk, World world, int maxEnemyCount, double deltaTime)
   {
     GameObjectType type = myChunk.getChunkType().getEnemyType();
     Player player =  world.getPlayer();
     if (type == null) return 0;
-    int maxEnemy = player.getMaxEnemy(type);
     
-    if (activeEnemyCount >= maxEnemy) return 0;
+    if (activeEnemyCount >= maxEnemyCount) return 0;
     
     if (type == GameObjectType.ENEMY_STRAIGHT) 
     { if ((activeEnemyCount > 1) && (Math.abs(player.getY() - playerHeightAtLastSpawn) < player.getHeight())) 
@@ -339,7 +344,8 @@ public class Enemy extends GameObject
     
     double r = Library.RANDOM.nextDouble();
     
-    if (r > (0.75 * deltaTime)*(maxEnemy-activeEnemyCount)) return 0;
+
+    if (r > (0.5 * deltaTime)*(maxEnemyCount-activeEnemyCount)) return 0;
 
     
 
@@ -364,6 +370,7 @@ public class Enemy extends GameObject
       enemyList[enemyIdx] = new Enemy(type, vertex, world);
     }
    
+    playerHealthAtLastSpawn = player.getHealth();
     world.addGameObject(enemyList[enemyIdx]);
     playerHeightAtLastSpawn = player.getY();
     activeEnemyCount++;
@@ -387,6 +394,7 @@ public class Enemy extends GameObject
   public static void initGame() 
   { 
     activeEnemyCount = 0;
+    playerHealthAtLastSpawn = Library.HEALTH_MAX;
     for (int i=0; i<MAX_ENEMY_COUNT; i++)
     {
       enemyList[i] = null;

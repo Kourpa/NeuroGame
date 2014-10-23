@@ -1,17 +1,11 @@
 package neurogame.io;
 
 
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.JComponent;
 
 import neurogame.gameplay.DirectionVector;
 import neurogame.io.User;
-import neurogame.main.NeuroGame;
 
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;

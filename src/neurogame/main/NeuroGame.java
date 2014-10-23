@@ -524,7 +524,7 @@ public class NeuroGame extends JFrame implements ActionListener
 	      ex.printStackTrace();
 	    }
 
-	    NeuroGame game = new NeuroGame();
+	    new NeuroGame();
 	    // Process CLI arguments.
 	    if (args.length == 1)
 	    {

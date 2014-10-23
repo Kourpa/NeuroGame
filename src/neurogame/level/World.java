@@ -30,7 +30,8 @@ public class World
   private double chunkScolledDistance = 0; // used to determine when to generate
                                            // new chunks
 
-  private double[] skillBasedChunkGapHeight;
+  private double[] skillBasedChunkGapHeight = new double[EnumChunkType.SIZE];
+  private int[] skillBasedMaxEnemyCount     = new int[EnumChunkType.SIZE];
 
   private CrystalGrower crystalWalls; // fractals!
 
@@ -50,13 +51,12 @@ public class World
     gameObjectList.clear();
     gameObjectList.add(player);
     objectWaitList.clear();
-    
-    
-    skillBasedChunkGapHeight = new double[EnumChunkType.SIZE];
 
     for (EnumChunkType type : EnumChunkType.values())
     {
-      skillBasedChunkGapHeight[type.ordinal()] = type.getDefaultOpeningHeight();
+      int idx = type.ordinal();
+      skillBasedChunkGapHeight[idx] = type.getDefaultOpeningHeight();
+      skillBasedMaxEnemyCount[idx] = 1;
     }
 
     chunkLeft = new Chunk(null, windowWidth, EnumChunkType.FLAT, EnumChunkType.FLAT.getDefaultOpeningHeight());
@@ -105,44 +105,64 @@ public class World
   {
     
     EnumChunkType pathType = chunkRight.getChunkType();
+    int chunkTypeIdx = pathType.ordinal();
     
     chunkLeft = chunkRight;
+    double deltaHealthPercent = (player.getHealth() - playerHealthAtStartOfLastChunk)/playerHealthAtStartOfLastChunk;
+    
+    String deltaHealthStr = String.format("%.2f%%", deltaHealthPercent);
+    System.out.print("World.createChunk(type="+pathType+") deltaHealth="+deltaHealthStr);
+    
    
     if ((frameCountSinceLastChunkTypeChange > 5) && (Library.RANDOM.nextInt(30) < frameCountSinceLastChunkTypeChange))
     {
       pathType = EnumChunkType.getRandomType();
-
-      if (pathType != chunkRight.getChunkType())
-      { 
-        frameCountSinceLastChunkTypeChange = 0;
-      }
     }
     
-    double gapHeight = skillBasedChunkGapHeight[pathType.ordinal()];
-    double currentPlayerHealth = player.getHealth();
-    
-    if (currentPlayerHealth >= playerHealthAtStartOfLastChunk)
-    {
-      gapHeight = gapHeight * 0.9;
-      if (gapHeight < pathType.getMinimumOpeningHeight()) gapHeight = pathType.getMinimumOpeningHeight();
+    if (pathType != chunkRight.getChunkType())
+    { 
+      frameCountSinceLastChunkTypeChange = 0;
+      System.out.println(": changed Type");
     }
     else
     {
-      double percentHealthLoss = (playerHealthAtStartOfLastChunk - currentPlayerHealth)/playerHealthAtStartOfLastChunk;
-      gapHeight = gapHeight * (1 + percentHealthLoss);;
-      if (gapHeight > pathType.getDefaultOpeningHeight()) gapHeight = pathType.getDefaultOpeningHeight();
+      frameCountSinceLastChunkTypeChange++;
+    
+      double gapHeight = skillBasedChunkGapHeight[chunkTypeIdx];
+    
+      if (player.getHealth() >= playerHealthAtStartOfLastChunk)
+      {
+        gapHeight = gapHeight * 0.85;
+        if (gapHeight < pathType.getMinimumOpeningHeight()) gapHeight = pathType.getMinimumOpeningHeight();
+      
+        skillBasedMaxEnemyCount[chunkTypeIdx]++;
+        if (skillBasedMaxEnemyCount[chunkTypeIdx] > Enemy.MAX_ENEMY_COUNT)
+        { skillBasedMaxEnemyCount[chunkTypeIdx] = Enemy.MAX_ENEMY_COUNT;
+        }
+      }
+      else
+      {
+        gapHeight = gapHeight * (1 - deltaHealthPercent*2.0);
+        if (gapHeight > pathType.getDefaultOpeningHeight()) gapHeight = pathType.getDefaultOpeningHeight();
+      
+        if (deltaHealthPercent < -0.4) skillBasedMaxEnemyCount[chunkTypeIdx] = 1; 
+        else
+        { skillBasedMaxEnemyCount[chunkTypeIdx]--;
+          if (skillBasedMaxEnemyCount[chunkTypeIdx] < 1) skillBasedMaxEnemyCount[chunkTypeIdx] = 1;
+        }
+      }
+      skillBasedChunkGapHeight[chunkTypeIdx] = gapHeight;
+      
+      System.out.println(", gapHeight="+gapHeight+", maxEmemy="+skillBasedMaxEnemyCount[chunkTypeIdx]);
     }
-    
-    System.out.println("World.createChunk(type="+pathType+"): gapHeight="+gapHeight);
-    skillBasedChunkGapHeight[pathType.ordinal()] = gapHeight;
-    playerHealthAtStartOfLastChunk = currentPlayerHealth;
-    
-    if (pathType == chunkRight.getChunkType()) frameCountSinceLastChunkTypeChange++;
 
-    chunkRight = new Chunk(chunkLeft, windowWidth, pathType, gapHeight);
+
+    chunkRight = new Chunk(chunkLeft, windowWidth, pathType, skillBasedChunkGapHeight[chunkTypeIdx]);
 
     chunkScolledDistance = 0;
     Library.leftEdgeOfWorld = chunkLeft.getStartX();
+    
+    playerHealthAtStartOfLastChunk = player.getHealth();
 
     crystalWalls.addChunk(chunkRight);
   }
@@ -158,8 +178,10 @@ public class World
    */
   private void spawner(double deltaTime)
   {
+    EnumChunkType pathType = chunkRight.getChunkType();
+    
     Star.spawn(chunkRight, this, deltaTime);
-    Enemy.spawn(chunkRight, this, deltaTime);
+    Enemy.spawn(chunkRight, this, skillBasedMaxEnemyCount[pathType.ordinal()], deltaTime);
     Ammo.spawn(chunkRight, this, deltaTime);
   }
   
@@ -182,6 +204,8 @@ public class World
   {
     return player;
   }
+  
+  public double getPlayerHealthAtStartOfLastChunk() {return playerHealthAtStartOfLastChunk;}
 
   public ArrayList<GameObject> getObjectList()
   {
