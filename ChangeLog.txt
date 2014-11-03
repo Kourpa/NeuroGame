@@ -6,3 +6,13 @@ Oct 22, 2014: Joel
      direction is pressed before the old direction is released.
   4) Attempted to make game difficultly level more responsive to player skill.
   5) Lightened the player Ammo count graphic.
+
+Oct 23, 2014: Marcos
+  1) Added particle effects for collecting star and ammo box.
+
+Oct 24, 2014: Joel
+  Changes to log file:
+  1) Changed times to seconds and added a significant figure 
+     (using a more accurate time measure).
+  2) Changed  column 9 from "Collision" to "trigger" and it now is the trigger 
+     value sent to the parallel port.

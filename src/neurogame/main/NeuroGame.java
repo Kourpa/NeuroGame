@@ -86,7 +86,8 @@ public class NeuroGame extends JFrame implements ActionListener
   public static final double NANO_TO_SEC = 1.0e-9;
   
   private Timer timer;
-  private double timeSec_start, timeSec_LastTick;
+  private double timeSec_start, timeSec_LastTick, timeCurrent;
+  private int tick;
   
   
   private GameState gameState = GameState.INITIALIZING;
@@ -180,8 +181,11 @@ public class NeuroGame extends JFrame implements ActionListener
     
     timeSec_start = System.nanoTime()*NANO_TO_SEC;
     timeSec_LastTick = timeSec_start;
+    
+    //Timer needs to run at 2x frame speed to set parallel port triggers so 0 between signals
     timer = new Timer(Library.MIN_FRAME_MILLISEC, this);
     timer.start();
+    tick = 0;
   }
   
 
@@ -190,7 +194,8 @@ public class NeuroGame extends JFrame implements ActionListener
    * Perform framewise updates.
    */
   private void update(double deltaSec)
-  {
+  { 
+
     int keycode = controller.updatePlayerInput();
     switch (gameState)
     {
@@ -399,8 +404,7 @@ public class NeuroGame extends JFrame implements ActionListener
 
     updateObjectList(world.getObjectList(), deltaTime, scrollDistance);
     
-    //System.out.println("NeuroGame.palyUpdate("+deltaTime+")  currentUser.isLogging()="+currentUser.isLogging());
-    if (currentUser.isLogging()) log.update(world);
+    if (currentUser.isLogging()) log.update(world, timeCurrent);
   }
 
   public GameState getGameState(){
@@ -691,7 +695,17 @@ public User getCurrentUser(){
   //This is the main game loop controlled by a timer.
   public void actionPerformed(ActionEvent e)
   {
-    double timeCurrent = System.nanoTime()*NANO_TO_SEC;
+//    tick++;
+//    if ((tick % 2) == 1) 
+//    { if (gameState == GameState.PLAYING)
+//      { if (currentUser.isLogging())
+//        { log.sendGroundIfNeeded();
+//        }
+//      }
+//      return;
+//    }
+    
+    timeCurrent = System.nanoTime()*NANO_TO_SEC;
     double deltaSec = timeCurrent - timeSec_LastTick;
 
     update(deltaSec);

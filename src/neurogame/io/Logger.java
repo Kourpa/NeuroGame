@@ -27,18 +27,17 @@ import neurogame.gameplay.Player;
 import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
+import neurogame.main.NeuroGame;
 import neurogame.io.InputController;
 
 public class Logger
 {
-
   private static final String LOG_PREFIX = "AxonGameLog_";
   private static final String LOG_EXTENSION = ".csv";
   private static final String PATH = "logs/";
   private static final String PARALLEL_CONNECTION_PROGRAM = "ParallelPortTrigger/timer.exe";
 
   private static final SimpleDateFormat FILE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd.HH-mm");
-  private static final String FLOAT4 = "%.4f";
   
   private User user;
   private InputController controller;
@@ -46,14 +45,16 @@ public class Logger
   private File logFile;
   private BufferedWriter writer;
 
-  private Long time0;
-
   private SocketToParallelPort socket;
   private static final String HOST = "127.0.0.1";
   private static final int PORT = 55555;
   
-  private int senttrigger;
+  private byte socketByteLast;
+  private byte socketByteSend;
+  
+  private double startSec;
 
+  
   /**
    * Instantiate a new Logger with the default file path.
    * 
@@ -66,15 +67,12 @@ public class Logger
     this.user = user;
     this.controller =  controller;
     
-	  senttrigger = 0;
     String fileName = generateFileName();
 
     logFile = new File(PATH, fileName);
     logFile.getParentFile().mkdir();
 
-    time0 = System.currentTimeMillis();
-
-    String out = "Milliseconds, PlayerX, PlayerY, Health, Ammo, JoystickX, JoystickY, JoystickButton, Collision, WallAbove, WallBelow, ";
+    String out = "Seconds, PlayerX, PlayerY, Health, Ammo, JoystickX, JoystickY, JoystickButton, Trigger, WallAbove, WallBelow, ";
     for (int i = 0; i < Enemy.MAX_ENEMY_COUNT; i++)
     {
       out += "Enemy" + i + "X, Enemy" + i + "Y, ";
@@ -84,7 +82,8 @@ public class Logger
       out += "Star" + i + "X, Star" + i + "Y, ";
     }
 
-    out += "AmmoBoxX, AmmoBoxY, MissileX, MissileY\n" + time0 + "\n";
+    startSec = System.nanoTime()*NeuroGame.NANO_TO_SEC;
+    out += "AmmoBoxX, AmmoBoxY, MissileX, MissileY\n" + String.format("%.4f\n", startSec);
 
     try
     {
@@ -108,13 +107,13 @@ public class Logger
     }
 
     socket = new SocketToParallelPort(HOST, PORT);
+    socketByteLast = -1;
+    socketByteSend = SocketToParallelPort.TRIGGER_SIGNAL_GROUND;
+    updateSocket();
 
   }
 
-  public void sendByteBySocket(byte data)
-  {
-    socket.sendByte(data);
-  }
+
 
   private String generateFileName()
   {
@@ -123,29 +122,14 @@ public class Logger
 
   public void startGame()
   {
-	  senttrigger = 5;
-    if (socket != null)
-    {
-      socket.sendByte(SocketToParallelPort.TRIGGER_GAME_START);
-    }
+    socketByteSend = SocketToParallelPort.TRIGGER_GAME_START;
+    updateSocket();
+
   }
 
-  public void update(World world)
+  public void update(World world, double currentSec)
   {
-	  
-	if (socket != null)
-	{
-	  if (senttrigger > 0)
-	  {
-		if (senttrigger == 1) {
-		  socket.sendByte(SocketToParallelPort.TRIGGER_SIGNAL_GROUND);
-		senttrigger = 0;
-		}
-		else senttrigger--;
-		
-	  }
-	}
-	
+    double gameSec = currentSec - startSec;
     Player player = world.getPlayer();
     Enemy[] enemyList = Enemy.getEnemyList();
     Star[] starList = Star.getStarList();
@@ -154,68 +138,72 @@ public class Logger
     double health = (double) (player.getHealth()) / Library.HEALTH_MAX;
     int joystickButton = 0;
     if (controller.isPlayerPressingButton()) joystickButton = 1;
-
-    int collisionBits = player.getCollisionLogBitsThisUpdate();
-    //System.out.println(socket);
-    if (socket != null)
-    {
-      if (joystickButton == 1)
-       { socket.sendByte(SocketToParallelPort.TRIGGER_GAME_SHOOT_BUTTON);
-       senttrigger =1;
-       }
-      else if ((collisionBits & (Player.COLLISION_BITS_WALL_ABOVE | Player.COLLISION_BITS_WALL_BELOW)) > 0)
-      {
-        socket.sendByte(SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_WALL);
-        senttrigger =5;
-      }
-      else if ((collisionBits & Player.COLLISION_BITS_ENEMY) > 0)
-      {
-        socket.sendByte(SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_ENEMY);
-        senttrigger =5;
-      }
-      else if ((collisionBits & Player.COLLISION_BITS_STAR) > 0)
-      {
-        socket.sendByte(SocketToParallelPort.TRIGGER_GAME_COLLECT_STAR);
-        senttrigger =5;
-      }
-      else if ((collisionBits & Player.COLLISION_BITS_AMMO) > 0)
-      {
-        socket.sendByte(SocketToParallelPort.TRIGGER_GAME_COLLECT_AMMO);
-        senttrigger =5;
-      }
-      else if ((collisionBits & Player.COLLISION_FLAG_MISSILE_HIT_ENEMY) > 0)
-      {
-        socket.sendByte(SocketToParallelPort.TRIGGER_GAME_MISSILE_HIT_ENEMY);
-        senttrigger =5;
-      }
-    }
-
     DirectionVector joystickVector = controller.getPlayerInputDirectionVector();
-
-    String out = Long.toString(System.currentTimeMillis() - time0)
-        + String.format("," + FLOAT4 + "," + FLOAT4 + "," + FLOAT4 + ",%d," + FLOAT4 + "," + FLOAT4 + ",%d,%d,",
-            player.getCenterX(), player.getCenterY(), health, player.getAmmoCount(), joystickVector.x,
-            joystickVector.y, joystickButton, collisionBits);
-
+    
     //System.out.println(out);
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(player.getX() + player.getWidth());
 
     // System.out.println("Logger(): vertex.getTop()="+vertex.getTop()+", vertex.getBottom()="+
     // vertex.getBottom());
 
+    String out = String.format("%.4f,%.3f,%.3f", gameSec, player.getCenterX(), player.getCenterY());
+    
+    out += String.format(",%.2f,%d", health, player.getAmmoCount()); 
+    
+    out += String.format(",%.3f,%.3f,%d",joystickVector.x,joystickVector.y, joystickButton);
+    
+    int collisionBits = player.getCollisionLogBitsThisUpdate();
+    
+
     double proximityTop = Math.min(1.0, (1.0 - (player.getY() - vertex.getTop())));
     double proximityBot = Math.min(1.0, (1.0 - (vertex.getBottom() - (player.getY() + player.getHeight()))));
+   
 
-    if ((collisionBits & Player.COLLISION_BITS_WALL_ABOVE) > 0) proximityTop = 1.0;
-    if ((collisionBits & Player.COLLISION_BITS_WALL_BELOW) > 0) proximityBot = 1.0;
+    if ((collisionBits & Player.COLLISION_BITS_STAR) > 0)
+    {
+      socketByteSend = SocketToParallelPort.TRIGGER_GAME_COLLECT_STAR;
+    }
+      
+    else if ((collisionBits & Player.COLLISION_BITS_WALL_ABOVE) > 0)
+    {
+      proximityTop = 1.0;
+      socketByteSend = SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_WALL;
+    }
+    
+    else if ((collisionBits & Player.COLLISION_BITS_WALL_BELOW) > 0)
+    {
+      proximityBot = 1.0;
+      socketByteSend = SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_WALL;
+    }
+      
+    else if ((collisionBits & Player.COLLISION_BITS_ENEMY) > 0)
+    {
+      socketByteSend = SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_ENEMY;
+    }
+      
+    else if ((collisionBits & Player.COLLISION_BITS_AMMO) > 0)
+    {
+      socketByteSend = SocketToParallelPort.TRIGGER_GAME_COLLECT_AMMO;
+    }
+      
+    else if ((collisionBits & Player.COLLISION_FLAG_MISSILE_HIT_ENEMY) > 0)
+    {
+      socketByteSend = SocketToParallelPort.TRIGGER_GAME_MISSILE_HIT_ENEMY;
+    }
+      
+    else if (joystickButton == 1) socketByteSend = SocketToParallelPort.TRIGGER_GAME_SHOOT_BUTTON;
+    
+    updateSocket();
+    
+    
 
-    out += String.format(FLOAT4 + "," + FLOAT4 + ",", proximityTop, proximityBot);
+    out += String.format(",%d,%.3f,%.3f,", socketByteSend, proximityTop, proximityBot);
 
     for (int i = 0; i < Enemy.MAX_ENEMY_COUNT; i++)
     {
       if ((enemyList[i] != null) && (enemyList[i].isAlive()))
       {
-        out += String.format(FLOAT4 + "," + FLOAT4 + ",", enemyList[i].getCenterX(), enemyList[i].getCenterY());
+        out += String.format("%.3f,%.3f,", enemyList[i].getCenterX(), enemyList[i].getCenterY());
       }
       else out += "0,0,";
     }
@@ -223,19 +211,19 @@ public class Logger
     {
       if ((starList[i] != null) && (starList[i].isAlive()))
       {
-        out += String.format(FLOAT4 + "," + FLOAT4 + ",", starList[i].getCenterX(), starList[i].getCenterY());
+        out += String.format("%.3f,%.3f,", starList[i].getCenterX(), starList[i].getCenterY());
       }
       else out += "0,0,";
     }
     if ((ammo != null) && (ammo.isAlive()))
     {
-      out += String.format(FLOAT4 + "," + FLOAT4, ammo.getCenterX(), ammo.getCenterY());
+      out += String.format("%.3f,%.3f", ammo.getCenterX(), ammo.getCenterY());
     }
     else out += "0,0,";
 
     if ((missile != null) && (missile.isAlive()))
     {
-      out += String.format(FLOAT4 + "," + FLOAT4 + "\n", missile.getCenterX(), missile.getCenterY());
+      out += String.format("%.3f,%.3f\n", missile.getCenterX(), missile.getCenterY());
     }
     else out += "0,0\n";
 
@@ -249,20 +237,48 @@ public class Logger
     }
 
   }
+	
+	
+  private void updateSocket()
+  {
+    if (socket == null) return;
+    
+    if (socketByteLast != SocketToParallelPort.TRIGGER_SIGNAL_GROUND)
+    { 
+      socket.sendByte(SocketToParallelPort.TRIGGER_SIGNAL_GROUND);
+      socketByteLast = SocketToParallelPort.TRIGGER_SIGNAL_GROUND;
+      return;
+    }
+    
+    if (socketByteSend != SocketToParallelPort.TRIGGER_SIGNAL_GROUND)
+    {
+      socket.sendByte(socketByteSend);
+      socketByteLast = socketByteSend;
+      socketByteSend = SocketToParallelPort.TRIGGER_SIGNAL_GROUND;
+    }
+  }
+  
+  public void sendByteBySocket(byte data)
+  {
+    socket.sendByte(data);
+  }
+  
+//  public double getProximity(double playerX, double playerY, double x, double y)
+//  {
+//    double dx = 
+//  }
 
   public void closeLog()
   {
     if (socket != null)
     {
-    try
-    {
-      socket.sendByte(SocketToParallelPort.TRIGGER_GAME_OVER);
-      socket.close();
-      writer.close();
-    }
-    catch (IOException e)
-    {}
+      try
+      {
+        socket.sendByte(SocketToParallelPort.TRIGGER_GAME_OVER);
+        socket.close();
+        writer.close();
+      }
+      catch (IOException e) {}
     }
   }
-
 }

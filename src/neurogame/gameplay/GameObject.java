@@ -16,7 +16,7 @@ public abstract class GameObject
   private double centerX, centerY;
   private double hitBoxMinX, hitBoxMaxX, hitBoxMinY, hitBoxMaxY;
   protected World world;
-  protected boolean isAlive = true; // determines if the object is active/alivezz
+  protected boolean isAlive = true;
   
 
   public GameObject(GameObjectType type, double x, double y, World world)
