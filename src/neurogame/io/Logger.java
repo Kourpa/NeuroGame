@@ -82,8 +82,13 @@ public class Logger
       out += "Star" + i + "X, Star" + i + "Y, ";
     }
 
+    SimpleDateFormat dateFormat = new SimpleDateFormat ("EEEE: MMMM d yyyy 'at' h:mm:ss a zzz");
+
+    
+    
+    Date curDate = new Date();
     startSec = System.nanoTime()*NeuroGame.NANO_TO_SEC;
-    out += "AmmoBoxX, AmmoBoxY, MissileX, MissileY\n" + String.format("%.4f\n", startSec);
+    out += "AmmoBoxX, AmmoBoxY, MissileX, MissileY\nStart Date/Time: " + dateFormat.format(curDate) + "\n";
 
     try
     {
@@ -159,7 +164,13 @@ public class Logger
     double proximityBot = Math.min(1.0, (1.0 - (vertex.getBottom() - (player.getY() + player.getHeight()))));
    
 
-    if ((collisionBits & Player.COLLISION_BITS_STAR) > 0)
+    if ((collisionBits & Player.COLLISION_BITS_ENEMY) > 0)
+    {
+      socketByteSend = SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_ENEMY;
+      System.out.println("===================================> socketByteSend="+socketByteSend);
+    }
+    
+    else if ((collisionBits & Player.COLLISION_BITS_STAR) > 0)
     {
       socketByteSend = SocketToParallelPort.TRIGGER_GAME_COLLECT_STAR;
     }
@@ -176,11 +187,6 @@ public class Logger
       socketByteSend = SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_WALL;
     }
       
-    else if ((collisionBits & Player.COLLISION_BITS_ENEMY) > 0)
-    {
-      socketByteSend = SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_ENEMY;
-    }
-      
     else if ((collisionBits & Player.COLLISION_BITS_AMMO) > 0)
     {
       socketByteSend = SocketToParallelPort.TRIGGER_GAME_COLLECT_AMMO;
@@ -190,22 +196,26 @@ public class Logger
     {
       socketByteSend = SocketToParallelPort.TRIGGER_GAME_MISSILE_HIT_ENEMY;
     }
-      
+    
     else if (joystickButton == 1) socketByteSend = SocketToParallelPort.TRIGGER_GAME_SHOOT_BUTTON;
     
-    updateSocket();
-    
-    
-
     out += String.format(",%d,%.3f,%.3f,", socketByteSend, proximityTop, proximityBot);
+    
+    
+    updateSocket();
 
     for (int i = 0; i < Enemy.MAX_ENEMY_COUNT; i++)
     {
       if ((enemyList[i] != null) && (enemyList[i].isAlive()))
       {
         out += String.format("%.3f,%.3f,", enemyList[i].getCenterX(), enemyList[i].getCenterY());
+        
+        double proximity = player.getProximity(enemyList[i]);
+        double angle = 0.0;
+        if (proximity > 0.0) angle = Math.toDegrees(player.getAngle(enemyList[i]));
+        out += String.format("%.3f,%.3f,",proximity, angle);
       }
-      else out += "0,0,";
+      else out += "0,0,0,0";
     }
     for (int i = 0; i < Star.MAX_STAR_COUNT; i++)
     {

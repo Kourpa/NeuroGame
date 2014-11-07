@@ -226,7 +226,7 @@ public class InputController implements KeyListener
   public void keyReleased(KeyEvent event)
   {
     int code = event.getKeyCode();
-    System.out.println("InputController.keyReleased() keyTyped code= " + code);
+    //System.out.println("InputController.keyReleased() keyTyped code= " + code);
     
     if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_ENTER) spacebarReleased = true;
     else if (code == KeyEvent.VK_UP) 

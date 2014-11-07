@@ -394,6 +394,45 @@ public class Player extends GameObject
       }
     }
   }
+  
+  public double getProximity(GameObject obj)
+  {
+    double distX = 0;
+    double distY = 0;
+    if (obj.getCenterX() > getCenterX())
+    { 
+      distX = Math.abs(obj.getHitMinX() - getHitMaxX());
+    }
+    else 
+    { 
+      distX = Math.abs(getHitMinX() - obj.getHitMaxX());
+    } 
+    
+    if (obj.getCenterY() > getCenterY())
+    { 
+      distY = Math.abs(obj.getHitMinY() - getHitMaxY());
+    }
+    else 
+    { 
+      distY = Math.abs(getHitMinY() - obj.getHitMaxY());
+    }
+    
+    double dist = distX + distY;
+    
+    double maxDistance = Library.getManhattanDistanceOnScreen();
+    if (dist > maxDistance) dist = maxDistance;
+    
+    double proximity = 1.0 - (dist/maxDistance);
+    if (collision(obj)) proximity = 1.0;
+    return proximity;  
+  }
+  
+  public double getAngle(GameObject obj)
+  {
+    double dx = obj.getCenterX() - getCenterX();
+    double dy = getCenterY() - obj.getCenterY();
+    return Math.atan2(dy, dx);
+  }
 
   public String toString()
   {

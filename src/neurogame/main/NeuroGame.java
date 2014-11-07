@@ -680,8 +680,7 @@ public User getCurrentUser(){
       return false;
     }
     
-    Library.setWindowPixelWidth(windowPixelWidth);
-    Library.setWindowPixelHeight(windowPixelHeight);
+    Library.setWindowPixelSize(windowPixelWidth, windowPixelHeight);
     Library.U_VALUE = windowPixelHeight;
 
     return true;

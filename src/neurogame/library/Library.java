@@ -80,6 +80,8 @@ public final class Library
 
   private static boolean debug = false;
   public static double leftEdgeOfWorld = 0;
+  
+  private static double aspectRatio,maxManhattenDistanceOnScreen;
 
   private static SpriteMap sprites;
   
@@ -141,22 +143,25 @@ public final class Library
     return windowPixelHeight;
   }
 
-  public static double getWindowAspect()
-  {
-    return (double) windowPixelWidth / (double) windowPixelHeight;
-  }
-
-  public static void setWindowPixelWidth(int width)
+  
+  public static void setWindowPixelSize(int width, int height)
   {
     windowPixelWidth = width;
-  }
-
-  public static void setWindowPixelHeight(int height)
-  {
     windowPixelHeight = height;
+    aspectRatio = (double) windowPixelWidth / (double) windowPixelHeight;
+    maxManhattenDistanceOnScreen = 1.0 + aspectRatio;
+  }
+  
+  public static double getWindowAspect()
+  {
+    return aspectRatio;
   }
 
 
+  public static double getManhattanDistanceOnScreen()
+  {
+     return maxManhattenDistanceOnScreen;
+  }
 
   /**
    * Set the random number generator's seed.
