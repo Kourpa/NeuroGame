@@ -283,6 +283,7 @@ public class Player extends GameObject
   
   public void crashedIntoEnemy(GameObject obj)
   {
+    System.out.println("Player hit Enemy: proximity=" + getProximity(obj));
     collisionLogBitsThisUpdate |= COLLISION_BITS_ENEMY;
     
     double hitX = (getCenterX() + obj.getCenterX()) / 2.0;
@@ -401,21 +402,23 @@ public class Player extends GameObject
     double distY = 0;
     if (obj.getCenterX() > getCenterX())
     { 
-      distX = Math.abs(obj.getHitMinX() - getHitMaxX());
+      distX = obj.getHitMinX() - getHitMaxX();
     }
     else 
     { 
-      distX = Math.abs(getHitMinX() - obj.getHitMaxX());
+      distX = getHitMinX() - obj.getHitMaxX();
     } 
+    if (distX < 0) distX = 0;
     
     if (obj.getCenterY() > getCenterY())
     { 
-      distY = Math.abs(obj.getHitMinY() - getHitMaxY());
+      distY = obj.getHitMinY() - getHitMaxY();
     }
     else 
     { 
-      distY = Math.abs(getHitMinY() - obj.getHitMaxY());
+      distY = getHitMinY() - obj.getHitMaxY();
     }
+    if (distY < 0) distY = 0;
     
     double dist = distX + distY;
     

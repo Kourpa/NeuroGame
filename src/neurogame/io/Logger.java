@@ -20,6 +20,7 @@ import java.util.Date;
 
 import neurogame.gameplay.Ammo;
 import neurogame.gameplay.DirectionVector;
+import neurogame.gameplay.GameObject;
 import neurogame.gameplay.Missile;
 import neurogame.gameplay.Star;
 import neurogame.gameplay.Enemy;
@@ -75,11 +76,11 @@ public class Logger
     String out = "Seconds, PlayerX, PlayerY, Health, Ammo, JoystickX, JoystickY, JoystickButton, Trigger, WallAbove, WallBelow, ";
     for (int i = 0; i < Enemy.MAX_ENEMY_COUNT; i++)
     {
-      out += "Enemy" + i + "X, Enemy" + i + "Y, ";
+      out += "Enemy" + i + " Proximity, Enemy" + i + " Angle, ";
     }
     for (int i = 0; i < Star.MAX_STAR_COUNT; i++)
     {
-      out += "Star" + i + "X, Star" + i + "Y, ";
+      out += "Star" + i + " Proximity, Star" + i + " Angle, ";
     }
 
     SimpleDateFormat dateFormat = new SimpleDateFormat ("EEEE: MMMM d yyyy 'at' h:mm:ss a zzz");
@@ -88,7 +89,7 @@ public class Logger
     
     Date curDate = new Date();
     startSec = System.nanoTime()*NeuroGame.NANO_TO_SEC;
-    out += "AmmoBoxX, AmmoBoxY, MissileX, MissileY\nStart Date/Time: " + dateFormat.format(curDate) + "\n";
+    out += "AmmoProximity, AmmoAngle, MissileX, MissileY\nStart Date/Time: " + dateFormat.format(curDate) + "\n";
 
     try
     {
@@ -167,7 +168,6 @@ public class Logger
     if ((collisionBits & Player.COLLISION_BITS_ENEMY) > 0)
     {
       socketByteSend = SocketToParallelPort.TRIGGER_GAME_PLAYER_CRASH_ENEMY;
-      System.out.println("===================================> socketByteSend="+socketByteSend);
     }
     
     else if ((collisionBits & Player.COLLISION_BITS_STAR) > 0)
@@ -206,32 +206,40 @@ public class Logger
 
     for (int i = 0; i < Enemy.MAX_ENEMY_COUNT; i++)
     {
-      if ((enemyList[i] != null) && (enemyList[i].isAlive()))
+      if ((enemyList[i] != null) && (enemyList[i].isAlive()) && Library.isOnScreen(enemyList[i]))
       {
-        out += String.format("%.3f,%.3f,", enemyList[i].getCenterX(), enemyList[i].getCenterY());
+        //out += String.format("%.3f,%.3f,", enemyList[i].getCenterX(), enemyList[i].getCenterY());
         
         double proximity = player.getProximity(enemyList[i]);
         double angle = 0.0;
         if (proximity > 0.0) angle = Math.toDegrees(player.getAngle(enemyList[i]));
         out += String.format("%.3f,%.3f,",proximity, angle);
       }
-      else out += "0,0,0,0";
+      else out += "0,0,";
     }
     for (int i = 0; i < Star.MAX_STAR_COUNT; i++)
     {
-      if ((starList[i] != null) && (starList[i].isAlive()))
+      if ((starList[i] != null) && (starList[i].isAlive())  && Library.isOnScreen(starList[i]))
       {
-        out += String.format("%.3f,%.3f,", starList[i].getCenterX(), starList[i].getCenterY());
+        //out += String.format("%.3f,%.3f,", starList[i].getCenterX(), starList[i].getCenterY());
+        double proximity = player.getProximity(starList[i]);
+        double angle = 0.0;
+        if (proximity > 0.0) angle = Math.toDegrees(player.getAngle(starList[i]));
+        out += String.format("%.3f,%.3f,",proximity, angle);
       }
       else out += "0,0,";
     }
-    if ((ammo != null) && (ammo.isAlive()))
+    if ((ammo != null) && (ammo.isAlive())  && Library.isOnScreen(ammo))
     {
-      out += String.format("%.3f,%.3f", ammo.getCenterX(), ammo.getCenterY());
+      //out += String.format("%.3f,%.3f", ammo.getCenterX(), ammo.getCenterY());
+      double proximity = player.getProximity(ammo);
+      double angle = 0.0;
+      if (proximity > 0.0) angle = Math.toDegrees(player.getAngle(ammo));
+      out += String.format("%.3f,%.3f,",proximity, angle);
     }
     else out += "0,0,";
 
-    if ((missile != null) && (missile.isAlive()))
+    if ((missile != null) && (missile.isAlive()) && Library.isOnScreen(missile))
     {
       out += String.format("%.3f,%.3f\n", missile.getCenterX(), missile.getCenterY());
     }

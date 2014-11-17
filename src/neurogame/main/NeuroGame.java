@@ -212,7 +212,7 @@ public class NeuroGame extends JFrame implements ActionListener
       if (keycode == KeyEvent.VK_P) unpause();
       break;
     case TITLE:
-      titlePanel.update(deltaSec, keycode);
+      titlePanel.update(deltaSec);
       break;
     case GAMEOVER:
     	gameOverUpdate(deltaSec);

@@ -377,7 +377,7 @@ public class TitleScreen extends JPanel implements ActionListener
 	   gameController.setupJoystick(user);
 	  }
 	
-	public void selectComponent(int code)
+	private void selectComponent(int code)
 	{
 	  if (code == SELECT_DOWN) buttonSelectedIdx++; 
 	  else if (code == SELECT_UP) buttonSelectedIdx--;
@@ -518,7 +518,7 @@ public class TitleScreen extends JPanel implements ActionListener
   }
 	
 	
-	  public void update(double deltaSec, int keyCode)
+	  public void update(double deltaSec)
 	  {
 	    //System.out.println(dropDown_userList.isPopupVisible());;
 	    //System.out.println("TitleScreen().update() dropDown_userList.getSelectedIndex()="+dropDown_userList.getSelectedIndex());
@@ -535,14 +535,21 @@ public class TitleScreen extends JPanel implements ActionListener
 //          buttonSelectedIdx = BUTTON_CONFIG_IDX;
 //          this.selectComponent(SELECT_CURRENT);
 //        }
-        
-        
+      
+      }
+      else
+      {
+        DirectionVector dir = gameController.getPlayerInputDirectionVector();
+        System.out.println("TitleScreen.update() dir="+buttonSelectedIdx);
+        { if (dir.y > 0.1) selectComponent(SELECT_DOWN);
+          else if (dir.y < -0.1) selectComponent(SELECT_UP);
+        }
       }
         
-      //if (buttonSelectedIdx < 0) return;
-      
-      if (keyCode == KeyEvent.VK_UP) selectComponent(SELECT_UP);
-      else if (keyCode == KeyEvent.VK_DOWN) selectComponent(SELECT_DOWN);
+//      //if (buttonSelectedIdx < 0) return;
+//      
+//      if (keyCode == KeyEvent.VK_UP) selectComponent(SELECT_UP);
+//      else if (keyCode == KeyEvent.VK_DOWN) selectComponent(SELECT_DOWN);
      
   
 	    
