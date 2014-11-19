@@ -80,6 +80,12 @@ public class Logger
     // ENEMY_SINUSOIDAL = 3;
     // ZAPPER = 4;
     
+    //Missile Target:
+    // 0: no missile
+    // -1 No target
+    // 1 through Enemy.MAX_ENEMY_COUNT: Index of enemy that is within verticle hit area.
+    
+    
     String out = "Seconds, PlayerX, PlayerY, Health, Ammo, JoystickX, JoystickY, JoystickButton, Trigger, WallAbove, WallBelow, ";
     for (int i = 0; i < Enemy.MAX_ENEMY_COUNT; i++)
     {
@@ -96,7 +102,7 @@ public class Logger
 
     Date curDate = new Date();
     startSec = System.nanoTime()*NeuroGame.NANO_TO_SEC;
-    out += "AmmoProximity, AmmoAngle, MissileX, MissileY\nStart Date/Time: " + dateFormat.format(curDate) + "\n";
+    out += "AmmoProximity, AmmoAngle, Missile Target, Missile Proximity to Target\nStart Date/Time: " + dateFormat.format(curDate) + "\n";
 
     try
     {
@@ -170,6 +176,12 @@ public class Logger
 
     double proximityTop = Math.min(1.0, (1.0 - (player.getY() - vertex.getTop())));
     double proximityBot = Math.min(1.0, (1.0 - (vertex.getBottom() - (player.getY() + player.getHeight()))));
+    
+    int missileTarget = 0;
+    double missileProximity = 0;
+    if ((missile != null) && (missile.isAlive()) && Library.isOnScreen(missile))
+    { missileTarget = -1;
+    }
    
 
     if ((collisionBits & Player.COLLISION_BITS_ENEMY) > 0)
@@ -225,6 +237,25 @@ public class Logger
         if (proximity > 0.0) angle = Math.toDegrees(player.getAngle(enemyList[i]));
         int enemyType = enemyList[i].getType().ordinal();
         out += String.format("%d,%.3f,%.3f,",enemyType, proximity, angle);
+        
+        if (missileTarget != 0)
+        {
+          if (missile.getX() < enemyList[i].getHitMaxX())
+          {
+            double y = enemyList[i].getY();
+            if ((missile.getCenterY() > y) && (missile.getCenterY() < y+enemyList[i].getHeight()))
+            {
+              double dist = enemyList[i].getX() - missile.getHitMaxX();
+              if (dist < 0) dist = 0;
+              proximity = (Library.getWindowAspect() - dist)/Library.getWindowAspect();
+              if (proximity > missileProximity)
+              {
+                missileTarget = i+1;
+                missileProximity = proximity;
+              }
+            }
+          }
+        }
       }
       else out += "0,0,0,";
     }
@@ -250,9 +281,9 @@ public class Logger
     }
     else out += "0,0,";
 
-    if ((missile != null) && (missile.isAlive()) && Library.isOnScreen(missile))
+    if (missileTarget != 0)
     {
-      out += String.format("%.3f,%.3f\n", missile.getCenterX(), missile.getCenterY());
+      out += String.format("%d,%.3f\n", missileTarget, missileProximity);
     }
     else out += "0,0\n";
 
