@@ -540,10 +540,9 @@ public class TitleScreen extends JPanel implements ActionListener
       else
       {
         DirectionVector dir = gameController.getPlayerInputDirectionVector();
-        System.out.println("TitleScreen.update() dir="+buttonSelectedIdx);
-        { if (dir.y > 0.1) selectComponent(SELECT_DOWN);
-          else if (dir.y < -0.1) selectComponent(SELECT_UP);
-        }
+        //System.out.println("TitleScreen.update() dir="+buttonSelectedIdx);
+        if (dir.y > 0.1) selectComponent(SELECT_DOWN);
+        else if (dir.y < -0.1) selectComponent(SELECT_UP);
       }
         
 //      //if (buttonSelectedIdx < 0) return;

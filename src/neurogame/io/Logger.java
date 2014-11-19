@@ -73,20 +73,27 @@ public class Logger
     logFile = new File(PATH, fileName);
     logFile.getParentFile().mkdir();
 
+    //Enemy Type:
+    // NONE = 0
+    // ENEMY_STRAIGHT = 1;
+    // ENEMY_FOLLOW   = 2;
+    // ENEMY_SINUSOIDAL = 3;
+    // ZAPPER = 4;
+    
     String out = "Seconds, PlayerX, PlayerY, Health, Ammo, JoystickX, JoystickY, JoystickButton, Trigger, WallAbove, WallBelow, ";
     for (int i = 0; i < Enemy.MAX_ENEMY_COUNT; i++)
     {
-      out += "Enemy" + i + " Proximity, Enemy" + i + " Angle, ";
+      int n = i+1;
+      out += "Enemy " + n +" Type,Enemy " + n +" Proximity,Enemy " + n +" Angle, ";
     }
     for (int i = 0; i < Star.MAX_STAR_COUNT; i++)
     {
-      out += "Star" + i + " Proximity, Star" + i + " Angle, ";
+      int n = i+1;
+      out += "Star " + n +" Proximity, Star " + n +" Angle, ";
     }
 
     SimpleDateFormat dateFormat = new SimpleDateFormat ("EEEE: MMMM d yyyy 'at' h:mm:ss a zzz");
 
-    
-    
     Date curDate = new Date();
     startSec = System.nanoTime()*NeuroGame.NANO_TO_SEC;
     out += "AmmoProximity, AmmoAngle, MissileX, MissileY\nStart Date/Time: " + dateFormat.format(curDate) + "\n";
@@ -203,6 +210,9 @@ public class Logger
     
     
     updateSocket();
+    
+    
+    
 
     for (int i = 0; i < Enemy.MAX_ENEMY_COUNT; i++)
     {
@@ -213,9 +223,10 @@ public class Logger
         double proximity = player.getProximity(enemyList[i]);
         double angle = 0.0;
         if (proximity > 0.0) angle = Math.toDegrees(player.getAngle(enemyList[i]));
-        out += String.format("%.3f,%.3f,",proximity, angle);
+        int enemyType = enemyList[i].getType().ordinal();
+        out += String.format("%d,%.3f,%.3f,",enemyType, proximity, angle);
       }
-      else out += "0,0,";
+      else out += "0,0,0,";
     }
     for (int i = 0; i < Star.MAX_STAR_COUNT; i++)
     {

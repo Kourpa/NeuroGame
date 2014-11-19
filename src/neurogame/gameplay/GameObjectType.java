@@ -13,41 +13,7 @@ public enum GameObjectType
     public double getMaxSpeed() {return 0.5;}
     public boolean hasCollider() {return true;}
   },
-
-  STAR
-  { public String getName() {return "coin";}
-    public double getWidth() {return 0.05;}
-    public double getHeight() {return 0.05;}
-    public int getHitDamage() {return 0;}
-    public boolean isEnemy() {return false;}
-    public boolean isDynamic() {return false;}
-    public double getMaxSpeed() {return 0;}
-    public boolean hasCollider() {return true;}
-  },
-
-  PARTICLE
-  { public String getName() {return "particle";}
-    public double getWidth() {return 0.01;}
-    public double getHeight() {return 0.01;}
-    public int getHitDamage() {return 0;}
-    public boolean isEnemy() {return false;}
-    public boolean isDynamic() {return true;}
-    public double getMaxSpeed() {return 0.5;}
-    public boolean hasCollider() {return false;}
-  },
   
-  
-  MISSILE
-  { public String getName() {return "missile";}
-    public double getWidth() {return 0.03;}
-    public double getHeight() {return 0.01;}
-    public int getHitDamage() {return 0;}
-    public boolean isEnemy() {return false;}
-    public boolean isDynamic() {return true;}
-    public double getMaxSpeed() {return 1.25;}
-    public boolean hasCollider() {return true;}
-    },
-
   ENEMY_STRAIGHT
   { public String getName() {return "EnemyStraight";}
     public double getWidth() {return 0.08;}
@@ -91,6 +57,42 @@ public enum GameObjectType
     public double getMaxSpeed() {return 0.0;}
     public boolean hasCollider() {return true;}
   },
+
+  STAR
+  { public String getName() {return "coin";}
+    public double getWidth() {return 0.05;}
+    public double getHeight() {return 0.05;}
+    public int getHitDamage() {return 0;}
+    public boolean isEnemy() {return false;}
+    public boolean isDynamic() {return false;}
+    public double getMaxSpeed() {return 0;}
+    public boolean hasCollider() {return true;}
+  },
+
+  PARTICLE
+  { public String getName() {return "particle";}
+    public double getWidth() {return 0.01;}
+    public double getHeight() {return 0.01;}
+    public int getHitDamage() {return 0;}
+    public boolean isEnemy() {return false;}
+    public boolean isDynamic() {return true;}
+    public double getMaxSpeed() {return 0.5;}
+    public boolean hasCollider() {return false;}
+  },
+  
+  
+  MISSILE
+  { public String getName() {return "missile";}
+    public double getWidth() {return 0.03;}
+    public double getHeight() {return 0.01;}
+    public int getHitDamage() {return 0;}
+    public boolean isEnemy() {return false;}
+    public boolean isDynamic() {return true;}
+    public double getMaxSpeed() {return 1.25;}
+    public boolean hasCollider() {return true;}
+    },
+
+
   
   AMMO
   { public String getName() {return "powerupMissileAmmo";}
