@@ -23,7 +23,6 @@ Nov 20, 2014: Joel
   Decreased damage from enemy hits
   If the player has suffer damage within the last 15 seconds, AND there is at least one 
      enemy on screen, then another enemy will not spawn.
-  Straight enemys only screens will not be created after the first screen set is passed.
   Multi-enemy screens will happen when the player is doing well.
   Ammo boxes are more common.
   Follow enemys now ignore you after you pass them.

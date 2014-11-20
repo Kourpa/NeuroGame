@@ -51,7 +51,9 @@ public class ParticleEffect extends GameObject
   public ParticleEffect(GameObject obj, World world){
     super(GameObjectType.PARTICLE, obj.getX(), obj.getY(), world);
 
-    particles = SpriteParticles.getPixels(obj.getName());
+    String name = obj.getName();
+    if (obj.getType() == GameObjectType.STAR) name = "singleStar";
+    particles = SpriteParticles.getPixels(name);
 
     player = world.getPlayer();
     double x = Library.worldPosXToScreen(player.getCenterX());

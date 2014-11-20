@@ -74,8 +74,7 @@ public class Ammo extends GameObject
     else if (world.getPlayer().getAmmoCount() < Player.MAX_AMMO_COUNT/2) r /= 2.0;
     if (r > PROBABILITY_SPAWN_AMMO_PER_SEC * deltaTime) return 0;
 
-    //System.out.println("probabilitySpawnCoinPerSec=" + world.getPlayer().skillProbabilitySpawnCoinPerSec);
-
+ 
     double rightEdgeOfScreen = Library.leftEdgeOfWorld
         + Library.getWindowAspect();
     PathVertex vertex = myChunk.getVertexRightOf(rightEdgeOfScreen);

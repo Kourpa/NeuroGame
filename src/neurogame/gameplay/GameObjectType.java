@@ -5,8 +5,8 @@ public enum GameObjectType
 {
   PLAYER
   { public String getName() {return "player";}
-    public double getWidth() {return 0.075;}
-    public double getHeight() {return 0.075;}
+    public double getWidth() {return 0.055;}
+    public double getHeight() {return 0.055;}
     public int getHitDamage() {return 0;}
     public boolean isEnemy() {return false;}
     public boolean isDynamic() {return true;}  
@@ -59,7 +59,7 @@ public enum GameObjectType
   },
 
   STAR
-  { public String getName() {return "coin";}
+  { public String getName() {return "star";}
     public double getWidth() {return 0.05;}
     public double getHeight() {return 0.05;}
     public int getHitDamage() {return 0;}

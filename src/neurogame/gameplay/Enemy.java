@@ -14,7 +14,7 @@ import neurogame.library.Vector2;
 
 public class Enemy extends GameObject
 {
-  public static final int MAX_ENEMY_COUNT = 6; 
+  public static final int MAX_ENEMY_COUNT = 5; 
   private static int activeEnemyCount;
   private static Enemy[] enemyList = new Enemy[Enemy.MAX_ENEMY_COUNT];
   
@@ -180,7 +180,7 @@ public class Enemy extends GameObject
     
     if (enemyFollowStoppedFollowing) 
     { 
-      maxSpeed = maxSpeed + 0.01;
+      maxSpeed = maxSpeed + 0.015;
       strategyStraight(maxDistanceChange, scrollDistance);
       return;
     }
@@ -343,7 +343,14 @@ public class Enemy extends GameObject
     if (activeEnemyCount > 0)
     { if (player.getGameTime() - player.getTimeOfLastPlayerDamage() < 15) return 0;
     
-      if (activeEnemyCount >= 4) type = GameObjectType.ENEMY_STRAIGHT;
+      if (activeEnemyCount ==  MAX_ENEMY_COUNT-2) 
+      {
+        if (type == GameObjectType.ENEMY_STRAIGHT)
+        {
+          type = GameObjectType.ENEMY_SINUSOIDAL;
+        }
+        else type = GameObjectType.ENEMY_STRAIGHT;
+      }
     }
     
    

@@ -48,7 +48,7 @@ public class SpriteMap extends HashMap<String, BufferedImage>
       SpriteParticles.setSprite("EnemyStraight", get("EnemyStraight"));
       SpriteParticles.setSprite("EnemySinusoidal", get("EnemySinusoidal"));
       SpriteParticles.setSprite("EnemyFollow", get("EnemyFollow"));
-      SpriteParticles.setSprite("coin", get("star"));
+      SpriteParticles.setSprite("singleStar", get("singleStar"));
       SpriteParticles.setSprite("powerupMissileAmmo", get("powerupMissileAmmo"));
     }
     catch (IOException ex)
@@ -73,9 +73,11 @@ public class SpriteMap extends HashMap<String, BufferedImage>
         Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
      
     // Game graphics.
-    add("player", "/images/playerShip.png", 68, 68);
-    add("pDmg1", "/images/damage1.png", 68, 68);
-    add("pDmg2", "/images/damage2.png", 68, 68);
+    int width = Library.worldUnitToScreen(GameObjectType.PLAYER.getWidth());
+    int height = Library.worldUnitToScreen(GameObjectType.PLAYER.getHeight());
+    add("player", "/images/playerShip.png", width, height);
+    add("pDmg1", "/images/damage1.png", width, height);
+    add("pDmg2", "/images/damage2.png", width, height);
     
     // Visual test graphics
     add("OddballPlayerShip","/images/playerShip.png", Oddball.ICON_SIZE, Oddball.ICON_SIZE);
@@ -90,7 +92,8 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("EnemyFollow", "/images/enemyFollow.png",
         Library.worldUnitToScreen(GameObjectType.ENEMY_FOLLOW.getWidth()),
         Library.worldUnitToScreen(GameObjectType.ENEMY_FOLLOW.getHeight()));
-    add("coin", "/images/star.png", 64, 2560);
+    //add("star", "/images/star.png", 64, 2560);
+    add("star", "/images/star.png", 53, 2560);
     add("zapper", "/images/zapper.png", 128, 128);
     // Power-up HUD icons.
     add("powerupMissileAmmo", "/images/powerup-MissileAmmo.png", Library.worldUnitToScreen(GameObjectType.AMMO.getWidth()), 
@@ -98,7 +101,7 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("missile", "/images/missile.png", Library.worldUnitToScreen(GameObjectType.MISSILE.getWidth()), 
         Library.worldUnitToScreen(GameObjectType.MISSILE.getHeight()));
     add("missileIcon", "/images/missileIcon.png", 15 ,33);
-    add("star", "/images/singleStar.png", 64, 64);
+    add("singleStar", "/images/singleStar.png", 64, 64);
   }
 
   /**

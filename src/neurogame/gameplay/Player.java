@@ -64,15 +64,9 @@ public class Player extends GameObject
     gameTotalSeconds = 0;
     timeOfLastWallCollision = 0;
     timeOfLastPlayerDamage  = 0;
-    //triggerPressed = false;
-    //triggerReleasedSinceLastMissile = true;
     
     ammoCount = 10;
     
-    //missileCurrentCooldown = 0;
-    
-    //skillProbabilitySpawnCoinPerSec = (Star.MIN_PROBALITY_SPAWN_PER_SEC + Star.MAX_PROBALITY_SPAWN_PER_SEC)/2.0;
-
     lastVelocityX = 0;
     lastVelocityY = 0;
     
@@ -243,15 +237,6 @@ public class Player extends GameObject
     InfoMessage scoreInfo = new InfoMessage(star.getCenterX(), star.getCenterY(), world, String.valueOf(Library.SCORE_STAR));
     world.addGameObject(scoreInfo);
     
-    
-//    skillProbabilitySpawnCoinPerSec -= 0.005;
-//    if (health > Library.HEALTH_MAX) 
-//    { health = Library.HEALTH_MAX;
-//      skillProbabilitySpawnCoinPerSec -= 0.025;
-//    }
-//    if (skillProbabilitySpawnCoinPerSec < Star.MIN_PROBALITY_SPAWN_PER_SEC)
-//    { skillProbabilitySpawnCoinPerSec = Star.MIN_PROBALITY_SPAWN_PER_SEC;
-//    }
   }
 
 
@@ -286,7 +271,7 @@ public class Player extends GameObject
   
   public void crashedIntoEnemy(GameObject obj)
   {
-    System.out.println("Player hit Enemy: proximity=" + getProximity(obj));
+    //System.out.println("Player hit Enemy: proximity=" + getProximity(obj));
     collisionLogBitsThisUpdate |= COLLISION_BITS_ENEMY;
     
     double hitX = (getCenterX() + obj.getCenterX()) / 2.0;

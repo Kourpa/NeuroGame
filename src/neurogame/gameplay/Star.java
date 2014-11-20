@@ -17,7 +17,7 @@ import neurogame.level.*;
 import neurogame.library.Library;
 
 /**
- * A Coin object for NeuroGame.
+ * A Star object for NeuroGame.
  * 
  * @author Ramon A. Lovato
  * @team Danny Gomez
@@ -37,34 +37,34 @@ public class Star extends GameObject
   public static final int MAX_STAR_COUNT = 20;
   private static int currentStarCount;
 
-  private static double lastCoinSpawnX;
+  private static double lastStarSpawnX;
 
   private int frameCounter;
 
   private int spriteY;
 
   /**
-   * Instantiate a new Coin at the specified coordinates.
+   * Instantiate a new Star at the specified coordinates.
    * 
    * @param x
-   *          X-coordinate at which to place the Coin.
+   *          X-coordinate at which to place the star.
    * @param y
-   *          Y-coordinate at which to place the coin.
+   *          Y-coordinate at which to place the star.
    * @param world
-   *          World in which to place the coin.
+   *          World in which to place the star.
    */
   public Star(double x, double y, World world)
   {
     super(GameObjectType.STAR, x, y, world);
     
     spriteY = 0;
-    lastCoinSpawnX = x;
+    lastStarSpawnX = x;
     
   }
   
   public static void initGame()
   {
-    lastCoinSpawnX = 0;
+    lastStarSpawnX = 0;
     currentStarCount = 0;
     for (int i=0; i<MAX_STAR_COUNT; i++)
     {
@@ -79,8 +79,6 @@ public class Star extends GameObject
 
   public void update(double deltaTime, double scrollDistance)
   {
-    // System.out.println("coin["+id+"]: ("+getX() + ", " + getY() +
-    // ") left world edge="+Library.leftEdgeOfWorld);
 
     if (getX()+getWidth() < Library.leftEdgeOfWorld) die(false);
     
@@ -100,7 +98,7 @@ public class Star extends GameObject
   
   public void hit(GameObject obj)
   {
-    if(obj.getName() == "player")die(true);
+    if(obj.getType() == GameObjectType.PLAYER) die(true);
     else die(false);
   }
 
@@ -133,8 +131,7 @@ public class Star extends GameObject
 
     if (r > MAX_PROBALITY_SPAWN_PER_SEC * deltaTime) return 0;
 
-    //System.out.println("probabilitySpawnCoinPerSec=" + world.getPlayer().skillProbabilitySpawnCoinPerSec);
-
+  
     double rightEdgeOfScreen = Library.leftEdgeOfWorld
         + Library.getWindowAspect();
     PathVertex vertex = myChunk.getVertexRightOf(rightEdgeOfScreen);
@@ -142,12 +139,12 @@ public class Star extends GameObject
     if (vertex == null) return 0;
 
     double x = vertex.getX();
-    if (x < lastCoinSpawnX + 4 * GameObjectType.STAR.getWidth()) return 0;
+    if (x < lastStarSpawnX + 4 * GameObjectType.STAR.getWidth()) return 0;
 
     
 
     int targetSpawnCount = Library.RANDOM.nextInt(5) + 1;
-    int numCoinsSpawned = 0;
+    int numStarsSpawned = 0;
 
     double y = vertex.getTop() + GameObjectType.STAR.getHeight() / 3;
     double direction = 1.0;
@@ -164,7 +161,7 @@ public class Star extends GameObject
       
       Star myStar = new Star(x, y, world);
       
-      if (myStar.wallCollision() != EnumCollisionType.NONE) return numCoinsSpawned;
+      if (myStar.wallCollision() != EnumCollisionType.NONE) return numStarsSpawned;
       
       int starIdx = getFreeStarIndex();
       if (starIdx < 0)
@@ -177,7 +174,7 @@ public class Star extends GameObject
       
       
       world.addGameObject(myStar);
-      numCoinsSpawned++;
+      numStarsSpawned++;
       currentStarCount++;
       
 
@@ -186,7 +183,7 @@ public class Star extends GameObject
       y += direction * GameObjectType.STAR.getHeight() * (1.0 + Library.RANDOM.nextDouble() / 2);
     }
 
-    return numCoinsSpawned;
+    return numStarsSpawned;
 
   }
   
