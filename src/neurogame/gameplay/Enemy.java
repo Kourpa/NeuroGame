@@ -48,14 +48,14 @@ public class Enemy extends GameObject
     else if (type == GameObjectType.ENEMY_FOLLOW)
     { 
       image = Library.getSprites().get(type.getName());
-      maxSpeed = 0.25 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/50.0;
+      maxSpeed = 0.30 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/20.0;
     }
     else if (type == GameObjectType.ENEMY_SINUSOIDAL)
     { 
       y = (vertex.getTop()+vertex.getCenter())/2.0;
       
       image = Library.getSprites().get(type.getName());
-      maxSpeed = 0.40 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/50.0;
+      maxSpeed = 0.20 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/10.0;
     }
     if (playerHealthAtLastSpawn < world.getPlayer().getHealth())
     {
@@ -69,7 +69,7 @@ public class Enemy extends GameObject
   
   public void die(boolean showDeathEffect)
   { 
-    if (showDeathEffect) 
+    if (showDeathEffect && Library.isOnScreen(this) ) 
     { world.addGameObject(new ParticleEffect(this, getCenterX(), getCenterY(), world));
     }
     if (isAlive())
@@ -179,7 +179,9 @@ public class Enemy extends GameObject
     double lastVelocityY =  velocity.y;
     
     if (enemyFollowStoppedFollowing) 
-    { strategyStraight(maxDistanceChange, scrollDistance);
+    { 
+      maxSpeed = maxSpeed + 0.01;
+      strategyStraight(maxDistanceChange, scrollDistance);
       return;
     }
     
@@ -191,9 +193,10 @@ public class Enemy extends GameObject
       
     velocity.setMaxMagnitude(maxDistanceChange);
     
-    if (getX() + getWidth()*(4 + 8*Library.RANDOM.nextDouble()) < player.getX())
-    { enemyFollowStoppedFollowing = true;
-    }
+//    if (getX() + getWidth()*(4 + 8*Library.RANDOM.nextDouble()) < player.getX())
+//    { enemyFollowStoppedFollowing = true;
+//    }
+    if (getX() + getWidth() < player.getX()) enemyFollowStoppedFollowing = true;
     
     boolean changedSpeedToAvoidWall = false;
     double xx = getX()+velocity.x;
@@ -333,7 +336,17 @@ public class Enemy extends GameObject
     Player player =  world.getPlayer();
     if (type == null) return 0;
     
+    //System.out.println("Enemy.spawn(): activeEnemyCount="+activeEnemyCount);
+    
     if (activeEnemyCount >= maxEnemyCount) return 0;
+    
+    if (activeEnemyCount > 0)
+    { if (player.getGameTime() - player.getTimeOfLastPlayerDamage() < 15) return 0;
+    
+      if (activeEnemyCount >= 4) type = GameObjectType.ENEMY_STRAIGHT;
+    }
+    
+   
     
     if (type == GameObjectType.ENEMY_STRAIGHT) 
     { if ((activeEnemyCount > 1) && (Math.abs(player.getY() - playerHeightAtLastSpawn) < player.getHeight())) 

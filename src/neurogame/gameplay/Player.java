@@ -10,10 +10,6 @@ import neurogame.library.Library;
 import neurogame.library.QuickSet;
 import neurogame.io.InputController;
 
-/**
- * @author Daniel
- * 
- */
 public class Player extends GameObject
 {
 
@@ -26,7 +22,7 @@ public class Player extends GameObject
   //private boolean triggerReleasedSinceLastMissile;
  // private boolean triggerPressed = false;
 
-  private boolean invulnerable = false;
+  //private boolean invulnerable = false;
   
   private int collisionLogBitsThisUpdate;
   public static final int COLLISION_BITS_WALL_ABOVE = 1;
@@ -37,6 +33,7 @@ public class Player extends GameObject
   public static final int COLLISION_FLAG_MISSILE_HIT_ENEMY = 32;
  
   private double timeOfLastWallCollision;
+  private double timeOfLastPlayerDamage;
   private double gameScore;
   private double gameTotalSeconds;
 
@@ -66,6 +63,7 @@ public class Player extends GameObject
     gameScore = 0;
     gameTotalSeconds = 0;
     timeOfLastWallCollision = 0;
+    timeOfLastPlayerDamage  = 0;
     //triggerPressed = false;
     //triggerReleasedSinceLastMissile = true;
     
@@ -79,6 +77,9 @@ public class Player extends GameObject
     lastVelocityY = 0;
     
   }
+  
+  public double getGameTime() {return gameTotalSeconds;}
+  public double getTimeOfLastPlayerDamage() {return timeOfLastPlayerDamage;}
 
   /**
    * Update method for the player. This will be called on every frame.
@@ -219,8 +220,7 @@ public class Player extends GameObject
 
   public void loseHealth(double hitX, double hitY, double damage)
   {
-    if (invulnerable) return;
-    
+    timeOfLastPlayerDamage = gameTotalSeconds;
     health -= damage;
     if (health < 0) health = 0;
 
@@ -266,14 +266,17 @@ public class Player extends GameObject
     //System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
     
     
-    if (shotWithMissle) 
-    { int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
+    //if (shotWithMissle) 
+    //{ 
+      int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
     
       gameScore += score;
     
    
       InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(score));
       world.addGameObject(scoreInfo);
+    if (shotWithMissle) 
+    {
       collisionLogBitsThisUpdate = collisionLogBitsThisUpdate | COLLISION_FLAG_MISSILE_HIT_ENEMY;
     }
     //System.out.println("    obj ("+ obj.getCenterX() +", " + obj.getCenterY() +")  worldLeft="+Library.leftEdgeOfWorld);
@@ -319,17 +322,6 @@ public class Player extends GameObject
   }
   
 
-  public boolean getInvulnerable()
-  {
-    return invulnerable;
-  }
-
-  public void setInvulnerable(boolean invulnerable)
-  {
-    this.invulnerable = invulnerable;
-  }
-
-
   public int getScore()
   {
     return (int) gameScore;
@@ -341,23 +333,6 @@ public class Player extends GameObject
     gameScore += score;
   }
   
-//  public int getMaxEnemy(GameObjectType enemytype)
-//  {
-//    if (enemytype == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
-//    else if (enemytype == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
-//    else if (enemytype == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
-//    else if (enemytype == GameObjectType.ZAPPER) return (int)skillEnemyZapper;
-//    return 1;
-//  }
-//  
-//  public int getMaxEnemy(EnumChunkType chunkType)
-//  {
-//    if (chunkType.getEnemyType() == GameObjectType.ENEMY_STRAIGHT) return (int)skillEnemyStraight;
-//    else if (chunkType.getEnemyType() == GameObjectType.ENEMY_FOLLOW) return (int)skillEnemyFollow;
-//    else if (chunkType.getEnemyType() == GameObjectType.ENEMY_SINUSOIDAL) return (int)skillEnemySinusoidal;
-//    else if (chunkType.getEnemyType() == GameObjectType.ZAPPER) return (int)skillEnemyZapper;
-//    return 1;
-//  }
   
 
   public int getHealth() {return (int)(health);}

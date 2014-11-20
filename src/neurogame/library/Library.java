@@ -78,7 +78,6 @@ public final class Library
   public static final int DAMAGE_PER_WALL_HIT = 5;
 
 
-  private static boolean debug = false;
   public static double leftEdgeOfWorld = 0;
   
   private static double aspectRatio,maxManhattenDistanceOnScreen;
@@ -176,28 +175,6 @@ public final class Library
 
 
 
-
-
-  /**
-   * Getter for debug.
-   * 
-   * @return True if debugging is enabled, false if not.
-   */
-  public static boolean debugging()
-  {
-    return debug;
-  }
-
-  /**
-   * Setter for debug.
-   * 
-   * @param flag
-   *          Boolean enabling debugging if true or disabling if false.
-   */
-  public static void setDebug(boolean flag)
-  {
-    debug = flag;
-  }
 
   /**
    * Converts pixel scale (int) coordinates to u-scale world coordinates by

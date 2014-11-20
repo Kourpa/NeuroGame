@@ -70,7 +70,7 @@ public class Ammo extends GameObject
     if (type == EnumChunkType.SQUARE) return 0;
     
     double r = Library.RANDOM.nextDouble();
-    if (world.getPlayer().getAmmoCount() < 2) r /= 4.0;
+    if (world.getPlayer().getAmmoCount() < 2) r /= 10.0;
     else if (world.getPlayer().getAmmoCount() < Player.MAX_AMMO_COUNT/2) r /= 2.0;
     if (r > PROBABILITY_SPAWN_AMMO_PER_SEC * deltaTime) return 0;
 

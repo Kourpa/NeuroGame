@@ -29,7 +29,7 @@ public enum GameObjectType
   { public String getName() {return "EnemyFollow";}
     public double getWidth() {return 0.09936;}
     public double getHeight() {return 0.06;}
-    public int getHitDamage() {return 10;}
+    public int getHitDamage() {return 15;}
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
     public double getMaxSpeed() {return 0.5;}
@@ -40,7 +40,7 @@ public enum GameObjectType
   { public String getName() {return "EnemySinusoidal";}
     public double getWidth() {return 0.09;}
     public double getHeight() {return 0.07;}
-    public int getHitDamage() {return 10;}
+    public int getHitDamage() {return 15;}
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return true;}
     public double getMaxSpeed() {return 0.6;}

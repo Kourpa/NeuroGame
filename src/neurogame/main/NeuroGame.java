@@ -86,8 +86,7 @@ public class NeuroGame extends JFrame implements ActionListener
   public static final double NANO_TO_SEC = 1.0e-9;
   
   private Timer timer;
-  private double timeSec_start, timeSec_LastTick, timeCurrent;
-  private int tick;
+  private double timeSec_start, timeSec_LastTick, timeCurrent, timeGameSec;
   
   
   private GameState gameState = GameState.INITIALIZING;
@@ -135,7 +134,6 @@ public class NeuroGame extends JFrame implements ActionListener
     Library.initSprites(this);
     Library.loadFont();
 
-    //startTime = elapsedTime = System.currentTimeMillis();
     
     // Load user profiles
     User.loadUsers();
@@ -185,7 +183,6 @@ public class NeuroGame extends JFrame implements ActionListener
     //Timer needs to run at 2x frame speed to set parallel port triggers so 0 between signals
     timer = new Timer(Library.MIN_FRAME_MILLISEC, this);
     timer.start();
-    tick = 0;
   }
   
 
@@ -209,7 +206,7 @@ public class NeuroGame extends JFrame implements ActionListener
       }
       break;
     case PAUSED:
-      if (keycode == KeyEvent.VK_P) unpause();
+      if (keycode == KeyEvent.VK_P) togglePause();
       break;
     case TITLE:
       titlePanel.update(deltaSec);
@@ -236,7 +233,7 @@ public class NeuroGame extends JFrame implements ActionListener
     render(gameObjectList);
   }
    
-  
+  public double getGameSec() {return timeGameSec;}
   
   /**
    * Continue scrolling the game when the player dies
@@ -302,7 +299,7 @@ public class NeuroGame extends JFrame implements ActionListener
    */
   public void startGame(User currentUser)
   {
-    
+    timeGameSec = 0;
     this.currentUser = currentUser;
     
     
@@ -368,14 +365,6 @@ public class NeuroGame extends JFrame implements ActionListener
 	  }
   }
 
-  /**
-   * Unpause the game.
-   */
-  private void unpause()
-  {
-    gameState = GameState.PLAYING;
-    //frame.unpause();
-  }
 
   /**
    * End the current game.
@@ -386,18 +375,11 @@ public class NeuroGame extends JFrame implements ActionListener
     showGameOver();
   }
 
-  public TitleScreen getTitleScreen(){
-	  return titlePanel;
-  }
-  
-  
-  public Oddball getOddballScreen(){
-	  return oddball;
-  }
+
   
   private void playUpdate(double deltaTime)
   {
-    
+    timeGameSec += deltaTime;
     //System.out.println("NeuroGame.game() = world=" + world);
     
     double scrollDistance = world.update(deltaTime);
@@ -462,32 +444,6 @@ public class NeuroGame extends JFrame implements ActionListener
     }
   }
   
- 
-
- 
-  /**
-   * Print CLI instructions.
-   */
-  public static void printInstructions()
-  {
-    System.out.printf("Usage:%n" + "    NeuroGame [OPTIONS]%n");
-    System.out.println();
-    System.out.printf("Options: -hdfFw%n" + "    h - print this help message%n"
-        + "    d - enable global debug mode%n"
-        + "    D - disable global debug mode (default)%n"
-        + "    l - enable local logging (default)%n"
-        + "    L - disable local logging%n"
-        + "    f - run in full-screen-exclusive mode (default)%n"
-        + "    F - run in maximized window mode%n"
-        + "    w - run in normal windowed mode%n"
-        + "    s - run with sound enabled (default)%n"
-        + "    S - run with sound disabled%n"
-        + "    g - enable global God mode%n"
-        + "    G - disable global God mode (default)");
-    System.out.println();
-    System.out.println("Arguments {'e', 'E'}, {'f', 'F', 'w'} "
-        + "{'g', 'G'}, {'l', 'L'} and {'s', 'S'} are " + "mutually exclusive.");
-  }
 
 
   /**
@@ -529,64 +485,6 @@ public class NeuroGame extends JFrame implements ActionListener
 	    }
 
 	    new NeuroGame();
-	    // Process CLI arguments.
-	    if (args.length == 1)
-	    {
-	      if (args[0].matches(Library.ARGS_REGEX))
-	      {
-	        String s = args[0].substring(1);
-	        // Help message.
-	        if (s.contains("h"))
-	        {
-	          printInstructions();
-	        }
-	        // Debug mode.
-	        if (s.toLowerCase().contains("d"))
-	        {
-	          Library.setDebug(true);
-	        }
-
-	        // Sound mode.
-	        if (s.toLowerCase().contains("s")){
-	          //setSound(true);
-	        }
-	        else{
-	          //setSound(true);
-	        }
-	        
-
-	        // God mode. If and only if perma-God mode is explicitly
-	        // enabled from the command line, then also set suicideEnabled
-	        // to true.
-	        if (s.toLowerCase().contains("g"))
-	        {
-	          //setGodMode(true);
-	          //setSuicideEnabled(true);
-	        }
-	        else
-	        {
-	          //setGodMode(false);
-	          //setSuicideEnabled(false);
-	        }
-	      }
-	      else
-	      {
-	        printInstructions();
-	      }
-	    }
-	    else
-	    {
-	      //setSound(true);
-	      //setGodMode(false);
-	      //setSuicideEnabled(false);
-	      //setGlobalDebug(false);
-	      Library.setDebug(false);
-	    }
-
-	    // Hand off control to the GameController and start the timer. The
-	    // timer must not be started until after setting the frame to full-
-	    // screen-exclusive mode, as it can cause concurrency issues.
-	    //game.mainGameLoop();
   }
   
   
