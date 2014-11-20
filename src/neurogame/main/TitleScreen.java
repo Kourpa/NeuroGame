@@ -520,6 +520,7 @@ public class TitleScreen extends JPanel implements ActionListener
 	
 	  public void update(double deltaSec)
 	  {
+	    
 	    //System.out.println(dropDown_userList.isPopupVisible());;
 	    //System.out.println("TitleScreen().update() dropDown_userList.getSelectedIndex()="+dropDown_userList.getSelectedIndex());
 	    
