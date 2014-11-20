@@ -29,10 +29,6 @@ public class PlayerHud
   private static final Color CRIMSON = new Color(220, 20, 60);
   private static final Color DARK_RED = new Color(109, 10, 30);
   
-  
-  // private Color healthPaintDamaged = Color.ORANGE;
-  // private Color healthPaintNearDeath = Color.RED;
-  
 
   private GradientPaint healthPaintFull = new GradientPaint(0, 0, COOL_GREEN, 0, 20, DARK_GREEN, true);
   private GradientPaint healthPaintDamaged = new GradientPaint(0, 0, Color.ORANGE, 0, 20, DARK_ORANGE, true);
@@ -152,22 +148,6 @@ public class PlayerHud
    */
   public void drawHealth(Graphics2D canvasObjectLayer, NeuroGame frame)
   {
-//    int health = world.getPlayer().getHealth();
-//
-//    if (health >= 0.9 * Library.HEALTH_MAX)
-//    {
-//      canvasObjectLayer.setPaint(healthPaintFull);
-//    }
-//    else if (health > 0.2 * Library.HEALTH_MAX)
-//    {
-//      canvasObjectLayer.setColor(healthPaintDamaged);
-//    }
-//    else
-//    {
-//      canvasObjectLayer.setColor(healthPaintNearDeath);
-//
-//    }
-    
     int health = world.getPlayer().getHealth();
     Color outline = COOL_GREEN;
     if (health >= 0.9 * Library.HEALTH_MAX)
@@ -190,9 +170,5 @@ public class PlayerHud
     canvasObjectLayer.setPaint(outline);
     canvasObjectLayer.drawRect(5, 5, 300, 32);
 
-
-//    canvasObjectLayer.fillRect(5, 5, width, 32);
-//    // canvasObjectLayer.setPaint(outline);
-//    canvasObjectLayer.drawRect(5, 5, 300, 32);
   }
 }
