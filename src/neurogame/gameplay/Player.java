@@ -250,20 +250,22 @@ public class Player extends GameObject
     double pathHeightBonus = 1.0 + 5*Math.max(0, pathType.getDefaultOpeningHeight() - world.getSkillBasedChunkGapHeight());
     //System.out.println("Player.killedOrAvoidedEnemy() pathHeightBonus = " + pathHeightBonus);
     
-    
-    //if (shotWithMissle) 
-    //{ 
-      int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
-    
-      gameScore += score;
-    
-   
-      InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(score));
-      world.addGameObject(scoreInfo);
+     
+    int score = (int)(Library.ENEMY_POINTS *pathHeightBonus);
     if (shotWithMissle) 
     {
       collisionLogBitsThisUpdate = collisionLogBitsThisUpdate | COLLISION_FLAG_MISSILE_HIT_ENEMY;
     }
+    else
+    {
+      score = score / 2;
+    }
+    gameScore += score;
+    
+   
+    InfoMessage scoreInfo = new InfoMessage(obj.getCenterX(), obj.getCenterY(), world, String.valueOf(score));
+    world.addGameObject(scoreInfo);
+    
     //System.out.println("    obj ("+ obj.getCenterX() +", " + obj.getCenterY() +")  worldLeft="+Library.leftEdgeOfWorld);
     
   }

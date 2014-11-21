@@ -26,7 +26,6 @@ public class Enemy extends GameObject
   private static double playerHeightAtLastSpawn = -77;
   private static int playerHealthAtLastSpawn;
   
-  private double sinusoidalSpeedX, sinusoidalDeltaSpeedY;
   
   private Vector2 velocity = new Vector2();
   
@@ -58,8 +57,6 @@ public class Enemy extends GameObject
       
       image = Library.getSprites().get(type.getName());
       maxSpeed = 0.15 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/5.0;
-      sinusoidalSpeedX = maxSpeed * 0.5;
-      sinusoidalDeltaSpeedY = maxSpeed / (vertex.getBottom() - vertex.getTop());
     }
     if (playerHealthAtLastSpawn < world.getPlayer().getHealth())
     {
@@ -157,7 +154,7 @@ public class Enemy extends GameObject
       }
     }
     
-    //Avoid hitting other palyer enemies
+    //Avoid hitting other enemies
     for (int i=0; i<MAX_ENEMY_COUNT; i++)
     {
       if ((enemyList[i] == null) || (enemyList[i] == this)) continue;
@@ -271,12 +268,8 @@ public class Enemy extends GameObject
 
     double xx = getX() + velocity.x;
     PathVertex vertex = world.getInterpolatedWallTopAndBottom(xx);
-    if (vertex == null)
-    { velocity.y = 0;
-      return;
-    }
-   
-    
+    if (vertex == null) return;
+
 
     if (this.getCenterY() > vertex.getCenter())
     { 
@@ -289,7 +282,18 @@ public class Enemy extends GameObject
  
     if (getY() + velocity.y > vertex.getBottom() - getHeight()) velocity.y = - maxDistanceChange;
     if (getY() + velocity.y < vertex.getTop()) velocity.y = maxDistanceChange; 
-    
+
+
+    //Avoid hitting other enemies
+    for (int i=0; i<MAX_ENEMY_COUNT; i++)
+    {
+      if ((enemyList[i] == null) || (enemyList[i] == this)) continue;
+      if (!enemyList[i].isAlive) continue;
+      
+      if (enemyList[i].getX() > getX()) continue;
+      if ((getY() - enemyList[i].getY()) < 2*getType().getWidth()) 
+      velocity.x = velocity.x/2.0;
+    }
   }
 
 
