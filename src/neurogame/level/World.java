@@ -133,7 +133,7 @@ public class World
     
       if (player.getHealth() >= playerHealthAtStartOfLastChunk)
       {
-        gapHeight = gapHeight * 0.85;
+        gapHeight = gapHeight * 0.80;
         if (gapHeight < pathType.getMinimumOpeningHeight()) gapHeight = pathType.getMinimumOpeningHeight();
       
         skillBasedMaxEnemyCount[chunkTypeIdx]++;
@@ -143,13 +143,13 @@ public class World
       }
       else
       {
-        gapHeight = gapHeight * (1 - deltaHealthPercent*2.0);
-        if (gapHeight > pathType.getDefaultOpeningHeight()) gapHeight = pathType.getDefaultOpeningHeight();
-      
-        if (deltaHealthPercent < -0.4) skillBasedMaxEnemyCount[chunkTypeIdx] = 1; 
-        else
-        { skillBasedMaxEnemyCount[chunkTypeIdx]--;
-          if (skillBasedMaxEnemyCount[chunkTypeIdx] < 1) skillBasedMaxEnemyCount[chunkTypeIdx] = 1;
+        skillBasedMaxEnemyCount[chunkTypeIdx]--;
+        if (skillBasedMaxEnemyCount[chunkTypeIdx] < 1) skillBasedMaxEnemyCount[chunkTypeIdx] = 1;
+        
+        if (deltaHealthPercent < -0.2) 
+        { 
+          gapHeight = gapHeight * (1 - deltaHealthPercent*2.0);
+          if (gapHeight > pathType.getDefaultOpeningHeight()) gapHeight = pathType.getDefaultOpeningHeight(); 
         }
       }
       skillBasedChunkGapHeight[chunkTypeIdx] = gapHeight;

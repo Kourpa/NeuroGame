@@ -164,6 +164,7 @@ public class Enemy extends GameObject
       
       if (enemyList[i].getX() > getX()) continue;
       
+      velocity.x = velocity.x/2;
       if (Math.abs(lastVelocityY) > maxDistanceChange/3.0) velocity.y = lastVelocityY;
       else if (vertex != null)
       { if (getCenterY() > vertex.getCenter()) velocity.y = -maxDistanceChange/2.0;

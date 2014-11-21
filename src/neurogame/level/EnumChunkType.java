@@ -23,7 +23,7 @@ public enum EnumChunkType
   { public double getMaxChange() { return 0.01; }
     public double getStepSize()  { return 0.01; }
     public double getDefaultOpeningHeight()  { return 0.8; }
-    public double getMinimumOpeningHeight()  { return 0.224; }
+    public double getMinimumOpeningHeight()  { return 0.2; }
     public Ammo getPowerUp()  { return null; }
     public GameObjectType getEnemyType()  { return GameObjectType.ENEMY_STRAIGHT; }
   },
@@ -32,7 +32,7 @@ public enum EnumChunkType
   { public double getMaxChange() { return 0.1; }
     public double getStepSize() { return 0.1; }
     public double getDefaultOpeningHeight() { return 0.8; }
-    public double getMinimumOpeningHeight()  { return 0.224; }
+    public double getMinimumOpeningHeight()  { return 0.2; }
     public Ammo getPowerUp() { return null; }
     public GameObjectType getEnemyType() {  return GameObjectType.ENEMY_FOLLOW; }
   },
@@ -41,7 +41,7 @@ public enum EnumChunkType
   { public double getMaxChange() { return 0.05; }
     public double getStepSize() { return 0.1; }
     public double getDefaultOpeningHeight() { return 0.8; }
-    public double getMinimumOpeningHeight()  { return 0.224; }
+    public double getMinimumOpeningHeight()  { return 0.2; }
     public Ammo getPowerUp() { return null; }
     public GameObjectType getEnemyType() { return GameObjectType.ENEMY_SINUSOIDAL; }
   },
@@ -50,7 +50,7 @@ public enum EnumChunkType
   { public double getMaxChange() { return 0.06; }
     public double getStepSize() { return 0.06; }
     public double getDefaultOpeningHeight() { return 0.8; }
-    public double getMinimumOpeningHeight()  { return 0.224; }
+    public double getMinimumOpeningHeight()  { return 0.20; }
     public Ammo getPowerUp() { return null; }
     public GameObjectType getEnemyType() { return GameObjectType.ZAPPER; }
   };
