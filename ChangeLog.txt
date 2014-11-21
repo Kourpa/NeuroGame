@@ -18,14 +18,26 @@ Oct 24, 2014: Joel
      value sent to the parallel port.
 
 Nov 20, 2014: Joel
-  Changed straight enemy sprite
-  Doubled health gained from catching a star
-  Decreased damage from enemy hits
-  If the player has suffer damage within the last 15 seconds, AND there is at least one 
-     enemy on screen, then another enemy will not spawn.
-  Multi-enemy screens will happen when the player is doing well.
-  Ammo boxes are more common.
-  Follow enemys now ignore you after you pass them.
-  Follow enemys move a bit faster.
-  Player gets points for avoiding enemys (in past, player only got points for missle hits)
-  Added more randomness to enemy speed.
+ 
+1) Changed straight enemy sprite.
+
+2) Doubled health gained from catching a star.
+
+3) Decreased damage from enemy hits.
+
+4) If the player has suffered damage within the last 15 seconds AND there is at least one enemy on screen, then another enemy will not spawn.
+
+5) Multi-enemy screens will happen when the player is doing well.
+
+6) Ammo boxes are more common.
+
+7) Follow enemies move a bit faster and a bit smarter, but stop chasing when past you - this should make analysis simpler.
+
+8) Player gets points for avoiding enemies (in past, player only got points for missile hits).
+
+9) Added more randomness to enemy speed.
+
+10) Smartened enemies so they do not have so many friendly crashes, but this still needs more work.
+
+
+  
