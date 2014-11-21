@@ -63,7 +63,8 @@ public class World
 
     double gapHeight = skillBasedChunkGapHeight[EnumChunkType.SMOOTH.ordinal()];
     chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.SMOOTH, gapHeight);
-
+    //chunkRight = new Chunk(chunkLeft, windowWidth, EnumChunkType.CURVED, gapHeight);
+    
     crystalWalls = new CrystalGrower(chunkLeft, chunkRight);
   }
 

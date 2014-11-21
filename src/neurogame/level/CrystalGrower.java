@@ -26,6 +26,7 @@ public class CrystalGrower extends Thread
   private Graphics2D canvas;
 
   private QuickSet<Crystal> crystalList = new QuickSet<Crystal>(MAX_CRYSTALS);
+  
 
   private static final int TOTAL_ACTIVE_CHUNKS = 2;
   private Chunk[] chunkList = new Chunk[TOTAL_ACTIVE_CHUNKS];
@@ -167,8 +168,8 @@ public class CrystalGrower extends Thread
     List<PathVertex> vertexList = chunk.getPathList();
     int palett = Crystal.getPalettIdxOfChunkType(chunk.getChunkType());
     
-    int first90Percent = (int)(vertexList.size() * 0.8);
-    for (int i=0; i<first90Percent; i++)
+    int first80Percent = (int)(vertexList.size() * 0.8);
+    for (int i=0; i<first80Percent; i++)
     {
       PathVertex vertex = vertexList.get(i);
       int x = pixelStartOfNewChunk + (int)(Library.U_VALUE*(vertex.getX() - chunk.getStartX()));

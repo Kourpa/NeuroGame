@@ -22,9 +22,11 @@ public class Enemy extends GameObject
   
   private double maxSpeed;
   
-  private boolean enemyFollowStoppedFollowing = false;
+  //private boolean enemyFollowStoppedFollowing = false;
   private static double playerHeightAtLastSpawn = -77;
   private static int playerHealthAtLastSpawn;
+  
+  private double sinusoidalSpeedX, sinusoidalDeltaSpeedY;
   
   private Vector2 velocity = new Vector2();
   
@@ -55,7 +57,9 @@ public class Enemy extends GameObject
       y = (vertex.getTop()+vertex.getCenter())/2.0;
       
       image = Library.getSprites().get(type.getName());
-      maxSpeed = 0.20 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/10.0;
+      maxSpeed = 0.15 + (Library.RANDOM.nextDouble() + Library.RANDOM.nextDouble())/5.0;
+      sinusoidalSpeedX = maxSpeed * 0.5;
+      sinusoidalDeltaSpeedY = maxSpeed / (vertex.getBottom() - vertex.getTop());
     }
     if (playerHealthAtLastSpawn < world.getPlayer().getHealth())
     {
@@ -178,7 +182,10 @@ public class Enemy extends GameObject
   {
     double lastVelocityY =  velocity.y;
     
-    if (enemyFollowStoppedFollowing) 
+    Player player = world.getPlayer();
+    
+    if ((!player.isAlive()) || (getX() + getWidth() < player.getX()))
+    //if (enemyFollowStoppedFollowing) 
     { 
       maxSpeed = maxSpeed + 0.015;
       strategyStraight(maxDistanceChange, scrollDistance);
@@ -186,8 +193,7 @@ public class Enemy extends GameObject
     }
     
    
-    Player player = world.getPlayer();
-    if (!player.isAlive()) enemyFollowStoppedFollowing = true;
+    
     velocity.x = scrollDistance + player.getCenterX() - (getX() + getType().getWidth()/2);
     velocity.y = player.getCenterY() - (getY() + getType().getHeight()/2);
       
@@ -196,7 +202,7 @@ public class Enemy extends GameObject
 //    if (getX() + getWidth()*(4 + 8*Library.RANDOM.nextDouble()) < player.getX())
 //    { enemyFollowStoppedFollowing = true;
 //    }
-    if (getX() + getWidth() < player.getX()) enemyFollowStoppedFollowing = true;
+    //if (getX() + getWidth() < player.getX()) enemyFollowStoppedFollowing = true;
     
     boolean changedSpeedToAvoidWall = false;
     double xx = getX()+velocity.x;
@@ -272,7 +278,7 @@ public class Enemy extends GameObject
    
     
 
-    if (getY()+getHeight()/2 > vertex.getCenter())
+    if (this.getCenterY() > vertex.getCenter())
     { 
       velocity.y = velocity.y - maxDistanceChange/10;
     }

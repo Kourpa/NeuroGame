@@ -32,6 +32,7 @@ public class Crystal
 
   private static int gridX;
   private static int gridY;
+  private static int gridRightMostGrowX;
 
   private static final int[][][] PALETT =
   {
@@ -104,6 +105,7 @@ public class Crystal
   {
     Crystal.gridX = gridX;
     Crystal.gridY = gridY;
+    gridRightMostGrowX = (int)(gridX * 0.95);
 
   }
 
@@ -304,7 +306,7 @@ public class Crystal
   {
     int xx = x + DIR_DELTA_X[dir] + offsetX;
     int yy = y + DIR_DELTA_Y[dir];
-    if (xx >= 0 && yy >= 0 && xx < gridX && yy < gridY)
+    if (xx >= 0 && yy >= 0 && xx < gridRightMostGrowX && yy < gridY)
     {
       if (image.getRGB(xx, yy) == CrystalGrower.ROCK_AREA_INT) return true;
     }
