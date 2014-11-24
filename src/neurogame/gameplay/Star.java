@@ -33,6 +33,8 @@ public class Star extends GameObject
   private static Star[] starList = new Star[Star.MAX_STAR_COUNT];
 
   public static final double MAX_PROBALITY_SPAWN_PER_SEC = 0.9;
+  public static final double MIN_PROBALITY_SPAWN_PER_SEC = 0.2;
+  public static double probalitySpawnPerSec;
   
   public static final int MAX_STAR_COUNT = 20;
   private static int currentStarCount;
@@ -64,6 +66,7 @@ public class Star extends GameObject
   
   public static void initGame()
   {
+    probalitySpawnPerSec = (MAX_PROBALITY_SPAWN_PER_SEC + MIN_PROBALITY_SPAWN_PER_SEC)/2;
     lastStarSpawnX = 0;
     currentStarCount = 0;
     for (int i=0; i<MAX_STAR_COUNT; i++)
@@ -98,7 +101,10 @@ public class Star extends GameObject
   
   public void hit(GameObject obj)
   {
-    if(obj.getType() == GameObjectType.PLAYER) die(true);
+    if(obj.getType() == GameObjectType.PLAYER) 
+    {
+      die(true);
+    }
     else die(false);
   }
 
@@ -119,6 +125,14 @@ public class Star extends GameObject
                        0, spriteY, spriteWidth, spriteY+spriteHeight, null);
   }
   
+  public static void adjustSpawnRate(double factor)
+  {
+     probalitySpawnPerSec *= factor; 
+     if (probalitySpawnPerSec > MAX_PROBALITY_SPAWN_PER_SEC) probalitySpawnPerSec = MAX_PROBALITY_SPAWN_PER_SEC;
+     else if (probalitySpawnPerSec < MIN_PROBALITY_SPAWN_PER_SEC) probalitySpawnPerSec = MIN_PROBALITY_SPAWN_PER_SEC;  
+  }
+  
+  public static double getSpawnRate() {return  probalitySpawnPerSec;}
 
   public static int spawn(Chunk myChunk, World world, double deltaTime)
   {
@@ -129,7 +143,7 @@ public class Star extends GameObject
     EnumChunkType type = myChunk.getChunkType();
     if (type == EnumChunkType.FLAT) return 0;
 
-    if (r > MAX_PROBALITY_SPAWN_PER_SEC * deltaTime) return 0;
+    if (r > probalitySpawnPerSec * deltaTime) return 0;
 
   
     double rightEdgeOfScreen = Library.leftEdgeOfWorld

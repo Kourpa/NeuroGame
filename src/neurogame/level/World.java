@@ -123,7 +123,7 @@ public class World
     if (pathType != chunkRight.getChunkType())
     { 
       frameCountSinceLastChunkTypeChange = 0;
-      System.out.println(": changed Type");
+      System.out.print(": changed Type");
     }
     else
     {
@@ -154,8 +154,9 @@ public class World
       }
       skillBasedChunkGapHeight[chunkTypeIdx] = gapHeight;
       
-      System.out.println(", gapHeight="+gapHeight+", maxEmemy="+skillBasedMaxEnemyCount[chunkTypeIdx]);
+      System.out.print(", gapHeight="+gapHeight+", maxEmemy="+skillBasedMaxEnemyCount[chunkTypeIdx]);
     }
+    System.out.println(",  StarSpawnRate="+Star.getSpawnRate());
 
 
     chunkRight = new Chunk(chunkLeft, windowWidth, pathType, skillBasedChunkGapHeight[chunkTypeIdx]);
