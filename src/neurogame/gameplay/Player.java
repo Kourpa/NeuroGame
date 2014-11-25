@@ -218,7 +218,7 @@ public class Player extends GameObject
     health -= damage;
     if (health < 0) health = 0;
     if (health < Library.HEALTH_MAX * 0.25) Star.adjustSpawnRate(2.0);
-    else if (health < Library.HEALTH_MAX * 0.6) Star.adjustSpawnRate(1.25);
+    else if (health < Library.HEALTH_MAX * 0.6) Star.adjustSpawnRate(1.5);
 
     int sparkCount = Library.RANDOM.nextInt(20) + Library.RANDOM.nextInt(20)
         + Library.RANDOM.nextInt(20) + 25;
@@ -236,8 +236,8 @@ public class Player extends GameObject
     health += Library.HEALTH_PER_STAR;
     if (health > Library.HEALTH_MAX) health = Library.HEALTH_MAX;
       
-    if (health > Library.HEALTH_MAX * 0.9) Star.adjustSpawnRate(0.8);
-    else if (health > Library.HEALTH_MAX * 0.75) Star.adjustSpawnRate(0.9);
+    if (health > Library.HEALTH_MAX * 0.9) Star.adjustSpawnRate(0.9);
+    else if (health > Library.HEALTH_MAX * 0.75) Star.adjustSpawnRate(0.95);
     gameScore += Library.SCORE_STAR;
     InfoMessage scoreInfo = new InfoMessage(star.getCenterX(), star.getCenterY(), world, String.valueOf(Library.SCORE_STAR));
     world.addGameObject(scoreInfo); 

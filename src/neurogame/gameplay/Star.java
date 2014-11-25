@@ -44,6 +44,7 @@ public class Star extends GameObject
   private int frameCounter;
 
   private int spriteY;
+  
 
   /**
    * Instantiate a new Star at the specified coordinates.
@@ -156,8 +157,9 @@ public class Star extends GameObject
     if (x < lastStarSpawnX + 4 * GameObjectType.STAR.getWidth()) return 0;
 
     
-
-    int targetSpawnCount = Library.RANDOM.nextInt(5) + 1;
+    int n = (int)(probalitySpawnPerSec*10);
+    int targetSpawnCount = Library.RANDOM.nextInt(n) + 1;
+ 
     int numStarsSpawned = 0;
 
     double y = vertex.getTop() + GameObjectType.STAR.getHeight() / 3;
@@ -190,11 +192,9 @@ public class Star extends GameObject
       world.addGameObject(myStar);
       numStarsSpawned++;
       currentStarCount++;
-      
 
-      if (Library.RANDOM.nextDouble() > .75) x += GameObjectType.STAR.getWidth()
-          * (Library.RANDOM.nextDouble() * 2.0);
-      y += direction * GameObjectType.STAR.getHeight() * (1.0 + Library.RANDOM.nextDouble() / 2);
+      if (Library.RANDOM.nextDouble() > .75) x += GameObjectType.STAR.getWidth();
+      else y += direction * GameObjectType.STAR.getHeight();
     }
 
     return numStarsSpawned;
