@@ -38,8 +38,9 @@ public class TitleScreen extends JPanel implements ActionListener
   private static final int BUTTON_CONFIG_IDX = 0;
   private static final int BUTTON_START_IDX = 1;
   private static final int BUTTON_ODDBALL_IDX = 2;
-  private static final int BUTTON_EXIT_IDX = 3;
-  private static final int BUTTON_COUNT = 4;
+  private static final int BUTTON_BANDIT_IDX = 3;
+  private static final int BUTTON_EXIT_IDX = 4;
+  private static final int BUTTON_COUNT = 5;
 
   private static final int SELECT_CURRENT = 0;
   private static final int SELECT_UP = 1;
@@ -119,6 +120,9 @@ public class TitleScreen extends JPanel implements ActionListener
 
     // Oddball button
     buttonList[BUTTON_ODDBALL_IDX] = GUI_util.makeButton("Oddball Test", this, this);
+
+    //Bandit button
+    buttonList[BUTTON_BANDIT_IDX] = GUI_util.makeButton("One Armed Bandit", this, this);
 
     // Exit button
     buttonList[BUTTON_EXIT_IDX] = GUI_util.makeButton("Exit", this, this);
@@ -224,13 +228,14 @@ public class TitleScreen extends JPanel implements ActionListener
     int boxH20 = fontH20 + 8;
     int rowH20 = boxH20 + 3;
 
-    int top = 400;
+    int top = 350;
 
     int row1 = top;
     int row2 = row1 + 2 * rowH30;
     int row3 = row2 + rowH30;
     int row4 = row3 + rowH30;
     int row5 = row4 + rowH30;
+    int row6 = row5 + rowH30;
 
     int label_userWidth = fm30.stringWidth(label_user.getText());
     label_user.setBounds(column1, row1, label_userWidth, boxH30);
@@ -239,7 +244,8 @@ public class TitleScreen extends JPanel implements ActionListener
     buttonList[BUTTON_CONFIG_IDX].setBounds(column1, row2, menuItemWidth, boxH30);
     buttonList[BUTTON_START_IDX].setBounds(column1, row3, menuItemWidth, boxH30);
     buttonList[BUTTON_ODDBALL_IDX].setBounds(column1, row4, menuItemWidth, boxH30);
-    buttonList[BUTTON_EXIT_IDX].setBounds(column1, row5, menuItemWidth, boxH30);
+    buttonList[BUTTON_BANDIT_IDX].setBounds(column1, row5, menuItemWidth, boxH30);
+    buttonList[BUTTON_EXIT_IDX].setBounds(column1, row6, menuItemWidth, boxH30);
 
     int rowBottom = height - 2 * rowH30;
     int fullWidth = width - 2 * left;
@@ -376,6 +382,7 @@ public class TitleScreen extends JPanel implements ActionListener
     {
       startOddballGame();
     }
+    else if (buttonSelectedIdx == BUTTON_BANDIT_IDX) startBanditGame();
     else if (buttonSelectedIdx == BUTTON_EXIT_IDX) game.quit();
   }
 
@@ -388,6 +395,7 @@ public class TitleScreen extends JPanel implements ActionListener
     buttonList[BUTTON_CONFIG_IDX].setVisible(!showUserPanel);
     buttonList[BUTTON_START_IDX].setVisible(!showUserPanel);
     buttonList[BUTTON_ODDBALL_IDX].setVisible(!showUserPanel);
+    buttonList[BUTTON_BANDIT_IDX].setVisible(!showUserPanel);
     buttonList[BUTTON_EXIT_IDX].setVisible(!showUserPanel);
 
     if (showUserPanel)
@@ -466,6 +474,11 @@ public class TitleScreen extends JPanel implements ActionListener
     System.out.println("TitleScreen.startOddballGame() ");
 
     game.startOddBall(User.getUser(dropDown_userList.getSelectedIndex()));
+  }
+
+  private void startBanditGame()
+  {
+    game.startBandit(User.getUser(dropDown_userList.getSelectedIndex()));
   }
 
   private void startGame()
@@ -594,6 +607,7 @@ public class TitleScreen extends JPanel implements ActionListener
     else if (source == buttonList[BUTTON_EXIT_IDX]) game.quit();
     else if (source == buttonList[BUTTON_CONFIG_IDX]) toggleUserPanel();
     else if (source == buttonList[BUTTON_ODDBALL_IDX]) startOddballGame();
+    else if (source == buttonList[BUTTON_BANDIT_IDX]) startBanditGame();
     else if (source == but_configOK)
     {
       copyGUI_toUser();

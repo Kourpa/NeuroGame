@@ -18,7 +18,11 @@ public class SocketToParallelPort
   public static final byte TRIGGER_ODDBALL_RARE_EVENT     = 25;
   public static final byte TRIGGER_ODDBALL_DONE           = 29;  
 
-  
+  public static final byte TRIGGER_BANDIT_START = 50;
+  public static final byte TRIGGER_BANDIT_LOSE = 51;
+  public static final byte TRIGGER_BANDIT_WIN = 52;
+  public static final byte TRIGGER_BANDIT_DONE = 53;
+
   public static final byte TRIGGER_GAME_SHOOT_BUTTON       = 90;
   public static final byte TRIGGER_GAME_PLAYER_CRASH_WALL  = 91;
   public static final byte TRIGGER_GAME_PLAYER_CRASH_ENEMY = 92;

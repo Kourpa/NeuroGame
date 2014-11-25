@@ -76,7 +76,8 @@ public class NeuroGame extends JFrame implements ActionListener
     PAUSED,       // Normal game play paused
     DEAD,         // TODO : Player has died, continue showing game moving, no player controls, display "Game Over" overlay.
     GAMEOVER,     // show the high scores 
-    ODDBALL,	    // Oddball visual test 
+    ODDBALL,	    // Oddball visual test
+    BANDIT,
     HIGHSCORE;	  // Highscore screen after winning
   }
   
@@ -98,6 +99,7 @@ public class NeuroGame extends JFrame implements ActionListener
   
   
   private Oddball oddball;
+  private Bandit bandit;
   public Logger log;
   
   
@@ -221,6 +223,9 @@ public class NeuroGame extends JFrame implements ActionListener
       boolean oddballRunning = oddball.oddballUpdate(deltaSec);
       if (!oddballRunning) showTitle();
     	break;
+    case BANDIT:
+      boolean banditRunning = bandit.banditUpdate(deltaSec);
+      if(!banditRunning) showTitle();
     default:
       break;
     }
@@ -264,6 +269,7 @@ public class NeuroGame extends JFrame implements ActionListener
 	  gameState = GameState.TITLE;
     drawPanel.setVisible(false);
     if (oddball != null) oddball.setVisible(false);
+    else if(bandit != null) bandit.setVisible(false);
     titlePanel.showTitleScreen();
     
   }
@@ -352,6 +358,25 @@ public class NeuroGame extends JFrame implements ActionListener
     oddball.init(currentUser);
     gameState = GameState.ODDBALL;
   }
+
+  public void startBandit(User currentUser){
+    this.currentUser = currentUser;
+    titlePanel.setVisible(false);
+
+    if(currentUser.isLogging()){
+      if(log != null) log.closeLog();
+      log = new Logger(controller, currentUser);
+    }
+
+    if(bandit == null){
+      bandit = new Bandit(this, controller);
+      add(bandit);
+    }
+
+    bandit.init(currentUser);
+    gameState = GameState.BANDIT;
+  }
+
   /**
    * Pause the game.
    */
