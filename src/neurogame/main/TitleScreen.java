@@ -47,6 +47,8 @@ public class TitleScreen extends JPanel implements ActionListener
   private static final int SELECT_DOWN = 2;
 
   private int buttonSelectedIdx;
+  private int tutorialNum;
+
 
   private static JButton[] buttonList = new JButton[BUTTON_COUNT];
 
@@ -81,6 +83,7 @@ public class TitleScreen extends JPanel implements ActionListener
   {
     this.game = game;
     this.gameController = gameController;
+    this.tutorialNum = 0;
 
     this.setLayout(null);
 
@@ -646,6 +649,21 @@ public class TitleScreen extends JPanel implements ActionListener
     // else if (configureButton.isSelected()){
     // //onConfigureButtonPress();
     // }
+  }
+  
+  public void updateTutorial()
+  {
+	  tutorialNum = 1;
+	  backgroundImage = sprites.get("controls");
+	  label_user.setVisible(false);
+	  userPanel.setVisible(false);
+	  userPanel.setLayout(null);
+	  dropDown_userList.setVisible(false);
+	  buttonList[0].setVisible(false);
+	  buttonList[1].setVisible(false);
+	  buttonList[2].setVisible(false);
+	  buttonList[3].setVisible(false);
+	  buttonList[4].setVisible(false);		  
   }
 
   class JoystickTestDrawPanel extends JPanel
