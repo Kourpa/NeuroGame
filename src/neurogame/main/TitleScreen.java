@@ -586,38 +586,50 @@ public class TitleScreen extends JPanel implements ActionListener
   
   public void updateTutorial()
   { 
-	  label_user.setVisible(false);
-	  userPanel.setVisible(false);
-	  userPanel.setLayout(null);
-	  dropDown_userList.setVisible(false);
-	  buttonList[0].setVisible(false);
-	  buttonList[1].setVisible(false);
-	  buttonList[2].setVisible(false);
-	  buttonList[3].setVisible(false);
-	  buttonList[4].setVisible(false);	  
+	label_user.setVisible(false);
+	userPanel.setVisible(false);
+	userPanel.setLayout(null);
+	dropDown_userList.setVisible(false);
+	buttonList[0].setVisible(false);
+	buttonList[1].setVisible(false);
+	buttonList[2].setVisible(false);
+	buttonList[3].setVisible(false);
+	buttonList[4].setVisible(false);	  
 	  
-	  if (tutorialNum == 0) {
-		  tutorialNum = 1;
-		  backgroundImage = sprites.get("tutControls");
-	  }else if (tutorialNum == 1) {
-		  tutorialNum = 2;
-		  backgroundImage = sprites.get("tutEnemy");
-	  }else if (tutorialNum == 2) {
-		  tutorialNum = 3;
-		  backgroundImage = sprites.get("tutMissilesLeft");
-      }else if (tutorialNum == 3) {
-	      tutorialNum = 4;
-	      backgroundImage = sprites.get("tutStar");
-      }else if (tutorialNum == 4) {
-    	  tutorialNum = 5;
-    	  backgroundImage = sprites.get("tutHealthMeter");
-      }else if (tutorialNum == 5) {
-    	  tutorialNum = 6;
-    	  backgroundImage = sprites.get("tutStart");
-      }
-	  else{
-		  startGame();
-	  }	  
+	if (tutorialNum == 0) 
+	{
+	  tutorialNum = 1;
+	  backgroundImage = sprites.get("tutControls");
+	}
+	else if (tutorialNum == 1) 
+	{
+	  tutorialNum = 2;
+	  backgroundImage = sprites.get("tutEnemy");
+	}
+	else if (tutorialNum == 2) 
+	{
+	  tutorialNum = 3;
+      backgroundImage = sprites.get("tutMissilesLeft");
+    }
+	else if (tutorialNum == 3) 
+    {
+	  tutorialNum = 4;
+	  backgroundImage = sprites.get("tutStar");
+    }
+	else if (tutorialNum == 4) 
+    {
+      tutorialNum = 5;
+      backgroundImage = sprites.get("tutHealthMeter");
+    }
+	else if (tutorialNum == 5) 
+    {
+      tutorialNum = 6;
+      backgroundImage = sprites.get("tutStart");
+    }
+	else
+	{
+	  startGame();
+	}	  
   }
 
   private void setUser()

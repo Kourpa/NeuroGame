@@ -119,9 +119,12 @@ public class InputController implements KeyListener
   {
     return triggerPressed;
   }
-public boolean isPlayerPressingESC(){
+  
+  public boolean isPlayerPressingESC()
+  {
 	return escPressed;
-}
+  }
+  
   private void updateButtonStatus()
   {
     triggerPressed = false;
@@ -220,8 +223,8 @@ public boolean isPlayerPressingESC(){
     { 
       if(spacebarReleased) spacebarPressed = true;
     }
-    else if(keyCode == KeyEvent.VK_ESCAPE) {
-    	System.out.println("aaaaaaaaaaaaaaaaaaaaaaaa=====ESCESC");
+    else if(keyCode == KeyEvent.VK_ESCAPE) 
+    {
     	escPressed = true;
     }
     else if (keyCode == KeyEvent.VK_UP)  playerInputDirectionVector.y = -1;
