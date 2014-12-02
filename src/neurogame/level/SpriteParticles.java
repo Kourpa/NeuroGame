@@ -16,7 +16,7 @@ public class SpriteParticles
 
   public static void setSprite(String name, BufferedImage image){
     ArrayList<Particle> pixels = new ArrayList<>();
-    
+
     int c;
     int width = image.getWidth();
     int height = image.getHeight();

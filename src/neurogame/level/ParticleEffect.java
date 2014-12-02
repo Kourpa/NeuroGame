@@ -95,8 +95,13 @@ public class ParticleEffect extends GameObject
       dy = gmass.getY() - p.getY();
       double distance = Math.sqrt(dx * dx + dy * dy);
       double mag = 1/distance;
+      if(player != null && distance > 10){
+        p.update(xpull * dx * mag * Library.RANDOM.nextDouble(), ypull * dy * mag * Library.RANDOM.nextDouble());
+      }
+      else if(player == null){
+        p.update(xpull * dx * mag * Library.RANDOM.nextDouble(), ypull * dy * mag * Library.RANDOM.nextDouble());
+      }
 
-      p.update(xpull * dx * mag * Library.RANDOM.nextDouble(), ypull * dy * mag * Library.RANDOM.nextDouble());
     }
   }
   

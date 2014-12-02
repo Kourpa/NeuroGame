@@ -17,6 +17,7 @@ import java.util.LinkedList;
 
 import neurogame.gameplay.GameObjectType;
 import neurogame.level.SpriteParticles;
+import neurogame.main.Bandit;
 import neurogame.main.NeuroGame;
 import neurogame.main.Oddball;
 
@@ -70,7 +71,19 @@ public class SpriteMap extends HashMap<String, BufferedImage>
         + Library.getWindowPixelHeight());
 
     add("titleBackground", "/images/title-screen.png",
-        Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
+            Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
+    add("tutControls", "/images/tutControls.png",
+            Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
+    add("tutEnemy", "/images/tutEnemy.png",
+            Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
+    add("tutHealthMeter", "/images/tutHealthMeter.png",
+            Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
+    add("tutStar", "/images/tutStar.png",
+            Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
+    add("tutMissilesLeft", "/images/tutMissilesLeft.png",
+            Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
+    add("tutStart", "/images/tutStart.png",
+            Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
      
     // Game graphics.
     int width = Library.worldUnitToScreen(GameObjectType.PLAYER.getWidth());
@@ -94,6 +107,7 @@ public class SpriteMap extends HashMap<String, BufferedImage>
         Library.worldUnitToScreen(GameObjectType.ENEMY_FOLLOW.getHeight()));
     //add("star", "/images/star.png", 64, 2560);
     add("star", "/images/star.png", 53, 2560);
+    add("singleStar", "/images/singleStar.png", 53, 53);
     add("zapper", "/images/zapper.png", 128, 128);
     // Power-up HUD icons.
     add("powerupMissileAmmo", "/images/powerup-MissileAmmo.png", Library.worldUnitToScreen(GameObjectType.AMMO.getWidth()), 
@@ -101,7 +115,17 @@ public class SpriteMap extends HashMap<String, BufferedImage>
     add("missile", "/images/missile.png", Library.worldUnitToScreen(GameObjectType.MISSILE.getWidth()), 
         Library.worldUnitToScreen(GameObjectType.MISSILE.getHeight()));
     add("missileIcon", "/images/missileIcon.png", 15 ,33);
-    add("singleStar", "/images/singleStar.png", 64, 64);
+
+
+
+    // Sprites for the one armed bandit
+    add("slotMachine", "/images/slotMachine.png", 900, 600);
+    add("BanditIntro", "/images/banditIntro.png", 900, 600);
+    add("BanditStar", "/images/singleStar.png", Bandit.ICON_SIZE, Bandit.ICON_SIZE);
+    add("BanditPlayer","/images/playerShip.png", Bandit.ICON_SIZE, Bandit.ICON_SIZE);
+    add("BanditEnemyStraight", "/images/enemyStraight.png", Bandit.ICON_SIZE, Bandit.ICON_SIZE);
+    add("BanditEnemySinusoidal", "/images/enemySinusoidal.png", Bandit.ICON_SIZE, Bandit.ICON_SIZE);
+    add("BanditEnemyFollow", "/images/enemyFollow.png", Bandit.ICON_SIZE, Bandit.ICON_SIZE);
   }
 
   /**
