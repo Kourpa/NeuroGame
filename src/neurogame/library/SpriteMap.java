@@ -82,6 +82,8 @@ public class SpriteMap extends HashMap<String, BufferedImage>
             Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
     add("tutMissilesLeft", "/images/tutMissilesLeft.png",
             Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
+    add("tutStart", "/images/tutStart.png",
+            Library.getWindowPixelWidth(), Library.getWindowPixelHeight());
      
     // Game graphics.
     int width = Library.worldUnitToScreen(GameObjectType.PLAYER.getWidth());
