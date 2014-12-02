@@ -82,7 +82,7 @@ public class PlayerHud
   {
     String highscoreMessage = "Best:  " + user.getHighScore();
     String scoreMessage = "Score: " + world.getPlayer().getScore();
-
+    String topFive = "Top Five: ";
     // Score
     canvasObjectLayer.setFont(FONT30);
     canvasObjectLayer.setColor(Color.WHITE);
@@ -132,6 +132,15 @@ public class PlayerHud
       canvasObjectLayer.setColor(Color.white);
       canvasObjectLayer.drawString("GAME OVER", (int) (windowWidth * 0.47 - 225), (int) (windowHeight * 0.2));
 
+      // ADD HIGH SCORES IN HERE
+      canvasObjectLayer.setFont(FONT30);
+      canvasObjectLayer.setColor(Color.blue);
+      canvasObjectLayer.drawString(highscoreMessage, (int) (windowWidth * 0.475 - 225), (int) (windowHeight * 0.3));
+      
+      canvasObjectLayer.setFont(FONT30);
+      canvasObjectLayer.setColor(Color.white);
+      canvasObjectLayer.drawString(topFive, (int) (windowWidth * 0.475 - 225), (int) (windowHeight * 0.4));
+      
       canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN, 25));
       canvasObjectLayer.setColor(BLUE);
       canvasObjectLayer.drawString("[ Press Spacebar or Game controller button ]", (int) (windowWidth * 0.275 - 125), (int) (windowHeight * 0.8));
