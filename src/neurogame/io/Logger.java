@@ -16,7 +16,10 @@ import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 import neurogame.gameplay.Ammo;
 import neurogame.gameplay.DirectionVector;
@@ -37,6 +40,8 @@ public class Logger
   private static final String LOG_EXTENSION = ".csv";
   private static final String PATH = "logs/";
   private static final String PARALLEL_CONNECTION_PROGRAM = "ParallelPortTrigger/timer.exe";
+  private static final long MILLISEC_PER_HOUR = 1000L*60L*60L;
+  private static Calendar calendar = GregorianCalendar.getInstance(); 
 
   private static final SimpleDateFormat FILE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd.HH-mm");
   
@@ -98,11 +103,18 @@ public class Logger
       out += "Star " + n +" Proximity, Star " + n +" Angle, ";
     }
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat ("EEEE: MMMM d yyyy 'at' h:mm:ss a zzz");
+    //SimpleDateFormat dateFormat = new SimpleDateFormat ("EEEE: MMMM d yyyy 'at' h:mm:ss a zzz");
 
-    Date curDate = new Date();
-    startSec = System.nanoTime()*NeuroGame.NANO_TO_SEC;
-    out += "AmmoProximity, AmmoAngle, Missile Target, Missile Proximity to Target\nStart Date/Time: " + dateFormat.format(curDate) + "\n";
+    //Date curDate = new Date();
+    
+    long nanoTime = System.nanoTime();
+    
+    
+    
+    startSec = nanoTime*NeuroGame.NANO_TO_SEC;
+    String milliSecOfDay = getCurrentTimStr();
+    //out += "AmmoProximity, AmmoAngle, Missile Target, Missile Proximity to Target\nStart Date/Time: " + dateFormat.format(curDate) + "\n";
+    out += "AmmoProximity, AmmoAngle, Missile Target, Missile Proximity to Target\n" + milliSecOfDay + "\n";
 
     try
     {
@@ -130,6 +142,36 @@ public class Logger
     socketByteSend = SocketToParallelPort.TRIGGER_SIGNAL_GROUND;
     updateSocket();
 
+  }
+  
+  
+  
+  
+  public static String getCurrentTimStr()
+  {
+    //long millis = nanoSec / 1000000;
+    //Calendar cal = Calendar.getInstance();
+    //cal.setTimeInMillis(millis);
+    
+    Date curDate = new Date();
+    calendar.setTime(curDate);
+    int hours = calendar.get(Calendar.HOUR_OF_DAY);
+    int min = calendar.get(Calendar.MINUTE);
+    int sec = calendar.get(Calendar.SECOND);
+    int milliSec = calendar.get(Calendar.MILLISECOND);
+   // int milliSec = calendar.get(Calendar.MILLISECOND);
+//    System.out.println("Hours="+hours);
+//    long millisecondsAfterHour = ( nanoSec / 1000000) % MILLISEC_PER_HOUR;
+//    System.out.println("millisecondsAfterHour="+millisecondsAfterHour);
+    //millis -= TimeUnit.HOURS.toMillis(hours);
+    //long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+    //millis -= TimeUnit.MINUTES.toMillis(minutes);
+   // long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+
+    System.out.println(curDate);
+    //System.out.println("hours="+hours + (hours*10000000L));
+    //return Long.toString(hours * 10000000L + min * 100000L + (long)sec*1000L);
+    return String.format("%02d%02d%02d%03d", hours, min, sec, milliSec);
   }
 
 
