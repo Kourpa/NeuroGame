@@ -130,11 +130,11 @@ public class PlayerHud
     {
       canvasObjectLayer.setFont(FONT70);
       canvasObjectLayer.setColor(Color.white);
-      canvasObjectLayer.drawString("GAME OVER", (int) (windowWidth * 0.5 - 225), (int) (windowHeight * 0.5));
+      canvasObjectLayer.drawString("GAME OVER", (int) (windowWidth * 0.47 - 225), (int) (windowHeight * 0.2));
 
       canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN, 25));
       canvasObjectLayer.setColor(BLUE);
-      canvasObjectLayer.drawString("[ Press Spacebar ]", (int) (windowWidth * 0.5 - 125), (int) (windowHeight * 0.6));
+      canvasObjectLayer.drawString("[ Press Spacebar or Game controller button ]", (int) (windowWidth * 0.275 - 125), (int) (windowHeight * 0.8));
     }
   }
 
