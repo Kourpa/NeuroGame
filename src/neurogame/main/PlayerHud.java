@@ -6,7 +6,10 @@ import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Map;
+
+import javax.swing.JLabel;
 
 import neurogame.io.User;
 import neurogame.level.World;
@@ -19,6 +22,8 @@ public class PlayerHud
 
   private World world;
   private User user;
+  
+  //private JLabel[] labelScores;
 
   private Map<String, BufferedImage> sprites;
 
@@ -52,7 +57,7 @@ public class PlayerHud
     this.world = world;
     this.user = user;
     sprites = Library.getSprites();
-
+	
     windowWidth = frame.getWidth();
     windowHeight = frame.getHeight();
 
@@ -82,7 +87,7 @@ public class PlayerHud
   {
     String highscoreMessage = "Best:  " + user.getHighScore();
     String scoreMessage = "Score: " + world.getPlayer().getScore();
-
+    String highScores = "High Scores: ";
     // Score
     canvasObjectLayer.setFont(FONT30);
     canvasObjectLayer.setColor(Color.WHITE);
@@ -127,14 +132,47 @@ public class PlayerHud
 
     // Show game over
     if (isDead)
-    {
+    {    	
       canvasObjectLayer.setFont(FONT70);
-      canvasObjectLayer.setColor(Color.white);
-      canvasObjectLayer.drawString("GAME OVER", (int) (windowWidth * 0.5 - 225), (int) (windowHeight * 0.5));
+      canvasObjectLayer.setColor(Color.blue);
+      canvasObjectLayer.drawString("GAME OVER", (int) (windowWidth * 0.47 - 225), (int) (windowHeight * 0.25));
 
+      //canvasObjectLayer.setFont(FONT30);
+      //canvasObjectLayer.setColor(Color.blue);
+      //canvasObjectLayer.drawString(highscoreMessage, (int) (windowWidth * 0.475 - 225), (int) (windowHeight * 0.35));
+      
+      canvasObjectLayer.setFont(FONT30);
+      canvasObjectLayer.setColor(Color.white);
+      canvasObjectLayer.drawString(highScores, (int) (windowWidth * 0.475 - 75), (int) (windowHeight * 0.375));
+      
+      // ADD HIGH SCORES IN HERE
+      canvasObjectLayer.setFont(FONT30);
+      canvasObjectLayer.setColor(Color.white);
+      ArrayList<User> userList = User.getUserList();
+      double yValue = 0.45;
+      for (int i = 0; i < userList.size(); i++)
+      {
+    	  User cUser = userList.get(i);
+    	  if (cUser == user) 
+    	  {
+    		canvasObjectLayer.setColor(GUI_util.COLOR_SELECTED);
+    	  }
+    	  else
+    	  {
+    	    canvasObjectLayer.setColor(Color.white);
+    	  }
+    	  int score = cUser.getHighScore();
+    	  if (score > 0)
+    	  {
+    		  String str = score + "    " + cUser.getHighScoreDate() + "     " + cUser.getName();
+    		  canvasObjectLayer.drawString(str,  (int) (windowWidth * 0.475 - 225), (int) (windowHeight * yValue));
+    		  yValue += .05;
+    	  }
+      }      
+      
       canvasObjectLayer.setFont(new Font("Karmatic Arcade", Font.PLAIN, 25));
       canvasObjectLayer.setColor(BLUE);
-      canvasObjectLayer.drawString("[ Press Spacebar ]", (int) (windowWidth * 0.5 - 125), (int) (windowHeight * 0.6));
+      canvasObjectLayer.drawString("[ Press Spacebar or Game controller button ]", (int) (windowWidth * 0.275 - 125), (int) (windowHeight * 0.8));
     }
   }
 

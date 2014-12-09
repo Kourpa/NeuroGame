@@ -49,6 +49,7 @@ public class HighScoreScreen extends JPanel implements ActionListener
 //		int top = (frame.getHeight() - height)/2;
 //		
 //		this.setBounds(left, top, width, height);
+	  
     width = Library.getWindowPixelWidth();
     height = Library.getWindowPixelHeight();
 
