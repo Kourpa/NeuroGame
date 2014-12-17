@@ -1,14 +1,12 @@
 package neurogame.io;
 
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
 import neurogame.gameplay.DirectionVector;
-import neurogame.io.User;
-
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * The main game controller for NeuroGame.
@@ -119,10 +117,16 @@ public class InputController implements KeyListener
   {
     return triggerPressed;
   }
-  
+
   public boolean isPlayerPressingESC()
   {
-	return escPressed;
+    // This function wasn't working correctly.
+    // I added this in attempt to use it.
+	  if(escPressed){
+      escPressed = false;
+      return true;
+    }
+    else return false;
   }
   
   private void updateButtonStatus()

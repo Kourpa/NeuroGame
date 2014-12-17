@@ -55,7 +55,7 @@ public enum GameObjectType
     public boolean isEnemy() {return true;}
     public boolean isDynamic() {return false;}
     public double getMaxSpeed() {return 0.0;}
-    public boolean hasCollider() {return true;}
+    public boolean hasCollider() {return false;}
   },
 
   STAR

@@ -10,16 +10,16 @@
 
 package neurogame.library;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-
 import neurogame.gameplay.GameObjectType;
 import neurogame.level.SpriteParticles;
 import neurogame.main.Bandit;
 import neurogame.main.NeuroGame;
 import neurogame.main.Oddball;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * An image library for NeuroGame - handles loading and storage of game images.
@@ -119,7 +119,6 @@ public class SpriteMap extends HashMap<String, BufferedImage>
 
 
     // Sprites for the one armed bandit
-    add("slotMachine", "/images/slotMachine.png", 900, 600);
     add("BanditIntro", "/images/banditIntro.png", 900, 600);
     add("BanditStar", "/images/singleStar.png", Bandit.ICON_SIZE, Bandit.ICON_SIZE);
     add("BanditPlayer","/images/playerShip.png", Bandit.ICON_SIZE, Bandit.ICON_SIZE);

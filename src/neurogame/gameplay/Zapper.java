@@ -10,15 +10,14 @@
 
 package neurogame.gameplay;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-
 import neurogame.level.PathVertex;
 import neurogame.level.World;
 import neurogame.library.Library;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 
 /**
  * A Zapper object for NeuroGame.
@@ -49,6 +48,8 @@ public class Zapper extends Enemy
   private double threshold = 0.1;
   private boolean hitPlayer;
 
+  private static int randomCounter = 0;
+
   private int zapAreaWidth, zapAreaHeight, zapAreaHypotenuse;
 
   private double zapNodeWorldX, zapNodeWorldTopY, zapNodeWorldBottomY;
@@ -73,6 +74,46 @@ public class Zapper extends Enemy
     on = false;
     hitPlayer = false;
     player = world.getPlayer();
+
+    //Check if either of the nodes are in the walls.
+    //If they are move them out of the wall.
+    EnumCollisionType collision;
+
+    //Check top left
+    collision = world.collisionWithWall(zapNodeWorldX, zapNodeWorldTopY);
+
+    while(collision != EnumCollisionType.NONE)
+    {
+      zapNodeWorldTopY += getHeight();
+      collision = world.collisionWithWall(zapNodeWorldX, zapNodeWorldTopY);
+    }
+
+    //Check top right
+    collision = world.collisionWithWall(zapNodeWorldX + getWidth(), zapNodeWorldTopY);
+
+    while(collision != EnumCollisionType.NONE)
+    {
+      zapNodeWorldTopY += getHeight();
+      collision = world.collisionWithWall(zapNodeWorldX + getWidth(), zapNodeWorldTopY);
+    }
+
+    collision = world.collisionWithWall(zapNodeWorldX + getWidth(), zapNodeWorldBottomY + getHeight());
+
+    //Check bottom right
+    while(collision != EnumCollisionType.NONE)
+    {
+      zapNodeWorldBottomY -= getHeight();
+      collision = world.collisionWithWall(zapNodeWorldX + getWidth(), zapNodeWorldBottomY + getHeight());
+    }
+
+    //Check bottom left
+    collision = world.collisionWithWall(zapNodeWorldX, zapNodeWorldBottomY + getHeight());
+
+    while(collision != EnumCollisionType.NONE)
+    {
+      zapNodeWorldBottomY -= getHeight();
+      collision = world.collisionWithWall(zapNodeWorldX, zapNodeWorldBottomY + getHeight());
+    }
 
     setLocation(zapNodeWorldX, zapNodeWorldTopY);
 
@@ -170,6 +211,7 @@ public class Zapper extends Enemy
    
   public void render(Graphics2D g)
   {
+
     int zapX = Library.worldPosXToScreen(zapNodeWorldX);
     int zapY1 = Library.worldPosYToScreen(zapNodeWorldTopY);
     int zapY2 = Library.worldPosYToScreen(zapNodeWorldBottomY);
