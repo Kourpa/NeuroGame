@@ -39,6 +39,7 @@ public class Bandit extends JPanel {
   private BufferedImage foreground;
   private BufferedImage splash;
   private BufferedImage intro;
+  private BufferedImage doneScreen;
   private BufferedImage doorTop;
   private BufferedImage doorBottom;
 
@@ -48,6 +49,7 @@ public class Bandit extends JPanel {
   private Font font;
 
   private final Color CLEAR = new Color(0, 0, 0, 0);
+  private final Color FOG = new Color(0, 0, 0, 180);
   private final Color BACKGROUND_COLOR = new Color(27, 66, 92, 255);
   private final Color DOOR_COLOR = new Color(57, 99, 173, 255);
   private final Color DOOR_BACKGROUND = new Color(19, 42, 60, 254);
@@ -69,7 +71,7 @@ public class Bandit extends JPanel {
 
   private int panelWidth, panelHeight;
 
-  private final int TOTAL_EVENTS = 80;
+  private final int TOTAL_EVENTS = 10;
   private double elapsedTime;
   private double delayTime;
   private double animationDelay = 1;
@@ -124,6 +126,7 @@ public class Bandit extends JPanel {
 
   private void initializedImages(){
     background = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB);
+    doneScreen = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB);
     splash = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_ARGB);
     splashGraphics = splash.createGraphics();
     splashGraphics.setFont(font);
@@ -240,7 +243,6 @@ public class Bandit extends JPanel {
     g.fill(top);
     g.setColor(Color.LIGHT_GRAY);
     g.draw(top);
-//    g.fillRect(0, 0, doorTop.getWidth(), doorTop.getHeight()/2);
 
     g = doorBottom.createGraphics();
     g.setStroke(thicker);
@@ -249,7 +251,15 @@ public class Bandit extends JPanel {
     g.fill(bottom);
     g.setColor(Color.LIGHT_GRAY);
     g.draw(bottom);
-//    g.fillRect(0, doorBottom.getHeight() / 2, doorBottom.getWidth(), doorBottom.getHeight() / 2);
+
+    g = doneScreen.createGraphics();
+    g.setBackground(FOG);
+    g.setFont(GUI_util.FONT36);
+    g.setColor(FONT_COLOR);
+    g.clearRect(0, 0, doneScreen.getWidth(), doneScreen.getHeight());
+    g.drawString("Congradulations, you got enough credits to ", panelWidth / 16, panelHeight / 8);
+    g.drawString("purchase your Delton starfighter. ", panelWidth/16, panelHeight/8 + 42);
+
   }
 
   public void init(User currentUser){
@@ -303,7 +313,7 @@ public class Bandit extends JPanel {
 
     elapsedTime += deltaSec;
 
-    if(state != BanditState.INTRO) {
+    if(state != BanditState.INTRO && state != BanditState.DONE) {
       if (state == BanditState.IDLE) {
         if(controller.isPlayerPressingESC()) {
           state = BanditState.EXIT;
@@ -323,12 +333,17 @@ public class Bandit extends JPanel {
         }
       }
     }
-    else{
+    else if(state == BanditState.INTRO){
       if(controller.isPlayerPressingESC()) {
         state = BanditState.EXIT;
         running = false;
       }
       else if(controller.isPlayerPressingButton()) startBandit();
+    }
+    else{
+      if(controller.isPlayerPressingESC() || controller.isPlayerPressingButton()){
+        running = false;
+      }
     }
 
     animate(deltaSec);
@@ -342,24 +357,34 @@ public class Bandit extends JPanel {
    * a number of spins for each counter.
    */
   private void nextEvent(){
-    if(eventCount > TOTAL_EVENTS){
+    if(eventCount >= TOTAL_EVENTS){
       state = BanditState.DONE;
-      running = false;
+      if(currentUser.isLogging()){
+        game.log.sendByteBySocket(SocketToParallelPort.TRIGGER_BANDIT_DONE);
+      }
     }
     else{
+      eventCount++;
 
-      if(winCount == TOTAL_EVENTS/2) state = BanditState.LOSE;
-      else if(loseCount == TOTAL_EVENTS/2) state = BanditState.WIN;
-      else if(score < 50) state = BanditState.WIN;
+      if(winCount == TOTAL_EVENTS/2) {
+        state = BanditState.LOSE;
+        loseCount++;
+      }
+      else if(loseCount == TOTAL_EVENTS/2) {
+        state = BanditState.WIN;
+        winCount++;
+      }
+      else if(score < 50) {
+        state = BanditState.WIN;
+        winCount++;
+      }
       else if(Library.RANDOM.nextDouble() > winCount/(eventCount+1.0)){
         state = BanditState.WIN;
         winCount++;
-        eventCount++;
       }
       else{
         state = BanditState.LOSE;
         loseCount++;
-        eventCount++;
       }
 
       if(state == BanditState.WIN) {
@@ -457,6 +482,9 @@ public class Bandit extends JPanel {
 
     if(state == BanditState.INTRO){
       graphics.drawImage(intro, introXOffset, introYOffset, null);
+    }
+    else if(state == BanditState.DONE){
+      graphics.drawImage(doneScreen, 0, 0, null);
     }
 
     repaint();
