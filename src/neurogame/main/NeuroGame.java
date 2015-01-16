@@ -77,8 +77,7 @@ public class NeuroGame extends JFrame implements ActionListener
     DEAD,         // TODO : Player has died, continue showing game moving, no player controls, display "Game Over" overlay.
     GAMEOVER,     // show the high scores 
     ODDBALL,	    // Oddball visual test
-    BANDIT,
-    HIGHSCORE;	  // Highscore screen after winning
+    BANDIT;	  // Highscore screen after winning
   }
   
   private static final int MIN_WINDOW_WIDTH = 200;
@@ -92,7 +91,6 @@ public class NeuroGame extends JFrame implements ActionListener
   
   private GameState gameState = GameState.INITIALIZING;
   private TitleScreen titlePanel;
-  private HighScoreScreen highScorePanel;
 
   private World world;
   private Player player;
@@ -149,12 +147,7 @@ public class NeuroGame extends JFrame implements ActionListener
   	titlePanel = new TitleScreen(this, controller);
   	contentPane.add(titlePanel);
   	
-  	highScorePanel = new HighScoreScreen(this, controller);
-  	contentPane.add(highScorePanel);
   	
-    drawPanel.setLocation(0, 0);
-    titlePanel.setLocation(0, 0);
-    highScorePanel.setLocation(0, 0);
   	
   	
     resizeHelper();
@@ -216,9 +209,6 @@ public class NeuroGame extends JFrame implements ActionListener
     case GAMEOVER:
     	gameOverUpdate(deltaSec);
     	break;
-    case HIGHSCORE:
-    	highScorePanel.update(keycode);
-    	break;
     case ODDBALL:
       boolean oddballRunning = oddball.oddballUpdate(deltaSec);
       if (!oddballRunning) showTitle();
@@ -246,7 +236,7 @@ public class NeuroGame extends JFrame implements ActionListener
   public void gameOverUpdate(double deltaTime)
   {
     if (controller.isPlayerPressingButton())
-    { showHighScores();
+    { //showHighScores();
     }
     else
     { 
@@ -280,12 +270,6 @@ public class NeuroGame extends JFrame implements ActionListener
 	  this.player.die(true);
   }
   
-  public void showHighScores(){
-	  gameState = GameState.HIGHSCORE;
-	  drawPanel.setVisible(false);
-	  highScorePanel.showScorePanel(currentUser);
-  }
-
 
 
 
@@ -310,7 +294,6 @@ public class NeuroGame extends JFrame implements ActionListener
     
     
     titlePanel.setVisible(false);
-    highScorePanel.setVisible(false);
 
     world = new World(controller);
     
