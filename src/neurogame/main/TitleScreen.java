@@ -1,34 +1,23 @@
 package neurogame.main;
 
 import neurogame.gameplay.DirectionVector;
+import neurogame.io.InputController;
 import neurogame.io.User;
 import neurogame.library.Library;
-import neurogame.io.InputController;
-
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
 
 @SuppressWarnings("serial")
 public class TitleScreen extends JPanel implements ActionListener
@@ -125,7 +114,7 @@ public class TitleScreen extends JPanel implements ActionListener
     buttonList[BUTTON_ODDBALL_IDX] = GUI_util.makeButton("Oddball Test", this, this);
 
     //Bandit button
-    buttonList[BUTTON_BANDIT_IDX] = GUI_util.makeButton("One Armed Bandit", this, this);
+    buttonList[BUTTON_BANDIT_IDX] = GUI_util.makeButton("Gambling Parlor", this, this);
 
     // Exit button
     buttonList[BUTTON_EXIT_IDX] = GUI_util.makeButton("Exit", this, this);

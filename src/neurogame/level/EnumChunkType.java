@@ -3,8 +3,8 @@
  * */
 package neurogame.level;
 
-import neurogame.gameplay.GameObjectType;
 import neurogame.gameplay.Ammo;
+import neurogame.gameplay.GameObjectType;
 import neurogame.library.Library;
 
 public enum EnumChunkType
@@ -48,7 +48,7 @@ public enum EnumChunkType
 
   SQUARE
   { public double getMaxChange() { return 0.06; }
-    public double getStepSize() { return 0.06; }
+    public double getStepSize() { return GameObjectType.ZAPPER.getWidth(); }
     public double getDefaultOpeningHeight() { return 0.8; }
     public double getMinimumOpeningHeight()  { return 0.20; }
     public Ammo getPowerUp() { return null; }
