@@ -71,7 +71,7 @@ public class Bandit extends JPanel {
 
   private int panelWidth, panelHeight;
 
-  private final int TOTAL_EVENTS = 10;
+  private final int TOTAL_EVENTS = 80;
   private double elapsedTime;
   private double delayTime;
   private double animationDelay = 1;
