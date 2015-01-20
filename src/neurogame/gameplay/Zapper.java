@@ -48,7 +48,6 @@ public class Zapper extends Enemy
   private double threshold = 0.1;
   private boolean hitPlayer;
 
-  private static int randomCounter = 0;
 
   private int zapAreaWidth, zapAreaHeight, zapAreaHypotenuse;
 

@@ -31,6 +31,7 @@ public class Player extends GameObject
   public static final int COLLISION_BITS_STAR = 8;
   public static final int COLLISION_BITS_AMMO = 16;
   public static final int COLLISION_FLAG_MISSILE_HIT_ENEMY = 32;
+  public static final int COLLISION_FLAG_ENEMY_LOST = 64;
  
   private double timeOfLastWallCollision;
   private double timeOfLastPlayerDamage;
@@ -261,7 +262,8 @@ public class Player extends GameObject
     }
     else
     {
-      score = score / 2;
+      score = score / 5;
+      collisionLogBitsThisUpdate = collisionLogBitsThisUpdate | COLLISION_FLAG_ENEMY_LOST;
     }
     gameScore += score;
     

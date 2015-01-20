@@ -5,6 +5,7 @@ public class QuickSet<T>
   private T[] list;
   private int last = -1;
 
+  @SuppressWarnings("unchecked")
   public QuickSet(int maxElements)
   {
     list = (T[]) new Object[maxElements];

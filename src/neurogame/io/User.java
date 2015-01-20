@@ -11,13 +11,16 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
-public class User
+public class User implements Comparable<User> 
 {
+  public enum SortType {SORT_BY_NAME, SORT_BY_SCORE};
+  private SortType sortMode = SortType.SORT_BY_SCORE;
+
   private String name;
   private int highScore = 0;
   private String highScoreDate = "New Player";
   private boolean logging = true;
-  private String controllerName = InputController.JOYSTICK_NOT_CONNECTED;
+  private String controllerName = "Logitech Dual Action";//name of joystick currently in Logan Lab
   private int joystickIdx_x = 3;
   private int joystickIdx_y = 2;
 
@@ -162,7 +165,23 @@ public class User
     }
   }
   
-
+  public static int getUserCount()
+  { return userList.size();
+  }
+  
+  
+  
+  @Override
+  public int compareTo(User  otherObj)
+  {
+    User other = (User)otherObj;
+    if (sortMode == SortType.SORT_BY_SCORE)
+    {
+      return other.highScore - highScore;
+    }
+    
+    return 0;
+  }
   
   public static void main(String[] args)
   {

@@ -11,6 +11,7 @@
 
 package neurogame.library;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -43,7 +44,7 @@ public final class Library
   public static final String NEWLINE = System.getProperty("line.separator");
   public static final String SEPARATOR = System.getProperty("file.separator");
 
-  public static final String GAME_TITLE = "Escape from Asteroid Axon v2014-11-24";
+  public static final String GAME_TITLE = "Escape from Asteroid Axon v2015-1-18";
 
   public static final int MIN_FRAME_MILLISEC = 10;
   
@@ -81,6 +82,16 @@ public final class Library
   public static double leftEdgeOfWorld = 0;
   
   private static double aspectRatio,maxManhattenDistanceOnScreen;
+  
+  public static final Color HIGHLIGHT_TEXT_COLOR = new Color(79, 148, 198);//new Color(100, 191, 255);
+  public static final Color UNSELECTED_TEXT_COLOR = new Color(220,220,220);
+  
+  public static final Font FONT70 = new Font("Karmatic Arcade", Font.PLAIN, 70);
+  public static final Font FONT36 = new Font("Karmatic Arcade", Font.PLAIN, 36);
+  public static final Font FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 30);
+  public static final Font FONT20 = new Font("Karmatic Arcade", Font.PLAIN, 20);
+  public static final Font FONT_ARIAL30 = new Font("Arial", Font.PLAIN, 48);
+  public static final Font FONT_ARIAL20 = new Font("Arial", Font.PLAIN, 28);
 
   private static SpriteMap sprites;
   

@@ -29,10 +29,9 @@ public class SocketToParallelPort
   public static final byte TRIGGER_GAME_COLLECT_STAR       = 93;
   public static final byte TRIGGER_GAME_COLLECT_AMMO       = 94;
   public static final byte TRIGGER_GAME_MISSILE_HIT_ENEMY  = 97;
-  public static final byte TRIGGER_GAME_START              = 99;
-  public static final byte TRIGGER_GAME_OVER               = 100;
-
-  
+  public static final byte TRIGGER_GAME_ENEMY_LOST         = 98; //hit other enemy, wall or scrolled off screen.
+  public static final byte TRIGGER_GAME_OVER               = 99;
+  public static final byte TRIGGER_GAME_START_BASE         = 100; //Each game in series starts with 100, 101, 102, ...
   
   public SocketToParallelPort(String host, int portNumber)
   {

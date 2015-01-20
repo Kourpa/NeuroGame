@@ -119,7 +119,6 @@ public class SpriteMap extends HashMap<String, BufferedImage>
 
 
     // Sprites for the one armed bandit
-    add("BanditIntro", "/images/banditIntro.png", 900, 600);
     add("BanditStar", "/images/singleStar.png", Bandit.ICON_SIZE, Bandit.ICON_SIZE);
     add("BanditPlayer","/images/playerShip.png", Bandit.ICON_SIZE, Bandit.ICON_SIZE);
     add("BanditEnemyStraight", "/images/enemyStraight.png", Bandit.ICON_SIZE, Bandit.ICON_SIZE);

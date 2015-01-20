@@ -3,9 +3,6 @@ package neurogame.main;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -14,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import neurogame.io.InputController;
 import neurogame.io.SocketToParallelPort;
 import neurogame.io.User;
 import neurogame.library.Library;
@@ -23,7 +21,7 @@ import neurogame.library.SpriteMap;
  * @author kourpa
  */
 @SuppressWarnings("serial")
-public class Oddball extends JPanel implements MouseListener, KeyListener
+public class Oddball extends JPanel
 {
 
   private enum OddballMode
@@ -56,8 +54,6 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
   private int standardCount, oddballCount, totalEventCount, lastOddBallIdx;
   private double timeTotalElapsed;
   private double timeCurrentSymbolEnd;
-  
-  
 
   private static final String INTRO_STR = "In this exercise, we’ll determine if your neuro-perceptual processing "
       + "is adequate for piloting a starfighter\n\n"
@@ -66,7 +62,7 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
       + "You must keep a mental count of the number of Glion battlecrusiers you see, "
       + "and report this count when this 7 minute exercise is over.";
 
-  public Oddball(NeuroGame game)
+  public Oddball(NeuroGame game, InputController gameController)
   {
     this.game = game;
 
@@ -88,8 +84,8 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
 
     msg2 = GUI_util.makeTextAreaArial20(INTRO_STR, this);
 
-    msg3 = GUI_util.makeLabelArial20("[Press game controller button, spacebar or click to begin]", this);
-    msg3.setForeground(GUI_util.COLOR_SELECTED);
+    msg3 = GUI_util.makeLabelArial20("[Press game controller button, or spacebar begin]", this);
+    msg3.setForeground(Library.HIGHLIGHT_TEXT_COLOR);
     msg3.setHorizontalAlignment(SwingConstants.CENTER);
 
     label_friendImg = new JLabel(new ImageIcon(friendlyImage));
@@ -98,25 +94,21 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
 
     label_waitImg = new JLabel(new ImageIcon(waitImage));
 
-    
     label_friendTxt1 = GUI_util.makeLabelArial20("Our", this);
     label_friendTxt2 = GUI_util.makeLabelArial20("Delton-class Starfighter", this);
     label_enemyTxt1 = GUI_util.makeLabelArial20("Enemy", this);
     label_enemyTxt2 = GUI_util.makeLabelArial20("Glion Battlecrusiers", this);
-    
+
     label_friendTxt1.setHorizontalAlignment(SwingConstants.CENTER);
     label_friendTxt2.setHorizontalAlignment(SwingConstants.CENTER);
     label_enemyTxt1.setHorizontalAlignment(SwingConstants.CENTER);
     label_enemyTxt2.setHorizontalAlignment(SwingConstants.CENTER);
-    
 
     this.add(label_enemyImg);
     this.add(label_waitImg);
     this.add(label_friendImg);
-
-    this.addMouseListener(this);
-    this.addKeyListener(this);
-    this.requestFocus();
+    
+    this.addKeyListener(gameController);
   }
 
   public void init(User currentUser)
@@ -130,8 +122,8 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
 
     this.setSize(panelWidth, panelHeight);
 
-    FontMetrics fm30 = this.getFontMetrics(GUI_util.FONT_ARIAL30);
-    FontMetrics fm20 = this.getFontMetrics(GUI_util.FONT_ARIAL20);
+    FontMetrics fm30 = this.getFontMetrics(Library.FONT_ARIAL30);
+    FontMetrics fm20 = this.getFontMetrics(Library.FONT_ARIAL20);
 
     int fontW20 = fm20.stringWidth("X");
     int fontW30 = fm30.stringWidth("X");
@@ -157,29 +149,29 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     msg1.setBounds(titleLeft, titleTop, titleWidth, boxH30);
     msg2.setBounds(introLeft, introTop, introWidth, introHeight);
 
-
     int iconTop = introTop + introHeight + 5;
-    int iconLeft = introLeft + fontW20*5;
-    int col2 = panelWidth - 2*ICON_SIZE - iconLeft;
+    int iconLeft = introLeft + fontW20 * 5;
+    int col2 = panelWidth - 2 * ICON_SIZE - iconLeft;
     label_friendImg.setBounds(iconLeft, iconTop, ICON_SIZE, ICON_SIZE);
     label_enemyImg.setBounds(col2, iconTop, ICON_SIZE, ICON_SIZE);
-    
-    int imageLabelTop = iconTop+ICON_SIZE+5;
-    int imageLabelWidth = ICON_SIZE*2;
-    int text1L = (iconLeft+ICON_SIZE/2)-imageLabelWidth/2;
-    int text2L = (col2+ICON_SIZE/2)-imageLabelWidth/2;
+
+    int imageLabelTop = iconTop + ICON_SIZE + 5;
+    int imageLabelWidth = ICON_SIZE * 2;
+    int text1L = (iconLeft + ICON_SIZE / 2) - imageLabelWidth / 2;
+    int text2L = (col2 + ICON_SIZE / 2) - imageLabelWidth / 2;
     label_friendTxt1.setBounds(text1L, imageLabelTop, imageLabelWidth, fontH20);
-    label_friendTxt2.setBounds(text1L, imageLabelTop+fontH20, imageLabelWidth, boxH20);
+    label_friendTxt2.setBounds(text1L, imageLabelTop + fontH20, imageLabelWidth, boxH20);
     label_enemyTxt1.setBounds(text2L, imageLabelTop, imageLabelWidth, fontH20);
-    label_enemyTxt2.setBounds(text2L, imageLabelTop+fontH20, imageLabelWidth, boxH20);
+    label_enemyTxt2.setBounds(text2L, imageLabelTop + fontH20, imageLabelWidth, boxH20);
 
     int startMsgTop = (panelHeight - rowH30) - rowH20;
-    msg3.setBounds(0,startMsgTop,panelWidth,boxH20);
+    msg3.setBounds(0, startMsgTop, panelWidth, boxH20);
 
     this.repaint();
 
     setIntroGUI(true);
     this.setVisible(true);
+    this.requestFocus();
   }
 
   private void startOddball()
@@ -222,30 +214,37 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     label_friendTxt2.setVisible(state);
     label_enemyImg.setVisible(state);
     label_friendImg.setVisible(state);
+    label_waitImg.setVisible(false);
   }
 
-  public boolean oddballUpdate(double deltaSec)
+  public boolean oddballUpdate(double deltaSec, int keycode)
   {
-    this.requestFocus();
+
+    //System.out.println("Oddball.oddballUpdate(): keycode="+keycode);
+    
+    
+    if (mode == OddballMode.INTRO)
+    {
+      if ((keycode == KeyEvent.VK_ENTER) || (keycode == KeyEvent.VK_SPACE)) startOddball();
+    }
+
+    if (keycode == KeyEvent.VK_ESCAPE) mode = OddballMode.EXIT;
+
     if (mode == OddballMode.EXIT) return false;
 
     if (mode == OddballMode.INTRO) return true;
     if (mode == OddballMode.START) return true;
-    if (mode == OddballMode.DONE)  return false;
+    if (mode == OddballMode.DONE) return false;
     if (mode == OddballMode.SETUP) return true;
-
 
     timeTotalElapsed += deltaSec;
     if (timeTotalElapsed < timeCurrentSymbolEnd) return true;
-
 
     if (totalEventCount >= TOTAL_EVENTS)
     {
       oddballDone();
       return true;
     }
-    
-
 
     if (mode != OddballMode.PLAY_WAIT)
     {
@@ -254,7 +253,7 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
       timeCurrentSymbolEnd += waitTime;
       return true;
     }
-    
+
     totalEventCount++;
     System.out.println("Oddball: event #=" + totalEventCount + ", timeTotalElapsed=" + timeTotalElapsed);
 
@@ -269,7 +268,6 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     timeCurrentSymbolEnd += EVENT_SEC;
     return true;
   }
-
 
   private void oddballDone()
   {
@@ -333,62 +331,4 @@ public class Oddball extends JPanel implements MouseListener, KeyListener
     label_enemyImg.setVisible(false);
     mode = OddballMode.PLAY_WAIT;
   }
-
-  @Override
-  public void keyTyped(KeyEvent event)
-  {
-  }
-
-  @Override
-  public void keyPressed(KeyEvent e)
-  {}
-
-  @Override
-  public void keyReleased(KeyEvent event)
-  {
-    int code = event.getKeyCode();
-    //System.out.println("keyTyped code= " + code);
-    
-    if (mode == OddballMode.INTRO)
-    {
-      if ((code == KeyEvent.VK_ENTER) || (code == KeyEvent.VK_SPACE)) startOddball();
-    }
-
-    if (code == KeyEvent.VK_ESCAPE) mode = OddballMode.EXIT;
-  }
-
-  @Override
-  public void mouseClicked(MouseEvent e)
-  {
-    if (mode == OddballMode.INTRO) startOddball();
-  }
-
-  @Override
-  public void mousePressed(MouseEvent e)
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void mouseReleased(MouseEvent e)
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void mouseEntered(MouseEvent e)
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void mouseExited(MouseEvent e)
-  {
-    // TODO Auto-generated method stub
-
-  }
-
 }

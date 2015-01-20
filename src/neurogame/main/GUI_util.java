@@ -1,25 +1,18 @@
 package neurogame.main;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
+import neurogame.library.Library;
+
 public class GUI_util
 {
-	public static final Color COLOR_SELECTED = new Color(100, 191, 255);
-	public static final Color COLOR_DESELECTED = new Color(220,220,220);
-	
-	public static final Font FONT36 = new Font("Karmatic Arcade", Font.PLAIN, 36);
-	public static final Font FONT30 = new Font("Karmatic Arcade", Font.PLAIN, 30);
-	public static final Font FONT20 = new Font("Karmatic Arcade", Font.PLAIN, 20);
-  public static final Font FONT_ARIAL30 = new Font("Arial", Font.PLAIN, 48);
-	public static final Font FONT_ARIAL20 = new Font("Arial", Font.PLAIN, 28);
-	
 
   public static JButton makeButton(String text, ActionListener listener, java.awt.Container parent)
   {
@@ -34,9 +27,9 @@ public class GUI_util
         
     button.addActionListener(listener);
         
-    button.setFont(FONT30);
+    button.setFont(Library.FONT30);
 
-    button.setForeground(COLOR_DESELECTED);
+    button.setForeground(Library.UNSELECTED_TEXT_COLOR);
     return button;
   }
   
@@ -45,8 +38,8 @@ public class GUI_util
   {
     JLabel label = new JLabel(text);
     parent.add(label);
-    label.setFont(FONT30);
-    label.setForeground(COLOR_DESELECTED);
+    label.setFont(Library.FONT30);
+    label.setForeground(Library.UNSELECTED_TEXT_COLOR);
     return label;
   }
   
@@ -55,7 +48,7 @@ public class GUI_util
   {
     JLabel label = new JLabel(text);
     parent.add(label);
-    label.setFont(FONT20);
+    label.setFont(Library.FONT20);
     return label;
   }
   
@@ -64,8 +57,8 @@ public class GUI_util
   {
     JLabel label = new JLabel(text);
     parent.add(label);
-    label.setFont(FONT_ARIAL30);
-    label.setForeground(COLOR_DESELECTED);
+    label.setFont(Library.FONT_ARIAL30);
+    label.setForeground(Library.UNSELECTED_TEXT_COLOR);
     return label;
   }
   
@@ -73,8 +66,8 @@ public class GUI_util
   {
     JLabel label = new JLabel(text);
     parent.add(label);
-    label.setFont(FONT_ARIAL20);
-    label.setForeground(COLOR_DESELECTED);
+    label.setFont(Library.FONT_ARIAL20);
+    label.setForeground(Library.UNSELECTED_TEXT_COLOR);
     return label;
   }
   
@@ -83,9 +76,9 @@ public class GUI_util
   {
     JTextArea area = new JTextArea(text);
     parent.add(area);
-    area.setFont(FONT_ARIAL20);
+    area.setFont(Library.FONT_ARIAL20);
     area.setBackground(Color.BLACK);
-    area.setForeground(COLOR_DESELECTED);
+    area.setForeground(Library.UNSELECTED_TEXT_COLOR);
     area.setEditable(false);
     area.setLineWrap(true);
     area.setWrapStyleWord(true);
@@ -93,19 +86,19 @@ public class GUI_util
   }
 
     
-  public static void setSelected(JButton button, boolean selected)
+  public static void setSelected(JComponent component, boolean selected)
   {
-    button.setSelected(selected);
+    //component.setSelected(selected);
     
     if (selected)
     { 
-      button.setForeground(COLOR_SELECTED);
-      button.setFont(FONT36);
+      component.setForeground(Library.HIGHLIGHT_TEXT_COLOR);
+      component.setFont(Library.FONT36);
     }
     else 
     {
-      button.setForeground(COLOR_DESELECTED);
-      button.setFont(FONT30);
+      component.setForeground(Library.UNSELECTED_TEXT_COLOR);
+      component.setFont(Library.FONT30);
     }
 
   }
